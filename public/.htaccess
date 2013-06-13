@@ -1,6 +1,25 @@
 <IfModule mod_rewrite.c>
 	RewriteEngine On
 
+	# html5 pushstate (history) support:
+
+	###################################################
+	# Do not process images or CSS files further      #
+	###################################################
+	# No more processing occurs if this rule is       #
+	# successful                                      #
+	###################################################
+
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_FILENAME} !-d
+	RewriteCond %{REQUEST_URI} !index
+	RewriteCond %{REQUEST_URI} !php
+	RewriteCond %{REQUEST_URI} !assets
+	RewriteCond %{REQUEST_URI} !admin
+	RewriteRule (.*) index.php [L]
+
+	# html5 history end
+
 	# Send would-be 404 requests to Craft
 	RewriteCond %{REQUEST_FILENAME} !-f
 	RewriteCond %{REQUEST_FILENAME} !-d
