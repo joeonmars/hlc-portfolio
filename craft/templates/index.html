@@ -12,33 +12,32 @@
 {% block content %}
 
 	<div class="masthead section">
-		<div id="home">
-			<h1>
-				{{ home.heading }}
-				<span>{{ home.subHeading }}</span>
-			</h1>
-
-			{{ homepage.body }}
+		<div class="pages">
+			{% include "_includes/home" %}
 		</div>
+		
+		<div class="albumButton triangleButton upwards"></div>
 	</div>
 
-	{% for entry in craft.entries.section('album').find() %}
-		<div class="album section">
+	<div id="album-scroller">
+		{% for entry in craft.entries.section('album').find() %}
+			<div class="album section">
 
-			{% for song in entry.songs %}
-				<div class="background">
-						{% for cover in song.cover %}
-							<div style="background-image:url( {{cover.url}} );"></div>
-		    		{% endfor %}
+				{% for song in entry.songs %}
+					<div class="background">
+							{% for cover in song.cover %}
+								<div style="background-image:url( {{cover.url}} );"></div>
+			    		{% endfor %}
+					</div>
+				{% endfor %}
+
+				<div class="content">
+					<a href="{{ entry.url }}">{{ entry.title }}</a>
+					{% include "_includes/song-shuffler" with { songs: entry.songs } %}
 				</div>
-			{% endfor %}
-
-			<div class="content">
-				<a href="{{ entry.url }}">{{ entry.title }}</a>
-				{% include "_includes/song-shuffler" with { songs: entry.songs } %}
+				
 			</div>
-			
-		</div>
-	{% endfor %}
+		{% endfor %}
+	</div>
 
 {% endblock %}

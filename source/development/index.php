@@ -32,7 +32,7 @@
 
 		<!-- execute the main js-->
 		<script>
-			example.main();
+			hlc.main();
 		</script>
 	</body>
 	

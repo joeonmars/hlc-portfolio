@@ -4,20 +4,40 @@ $icon-layout:smart;
 
 @import "global";
 @import "album";
+@import "sidebar";
+@import "main-hud";
+@import "masthead-section";
 
-#main-scroller{
+#main-container{
 	width: 100%;
 	height: 100%;
-	padding: 10px;
+	padding: 6px;
 	@include box-sizing(border-box);
 
 	>.viewport{
-		width: 100%;
-		height: 100%;
-		overflow-y: scroll;
-		overflow-x: hidden;
+		white-space: nowrap;
+	}
+}
+
+#main-scroller{
+	display: inline-block;
+	width: 100%;
+	height: 100%;
+	@include single-transition(width, 0.5s, ease-out);
+	white-space: normal;
+
+	>.viewport{
+		//overflow-y: scroll; //for test only
 		outline: 1px solid #ddd;
 	}
+}
+
+#sidebar{
+	display: inline-block;
+	width: $sidebar_width;
+	height: 100%;
+	overflow: hidden;
+	white-space: normal;
 }
 
 .section{
@@ -28,7 +48,15 @@ $icon-layout:smart;
 }
 
 #main-hud{
-	position: absolute;
-	padding: 10px;
-	@include box-sizing(border-box);
+	position: relative;
+	width: 100%;
+	height: 0px;
+	z-index: 10;
+}
+
+#album-scroller{
+	width: 100%;
+	height: 100%;
+	overflow-x: hidden;
+	overflow-y: scroll;
 }

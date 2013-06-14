@@ -95,13 +95,27 @@ a {
   left: 0;
 }
 
-.button {
+.button, .triangleButton {
   -webkit-user-select: none;
   -moz-user-select: none;
   user-select: none;
   cursor: pointer;
   text-align: center;
   display: block;
+}
+
+.viewport {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.triangleButton {
+  width: 100px;
+  height: 100px;
+  background: white;
+  border: 1px solid black;
 }
 
 .album {
@@ -125,20 +139,86 @@ a {
   z-index: 1;
 }
 
-#main-scroller {
+#sidebar {
+  background: #ddd;
+}
+
+#media-player {
+  position: absolute;
+  width: 100%;
+  height: 90px;
+  background: #eee;
+  -webkit-transition: -webkit-transform 0.2s ease-out;
+  -moz-transition: -moz-transform 0.2s ease-out;
+  -o-transition: -o-transform 0.2s ease-out;
+  transition: transform 0.2s ease-out;
+}
+#media-player.hide {
+  -webkit-transform: translate(0px, 90px);
+  -moz-transform: translate(0px, 90px);
+  -ms-transform: translate(0px, 90px);
+  -o-transform: translate(0px, 90px);
+  transform: translate(0px, 90px);
+}
+
+#main-hud > .triangleButton {
+  position: absolute;
+  right: 0;
+}
+
+.masthead {
+  background-color: #aaa;
+}
+.masthead > .pages {
   width: 100%;
   height: 100%;
-  padding: 10px;
+}
+.masthead > .pages > .page {
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  padding: 100px 0 100px 0;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-#main-scroller > .viewport {
+.masthead > .albumButton {
+  position: absolute;
+  bottom: 0;
+}
+
+#main-container {
   width: 100%;
   height: 100%;
-  overflow-y: scroll;
-  overflow-x: hidden;
+  padding: 6px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+#main-container > .viewport {
+  white-space: nowrap;
+}
+
+#main-scroller {
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  -webkit-transition: width 0.5s ease-out;
+  -moz-transition: width 0.5s ease-out;
+  -o-transition: width 0.5s ease-out;
+  transition: width 0.5s ease-out;
+  white-space: normal;
+}
+#main-scroller > .viewport {
   outline: 1px solid #ddd;
+}
+
+#sidebar {
+  display: inline-block;
+  width: 400px;
+  height: 100%;
+  overflow: hidden;
+  white-space: normal;
 }
 
 .section {
@@ -149,9 +229,15 @@ a {
 }
 
 #main-hud {
-  position: absolute;
-  padding: 10px;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
+  position: relative;
+  width: 100%;
+  height: 0px;
+  z-index: 10;
+}
+
+#album-scroller {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: scroll;
 }

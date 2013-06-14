@@ -26,6 +26,10 @@
 </head>
 
 <body>
+	<script>
+		document.body.style.visibility = 'hidden';
+	</script>
+
 			<!--
 		<header id="header">
 			<h1><a href="{{ siteUrl }}">{{ siteName }}</a></h1>
@@ -37,15 +41,28 @@
 			</nav>
 		</header>-->
 
-	<div id="main-hud">
-		<div id="audio-player"></div>
-	</div>
+	<div id="main-container">
 
-	<div id="main-scroller">
 		<div class="viewport">
-			{% block content %}
-			{% endblock %}
+
+			<div id="main-scroller">
+
+				<div id="main-hud">
+					<div class="sidebarButton triangleButton leftwards"></div>
+					<div id="media-player" class="hide"></div>
+				</div>
+
+				<div class="viewport">
+					{% block content %}
+					{% endblock %}
+				</div>
+			</div>
+
+			<div id="sidebar">
+			</div>
+			
 		</div>
+
 	</div>
 
 	<!--
@@ -58,6 +75,7 @@
 	<script src="{{PATH_TO_STATIC_ASSETS}}/js/third-party/crossroads.min.js"></script>
 	<script src="{{PATH_TO_STATIC_ASSETS}}/js/third-party/modernizr-latest.js"></script>
 	<script src="{{PATH_TO_STATIC_ASSETS}}/js/third-party/greensock/TweenMax.min.js"></script>
+	<script src="{{PATH_TO_STATIC_ASSETS}}/js/third-party/greensock/plugins/ScrollToPlugin.min.js"></script>
 
 	<!-- project js -->
 	<!--<script src="js/compiled.js"></script>-->
@@ -65,7 +83,8 @@
 
 	<!-- execute the main js-->
 	<script>
-		example.main();
+		document.body.style.visibility = 'visible';
+		hlc.main();
 	</script>
 </body>
 </html>

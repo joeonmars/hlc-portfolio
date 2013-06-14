@@ -1,4 +1,4 @@
-goog.provide('example.controllers.NavigationController');
+goog.provide('hlc.controllers.NavigationController');
 
 goog.require('goog.events.EventTarget');
 goog.require('goog.events');
@@ -10,7 +10,7 @@ goog.require('goog.string');
 /**
  * @constructor
  */
-example.controllers.NavigationController = function(){
+hlc.controllers.NavigationController = function(){
   goog.base(this);
 
   // a toggle of whether to use history API
@@ -22,12 +22,12 @@ example.controllers.NavigationController = function(){
   // the history object
   this._navHistory = null;
 };
-goog.inherits(example.controllers.NavigationController, goog.events.EventTarget);
-goog.addSingletonGetter(example.controllers.NavigationController);
+goog.inherits(hlc.controllers.NavigationController, goog.events.EventTarget);
+goog.addSingletonGetter(hlc.controllers.NavigationController);
 
 
-example.controllers.NavigationController.prototype.init = function(){
-  this._useHistoryAPI = (example.controllers.NavigationController.Implementation === example.controllers.NavigationController.HISTORY_API);
+hlc.controllers.NavigationController.prototype.init = function(){
+  this._useHistoryAPI = (hlc.controllers.NavigationController.Implementation === hlc.controllers.NavigationController.HISTORY_API);
 
   if(this._useHistoryAPI) {
   	this._navHistory = new goog.history.Html5History();
@@ -47,7 +47,7 @@ example.controllers.NavigationController.prototype.init = function(){
 };
 
 
-example.controllers.NavigationController.prototype.setToken = function(token, title){
+hlc.controllers.NavigationController.prototype.setToken = function(token, title){
 	// if using hash, make sure the '/' is prepended
 	if(!this._useHistoryAPI) {
 		if(!goog.string.startsWith(token, '/')) {
@@ -59,7 +59,7 @@ example.controllers.NavigationController.prototype.setToken = function(token, ti
 };
 
 
-example.controllers.NavigationController.prototype.getToken = function(){
+hlc.controllers.NavigationController.prototype.getToken = function(){
 	var token = this._navHistory.getToken();
 	if(goog.string.startsWith(token, '/')) {
 		token = token.substring(1);
@@ -68,34 +68,34 @@ example.controllers.NavigationController.prototype.getToken = function(){
 };
 
 
-example.controllers.NavigationController.prototype.replaceToken = function(token, title){
+hlc.controllers.NavigationController.prototype.replaceToken = function(token, title){
 	this._navHistory.replaceToken(token ,title);
 };
 
 
-example.controllers.NavigationController.prototype.handleToken = function(token){
+hlc.controllers.NavigationController.prototype.handleToken = function(token){
 	console.log('handle token: ' + token);
 };
 
 
-example.controllers.NavigationController.prototype.onNavigate = function(e){
+hlc.controllers.NavigationController.prototype.onNavigate = function(e){
 	// validate the token by HTML5 history API support,
 	// optionally append or remove hash fragment,
 	// and reset the window location
-	var tokenStr = goog.string.remove(window.location.href, example.Url.ORIGIN);
+	var tokenStr = goog.string.remove(window.location.href, hlc.Url.ORIGIN);
 
 	if(e.token === '' && tokenStr !== '') {
 		if(this._useHistoryAPI) {
 			// indicates a possible hash bang to be removed
 			if(goog.string.startsWith(tokenStr, '#/')) {
 				var token = tokenStr.substring(2);
-				window.location = example.Url.ORIGIN + token;
+				window.location = hlc.Url.ORIGIN + token;
 			}
 		}else{
 			// indicates a possible lack of hash bang
 			if(!goog.string.startsWith(tokenStr, '#/')) {
 				var token = ('#/').concat(tokenStr);
-				window.location = example.Url.ORIGIN + token;
+				window.location = hlc.Url.ORIGIN + token;
 			}
 		}
 
@@ -110,6 +110,6 @@ example.controllers.NavigationController.prototype.onNavigate = function(e){
 };
 
 
-example.controllers.NavigationController.HASH = 'hash';
-example.controllers.NavigationController.HISTORY_API = 'history_api';
-example.controllers.NavigationController.Implementation = (goog.history.Html5History.isSupported() ? example.controllers.NavigationController.HISTORY_API : example.controllers.NavigationController.HASH);
+hlc.controllers.NavigationController.HASH = 'hash';
+hlc.controllers.NavigationController.HISTORY_API = 'history_api';
+hlc.controllers.NavigationController.Implementation = (goog.history.Html5History.isSupported() ? hlc.controllers.NavigationController.HISTORY_API : hlc.controllers.NavigationController.HASH);
