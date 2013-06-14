@@ -10,17 +10,34 @@
 {% extends "_layout" %}
 
 {% block content %}
-	<h1>
-		{{ home.heading }}
-		<span>{{ home.subHeading }}</span>
-	</h1>
 
-	{{ homepage.body }}
+	<div class="masthead section">
+		<div id="home">
+			<h1>
+				{{ home.heading }}
+				<span>{{ home.subHeading }}</span>
+			</h1>
+
+			{{ homepage.body }}
+		</div>
+	</div>
 
 	{% for entry in craft.entries.section('album').find() %}
-		<div>
-			<a href="{{ entry.url }}">{{ entry.title }}</a>
-			{% include "_includes/song-shuffler" with { songs: entry.songs } %}
+		<div class="album section">
+
+			{% for song in entry.songs %}
+				<div class="background">
+						{% for cover in song.cover %}
+							<div style="background-image:url( {{cover.url}} );"></div>
+		    		{% endfor %}
+				</div>
+			{% endfor %}
+
+			<div class="content">
+				<a href="{{ entry.url }}">{{ entry.title }}</a>
+				{% include "_includes/song-shuffler" with { songs: entry.songs } %}
+			</div>
+			
 		</div>
 	{% endfor %}
 

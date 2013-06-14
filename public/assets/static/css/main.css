@@ -103,3 +103,55 @@ a {
   text-align: center;
   display: block;
 }
+
+.album {
+  background-color: gray;
+}
+.album > .background {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+.album > .background > div {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+}
+.album > .content {
+  position: relative;
+  z-index: 1;
+}
+
+#main-scroller {
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+#main-scroller > .viewport {
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  outline: 1px solid #ddd;
+}
+
+.section {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+#main-hud {
+  position: absolute;
+  padding: 10px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}

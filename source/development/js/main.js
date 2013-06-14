@@ -16,9 +16,6 @@ example.main = function() {
 
 	//example.controllers.NavigationController.Implementation = example.controllers.NavigationController.HASH;
 	example.main.controllers.navigationController.init();
-
-	var helloWorld = soy.renderAsFragment(example.templates.helloWorld);
-	goog.dom.appendChild(document.body, helloWorld);
 };
 
 example.main.controllers = {
