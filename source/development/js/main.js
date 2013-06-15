@@ -39,6 +39,7 @@ hlc.main.views = {
 
 // test
 hlc.main.controllers.mainScrollController.init();
+hlc.main.controllers.albumScrollController.init();
 hlc.main.views.sidebar.init();
 hlc.main.views.mainHud.init();
 hlc.main.views.mastheadSection.init();

@@ -46,6 +46,18 @@ a{
   text-decoration: none;
 }
 
+::-webkit-scrollbar {
+    width: 6px;
+}
+ 
+::-webkit-scrollbar-track {
+    background: #ddd;
+}
+ 
+::-webkit-scrollbar-thumb {
+    @include background(linear-gradient(left, #595968 50%, #4F4F5D 50%));
+}
+
 .clearfix{
   clear:both;
 }
@@ -75,5 +87,4 @@ a{
   width: 100px;
   height: 100px;
   background: white;
-  border: 1px solid black;
 }

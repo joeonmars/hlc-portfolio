@@ -13,6 +13,8 @@ hlc.views.MediaPlayer = function(){
   goog.base(this);
 
   this.domElement = goog.dom.getElement('media-player');
+  this.parentDomElement = goog.dom.getParentElement(this.domElement);
+
   this._size = goog.style.getSize(this.domElement);
 };
 goog.inherits(hlc.views.MediaPlayer, goog.events.EventTarget);
@@ -28,12 +30,12 @@ hlc.views.MediaPlayer.prototype.init = function(){
 
 
 hlc.views.MediaPlayer.prototype.show = function(){
-	goog.dom.classes.remove(this.domElement, 'hide');
+	goog.dom.classes.remove(this.parentDomElement, 'hidePlayer');
 };
 
 
 hlc.views.MediaPlayer.prototype.hide = function(){
-	goog.dom.classes.add(this.domElement, 'hide');
+	goog.dom.classes.add(this.parentDomElement, 'hidePlayer');
 };
 
 
@@ -55,6 +57,5 @@ hlc.views.MediaPlayer.prototype.onClick = function(e){
 
 
 hlc.views.MediaPlayer.prototype.onResize = function(e){
-	var y = e.mainViewportSize.height - this._size.height;
-	goog.style.setStyle(this.domElement, 'top', y + 'px');
+	goog.style.setStyle(this.domElement, 'padding-right', e.scrollbarWidth + 'px');
 };

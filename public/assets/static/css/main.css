@@ -85,6 +85,22 @@ a {
   text-decoration: none;
 }
 
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #ddd;
+}
+
+::-webkit-scrollbar-thumb {
+  background: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(50%, #595968), color-stop(50%, #4f4f5d));
+  background: -webkit-linear-gradient(left, #595968 50%, #4f4f5d 50%);
+  background: -moz-linear-gradient(left, #595968 50%, #4f4f5d 50%);
+  background: -o-linear-gradient(left, #595968 50%, #4f4f5d 50%);
+  background: linear-gradient(left, #595968 50%, #4f4f5d 50%);
+}
+
 .clearfix {
   clear: both;
 }
@@ -115,7 +131,6 @@ a {
   width: 100px;
   height: 100px;
   background: white;
-  border: 1px solid black;
 }
 
 .album {
@@ -140,30 +155,60 @@ a {
 }
 
 #sidebar {
-  background: #ddd;
+  background: white;
 }
 
 #media-player {
-  position: absolute;
   width: 100%;
   height: 90px;
-  background: #eee;
-  -webkit-transition: -webkit-transform 0.2s ease-out;
-  -moz-transition: -moz-transform 0.2s ease-out;
-  -o-transition: -o-transform 0.2s ease-out;
-  transition: transform 0.2s ease-out;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
-#media-player.hide {
-  -webkit-transform: translate(0px, 90px);
-  -moz-transform: translate(0px, 90px);
-  -ms-transform: translate(0px, 90px);
-  -o-transform: translate(0px, 90px);
-  transform: translate(0px, 90px);
+#media-player > div {
+  width: 100%;
+  height: 100%;
+  background: #eee;
 }
 
 #main-hud > .triangleButton {
   position: absolute;
+}
+#main-hud > .playlistButton {
+  top: 0;
+}
+#main-hud > .sidebarButton {
   right: 0;
+  -webkit-transition: right 0.2s ease-out;
+  -moz-transition: right 0.2s ease-out;
+  -o-transition: right 0.2s ease-out;
+  transition: right 0.2s ease-out;
+}
+#main-hud > .sidebarButton.hide {
+  right: -100px !important;
+}
+#main-hud > .bottom {
+  position: absolute;
+  width: 100%;
+  height: 0;
+  margin-top: -190px;
+  -webkit-transition: margin-top 0.2s ease-out;
+  -moz-transition: margin-top 0.2s ease-out;
+  -o-transition: margin-top 0.2s ease-out;
+  transition: margin-top 0.2s ease-out;
+}
+#main-hud > .bottom.hide {
+  margin-top: 0 !important;
+}
+#main-hud > .bottom.hidePlayer {
+  margin-top: -100px;
+}
+#main-hud > .bottom > .homeButton {
+  position: relative;
+  margin: 0 auto;
+}
+#main-hud > .bottom #media-player {
+  position: relative;
 }
 
 .masthead {
@@ -185,6 +230,17 @@ a {
 .masthead > .albumButton {
   position: absolute;
   bottom: 0;
+  -webkit-transition: -webkit-transform 0.2s;
+  -moz-transition: -moz-transform 0.2s;
+  -o-transition: -o-transform 0.2s;
+  transition: transform 0.2s;
+}
+.masthead > .albumButton.hide {
+  -webkit-transform: translate(0, 100px);
+  -moz-transform: translate(0, 100px);
+  -ms-transform: translate(0, 100px);
+  -o-transform: translate(0, 100px);
+  transform: translate(0, 100px);
 }
 
 #main-container {

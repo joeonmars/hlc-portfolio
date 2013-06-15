@@ -4,6 +4,7 @@ goog.require('goog.array');
 goog.require('goog.dom.ViewportSizeMonitor');
 goog.require('goog.events.EventType');
 goog.require('goog.dom.query');
+goog.require('goog.userAgent');
 
 hlc.controllers.WindowController = function() {
 	goog.base(this);
@@ -13,6 +14,7 @@ hlc.controllers.WindowController = function() {
 	this._viewportSizeMonitor = new goog.dom.ViewportSizeMonitor();
 	this._window = goog.dom.getWindow();
 	this._mainViewport = goog.dom.query('#main-container > .viewport')[0];
+	this._scrollBarWidth = goog.userAgent.WEBKIT ? 6 : goog.style.getScrollbarWidth();
 
   // listen for window events
   goog.events.listen(this._viewportSizeMonitor, goog.events.EventType.RESIZE, this.onResize, false, this);
@@ -39,6 +41,11 @@ hlc.controllers.WindowController.prototype.removeDispatcher = function(dispatche
 };
 
 
+hlc.controllers.WindowController.prototype.getScrollbarWidth = function() {
+	return this._scrollBarWidth;
+};
+
+
 hlc.controllers.WindowController.prototype.getWindowSize = function() {
 	return (this._viewportSizeMonitor.getSize() || goog.dom.getViewportSize());
 };
@@ -53,7 +60,8 @@ hlc.controllers.WindowController.prototype.getResizeEvent = function() {
 	var ev = {
 		type: goog.events.EventType.RESIZE,
 		windowSize: this.getWindowSize(),
-		mainViewportSize: this.getMainViewportSize()
+		mainViewportSize: this.getMainViewportSize(),
+		scrollbarWidth: this.getScrollbarWidth()
 	};
 
 	return ev;

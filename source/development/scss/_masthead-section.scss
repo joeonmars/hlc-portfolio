@@ -17,5 +17,10 @@
 	>.albumButton{
 		position: absolute;
 		bottom: 0;
+		@include single-transition(transform, 0.2s);
+
+		&.hide{
+			@include translate(0, 100px);
+		}
 	}
 }

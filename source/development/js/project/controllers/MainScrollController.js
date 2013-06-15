@@ -25,7 +25,7 @@ hlc.controllers.MainScrollController.prototype.init = function(){
 };
 
 
-hlc.controllers.MainScrollController.prototype.scrollTo = function(scrollPosition, onComplete){
+hlc.controllers.MainScrollController.prototype.scrollTo = function(scrollPosition){
 	var y;
 	if( scrollPosition === hlc.controllers.MainScrollController.ScrollPosition.MASTHEAD ) {
 		y = 0;
@@ -44,8 +44,6 @@ hlc.controllers.MainScrollController.prototype.scrollTo = function(scrollPositio
 				scrollPosition: this.scrollPosition
 			};
 			this.dispatchEvent(ev);
-			
-			if(onComplete) onComplete();
 		},
 		onCompleteScope: this
 	});

@@ -21,20 +21,28 @@ hlc.views.MastheadSection.prototype.init = function(){
 	goog.base(this, 'init');
 
 	goog.events.listen(this.albumButton, 'click', this.onClick, false, this);
+
+	goog.events.listen(hlc.main.controllers.mainScrollController,
+		hlc.controllers.MainScrollController.EventType.SCROLL_FINISH, this.onScrollFinish, false, this);
 };
 
 
 hlc.views.MastheadSection.prototype.onClick = function(e){
 	switch(e.currentTarget) {
 		case this.albumButton:
+		goog.dom.classes.add(this.albumButton, 'hide');
 		hlc.main.controllers.mainScrollController.scrollTo(hlc.controllers.MainScrollController.ScrollPosition.ALBUM);
 		break;
 	}
 };
 
 
-hlc.views.MastheadSection.prototype.onScroll = function(e){
-	goog.base(this, 'onScroll', e);
+hlc.views.MastheadSection.prototype.onScrollFinish = function(e){
+	if(e.scrollPosition === hlc.controllers.MainScrollController.ScrollPosition.MASTHEAD) {
+		goog.dom.classes.remove(this.albumButton, 'hide');
+	}else {
+		goog.dom.classes.add(this.albumButton, 'hide');
+	}
 };
 
 
