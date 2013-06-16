@@ -12,8 +12,34 @@
 {% block content %}
 
 	<div class="masthead section">
+		<div class="colorOverlay"></div>
+
+		<div class="hud">
+			<ul class="nav">
+				<li>{% include "_includes/diamond-button" with {text: 'home', dataUrl: 'home'} %}</li>
+				<li>{% include "_includes/diamond-button" with {text: 'biography', dataUrl: 'biography'} %}</li>
+				<li>{% include "_includes/diamond-button" with {text: 'awards', dataUrl: 'awards'} %}</li>
+				<li>{% include "_includes/diamond-button" with {text: 'contact', dataUrl: 'contact'} %}</li>
+			</ul>
+		</div>
+
+		<div class="marquee">
+			<div class="hide">
+				<div class="heading">
+					<h2>home</h2>
+					<h2>biography</h2>
+					<h2>awards</h2>
+					<h2>contact</h2>
+				</div>
+				<a href="/resume.pdf">{% include "_includes/rectangle-button" with {text: 'download resume'} %}</a>
+			</div>
+		</div>
+
 		<div class="pages">
 			{% include "_includes/home" %}
+			{% include "_includes/biography" %}
+			{% include "_includes/awards" %}
+			{% include "_includes/contact" %}
 		</div>
 		
 		<div class="albumButton triangleButton upwards"></div>

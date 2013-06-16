@@ -1,4 +1,5 @@
 @import "media-player";
+@import "playlist";
 
 #main-hud{
 	>.triangleButton{
@@ -7,14 +8,16 @@
 
 	>.playlistButton{
 		top: 0;
+		z-index: 2;
 	}
 
 	>.sidebarButton{
+		z-index: 3;
 		right: 0;
 		@include single-transition(right, 0.2s, ease-out);
 
 		&.hide{
-			right: -100px !important;
+			right: -57px !important;
 		}
 	}
 
@@ -22,7 +25,8 @@
 		position: absolute;
 		width: 100%;
 		height: 0;
-		margin-top: -100px - $media_player_height;
+		margin-top: -57px - $media_player_height;
+		z-index: 0;
 		@include single-transition(margin-top, 0.2s, ease-out);
 
 		&.hide{
@@ -30,7 +34,7 @@
 		}
 
 		&.hidePlayer{
-			margin-top: -100px;
+			margin-top: -57px;
 		}
 
 		>.homeButton{

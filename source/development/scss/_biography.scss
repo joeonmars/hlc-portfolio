@@ -1,0 +1,32 @@
+#biography{
+	ul{
+		text-align: center;
+
+		>li{
+			display: inline-block;
+			vertical-align: top;
+			width: 30%;
+			padding-right: 2%;
+			text-align: left;
+			@include box-sizing(border-box);
+
+			&:last-child{
+				padding-right: 0;
+			}
+
+			>h3{
+				font-family: $font_poly;
+				font-size: 30px;
+				font-style: italic;
+				text-decoration: underline;
+				text-transform: capitalize;
+			}
+
+			>p{
+				margin-top: 15px;
+				font-size: 13px;
+				line-height: 13px * 1.8;
+			}
+		}
+	}
+}

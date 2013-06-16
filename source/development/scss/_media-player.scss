@@ -8,6 +8,9 @@ $media_player_height: 90px;
 	>div{
 		width: 100%;
 		height: 100%;
-		background: #eee;
+		border: 1px solid #ddd;
+		border-top: none;
+		@include box-sizing(border-box);
+		@include background(linear-gradient(bottom, #F0EFFD, white));
 	}
 }

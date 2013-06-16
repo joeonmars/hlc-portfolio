@@ -1,3 +1,5 @@
+@import url(http://fonts.googleapis.com/css?family=Droid+Sans:400,700);
+@import url(http://fonts.googleapis.com/css?family=Poly:400,400italic);
 /* Welcome to Compass.
  * In this file you should write your main styles. (or centralize your imports)
  * Import this file using the following HTML or equivalent:
@@ -58,6 +60,14 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
   display: block;
 }
 
+@font-face {
+  font-family: 'barkentina_1regular';
+  src: url("../font/barkentina/barkentina.eot");
+  src: url("../font/barkentina/barkentina.eot?#iefix") format("embedded-opentype"), url("../font/barkentina/barkentina.woff") format("woff"), url("../font/barkentina/barkentina.ttf") format("truetype"), url("../font/barkentina/barkentina.svg#barkentina_1regular") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
 html, body {
   position: absolute;
   width: 100%;
@@ -79,10 +89,27 @@ html.touch *, body.touch * {
 body {
   min-width: 768px;
   min-height: 640px;
+  font-family: "Droid Sans", sans-serif;
+}
+
+h1, h2 {
+  font-family: "barkentina_1regular", serif;
+}
+
+h3, h4, h5, h6 {
+  font-family: "Droid Sans", sans-serif;
+}
+
+p {
+  font-family: "Poly", serif;
 }
 
 a {
   text-decoration: none;
+}
+
+textarea {
+  resize: none;
 }
 
 ::-webkit-scrollbar {
@@ -101,23 +128,17 @@ a {
   background: linear-gradient(left, #595968 50%, #4f4f5d 50%);
 }
 
-.clearfix {
-  clear: both;
-}
-
-.topLeft {
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-.button, .triangleButton {
+.button, .triangleButton, .rectangleButton, .diamondButton {
   -webkit-user-select: none;
   -moz-user-select: none;
   user-select: none;
   cursor: pointer;
   text-align: center;
-  display: block;
+}
+
+.centerColumn {
+  margin: 0 auto;
+  max-width: 1280px;
 }
 
 .viewport {
@@ -127,15 +148,87 @@ a {
   overflow: hidden;
 }
 
-.triangleButton {
-  width: 100px;
-  height: 100px;
-  background: white;
+.colorOverlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
 }
 
-.album {
-  background-color: gray;
+.triangleButton {
+  background: white;
 }
+.triangleButton.upwards, .triangleButton.downwards {
+  width: 114px;
+  height: 57px;
+}
+.triangleButton.leftwards, .triangleButton.rightwards {
+  width: 57px;
+  height: 114px;
+}
+
+.rectangleButton {
+  position: relative;
+  background: white;
+  display: inline-block;
+  padding: 10px 20px 10px 20px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-box-shadow: inset -1px -1px 0px 0px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: inset -1px -1px 0px 0px rgba(0, 0, 0, 0.2);
+  box-shadow: inset -1px -1px 0px 0px rgba(0, 0, 0, 0.2);
+}
+.rectangleButton > .gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: -webkit-linear-gradient(120deg, #cacad9, rgba(255, 255, 255, 0));
+  background: -moz-linear-gradient(120deg, #cacad9, rgba(255, 255, 255, 0));
+  background: -o-linear-gradient(120deg, #cacad9, rgba(255, 255, 255, 0));
+  background: linear-gradient(120deg, #cacad9, rgba(255, 255, 255, 0));
+  -webkit-transition: opacity 0.6s;
+  -moz-transition: opacity 0.6s;
+  -o-transition: opacity 0.6s;
+  transition: opacity 0.6s;
+}
+.rectangleButton > .content {
+  position: relative;
+  z-index: 1;
+  color: #535362;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  text-transform: capitalize;
+  -webkit-transition: opacity 0.2s;
+  -moz-transition: opacity 0.2s;
+  -o-transition: opacity 0.2s;
+  transition: opacity 0.2s;
+}
+.rectangleButton:hover > .gradient {
+  opacity: 0.4;
+}
+.rectangleButton:hover > .content {
+  opacity: 0.8;
+}
+.rectangleButton:active > .content {
+  color: black;
+}
+
+.diamondButton {
+  width: 100px;
+  height: 100px;
+  display: table-cell;
+  vertical-align: middle;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: white;
+  border: 1px solid white;
+}
+.diamondButton.active {
+  background: black;
+}
+
 .album > .background {
   position: absolute;
   width: 100%;
@@ -168,7 +261,105 @@ a {
 #media-player > div {
   width: 100%;
   height: 100%;
-  background: #eee;
+  border: 1px solid #ddd;
+  border-top: none;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  background: -webkit-gradient(linear, 50% 100%, 50% 0%, color-stop(0%, #f0effd), color-stop(100%, #ffffff));
+  background: -webkit-linear-gradient(bottom, #f0effd, #ffffff);
+  background: -moz-linear-gradient(bottom, #f0effd, #ffffff);
+  background: -o-linear-gradient(bottom, #f0effd, #ffffff);
+  background: linear-gradient(bottom, #f0effd, #ffffff);
+}
+
+#playlist-wrapper {
+  position: absolute;
+  width: 100%;
+  z-index: 1;
+}
+#playlist-wrapper > .colorOverlay {
+  opacity: 0;
+  background: rgba(0, 0, 0, 0.7);
+  -webkit-transition: opacity 1s;
+  -moz-transition: opacity 1s;
+  -o-transition: opacity 1s;
+  transition: opacity 1s;
+}
+
+#playlist {
+  margin: 0 auto;
+  width: 360px;
+  height: 100%;
+  font-size: 0;
+  white-space: nowrap;
+  text-align: center;
+  -webkit-backface-visibility: hidden;
+}
+#playlist > .deco {
+  display: inline-block;
+  vertical-align: top;
+  width: 2px;
+  height: 100%;
+}
+#playlist > .deco:first-child {
+  border-left: 1px solid white;
+}
+#playlist > .deco:last-child {
+  border-right: 1px solid white;
+}
+#playlist > .viewport {
+  display: inline-block;
+  vertical-align: top;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.94);
+  overflow-y: scroll;
+  text-align: left;
+}
+#playlist > .viewport.hide {
+  width: 0;
+}
+#playlist > .viewport .album {
+  padding: 0 1px 0 1px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  font-size: 18px;
+  color: white;
+  text-transform: uppercase;
+}
+#playlist > .viewport .album:first-child {
+  margin-top: 80px;
+}
+#playlist > .viewport .album > .heading {
+  height: 60px;
+  background: #646473;
+}
+#playlist > .viewport .album > .songs {
+  margin: 20px 0 20px 0;
+}
+#playlist > .viewport .album > .songs li {
+  border-bottom: 1px solid #ccc;
+  padding: 17px 18px 17px 18px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+#playlist > .viewport .album > .songs li > h4 {
+  color: black;
+  font-size: 20px;
+  font-style: italic;
+  font-family: "Poly", serif;
+  text-transform: capitalize;
+}
+#playlist > .viewport .album > .songs li > h4 > span {
+  display: block;
+  font-size: 14px;
+  font-family: "Droid Sans", sans-serif;
+}
+#playlist > .viewport .album > .songs li:last-child {
+  border-bottom: none;
 }
 
 #main-hud > .triangleButton {
@@ -176,8 +367,10 @@ a {
 }
 #main-hud > .playlistButton {
   top: 0;
+  z-index: 2;
 }
 #main-hud > .sidebarButton {
+  z-index: 3;
   right: 0;
   -webkit-transition: right 0.2s ease-out;
   -moz-transition: right 0.2s ease-out;
@@ -185,13 +378,14 @@ a {
   transition: right 0.2s ease-out;
 }
 #main-hud > .sidebarButton.hide {
-  right: -100px !important;
+  right: -57px !important;
 }
 #main-hud > .bottom {
   position: absolute;
   width: 100%;
   height: 0;
-  margin-top: -190px;
+  margin-top: -147px;
+  z-index: 0;
   -webkit-transition: margin-top 0.2s ease-out;
   -moz-transition: margin-top 0.2s ease-out;
   -o-transition: margin-top 0.2s ease-out;
@@ -201,7 +395,7 @@ a {
   margin-top: 0 !important;
 }
 #main-hud > .bottom.hidePlayer {
-  margin-top: -100px;
+  margin-top: -57px;
 }
 #main-hud > .bottom > .homeButton {
   position: relative;
@@ -211,21 +405,151 @@ a {
   position: relative;
 }
 
-.masthead {
-  background-color: #aaa;
+#home .logo h1 {
+  color: white;
+  font-size: 64px;
+  text-align: center;
+  text-transform: uppercase;
 }
-.masthead > .pages {
-  width: 100%;
-  height: 100%;
+#home .logo h1 > span {
+  display: block;
+  text-transform: lowercase;
+  font-size: 30px;
+  letter-spacing: 1px;
+  opacity: .8;
 }
-.masthead > .pages > .page {
+
+#biography ul {
+  text-align: center;
+}
+#biography ul > li {
   display: inline-block;
-  width: 100%;
-  height: 100%;
-  padding: 100px 0 100px 0;
+  vertical-align: top;
+  width: 30%;
+  padding-right: 2%;
+  text-align: left;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+}
+#biography ul > li:last-child {
+  padding-right: 0;
+}
+#biography ul > li > h3 {
+  font-family: "Poly", serif;
+  font-size: 30px;
+  font-style: italic;
+  text-decoration: underline;
+  text-transform: capitalize;
+}
+#biography ul > li > p {
+  margin-top: 15px;
+  font-size: 13px;
+  line-height: 23.4px;
+}
+
+#contact input {
+  display: block;
+}
+#contact textarea {
+  display: block;
+}
+
+.masthead {
+  background: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 100, color-stop(0%, rgba(255, 255, 255, 0)), color-stop(100%, rgba(0, 0, 0, 0.3))), url("/assets/static/images/backgrounds/masthead.jpg");
+  background: -webkit-radial-gradient(rgba(255, 255, 255, 0), rgba(0, 0, 0, 0.3)), url("/assets/static/images/backgrounds/masthead.jpg");
+  background: -moz-radial-gradient(rgba(255, 255, 255, 0), rgba(0, 0, 0, 0.3)), url("/assets/static/images/backgrounds/masthead.jpg");
+  background: -o-radial-gradient(rgba(255, 255, 255, 0), rgba(0, 0, 0, 0.3)), url("/assets/static/images/backgrounds/masthead.jpg");
+  background: radial-gradient(rgba(255, 255, 255, 0), rgba(0, 0, 0, 0.3)), url("/assets/static/images/backgrounds/masthead.jpg");
+  background-color: #ddd;
+  background-size: cover;
+  background-position: center;
+}
+.masthead > .colorOverlay {
+  opacity: 0;
+  background-color: rgba(255, 255, 255, 0.88);
+  -webkit-transition: opacity 0.8s;
+  -moz-transition: opacity 0.8s;
+  -o-transition: opacity 0.8s;
+  transition: opacity 0.8s;
+}
+.masthead > .marquee {
+  position: relative;
+  width: 100%;
+  height: 33%;
+}
+.masthead > .marquee > div {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 140px;
+  text-align: center;
+  white-space: nowrap;
+  background-color: black;
+  overflow: hidden;
+  background: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, rgba(15, 15, 30, 0.4)), color-stop(50%, rgba(0, 0, 0, 0.2)), color-stop(100%, rgba(15, 15, 30, 0.4))), url("/assets/static/images/backgrounds/heading.jpg");
+  background: -webkit-linear-gradient(left, rgba(15, 15, 30, 0.4), rgba(0, 0, 0, 0.2), rgba(15, 15, 30, 0.4)), url("/assets/static/images/backgrounds/heading.jpg");
+  background: -moz-linear-gradient(left, rgba(15, 15, 30, 0.4), rgba(0, 0, 0, 0.2), rgba(15, 15, 30, 0.4)), url("/assets/static/images/backgrounds/heading.jpg");
+  background: -o-linear-gradient(left, rgba(15, 15, 30, 0.4), rgba(0, 0, 0, 0.2), rgba(15, 15, 30, 0.4)), url("/assets/static/images/backgrounds/heading.jpg");
+  background: linear-gradient(left, rgba(15, 15, 30, 0.4), rgba(0, 0, 0, 0.2), rgba(15, 15, 30, 0.4)), url("/assets/static/images/backgrounds/heading.jpg");
+  background-size: auto 100%;
+  background-position: center;
+  -webkit-transition: height 0.5s ease-out;
+  -moz-transition: height 0.5s ease-out;
+  -o-transition: height 0.5s ease-out;
+  transition: height 0.5s ease-out;
+}
+.masthead > .marquee > div.hide {
+  height: 0;
+}
+.masthead > .marquee > div > .heading, .masthead > .marquee > div > a {
+  display: inline-block;
+  vertical-align: middle;
+}
+.masthead > .marquee > div > a {
+  width: 180px;
+}
+.masthead > .marquee > div > .heading {
+  width: 400px;
+  margin-left: 180px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.masthead > .marquee > div > .heading > h2 {
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  font-size: 50px;
+  font-style: italic;
+  text-transform: capitalize;
+  color: white;
+  -webkit-font-smoothing: antialiased;
+  -webkit-transition: opacity 0.2s ease-out;
+  -moz-transition: opacity 0.2s ease-out;
+  -o-transition: opacity 0.2s ease-out;
+  transition: opacity 0.2s ease-out;
+}
+.masthead > .marquee > div > .heading > h2:first-child {
+  visibility: hidden;
+}
+.masthead > .pages {
+  position: relative;
+  width: 100%;
+  height: 67%;
+  white-space: nowrap;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  padding-top: 20px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.masthead > .pages > .page {
+  display: inline-block;
+  vertical-align: top;
+  width: 100%;
+  height: 100%;
+  white-space: normal;
 }
 .masthead > .albumButton {
   position: absolute;
@@ -241,6 +565,21 @@ a {
   -ms-transform: translate(0, 100px);
   -o-transform: translate(0, 100px);
   transform: translate(0, 100px);
+}
+.masthead > .hud {
+  position: absolute;
+  width: 100%;
+  height: 0;
+  z-index: 1;
+}
+.masthead > .hud > .nav {
+  position: relative;
+  top: 30px;
+  text-align: center;
+  font-size: 0;
+}
+.masthead > .hud > .nav > li {
+  display: inline-block;
 }
 
 #main-container {

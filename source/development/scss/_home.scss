@@ -1,0 +1,18 @@
+#home{
+	.logo{
+		h1{
+			color: white;
+			font-size: 64px;
+			text-align: center;
+			text-transform: uppercase;
+
+			>span{
+				display: block;
+				text-transform: lowercase;
+				font-size: 30px;
+				letter-spacing: 1px;
+				opacity: .8;
+			}
+		}
+	}
+}

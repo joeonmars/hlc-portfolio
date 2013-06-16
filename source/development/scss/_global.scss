@@ -3,11 +3,6 @@
  * Import this file using the following HTML or equivalent:
  * <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" /> */
 
-// --- Global vars ---
-$min_width: 768px;
-$min_height: 640px;
-$font_system: Arial, Helvetica, sans-serif;
-
 // --- imports ---
 @import "compass/reset";
 @import "compass/css3";
@@ -15,8 +10,40 @@ $font_system: Arial, Helvetica, sans-serif;
 @import "compass/css3/text-shadow";
 @import "compass/css3/transition";
 
+// --- web fonts ---
+@import url(http://fonts.googleapis.com/css?family=Droid+Sans:400,700);
+@import url(http://fonts.googleapis.com/css?family=Poly:400,400italic);
+
+// --- local fonts ---
+@font-face {
+    font-family: 'barkentina_1regular';
+    src: url('../font/barkentina/barkentina.eot');
+    src: url('../font/barkentina/barkentina.eot?#iefix') format('embedded-opentype'),
+         url('../font/barkentina/barkentina.woff') format('woff'),
+         url('../font/barkentina/barkentina.ttf') format('truetype'),
+         url('../font/barkentina/barkentina.svg#barkentina_1regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
 // --- variables ---
+$min_width: 768px;
+$min_height: 640px;
+
+$static_images_path: "/assets/static/images/";
+
+$font_sans: 'Droid Sans', sans-serif;
+$font_poly: 'Poly', serif;
+$font_barkentina: 'barkentina_1regular', serif;
+
+$color_purple: #535362;
+
 $sidebar_width: 400px;
+
+// --- mixins ---
+@mixin staticBackgroundImage($filename) {
+  background-image: url(#{$static_images_path}#{$filename});
+};
 
 // ---
 html, body{
@@ -39,11 +66,28 @@ html, body{
 body{
   min-width: $min-width;
   min-height: $min-height;
+  font-family: $font_sans;
   //font-size: 62.5%; //1em = 10px;
+}
+
+h1, h2{
+  font-family: $font_barkentina;
+}
+
+h3, h4, h5, h6{
+  font-family: $font_sans;
+}
+
+p{
+  font-family: $font_poly;
 }
 
 a{
   text-decoration: none;
+}
+
+textarea{
+  resize: none;
 }
 
 ::-webkit-scrollbar {
@@ -58,21 +102,15 @@ a{
     @include background(linear-gradient(left, #595968 50%, #4F4F5D 50%));
 }
 
-.clearfix{
-  clear:both;
-}
-
-.topLeft{
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
 .button{
   @include user-select('none');
   cursor: pointer;
   text-align: center;
-  display: block;
+}
+
+.centerColumn{
+  margin: 0 auto;
+  max-width: 1280px;
 }
 
 .viewport{
@@ -82,9 +120,87 @@ a{
   overflow: hidden;
 }
 
+.colorOverlay{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
 .triangleButton{
+  @extend .button;
+  background: white;
+
+  &.upwards, &.downwards{
+    width: 114px;
+    height: 57px;
+  }
+
+  &.leftwards, &.rightwards{
+    width: 57px;
+    height: 114px;
+  }
+}
+
+// --- rectangle button --
+.rectangleButton{
+  @extend .button;
+  position: relative;
+  background: white;
+  display: inline-block;
+  padding: 10px 20px 10px 20px;
+  @include box-sizing(border-box);
+  @include single-box-shadow(rgba(0, 0, 0, 0.2), -1px, -1px, 0px, 0px, inset);
+
+  >.gradient{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    @include background(linear-gradient(120deg, #CACAD9, rgba(255, 255, 255, 0)));
+    @include single-transition(opacity, 0.6s);
+  }
+
+  >.content{
+    position: relative;
+    z-index: 1;
+    color: $color_purple;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    text-transform: capitalize;
+    @include single-transition(opacity, 0.2s);
+  }
+
+  &:hover{
+    >.gradient{
+      opacity: 0.4;
+    }
+
+    >.content{
+      opacity: 0.8;
+    }
+  }
+
+  &:active{
+    >.content{
+      color: black;
+    }
+  }
+}
+
+// --- diamond button ---
+.diamondButton{
   @extend .button;
   width: 100px;
   height: 100px;
-  background: white;
+  display: table-cell;
+  vertical-align: middle;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: white;
+  border: 1px solid white;
+
+  &.active{
+    background: black;
+  }
 }

@@ -21,6 +21,9 @@ hlc.controllers.NavigationController = function(){
 
   // the history object
   this._navHistory = null;
+
+  // dispatchers that listen for navigate event
+  this._dispatchers = [];
 };
 goog.inherits(hlc.controllers.NavigationController, goog.events.EventTarget);
 goog.addSingletonGetter(hlc.controllers.NavigationController);
@@ -44,6 +47,20 @@ hlc.controllers.NavigationController.prototype.init = function(){
   goog.events.listen(this._navHistory, goog.history.EventType.NAVIGATE, this.onNavigate, false, this);
 
   this._navHistory.setEnabled(true);
+};
+
+
+hlc.controllers.NavigationController.prototype.addDispatcher = function(dispatcher) {
+	if(!goog.array.contains(this._dispatchers, dispatcher)) {
+		this._dispatchers.push(dispatcher);
+	}
+};
+
+
+hlc.controllers.NavigationController.prototype.removeDispatcher = function(dispatcher) {
+	if(goog.array.contains(this._dispatchers, dispatcher)) {
+		goog.array.remove(this._dispatchers, dispatcher);
+	}
 };
 
 
@@ -75,6 +92,15 @@ hlc.controllers.NavigationController.prototype.replaceToken = function(token, ti
 
 hlc.controllers.NavigationController.prototype.handleToken = function(token){
 	console.log('handle token: ' + token);
+
+	var ev = {
+		type: goog.history.EventType.NAVIGATE,
+		token: token
+	};
+
+	goog.array.forEach(this._dispatchers, function(dispatcher) {
+		dispatcher.dispatchEvent(ev);
+	});
 };
 
 

@@ -6,6 +6,7 @@ goog.require('goog.dom');
 goog.require('goog.dom.query');
 goog.require('goog.dom.classes');
 goog.require('hlc.views.MediaPlayer');
+goog.require('hlc.views.Playlist');
 
 /**
  * @constructor
@@ -17,8 +18,10 @@ hlc.views.MainHud = function(){
   this.sidebarButton = goog.dom.query('.sidebarButton', this.domElement)[0];
   this.playlistButton = goog.dom.query('.playlistButton', this.domElement)[0];
   this.homeButton = goog.dom.query('.homeButton', this.domElement)[0];
+  this.playlistButton = goog.dom.query('.playlistButton', this.domElement)[0];
   this.bottomContainer = goog.dom.query('.bottom', this.domElement)[0];
 
+  this.playlist = new hlc.views.Playlist();
   this.mediaPlayer = new hlc.views.MediaPlayer();
 };
 goog.inherits(hlc.views.MainHud, goog.events.EventTarget);
@@ -26,6 +29,7 @@ goog.inherits(hlc.views.MainHud, goog.events.EventTarget);
 
 hlc.views.MainHud.prototype.init = function(){
 	this.mediaPlayer.init();
+	this.playlist.init();
 
 	goog.events.listen(this, 'resize', this.onResize, false, this);
 	hlc.main.controllers.windowController.addDispatcher(this);
@@ -36,6 +40,9 @@ hlc.views.MainHud.prototype.init = function(){
 	goog.events.listen(this.sidebarButton, 'click', this.onClick, false, this);
 	goog.events.listen(this.playlistButton, 'click', this.onClick, false, this);
 	goog.events.listen(this.homeButton, 'click', this.onClick, false, this);
+
+	goog.events.listen(this.playlist, hlc.views.Playlist.EventType.SHOW, this.onPlaylistShow, false, this);
+	goog.events.listen(this.playlist, hlc.views.Playlist.EventType.HIDE, this.onPlaylistHide, false, this);
 };
 
 
@@ -60,6 +67,16 @@ hlc.views.MainHud.prototype.onScrollFinish = function(e){
 };
 
 
+hlc.views.MainHud.prototype.onPlaylistShow = function(e){
+	this.mediaPlayer.hide();
+};
+
+
+hlc.views.MainHud.prototype.onPlaylistHide = function(e){
+	this.mediaPlayer.show();
+};
+
+
 hlc.views.MainHud.prototype.onClick = function(e){
 	switch(e.currentTarget) {
 		case this.sidebarButton:
@@ -67,7 +84,7 @@ hlc.views.MainHud.prototype.onClick = function(e){
 		break;
 
 		case this.playlistButton:
-
+		this.playlist.toggle();
 		break;
 
 		case this.homeButton:

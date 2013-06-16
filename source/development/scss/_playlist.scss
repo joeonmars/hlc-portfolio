@@ -1,0 +1,96 @@
+#playlist-wrapper{
+	position: absolute;
+	width: 100%;
+	z-index: 1;
+
+	>.colorOverlay{
+		opacity: 0;
+		background: rgba(0,0,0,.7);
+		@include single-transition(opacity, 1s);
+	}
+}
+
+#playlist{
+	margin: 0 auto;
+	width: 360px;
+	height: 100%;
+	font-size: 0;
+	white-space: nowrap;
+	text-align: center;
+	-webkit-backface-visibility: hidden;
+
+	>.deco{
+		display: inline-block;
+		vertical-align: top;
+		width: 2px;
+		height: 100%;
+
+		&:first-child{
+			border-left: 1px solid white;
+		}
+		
+		&:last-child{
+			border-right: 1px solid white;
+		}
+	}
+
+	>.viewport{
+		display: inline-block;
+		vertical-align: top;
+		width: 100%;
+		height: 100%;
+		background: rgba(255, 255, 255, .94);
+		overflow-y: scroll;
+		text-align: left;
+
+		&.hide{
+			width: 0;
+		}
+
+		.album{
+			padding: 0 1px 0 1px;
+			@include box-sizing(border-box);
+
+			font-size: 18px;
+			color: white;
+			text-transform: uppercase;
+
+			&:first-child{
+				margin-top: 80px;
+			}
+
+			>.heading{
+				height: 60px;
+				background: #646473;
+			}
+
+			>.songs{
+				margin: 20px 0 20px 0;
+
+				li{
+					border-bottom: 1px solid #ccc;
+					padding: 17px 18px 17px 18px;
+					@include box-sizing(border-box);
+
+					>h4{
+						color: black;
+						font-size: 20px;
+						font-style: italic;
+						font-family: $font_poly;
+						text-transform: capitalize;
+
+						>span{
+							display: block;
+							font-size: 14px;
+							font-family: $font_sans;
+						}
+					}
+
+					&:last-child{
+						border-bottom: none;
+					}
+				}
+			}
+		}
+	}
+}

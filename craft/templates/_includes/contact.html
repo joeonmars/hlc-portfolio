@@ -1,0 +1,25 @@
+<div id="contact" class="page">
+	<div class="centerColumn">
+		<div>
+			<h4>{{ contact.emailHeading }}</h4>
+			<a href="mailto:{{ contact.emailAddress }}">{{ contact.emailAddress }}</a>
+		</div>
+
+		<div>
+			<h4>{{ contact.socialHeading }}</h4>
+			<ul class="socialIcons">
+				<li><a class="facebook" href="{{ contact.facebookUrl }}" target="_blank"></a></li>
+				<li><a class="twitter" href="{{ contact.twitterUrl }}" target="_blank"></a></li>
+				<li><a class="googlePlus" href="{{ contact.googlePlusUrl }}" target="_blank"></a></li>
+			</ul>
+		</div>
+
+		<div>
+			<h4>{{ contact.messageFormHeading }}</h4>
+			<input type="text" name="username" placeholder="- {{ contact.messageFormName }}">
+			<input type="text" name="email" placeholder="- {{ contact.messageFormEmail }}">
+			<textarea type="text" name="message" placeholder="- {{ contact.messageFormBody }}"></textarea>
+			{% include "_includes/rectangle-button" with {text: 'send'} %}
+		</div>
+	</div>
+</div>

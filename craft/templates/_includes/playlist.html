@@ -1,0 +1,26 @@
+<div id="playlist-wrapper">
+	<div class="colorOverlay"></div>
+	<div id="playlist">
+		<div class="deco"></div>
+		<div class="viewport">
+			{% for album in craft.entries.section('album').find() %}
+				<div class="album">
+					<div class="heading">
+						{{ album.title }}
+					</div>
+					<ul class="songs">
+						{% for song in album.songs %}
+							<li>
+								<h4>
+									{{ song.title }}
+									<span>{{ song.year }}</span>
+								</h4>
+							</li>
+						{% endfor %}
+					</ul>
+				</div>
+			{% endfor %}
+		</div>
+		<div class="deco"></div>
+	</div>
+</div>
