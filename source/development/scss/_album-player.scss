@@ -1,0 +1,52 @@
+.albumPlayer{
+	width: 50%;
+	min-width: 600px;
+
+	>.top, >.middle, >.bottom{
+		>ul{
+			>li{
+				width: 80%;
+				overflow: hidden;
+
+				>h4{
+					overflow: hidden;
+					white-space: nowrap;
+					text-overflow: ellipsis;
+				}
+			}
+		}
+	}
+
+	>.top, >.bottom{
+		height: 40px;
+		@include background(linear-gradient(left, rgba(0,0,0,0), rgba(15,15,30,.5) 20%, rgba(35,35,35,.5) 80%, rgba(0,0,0,0)));
+
+		>ul{
+			padding-top: (40px - 22px ) / 2;
+			height: 22px;
+			overflow: hidden;
+			opacity: .4;
+
+			h4{
+				height: 18px;
+				font-size: 18px;
+			}
+		}
+	}
+
+	>.middle{
+		height: 60px;
+		@include background(linear-gradient(left, rgba(0,0,0,0), rgba(15,15,30,.25) 20%, rgba(35,35,35,.25) 80%, rgba(0,0,0,0)));
+
+		>ul{
+			padding-top: (60px - 44px ) / 2;
+			height: 44px;
+			overflow: hidden;
+
+			h4{
+				height: 44px;
+				font-size: 40px;
+			}
+		}
+	}
+}

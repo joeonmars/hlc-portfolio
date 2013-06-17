@@ -15,12 +15,15 @@ hlc.views.Playlist = function(){
   this.domElement = goog.dom.getElement('playlist');
   this.parentDomElement = goog.dom.getParentElement(this.domElement);
 
+  this.middleDomElement = goog.dom.query('.middle', this.domElement)[0];
   this.viewportDomElement = goog.dom.query('.viewport', this.domElement)[0];
   this.colorOverlayDomElement = goog.dom.query('.colorOverlay', this.parentDomElement)[0];
+  this.bottomGradientDomElement = goog.dom.query('.gradient', this.domElement)[1];
 
-  this.isClosed = false;
+  this._middleTweener = null;
 
-  this._viewportTweener = null;
+  this.isClosed = true;
+  goog.style.showElement(this.parentDomElement, false);
 };
 goog.inherits(hlc.views.Playlist, goog.events.EventTarget);
 
@@ -38,12 +41,14 @@ hlc.views.Playlist.prototype.show = function(){
 
 	goog.style.showElement(this.parentDomElement, true);
 
+	this.onResize();
+
 	goog.Timer.callOnce(function() {
 		goog.style.setOpacity(this.colorOverlayDomElement, 1);
 	}, 100, this);
 
-	if(this._viewportTweener) this._viewportTweener.kill();
-	this._viewportTweener = TweenMax.to(this.viewportDomElement, 1.5, {
+	if(this._middleTweener) this._middleTweener.kill();
+	this._middleTweener = TweenMax.to(this.middleDomElement, 1.5, {
 		width: 360,
 		ease: Strong.easeInOut
 	});
@@ -61,8 +66,8 @@ hlc.views.Playlist.prototype.hide = function(){
 		goog.style.setOpacity(this.colorOverlayDomElement, 0);
 	}, 400, this);
 
-	if(this._viewportTweener) this._viewportTweener.kill();
-	this._viewportTweener = TweenMax.to(this.viewportDomElement, 1.5, {
+	if(this._middleTweener) this._middleTweener.kill();
+	this._middleTweener = TweenMax.to(this.middleDomElement, 1.5, {
 		width: 0,
 		ease: Strong.easeInOut,
 		onComplete: function() {
@@ -96,7 +101,12 @@ hlc.views.Playlist.prototype.onClick = function(e){
 
 
 hlc.views.Playlist.prototype.onResize = function(e){
-	goog.style.setStyle(this.parentDomElement, 'height', e.mainViewportSize.height + 'px');
+	var mainViewportSize = e ? e.mainViewportSize : hlc.main.controllers.windowController.getMainViewportSize();
+
+	goog.style.setStyle(this.parentDomElement, 'height', mainViewportSize.height + 'px');
+
+	var bottomGradientHeight = goog.style.getSize(this.bottomGradientDomElement).height;
+	goog.style.setStyle(this.bottomGradientDomElement, 'top', mainViewportSize.height - bottomGradientHeight + 'px');
 };
 
 

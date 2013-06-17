@@ -11,17 +11,34 @@
 @import "compass/css3/transition";
 
 // --- web fonts ---
-@import url(http://fonts.googleapis.com/css?family=Droid+Sans:400,700);
 @import url(http://fonts.googleapis.com/css?family=Poly:400,400italic);
 
 // --- local fonts ---
 @font-face {
-    font-family: 'barkentina_1regular';
+    font-family: "barkentina_1regular";
     src: url('../font/barkentina/barkentina.eot');
     src: url('../font/barkentina/barkentina.eot?#iefix') format('embedded-opentype'),
          url('../font/barkentina/barkentina.woff') format('woff'),
          url('../font/barkentina/barkentina.ttf') format('truetype'),
          url('../font/barkentina/barkentina.svg#barkentina_1regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "MyriadPro-Regular";
+    src: url('../font/myriadpro/MYRIADPRO-REGULAR.eot');
+    src: url('../font/myriadpro/MYRIADPRO-REGULAR.woff') format('woff'),
+    url('../font/myriadpro/MYRIADPRO-REGULAR.svg#MyriadPro-Regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "MyriadPro-BoldCond";
+    src: url('../font/myriadpro/MYRIADPRO-BOLDCOND.eot');
+    src: url('../font/myriadpro/MYRIADPRO-BOLDCOND.woff') format('woff'),
+    url('../font/myriadpro/MYRIADPRO-BOLDCOND.svg#MyriadPro-BoldCond') format('svg');
     font-weight: normal;
     font-style: normal;
 }
@@ -32,9 +49,10 @@ $min_height: 640px;
 
 $static_images_path: "/assets/static/images/";
 
-$font_sans: 'Droid Sans', sans-serif;
-$font_poly: 'Poly', serif;
-$font_barkentina: 'barkentina_1regular', serif;
+$font_sans: "MyriadPro-Regular", sans-serif;
+$font_sans_boldcond: "MyriadPro-BoldCond", sans-serif;
+$font_poly: "Poly", serif;
+$font_barkentina: "barkentina_1regular", serif;
 
 $color_purple: #535362;
 

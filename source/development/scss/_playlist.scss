@@ -19,7 +19,17 @@
 	text-align: center;
 	-webkit-backface-visibility: hidden;
 
-	>.deco{
+	&.noScroll{
+		.gradients{
+			padding-right: 0 !important;
+		}
+
+		.viewport{
+			overflow-y: hidden;
+		}
+	}
+
+	>.left, >.right{
 		display: inline-block;
 		vertical-align: top;
 		width: 2px;
@@ -34,9 +44,47 @@
 		}
 	}
 
-	>.viewport{
+	>.middle{
+		position: relative;
 		display: inline-block;
 		vertical-align: top;
+		width: 100%;
+		height: 100%;
+	}
+
+	.gradients{
+		position: absolute;
+		top: 0;
+		width: 100%;
+		height: 0;
+		@include box-sizing(border-box);
+
+		>div{
+			position: relative;
+			width: 100%;
+
+			>.gradient{
+				&:first-child, &:last-child{
+					position: absolute;
+					left: 0;
+					width: 100%;
+					height: 100px;
+				}
+
+				&:first-child{
+					top: 0;
+					@include background(linear-gradient(top, #fff, rgba(255,255,255,0)));
+				}
+
+				&:last-child{
+					bottom: 0;
+					@include background(linear-gradient(bottom, #fff, rgba(255,255,255,0)));
+				}
+			}
+		}
+	}
+
+	.viewport{
 		width: 100%;
 		height: 100%;
 		background: rgba(255, 255, 255, .94);
@@ -56,33 +104,75 @@
 			text-transform: uppercase;
 
 			&:first-child{
-				margin-top: 80px;
+				margin-top: 90px;
 			}
 
 			>.heading{
+				font-family: $font_sans_boldcond;
+				-webkit-font-smoothing: antialiased;
+				line-height: 60px;
+				padding-left: 20px;
 				height: 60px;
-				background: #646473;
+				background-color: #646473;
+				background-size: cover;
+				background-position: center;
+				background-attachment: fixed;
 			}
 
 			>.songs{
 				margin: 20px 0 20px 0;
 
 				li{
+					cursor: pointer;
+					font-size: 0;
 					border-bottom: 1px solid #ccc;
-					padding: 17px 18px 17px 18px;
+					padding: 10px 0 10px 0;
+					margin: 17px 18px 17px 18px;
 					@include box-sizing(border-box);
 
+					&:hover{
+						>h4{
+							color: black;
+						}
+					}
+
 					>h4{
-						color: black;
+						display: inline-block;
+						vertical-align: middle;
+						width: 80%;
+						color: #999;
 						font-size: 20px;
 						font-style: italic;
 						font-family: $font_poly;
 						text-transform: capitalize;
+						overflow: hidden;
+						text-overflow:ellipsis;
+						@include single-transition(color, 0.5s);
+
+						&.active{
+							color: black;
+						}
 
 						>span{
 							display: block;
+							margin-top: 4px;
 							font-size: 14px;
 							font-family: $font_sans;
+						}
+					}
+
+					>.iconWrapper{
+						display: inline-block;
+						vertical-align: middle;
+						width: 20%;
+						overflow: hidden;
+
+						>i{
+							@extend .button;
+							float: right;
+							width: 30px;
+							height: 30px;
+							background: #ddd;
 						}
 					}
 

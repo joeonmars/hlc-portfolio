@@ -1,3 +1,5 @@
+@import "album-player";
+
 .album{
 	>.background{
 		position: absolute;
@@ -14,8 +16,39 @@
 		}
 	}
 
-	>.content{
-		position: relative;
-		z-index: 1;
+	>.centerColumn{
+		height: 100%;
+		padding: 100px 0 100px 0;
+		@include box-sizing(border-box);
+
+		>.content{
+			position: relative;
+		}
+	}
+
+	.content{
+		>h3{
+			margin-top: 45px;
+			margin-bottom: 10px;
+			padding-left: 95px;
+			font-family: $font_sans_boldcond;
+			font-size: 18px;
+			text-transform: uppercase;
+			color: white;
+			-webkit-font-smoothing: antialiased;
+		}
+
+		h4{
+			padding-left: 95px;
+			color: white;
+			font-family: $font_poly;
+			font-style: italic;
+			text-transform: capitalize;
+			-webkit-font-smoothing: antialiased;
+		}
+
+		>h4{
+			font-size: 30px;
+		}
 	}
 }

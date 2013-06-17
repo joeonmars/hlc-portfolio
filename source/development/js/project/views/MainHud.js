@@ -98,11 +98,7 @@ hlc.views.MainHud.prototype.onClick = function(e){
 hlc.views.MainHud.prototype.onResize = function(e){
 	var sidebarButtonSize = goog.style.getSize(this.sidebarButton);
 	var sidebarButtonY = (e.mainViewportSize.height - sidebarButtonSize.height ) / 2;
-	goog.style.setStyle(this.sidebarButton, {'top': sidebarButtonY + 'px', 'right': e.scrollbarWidth + 'px'});
-
-	var playlistButtonSize = goog.style.getSize(this.playlistButton);
-	var playlistButtonX = (e.mainViewportSize.width - playlistButtonSize.width) / 2;
-	goog.style.setStyle(this.playlistButton, 'left', playlistButtonX + 'px');
+	goog.style.setStyle(this.sidebarButton, {'top': sidebarButtonY + 'px', 'right': e.scrollbarWidth + sidebarButtonSize.width + 'px'});
 
 	goog.style.setStyle(this.bottomContainer, 'top', e.mainViewportSize.height + 'px');
 };

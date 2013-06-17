@@ -1,4 +1,3 @@
-@import url(http://fonts.googleapis.com/css?family=Droid+Sans:400,700);
 @import url(http://fonts.googleapis.com/css?family=Poly:400,400italic);
 /* Welcome to Compass.
  * In this file you should write your main styles. (or centralize your imports)
@@ -61,9 +60,25 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 }
 
 @font-face {
-  font-family: 'barkentina_1regular';
+  font-family: "barkentina_1regular";
   src: url("../font/barkentina/barkentina.eot");
   src: url("../font/barkentina/barkentina.eot?#iefix") format("embedded-opentype"), url("../font/barkentina/barkentina.woff") format("woff"), url("../font/barkentina/barkentina.ttf") format("truetype"), url("../font/barkentina/barkentina.svg#barkentina_1regular") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "MyriadPro-Regular";
+  src: url("../font/myriadpro/MYRIADPRO-REGULAR.eot");
+  src: url("../font/myriadpro/MYRIADPRO-REGULAR.woff") format("woff"), url("../font/myriadpro/MYRIADPRO-REGULAR.svg#MyriadPro-Regular") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "MyriadPro-BoldCond";
+  src: url("../font/myriadpro/MYRIADPRO-BOLDCOND.eot");
+  src: url("../font/myriadpro/MYRIADPRO-BOLDCOND.woff") format("woff"), url("../font/myriadpro/MYRIADPRO-BOLDCOND.svg#MyriadPro-BoldCond") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -89,7 +104,7 @@ html.touch *, body.touch * {
 body {
   min-width: 768px;
   min-height: 640px;
-  font-family: "Droid Sans", sans-serif;
+  font-family: "MyriadPro-Regular", sans-serif;
 }
 
 h1, h2 {
@@ -97,7 +112,7 @@ h1, h2 {
 }
 
 h3, h4, h5, h6 {
-  font-family: "Droid Sans", sans-serif;
+  font-family: "MyriadPro-Regular", sans-serif;
 }
 
 p {
@@ -128,7 +143,7 @@ textarea {
   background: linear-gradient(left, #595968 50%, #4f4f5d 50%);
 }
 
-.button, .triangleButton, .rectangleButton, .diamondButton {
+.button, .triangleButton, .rectangleButton, .diamondButton, #playlist .viewport .album > .songs li > .iconWrapper > i {
   -webkit-user-select: none;
   -moz-user-select: none;
   user-select: none;
@@ -229,6 +244,55 @@ textarea {
   background: black;
 }
 
+.albumPlayer {
+  width: 50%;
+  min-width: 600px;
+}
+.albumPlayer > .top > ul > li, .albumPlayer > .middle > ul > li, .albumPlayer > .bottom > ul > li {
+  width: 80%;
+  overflow: hidden;
+}
+.albumPlayer > .top > ul > li > h4, .albumPlayer > .middle > ul > li > h4, .albumPlayer > .bottom > ul > li > h4 {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.albumPlayer > .top, .albumPlayer > .bottom {
+  height: 40px;
+  background: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, rgba(0, 0, 0, 0)), color-stop(20%, rgba(15, 15, 30, 0.5)), color-stop(80%, rgba(35, 35, 35, 0.5)), color-stop(100%, rgba(0, 0, 0, 0)));
+  background: -webkit-linear-gradient(left, rgba(0, 0, 0, 0), rgba(15, 15, 30, 0.5) 20%, rgba(35, 35, 35, 0.5) 80%, rgba(0, 0, 0, 0));
+  background: -moz-linear-gradient(left, rgba(0, 0, 0, 0), rgba(15, 15, 30, 0.5) 20%, rgba(35, 35, 35, 0.5) 80%, rgba(0, 0, 0, 0));
+  background: -o-linear-gradient(left, rgba(0, 0, 0, 0), rgba(15, 15, 30, 0.5) 20%, rgba(35, 35, 35, 0.5) 80%, rgba(0, 0, 0, 0));
+  background: linear-gradient(left, rgba(0, 0, 0, 0), rgba(15, 15, 30, 0.5) 20%, rgba(35, 35, 35, 0.5) 80%, rgba(0, 0, 0, 0));
+}
+.albumPlayer > .top > ul, .albumPlayer > .bottom > ul {
+  padding-top: 9px;
+  height: 22px;
+  overflow: hidden;
+  opacity: .4;
+}
+.albumPlayer > .top > ul h4, .albumPlayer > .bottom > ul h4 {
+  height: 18px;
+  font-size: 18px;
+}
+.albumPlayer > .middle {
+  height: 60px;
+  background: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, rgba(0, 0, 0, 0)), color-stop(20%, rgba(15, 15, 30, 0.25)), color-stop(80%, rgba(35, 35, 35, 0.25)), color-stop(100%, rgba(0, 0, 0, 0)));
+  background: -webkit-linear-gradient(left, rgba(0, 0, 0, 0), rgba(15, 15, 30, 0.25) 20%, rgba(35, 35, 35, 0.25) 80%, rgba(0, 0, 0, 0));
+  background: -moz-linear-gradient(left, rgba(0, 0, 0, 0), rgba(15, 15, 30, 0.25) 20%, rgba(35, 35, 35, 0.25) 80%, rgba(0, 0, 0, 0));
+  background: -o-linear-gradient(left, rgba(0, 0, 0, 0), rgba(15, 15, 30, 0.25) 20%, rgba(35, 35, 35, 0.25) 80%, rgba(0, 0, 0, 0));
+  background: linear-gradient(left, rgba(0, 0, 0, 0), rgba(15, 15, 30, 0.25) 20%, rgba(35, 35, 35, 0.25) 80%, rgba(0, 0, 0, 0));
+}
+.albumPlayer > .middle > ul {
+  padding-top: 8px;
+  height: 44px;
+  overflow: hidden;
+}
+.albumPlayer > .middle > ul h4 {
+  height: 44px;
+  font-size: 40px;
+}
+
 .album > .background {
   position: absolute;
   width: 100%;
@@ -242,9 +306,36 @@ textarea {
   background-size: cover;
   background-position: center;
 }
-.album > .content {
+.album > .centerColumn {
+  height: 100%;
+  padding: 100px 0 100px 0;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.album > .centerColumn > .content {
   position: relative;
-  z-index: 1;
+}
+.album .content > h3 {
+  margin-top: 45px;
+  margin-bottom: 10px;
+  padding-left: 95px;
+  font-family: "MyriadPro-BoldCond", sans-serif;
+  font-size: 18px;
+  text-transform: uppercase;
+  color: white;
+  -webkit-font-smoothing: antialiased;
+}
+.album .content h4 {
+  padding-left: 95px;
+  color: white;
+  font-family: "Poly", serif;
+  font-style: italic;
+  text-transform: capitalize;
+  -webkit-font-smoothing: antialiased;
+}
+.album .content > h4 {
+  font-size: 30px;
 }
 
 #sidebar {
@@ -253,7 +344,7 @@ textarea {
 
 #media-player {
   width: 100%;
-  height: 90px;
+  height: 80px;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -296,31 +387,77 @@ textarea {
   text-align: center;
   -webkit-backface-visibility: hidden;
 }
-#playlist > .deco {
+#playlist.noScroll .gradients {
+  padding-right: 0 !important;
+}
+#playlist.noScroll .viewport {
+  overflow-y: hidden;
+}
+#playlist > .left, #playlist > .right {
   display: inline-block;
   vertical-align: top;
   width: 2px;
   height: 100%;
 }
-#playlist > .deco:first-child {
+#playlist > .left:first-child, #playlist > .right:first-child {
   border-left: 1px solid white;
 }
-#playlist > .deco:last-child {
+#playlist > .left:last-child, #playlist > .right:last-child {
   border-right: 1px solid white;
 }
-#playlist > .viewport {
+#playlist > .middle {
+  position: relative;
   display: inline-block;
   vertical-align: top;
+  width: 100%;
+  height: 100%;
+}
+#playlist .gradients {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 0;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+#playlist .gradients > div {
+  position: relative;
+  width: 100%;
+}
+#playlist .gradients > div > .gradient:first-child, #playlist .gradients > div > .gradient:last-child {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 100px;
+}
+#playlist .gradients > div > .gradient:first-child {
+  top: 0;
+  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(100%, rgba(255, 255, 255, 0)));
+  background: -webkit-linear-gradient(top, #ffffff, rgba(255, 255, 255, 0));
+  background: -moz-linear-gradient(top, #ffffff, rgba(255, 255, 255, 0));
+  background: -o-linear-gradient(top, #ffffff, rgba(255, 255, 255, 0));
+  background: linear-gradient(top, #ffffff, rgba(255, 255, 255, 0));
+}
+#playlist .gradients > div > .gradient:last-child {
+  bottom: 0;
+  background: -webkit-gradient(linear, 50% 100%, 50% 0%, color-stop(0%, #ffffff), color-stop(100%, rgba(255, 255, 255, 0)));
+  background: -webkit-linear-gradient(bottom, #ffffff, rgba(255, 255, 255, 0));
+  background: -moz-linear-gradient(bottom, #ffffff, rgba(255, 255, 255, 0));
+  background: -o-linear-gradient(bottom, #ffffff, rgba(255, 255, 255, 0));
+  background: linear-gradient(bottom, #ffffff, rgba(255, 255, 255, 0));
+}
+#playlist .viewport {
   width: 100%;
   height: 100%;
   background: rgba(255, 255, 255, 0.94);
   overflow-y: scroll;
   text-align: left;
 }
-#playlist > .viewport.hide {
+#playlist .viewport.hide {
   width: 0;
 }
-#playlist > .viewport .album {
+#playlist .viewport .album {
   padding: 0 1px 0 1px;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -329,62 +466,114 @@ textarea {
   color: white;
   text-transform: uppercase;
 }
-#playlist > .viewport .album:first-child {
-  margin-top: 80px;
+#playlist .viewport .album:first-child {
+  margin-top: 90px;
 }
-#playlist > .viewport .album > .heading {
+#playlist .viewport .album > .heading {
+  font-family: "MyriadPro-BoldCond", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  line-height: 60px;
+  padding-left: 20px;
   height: 60px;
-  background: #646473;
+  background-color: #646473;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
 }
-#playlist > .viewport .album > .songs {
+#playlist .viewport .album > .songs {
   margin: 20px 0 20px 0;
 }
-#playlist > .viewport .album > .songs li {
+#playlist .viewport .album > .songs li {
+  cursor: pointer;
+  font-size: 0;
   border-bottom: 1px solid #ccc;
-  padding: 17px 18px 17px 18px;
+  padding: 10px 0 10px 0;
+  margin: 17px 18px 17px 18px;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-#playlist > .viewport .album > .songs li > h4 {
+#playlist .viewport .album > .songs li:hover > h4 {
   color: black;
+}
+#playlist .viewport .album > .songs li > h4 {
+  display: inline-block;
+  vertical-align: middle;
+  width: 80%;
+  color: #999;
   font-size: 20px;
   font-style: italic;
   font-family: "Poly", serif;
   text-transform: capitalize;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-transition: color 0.5s;
+  -moz-transition: color 0.5s;
+  -o-transition: color 0.5s;
+  transition: color 0.5s;
 }
-#playlist > .viewport .album > .songs li > h4 > span {
+#playlist .viewport .album > .songs li > h4.active {
+  color: black;
+}
+#playlist .viewport .album > .songs li > h4 > span {
   display: block;
+  margin-top: 4px;
   font-size: 14px;
-  font-family: "Droid Sans", sans-serif;
+  font-family: "MyriadPro-Regular", sans-serif;
 }
-#playlist > .viewport .album > .songs li:last-child {
+#playlist .viewport .album > .songs li > .iconWrapper {
+  display: inline-block;
+  vertical-align: middle;
+  width: 20%;
+  overflow: hidden;
+}
+#playlist .viewport .album > .songs li > .iconWrapper > i {
+  float: right;
+  width: 30px;
+  height: 30px;
+  background: #ddd;
+}
+#playlist .viewport .album > .songs li:last-child {
   border-bottom: none;
 }
 
-#main-hud > .triangleButton {
-  position: absolute;
+#main-hud .triangleButton {
+  position: relative;
 }
-#main-hud > .playlistButton {
-  top: 0;
-  z-index: 2;
+#main-hud .playlistButton {
+  margin: 0 auto;
 }
-#main-hud > .sidebarButton {
-  z-index: 3;
+#main-hud .sidebarButton {
   right: 0;
   -webkit-transition: right 0.2s ease-out;
   -moz-transition: right 0.2s ease-out;
   -o-transition: right 0.2s ease-out;
   transition: right 0.2s ease-out;
 }
-#main-hud > .sidebarButton.hide {
+#main-hud .sidebarButton.hide {
   right: -57px !important;
+}
+#main-hud > .top {
+  position: absolute;
+  width: 100%;
+  height: 0;
+  top: 0;
+  left: 0;
+  z-index: 2;
+}
+#main-hud > .right {
+  position: absolute;
+  width: 0;
+  height: 100%;
+  top: 0;
+  right: 0;
+  z-index: 3;
 }
 #main-hud > .bottom {
   position: absolute;
   width: 100%;
   height: 0;
-  margin-top: -147px;
+  margin-top: -137px;
   z-index: 0;
   -webkit-transition: margin-top 0.2s ease-out;
   -moz-transition: margin-top 0.2s ease-out;
@@ -448,6 +637,20 @@ textarea {
   line-height: 23.4px;
 }
 
+#press > p {
+  font-style: italic;
+  line-height: 28.6px !important;
+}
+#press > p:before {
+  content: '“';
+  margin-top: 20px;
+  margin: 10px;
+}
+#press > p:after {
+  content: '”';
+  margin: 10px;
+}
+
 #contact input {
   display: block;
 }
@@ -476,7 +679,7 @@ textarea {
 .masthead > .marquee {
   position: relative;
   width: 100%;
-  height: 33%;
+  height: 35%;
 }
 .masthead > .marquee > div {
   position: absolute;
@@ -535,7 +738,7 @@ textarea {
 .masthead > .pages {
   position: relative;
   width: 100%;
-  height: 67%;
+  height: 65%;
   white-space: nowrap;
   overflow-y: scroll;
   overflow-x: hidden;
@@ -551,20 +754,26 @@ textarea {
   height: 100%;
   white-space: normal;
 }
-.masthead > .albumButton {
+.masthead > .bottom {
   position: absolute;
-  bottom: 0;
+  width: 100%;
+  height: 0;
+}
+.masthead > .bottom > .albumButton {
+  position: relative;
+  margin: 0 auto;
+  top: -57px;
   -webkit-transition: -webkit-transform 0.2s;
   -moz-transition: -moz-transform 0.2s;
   -o-transition: -o-transform 0.2s;
   transition: transform 0.2s;
 }
-.masthead > .albumButton.hide {
-  -webkit-transform: translate(0, 100px);
-  -moz-transform: translate(0, 100px);
-  -ms-transform: translate(0, 100px);
-  -o-transform: translate(0, 100px);
-  transform: translate(0, 100px);
+.masthead > .bottom > .albumButton.hide {
+  -webkit-transform: translate(0, 57px);
+  -moz-transform: translate(0, 57px);
+  -ms-transform: translate(0, 57px);
+  -o-transform: translate(0, 57px);
+  transform: translate(0, 57px);
 }
 .masthead > .hud {
   position: absolute;

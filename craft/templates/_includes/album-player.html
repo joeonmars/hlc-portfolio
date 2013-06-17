@@ -1,0 +1,30 @@
+<div class="albumPlayer">
+	
+		<div class="top">
+			<ul>
+				{% for song in songs %}
+					<li><h4 data-id="{{ song.slug }}">{{ song.title }}</h4></li>
+				{% endfor %}
+			</ul>
+			<i class="arrowButton upwards"></i>
+		</div>
+
+		<div class="middle">
+			<ul>
+				{% for song in songs %}
+					<li><h4 data-id="{{ song.slug }}">{{ song.title }}</h4></li>
+				{% endfor %}
+			</ul>
+			<i class="progressIcon"></i>
+		</div>
+
+		<div class="bottom">
+			<ul>
+				{% for song in songs %}
+					<li><h4 data-id="{{ song.slug }}">{{ song.title }}</h4></li>
+				{% endfor %}
+			</ul>
+			<i class="arrowButton downwards"></i>
+		</div>
+	
+</div>

@@ -148,10 +148,6 @@ hlc.views.MastheadSection.prototype.onNavigate = function(e){
 hlc.views.MastheadSection.prototype.onResize = function(e){
 	goog.base(this, 'onResize', e);
 	
-	var albumButtonSize = goog.style.getSize(this.albumButton);
-	var albumButtonX = (e.mainViewportSize.width - albumButtonSize.width) / 2;
-	goog.style.setStyle(this.albumButton, 'left', albumButtonX + 'px');
-
 	if(this.pageToLoad) {
 		this._scrollOnResizeDelay.start();
 	}

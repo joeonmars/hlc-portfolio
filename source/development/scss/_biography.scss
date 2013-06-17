@@ -30,3 +30,21 @@
 		}
 	}
 }
+
+#press{
+	>p{
+		font-style: italic;
+		line-height: 13px * 2.2 !important;
+
+		&:before{
+			content: '“';
+			margin-top: 20px;
+			margin: 10px;
+		}
+
+		&:after{
+			content: '”';
+			margin: 10px;
+		}
+	}
+}

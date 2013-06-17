@@ -2,23 +2,39 @@
 @import "playlist";
 
 #main-hud{
-	>.triangleButton{
-		position: absolute;
+	.triangleButton{
+		position: relative;
 	}
 
-	>.playlistButton{
-		top: 0;
-		z-index: 2;
+	.playlistButton{
+		margin: 0 auto;
 	}
 
-	>.sidebarButton{
-		z-index: 3;
+	.sidebarButton{
 		right: 0;
 		@include single-transition(right, 0.2s, ease-out);
 
 		&.hide{
 			right: -57px !important;
 		}
+	}
+
+	>.top{
+		position: absolute;
+		width: 100%;
+		height: 0;
+		top: 0;
+		left: 0;
+		z-index: 2;
+	}
+
+	>.right{
+		position: absolute;
+		width: 0;
+		height: 100%;
+		top: 0;
+		right: 0;
+		z-index: 3;
 	}
 
 	>.bottom{

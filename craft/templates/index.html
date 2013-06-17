@@ -42,24 +42,31 @@
 			{% include "_includes/contact" %}
 		</div>
 		
-		<div class="albumButton triangleButton upwards"></div>
+		<div class="bottom">
+			<div class="albumButton triangleButton upwards"></div>
+		</div>
 	</div>
 
 	<div id="album-scroller">
-		{% for entry in craft.entries.section('album').find() %}
+		{% for album in craft.entries.section('album').find() %}
 			<div class="album section">
 
-				{% for song in entry.songs %}
+				{% for song in album.songs %}
 					<div class="background">
-							{% for cover in song.cover %}
-								<div style="background-image:url( {{cover.url}} );"></div>
+						{% for artwork in song.artwork %}
+							<div style="background-image:url( {{artwork.url}} );"></div>
 			    		{% endfor %}
 					</div>
 				{% endfor %}
 
-				<div class="content">
-					<a href="{{ entry.url }}">{{ entry.title }}</a>
-					{% include "_includes/song-shuffler" with { songs: entry.songs } %}
+				<div class="centerColumn">
+					<div class="content">
+						<h3>album</h3>
+						<h4>{{ album.title }}</h4>
+
+						<h3>songs</h3>
+						{% include "_includes/album-player" with { songs: album.songs } %}
+					</div>
 				</div>
 				
 			</div>

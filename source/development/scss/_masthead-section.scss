@@ -20,7 +20,7 @@
 	>.marquee{
 		position: relative;
 		width: 100%;
-		height: 33%;
+		height: 35%;
 
 		>div{
 			position: absolute;
@@ -82,7 +82,7 @@
 	>.pages{
 		position: relative;
 		width: 100%;
-		height: 67%;
+		height: 65%;
 		white-space: nowrap;
 		overflow-y: scroll;
 		overflow-x: hidden;
@@ -98,13 +98,20 @@
 		}
 	}
 
-	>.albumButton{
+	>.bottom{
 		position: absolute;
-		bottom: 0;
-		@include single-transition(transform, 0.2s);
+		width: 100%;
+		height: 0;
 
-		&.hide{
-			@include translate(0, 100px);
+		>.albumButton{
+			position: relative;
+			margin: 0 auto;
+			top: -57px;
+			@include single-transition(transform, 0.2s);
+
+			&.hide{
+				@include translate(0, 57px);
+			}
 		}
 	}
 

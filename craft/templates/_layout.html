@@ -50,8 +50,14 @@
 				<div id="main-hud">
 					{% include "_includes/playlist" %}
 
-					<div class="playlistButton triangleButton downwards"></div>
-					<div class="sidebarButton triangleButton leftwards"></div>
+					<div class="top">
+						<div class="playlistButton triangleButton downwards"></div>
+					</div>
+
+					<div class="right">
+						<div class="sidebarButton triangleButton leftwards"></div>
+					</div>
+					
 					<div class="bottom hide">
 						<div class="homeButton triangleButton upwards"></div>
 						<div id="media-player">
@@ -80,8 +86,6 @@
 		</footer>-->
 
 	<!-- third-party -->
-	<script src="{{PATH_TO_STATIC_ASSETS}}/js/third-party/signals.min.js"></script>
-	<script src="{{PATH_TO_STATIC_ASSETS}}/js/third-party/crossroads.min.js"></script>
 	<script src="{{PATH_TO_STATIC_ASSETS}}/js/third-party/modernizr-latest.js"></script>
 	<script src="{{PATH_TO_STATIC_ASSETS}}/js/third-party/greensock/TweenMax.min.js"></script>
 	<script src="{{PATH_TO_STATIC_ASSETS}}/js/third-party/greensock/plugins/ScrollToPlugin.min.js"></script>

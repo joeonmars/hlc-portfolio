@@ -1,26 +1,38 @@
 <div id="playlist-wrapper">
 	<div class="colorOverlay"></div>
 	<div id="playlist">
-		<div class="deco"></div>
-		<div class="viewport">
-			{% for album in craft.entries.section('album').find() %}
-				<div class="album">
-					<div class="heading">
-						{{ album.title }}
+		<div class="left"></div>
+		<div class="middle">
+			<div class="viewport">
+				{% for album in craft.entries.section('album').find() %}
+					<div class="album">
+						<div class="heading" style="background-image: url({{ album.cover[0].url }});">
+							{{ album.title }}
+						</div>
+						<ul class="songs">
+							{% for song in album.songs %}
+								<li>
+									<h4>
+										{{ song.title }}
+										<span>{{ song.year }}</span>
+									</h4>
+									<div class="iconWrapper">
+										<i class="icon">
+										</i>
+									</div>
+								</li>
+							{% endfor %}
+						</ul>
 					</div>
-					<ul class="songs">
-						{% for song in album.songs %}
-							<li>
-								<h4>
-									{{ song.title }}
-									<span>{{ song.year }}</span>
-								</h4>
-							</li>
-						{% endfor %}
-					</ul>
+				{% endfor %}
+			</div>
+			<div class="gradients">
+				<div>
+					<div class="gradient"></div>
+					<div class="gradient"></div>
 				</div>
-			{% endfor %}
+			</div>
 		</div>
-		<div class="deco"></div>
+		<div class="right"></div>
 	</div>
 </div>
