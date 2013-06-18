@@ -64,7 +64,8 @@ class RelationsService extends BaseApplicationComponent
 		}
 
 		$criteria = craft()->elements->getCriteria($elementTypeClass, array(
-			'id' => $elementIds
+			'id'     => $elementIds,
+			'status' => null
 		));
 
 		$query = craft()->elements->buildElementsQuery($criteria);
@@ -159,7 +160,10 @@ class RelationsService extends BaseApplicationComponent
 
 			if ($elementType)
 			{
-				$criteria = craft()->elements->getCriteria($elementTypeClass);
+				$criteria = craft()->elements->getCriteria($elementTypeClass, array(
+					'status' => null
+				));
+
 				$query = craft()->elements->buildElementsQuery($criteria);
 
 				if ($query)
@@ -187,8 +191,11 @@ class RelationsService extends BaseApplicationComponent
 
 				if ($elementType)
 				{
-					$criteria = craft()->elements->getCriteria($elementTypeClass);
-					$criteria->id = $row['id'];
+					$criteria = craft()->elements->getCriteria($elementTypeClass, array(
+						'id'     => $row['id'],
+						'status' => null
+					));
+
 					$query = craft()->elements->buildElementsQuery($criteria);
 
 					if ($query)

@@ -1,0 +1,21 @@
+{
+	"albums": {
+		{% for album in craft.entries.section('album').find() %}
+		"{{ album.slug }}": {
+			"title": "{{ album.title }}",
+			"songs": {
+				{% for song in album.songs %}
+				"{{ song.slug }}": {
+					"id": "{{ song.slug }}",
+					"artwork": [
+						{% for artwork in song.artwork %}
+						"{{artwork.url}}"{{ loop.last ? "" : "," }}
+						{% endfor %}
+					]
+				}{{ loop.last ? "" : "," }}
+				{% endfor %}
+			}
+		}{{ loop.last ? "" : "," }}
+		{% endfor %}
+	}
+}

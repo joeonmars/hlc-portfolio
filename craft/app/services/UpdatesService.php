@@ -235,7 +235,7 @@ class UpdatesService extends BaseApplicationComponent
 	 */
 	public function check()
 	{
-		@ini_set('memory_limit', craft()->config->get('phpMaxMemoryLimit'));
+		craft()->config->maxPowerCaptain();
 
 		$updateModel = new UpdateModel();
 		$updateModel->app = new AppUpdateModel();
@@ -490,7 +490,7 @@ class UpdatesService extends BaseApplicationComponent
 	{
 		try
 		{
-			@ini_set('memory_limit', craft()->config->get('phpMaxMemoryLimit'));
+			craft()->config->maxPowerCaptain();
 
 			if ($dbBackupPath && craft()->config->get('backupDbOnUpdate') && craft()->config->get('restoreDbOnUpdateFailure'))
 			{
