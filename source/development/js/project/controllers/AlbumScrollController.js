@@ -1,5 +1,6 @@
 goog.provide('hlc.controllers.AlbumScrollController');
 
+goog.require('hlc.views.AlbumSection');
 goog.require('goog.events.EventTarget');
 goog.require('goog.events');
 goog.require('goog.dom.query');
@@ -12,17 +13,26 @@ hlc.controllers.AlbumScrollController = function(){
   goog.base(this);
 
   this.scrollPosition = 0;
+  this.albumSections = [];
 
   this._tweener = null;
   this._locateDelay = new goog.async.Delay(this.locateAlbum, 1000, this);
   this._albumScrollDomElement = goog.dom.query('#album-scroller')[0];
   this._albumDomElements = goog.dom.getChildren(this._albumScrollDomElement);
+
+  goog.array.forEach(this._albumDomElements, function(albumDomElement) {
+  	this.albumSections.push( new hlc.views.AlbumSection( albumDomElement ) );
+  }, this);
 };
 goog.inherits(hlc.controllers.AlbumScrollController, goog.events.EventTarget);
 goog.addSingletonGetter(hlc.controllers.AlbumScrollController);
 
 
 hlc.controllers.AlbumScrollController.prototype.init = function(){
+	goog.array.forEach(this.albumSections, function(albumSection) {
+  	albumSection.init();
+  }, this);
+
 	goog.events.listen(this._albumScrollDomElement, 'scroll', this.onScroll, false, this);
 };
 

@@ -49,7 +49,7 @@
 
 	<div id="album-scroller">
 		{% for album in craft.entries.section('album').find() %}
-			<div class="album section">
+			<div class="album section" data-id="{{ album.slug }}">
 
 				{% for song in album.songs %}
 					<div class="background">
