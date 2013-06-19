@@ -9,15 +9,17 @@ goog.require('goog.object');
 /**
  * @constructor
  */
-hlc.models.AlbumModel = function(albumId){
+hlc.models.AlbumModel = function(albumId, albumData){
   goog.base(this);
 
   this.albumId = albumId;
+  this.albumTitle = albumData['title'];
+  this.albumCover = albumData['cover'];
   this.songs = [];
 
-  var songsObj = hlc.main.assets.sitemap['albums'][this.albumId]['songs'];
-  goog.object.forEach(songsObj, function(value, songId) {
-    var songModel = new hlc.models.SongModel( songId );
+  var songsObj = albumData['songs'];
+  goog.object.forEach(songsObj, function(songData, songId) {
+    var songModel = new hlc.models.SongModel( songId, songData );
     this.songs.push(songModel);
   }, this);
 };

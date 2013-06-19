@@ -58,7 +58,8 @@ hlc.controllers.AlbumScrollController.prototype.locateAlbum = function(){
 		onComplete: function() {
 			var ev = {
 				type: hlc.controllers.AlbumScrollController.EventType.SCROLL_FINISH,
-				scrollPosition: this.scrollPosition
+				scrollPosition: this.scrollPosition,
+				albumSection: this.albumSections[albumId]
 			};
 			this.dispatchEvent(ev);
 		},

@@ -3,13 +3,20 @@
 		{% for album in craft.entries.section('album').find() %}
 		"{{ album.slug }}": {
 			"title": "{{ album.title }}",
+			"cover": "{{ album.cover[0].url }}",
 			"songs": {
 				{% for song in album.songs %}
 				"{{ song.slug }}": {
 					"id": "{{ song.slug }}",
+					"title": "{{ song.title }}",
 					"artwork": [
 						{% for artwork in song.artwork %}
 						"{{artwork.url}}"{{ loop.last ? "" : "," }}
+						{% endfor %}
+					],
+					"assets": [
+						{% for audio in song.audio %}
+						"{{audio.url}}"{{ loop.last ? "" : "," }}
 						{% endfor %}
 					]
 				}{{ loop.last ? "" : "," }}

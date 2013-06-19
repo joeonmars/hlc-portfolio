@@ -14,6 +14,22 @@ hlc.views.AlbumSection = function(domElement){
   goog.base(this, domElement);
 
   this.albumModel = null;
+  this.currentSong = null;
+
+  this.backgroundDomElement = goog.dom.getElementByClass('background', this.domElement);
+
+  var backgrounds = goog.dom.getChildren(this.backgroundDomElement);
+  this._bg1DomElement = backgrounds[0];
+  this._bg2DomElement = backgrounds[1];
+  this._loaderDomElement = backgrounds[2];
+
+  this._currentArtwork = null;
+  this._nextArtwork = null;
+  this._currentBgDomElement = this._bg1DomElement;
+  this._nextBgDomElement = null;
+  this._loaderImage = new Image();
+
+  this._crossfadeTimer = new goog.Timer(20000);
 };
 goog.inherits(hlc.views.AlbumSection, hlc.views.Section);
 
@@ -21,10 +37,82 @@ goog.inherits(hlc.views.AlbumSection, hlc.views.Section);
 hlc.views.AlbumSection.prototype.init = function(){
 	goog.base(this, 'init');
 
+	// set model
 	var albumId = this.domElement.getAttribute('data-id');
-	this.albumModel = new hlc.models.AlbumModel(albumId);
+	var albumData = hlc.main.assets.sitemap['albums'][albumId];
+	this.albumModel = new hlc.models.AlbumModel(albumId, albumData);
 
 	console.log(this.albumModel);
+
+	// set current song
+	this.currentSong = this.albumModel.songs[0];
+
+	// set initial background opacity
+	goog.style.setOpacity(this._bg1DomElement, 0);
+	goog.style.setOpacity(this._bg2DomElement, 0);
+	goog.style.setOpacity(this._loaderDomElement, 0);
+
+	// set crossfade timer event
+	goog.events.listen(this._crossfadeTimer, goog.Timer.TICK, this.onCrossfadeTick, false, this);
+
+	// listen for album scroll event
+	goog.events.listen(hlc.main.controllers.albumScrollController,
+		hlc.controllers.AlbumScrollController.EventType.SCROLL_FINISH, this.onScrollFinish, false, this);
+};
+
+
+hlc.views.AlbumSection.prototype.onCrossfadeTick = function(e){
+	var nextArtwork = this.currentSong.getNextArtwork(this._currentArtwork);
+
+	if(nextArtwork !== this._currentArtwork) {
+		this._nextArtwork = nextArtwork;
+	}else {
+		return false;
+	}
+
+	goog.style.setOpacity(this._loaderDomElement, 1);
+
+	this._nextBgDomElement = (this._currentBgDomElement === this._bg1DomElement) ? this._bg2DomElement : this._bg1DomElement;
+
+	goog.events.listenOnce(this._loaderImage, 'load', this.crossfade, false, this);
+	this._loaderImage.src = this._nextArtwork;
+};
+
+
+hlc.views.AlbumSection.prototype.crossfade = function() {
+	// set current artwork
+	this._currentArtwork = this._nextArtwork;
+	this._nextArtwork = null;
+
+	// fade in next background, fade out current background
+	goog.style.setStyle(this._nextBgDomElement, 'background-image', 'url(' + this._currentArtwork + ')');
+	goog.style.setOpacity(this._nextBgDomElement, 1);
+	goog.style.setOpacity(this._currentBgDomElement, 0);
+	goog.style.setOpacity(this._loaderDomElement, 0);
+
+	this._currentBgDomElement = this._nextBgDomElement;
+	this._nextBgDomElement = null;
+
+	// reset loader image src for loading next image
+	this._loaderImage.src = '';
+};
+
+
+hlc.views.AlbumSection.prototype.onScrollFinish = function(e){
+	if(e.albumSection === this) {
+		// if no background image displays, load it immediately
+		if(goog.style.getStyle(this._currentBgDomElement, 'background-image').length === 0) {
+			this._crossfadeTimer.dispatchTick();
+		}
+
+		// kick off cross fade timer, play songs
+		this._crossfadeTimer.start();
+		this.currentSong.play();
+	}else {
+		// pause cross fade timer, stop songs
+		this._crossfadeTimer.stop();
+		this.currentSong.pause();
+	}
 };
 
 
