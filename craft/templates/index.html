@@ -51,13 +51,12 @@
 		{% for album in craft.entries.section('album').find() %}
 			<div class="album section" data-id="{{ album.slug }}">
 
-				{% for song in album.songs %}
-					<div class="background">
-						<div></div>
-						<div></div>
-						<div class="colorOverlay"></div>
-					</div>
-				{% endfor %}
+				<div class="background">
+					<div></div>
+					<div></div>
+					<div class="colorOverlay gradientOverlay"></div>
+					<div class="colorOverlay loaderOverlay"></div>
+				</div>
 
 				<div class="centerColumn">
 					<div class="content">

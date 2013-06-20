@@ -45,7 +45,12 @@ goog.inherits(hlc.models.SongModel, goog.events.EventTarget);
 
 
 hlc.models.SongModel.prototype.getDefaultArtwork = function(){
-  return this.artwork[0];
+  if(this.artwork.length < 1) {
+    var defaultArtwork = hlc.Url.STATIC_IMAGES + 'artwork-fallback.jpg';
+    return defaultArtwork;
+  }else {
+    return this.artwork[0];
+  }
 };
 
 

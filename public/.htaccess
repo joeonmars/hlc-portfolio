@@ -1,5 +1,5 @@
 <IfModule mod_rewrite.c>
-	php_value memory_limit 64M
+	php_value memory_limit 512M
 
 	RewriteEngine On
 

@@ -3,14 +3,47 @@ $media_player_height: 80px;
 #media-player{
 	width: 100%;
 	height: $media_player_height;
+	white-space: nowrap;
+	border: 1px solid #ddd;
+	border-top: none;
 	@include box-sizing(border-box);
+	@include background(linear-gradient(bottom, #F0EFFD, white));
 
 	>div{
-		width: 100%;
-		height: 100%;
-		border: 1px solid #ddd;
-		border-top: none;
+		display: inline-block;
+		vertical-align: top;
+		outline: 1px solid gray;
+		padding: 0 12px 0 12px;
 		@include box-sizing(border-box);
-		@include background(linear-gradient(bottom, #F0EFFD, white));
+
+		&.playbackControls{
+			margin-top: ($media_player_height - 40px) / 2;
+			width: 220px;
+			height: 40px;
+		}
+
+		&.soundControls{
+			margin-top: ($media_player_height - 24px) / 2;
+			width: 184px;
+			height: 24px;
+		}
+
+		&.progressControls{
+			margin-top: ($media_player_height - 60px) / 2;
+			width: 0;
+			height: 60px;
+
+			>canvas{
+				width: 100%;
+				height: 100%;
+				background: black;
+			}
+		}
+
+		&.shareControls{
+			margin-top: ($media_player_height - 24px) / 2;
+			width: 120px;
+			height: 24px;
+		}
 	}
 }

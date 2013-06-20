@@ -15,6 +15,11 @@ hlc.views.MediaPlayer = function(){
   this.domElement = goog.dom.getElement('media-player');
   this.parentDomElement = goog.dom.getParentElement(this.domElement);
 
+  this._playbackControls = goog.dom.getElementByClass('playbackControls', this.domElement);
+  this._soundControls = goog.dom.getElementByClass('soundControls', this.domElement);
+  this._progressControls = goog.dom.getElementByClass('progressControls', this.domElement);
+  this._shareControls = goog.dom.getElementByClass('shareControls', this.domElement);
+
   this._size = goog.style.getSize(this.domElement);
 };
 goog.inherits(hlc.views.MediaPlayer, goog.events.EventTarget);
@@ -58,4 +63,12 @@ hlc.views.MediaPlayer.prototype.onClick = function(e){
 
 hlc.views.MediaPlayer.prototype.onResize = function(e){
 	goog.style.setStyle(this.domElement, 'padding-right', e.scrollbarWidth + 'px');
+
+	var _domElementWidth = goog.style.getSize(this.domElement).width;
+	var _playbackControlsWidth = goog.style.getSize(this._playbackControls).width;
+	var _soundControlsWidth = goog.style.getSize(this._soundControls).width;
+	var _shareControlsWidth = goog.style.getSize(this._shareControls).width;
+
+	var progressControlsWidth = _domElementWidth - _playbackControlsWidth - _soundControlsWidth - _shareControlsWidth;
+	goog.style.setStyle(this._progressControls, 'width', progressControlsWidth + 'px');
 };

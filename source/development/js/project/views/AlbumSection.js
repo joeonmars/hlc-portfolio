@@ -21,7 +21,7 @@ hlc.views.AlbumSection = function(domElement){
   var backgrounds = goog.dom.getChildren(this.backgroundDomElement);
   this._bg1DomElement = backgrounds[0];
   this._bg2DomElement = backgrounds[1];
-  this._loaderDomElement = backgrounds[2];
+  this._loaderDomElement = backgrounds[3];
 
   this._currentArtwork = null;
   this._nextArtwork = null;

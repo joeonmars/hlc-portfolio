@@ -248,6 +248,10 @@ textarea {
   width: 50%;
   min-width: 600px;
 }
+.albumPlayer > .top > ul, .albumPlayer > .middle > ul, .albumPlayer > .bottom > ul {
+  height: 100%;
+  overflow: hidden;
+}
 .albumPlayer > .top > ul > li, .albumPlayer > .middle > ul > li, .albumPlayer > .bottom > ul > li {
   width: 80%;
   overflow: hidden;
@@ -266,14 +270,13 @@ textarea {
   background: linear-gradient(left, rgba(0, 0, 0, 0), rgba(15, 15, 30, 0.5) 20%, rgba(35, 35, 35, 0.5) 80%, rgba(0, 0, 0, 0));
 }
 .albumPlayer > .top > ul, .albumPlayer > .bottom > ul {
-  padding-top: 9px;
-  height: 22px;
-  overflow: hidden;
   opacity: .4;
 }
 .albumPlayer > .top > ul h4, .albumPlayer > .bottom > ul h4 {
   height: 18px;
   font-size: 18px;
+  padding-top: 11px;
+  padding-bottom: 11px;
 }
 .albumPlayer > .middle {
   height: 60px;
@@ -283,14 +286,11 @@ textarea {
   background: -o-linear-gradient(left, rgba(0, 0, 0, 0), rgba(15, 15, 30, 0.25) 20%, rgba(35, 35, 35, 0.25) 80%, rgba(0, 0, 0, 0));
   background: linear-gradient(left, rgba(0, 0, 0, 0), rgba(15, 15, 30, 0.25) 20%, rgba(35, 35, 35, 0.25) 80%, rgba(0, 0, 0, 0));
 }
-.albumPlayer > .middle > ul {
-  padding-top: 8px;
-  height: 44px;
-  overflow: hidden;
-}
 .albumPlayer > .middle > ul h4 {
   height: 44px;
   font-size: 40px;
+  padding-top: 8px;
+  padding-bottom: 8px;
 }
 
 .album > .background {
@@ -298,7 +298,7 @@ textarea {
   width: 100%;
   height: 100%;
   z-index: 0;
-  background: black;
+  background-image: url("/assets/static/images/album-tile.png");
 }
 .album > .background > div {
   position: absolute;
@@ -311,7 +311,14 @@ textarea {
   -o-transition: opacity 5s;
   transition: opacity 5s;
 }
-.album > .background > div.colorOverlay {
+.album > .background > div.colorOverlay.gradientOverlay {
+  background: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 100, color-stop(0%, rgba(140, 140, 140, 0.5)), color-stop(100%, rgba(0, 0, 0, 0.5)));
+  background: -webkit-radial-gradient(rgba(140, 140, 140, 0.5), rgba(0, 0, 0, 0.5));
+  background: -moz-radial-gradient(rgba(140, 140, 140, 0.5), rgba(0, 0, 0, 0.5));
+  background: -o-radial-gradient(rgba(140, 140, 140, 0.5), rgba(0, 0, 0, 0.5));
+  background: radial-gradient(rgba(140, 140, 140, 0.5), rgba(0, 0, 0, 0.5));
+}
+.album > .background > div.colorOverlay.loaderOverlay {
   background-image: url("/assets/static/images/ajax-loader.gif");
   background-repeat: no-repeat;
   background-position: center;
@@ -361,13 +368,7 @@ textarea {
 #media-player {
   width: 100%;
   height: 80px;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
-#media-player > div {
-  width: 100%;
-  height: 100%;
+  white-space: nowrap;
   border: 1px solid #ddd;
   border-top: none;
   -webkit-box-sizing: border-box;
@@ -378,6 +379,40 @@ textarea {
   background: -moz-linear-gradient(bottom, #f0effd, #ffffff);
   background: -o-linear-gradient(bottom, #f0effd, #ffffff);
   background: linear-gradient(bottom, #f0effd, #ffffff);
+}
+#media-player > div {
+  display: inline-block;
+  vertical-align: top;
+  outline: 1px solid gray;
+  padding: 0 12px 0 12px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+#media-player > div.playbackControls {
+  margin-top: 20px;
+  width: 220px;
+  height: 40px;
+}
+#media-player > div.soundControls {
+  margin-top: 28px;
+  width: 184px;
+  height: 24px;
+}
+#media-player > div.progressControls {
+  margin-top: 10px;
+  width: 0;
+  height: 60px;
+}
+#media-player > div.progressControls > canvas {
+  width: 100%;
+  height: 100%;
+  background: black;
+}
+#media-player > div.shareControls {
+  margin-top: 28px;
+  width: 120px;
+  height: 24px;
 }
 
 #playlist-wrapper {
