@@ -9,6 +9,12 @@
  # http://twig.sensiolabs.org/doc/templates.html#template-inheritance
  #}
 
+{% if craft.request.getQuery('staticjs') == 'true' or 'local' not in craft.request.serverName %}
+	{% set USE_STATIC_JS = true %}
+{% else %}
+	{% set USE_STATUC_JS = false %}
+{% endif %}
+
 {% set COMPILE_MODE = "SIMPLE" %}
 {% set PATH_TO_STATIC_ASSETS = "/assets/static" %}
 
@@ -88,8 +94,14 @@
 	<script src="{{PATH_TO_STATIC_ASSETS}}/js/third-party/greensock/plugins/ScrollToPlugin.min.js"></script>
 
 	<!-- project js -->
-	<!--<script src="js/compiled.js"></script>-->
-	<script src="http://localhost:9810/compile?id=hlc-portfolio&mode={{COMPILE_MODE}}"></script>
+	{% if USE_STATIC_JS == true %}
+		<!-- use static compiled js -->
+		<script src="{{PATH_TO_STATIC_ASSETS}}/js/hlc-compiled.js"></script>
+	{% else %}
+		<!-- use developemnt js -->
+		<script src="http://localhost:9810/compile?id=hlc-portfolio&mode={{COMPILE_MODE}}"></script>
+	{% endif %}
+	
 
 	<!-- execute the main js-->
 	<script>

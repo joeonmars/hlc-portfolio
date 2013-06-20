@@ -25,3 +25,10 @@ Craft Master
 -----------------------------------------------------------------
 A custom, multi-environment setup for Craft CMS.
 https://github.com/BarrelStrength/Craft-Master
+
+
+Environments
+-----------------------------------------------------------------
+Local: local.hsinleichen.com
+Staging: hsinleichen.joeonmars-staging.com
+Live: hsinleichen.com

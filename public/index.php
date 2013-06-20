@@ -3,6 +3,23 @@
 // Path to your craft/ folder
 $craftPath = '../craft';
 
+// Setup environment-friendly configs
+switch ($_SERVER['HTTP_HOST']) {		
+	case 'hsinleichen.com' :
+		define('ENV', 'live');
+		$craftPath = 'craft';
+		break;
+
+	case 'hsinleichen.joeonmars-staging.com' :
+		define('ENV', 'staging');
+		$craftPath = 'craft';
+		break;
+
+	default :
+		define('ENV', 'local');
+		break;
+}
+
 // Do not edit below this line
 $path = rtrim($craftPath, '/').'/app/index.php';
 
