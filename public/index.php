@@ -7,12 +7,10 @@ $craftPath = '../craft';
 switch ($_SERVER['HTTP_HOST']) {		
 	case 'hsinleichen.com' :
 		define('ENV', 'live');
-		$craftPath = 'craft';
 		break;
 
 	case 'hsinleichen.joeonmars-staging.com' :
 		define('ENV', 'staging');
-		$craftPath = 'craft';
 		break;
 
 	default :
