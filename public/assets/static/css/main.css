@@ -527,9 +527,8 @@ textarea {
   padding-left: 20px;
   height: 60px;
   background-color: #646473;
-  background-size: cover;
+  background-size: 360px auto;
   background-position: center;
-  background-attachment: fixed;
 }
 #playlist .viewport .album > .songs {
   margin: 20px 0 20px 0;
