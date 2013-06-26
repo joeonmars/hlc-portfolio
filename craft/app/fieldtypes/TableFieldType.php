@@ -147,6 +147,8 @@ class TableFieldType extends BaseFieldType
 	 */
 	public function getInputHtml($name, $value)
 	{
+		$input = '<input type="hidden" name="'.$name.'" value="">';
+
 		$columns = $this->getSettings()->columns;
 
 		if ($columns)
@@ -163,13 +165,15 @@ class TableFieldType extends BaseFieldType
 
 			$id = rtrim(preg_replace('/[\[\]]+/', '-', $name), '-');
 
-			return craft()->templates->render('_includes/forms/editableTable', array(
+			$input .= craft()->templates->render('_includes/forms/editableTable', array(
 				'id'   => $id,
 				'name' => $name,
 				'cols' => $columns,
 				'rows' => $value
 			));
 		}
+
+		return $input;
 	}
 
 	/**

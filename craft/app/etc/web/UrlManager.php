@@ -27,6 +27,8 @@ class UrlManager extends \CUrlManager
 
 	private $_routeAction;
 	private $_routeParams;
+	private $_matchedElement;
+	private $_matchedElementRoute;
 
 	/**
 	 *
@@ -82,17 +84,17 @@ class UrlManager extends \CUrlManager
 		if ($this->_isPublicTemplatePath())
 		{
 			// Default to that, then
-			$this->_processRoute($path);
+			$this->_setRoute($path);
 		}
 
 		// If this is a site request, see if there's an element assigned to this URI
 		if (Craft::isInstalled() && $request->isSiteRequest())
 		{
-			$this->_processRoute($this->_getMatchedElementRoute($path));
+			$this->_setRoute($this->_getMatchedElementRoute($path));
 		}
 
 		// Finally see if there's a URL route that matches
-		$this->_processRoute($this->_getMatchedUrlRoute($path));
+		$this->_setRoute($this->_getMatchedUrlRoute($path));
 
 		// Did we come up with something?
 		if ($this->_routeAction)
@@ -112,12 +114,35 @@ class UrlManager extends \CUrlManager
 	}
 
 	/**
-	 * Processes a route source's response.
+	 * Returns the element that was matched by the URI.
+	 *
+	 * @return BaseElementModel|false
+	 */
+	public function getMatchedElement()
+	{
+		if (!isset($this->_matchedElement))
+		{
+			if (craft()->request->isSiteRequest())
+			{
+				$path = craft()->request->getPath();
+				$this->_getMatchedElementRoute($path);
+			}
+			else
+			{
+				$this->_matchedElement = false;
+			}
+		}
+
+		return $this->_matchedElement;
+	}
+
+	/**
+	 * Sets the route.
 	 *
 	 * @access private
-	 * @param $route
+	 * @param mixed $route
 	 */
-	private function _processRoute($route)
+	private function _setRoute($route)
 	{
 		if ($route !== false)
 		{
@@ -174,59 +199,71 @@ class UrlManager extends \CUrlManager
 	 */
 	private function _getMatchedElementRoute($path)
 	{
-		$query = craft()->db->createCommand()
-			->select('elements.id, elements.type')
-			->from('elements elements')
-			->join('elements_i18n elements_i18n', 'elements_i18n.elementId = elements.id');
-
-		$conditions = array('and', 'elements_i18n.uri = :path', 'elements.enabled = 1', 'elements.archived = 0');
-		$params = array(':path' => $path);
-
-		$localeIds = array_unique(array_merge(
-			array(craft()->language),
-			craft()->i18n->getSiteLocaleIds()
-		));
-
-		if (count($localeIds) == 1)
+		if (!isset($this->_matchedElementRoute))
 		{
-			$conditions[] = 'elements_i18n.locale = :locale';
-			$params[':locale'] = $localeIds[0];
-		}
-		else
-		{
-			$quotedLocales = array();
-			$localeOrder = array();
+			$this->_matchedElement = false;
+			$this->_matchedElementRoute = false;
 
-			foreach ($localeIds as $localeId)
+			$query = craft()->db->createCommand()
+				->select('elements.id, elements.type')
+				->from('elements elements')
+				->join('elements_i18n elements_i18n', 'elements_i18n.elementId = elements.id');
+
+			$conditions = array('and', 'elements_i18n.uri = :path', 'elements.enabled = 1', 'elements.archived = 0');
+			$params = array(':path' => $path);
+
+			$localeIds = array_unique(array_merge(
+				array(craft()->language),
+				craft()->i18n->getSiteLocaleIds()
+			));
+
+			if (count($localeIds) == 1)
 			{
-				$quotedLocale = craft()->db->quoteValue($localeId);
-				$quotedLocales[] = $quotedLocale;
-				$localeOrder[] = "(elements_i18n.locale = {$quotedLocale}) DESC";
+				$conditions[] = 'elements_i18n.locale = :locale';
+				$params[':locale'] = $localeIds[0];
+			}
+			else
+			{
+				$quotedLocales = array();
+				$localeOrder = array();
+
+				foreach ($localeIds as $localeId)
+				{
+					$quotedLocale = craft()->db->quoteValue($localeId);
+					$quotedLocales[] = $quotedLocale;
+					$localeOrder[] = "(elements_i18n.locale = {$quotedLocale}) DESC";
+				}
+
+				$conditions[] = "elements_i18n.locale IN (".implode(', ', $quotedLocales).')';
+				$query->order($localeOrder);
 			}
 
-			$conditions[] = "elements_i18n.locale IN (".implode(', ', $quotedLocales).')';
-			$query->order($localeOrder);
-		}
+			$query->where($conditions, $params);
 
-		$query->where($conditions, $params);
+			$row = $query->queryRow();
 
-		$row = $query->queryRow();
-
-		if ($row)
-		{
-			$elementCriteria = craft()->elements->getCriteria($row['type']);
-			$elementCriteria->id = $row['id'];
-
-			$element = $elementCriteria->first();
-
-			if ($element)
+			if ($row)
 			{
-				$elementType = $elementCriteria->getElementType();
-				return $elementType->routeRequestForMatchedElement($element);
+				$elementCriteria = craft()->elements->getCriteria($row['type']);
+				$elementCriteria->id = $row['id'];
+
+				$element = $elementCriteria->first();
+
+				if ($element)
+				{
+					$elementType = $elementCriteria->getElementType();
+					$route = $elementType->routeRequestForMatchedElement($element);
+
+					if ($route)
+					{
+						$this->_matchedElement = $element;
+						$this->_matchedElementRoute = $route;
+					}
+				}
 			}
 		}
 
-		return false;
+		return $this->_matchedElementRoute;
 	}
 
 	/**

@@ -16,10 +16,13 @@
 
 		<div>
 			<h4>{{ contact.messageFormHeading }}</h4>
-			<input type="text" name="username" placeholder="- {{ contact.messageFormName }}">
-			<input type="text" name="email" placeholder="- {{ contact.messageFormEmail }}">
-			<textarea type="text" name="message" placeholder="- {{ contact.messageFormBody }}"></textarea>
-			{% include "_includes/rectangle-button" with {text: 'send'} %}
+			<form method="post" action="{{PATH_TO_PHP}}/contact.php" accept-charset="UTF-8">
+				<input id="fromName" type="text" name="fromName" placeholder="- {{ contact.fromName }}">
+				<input id="fromEmail" type="text" name="fromEmail" placeholder="- {{ contact.fromEmail }}">
+				<input id="subject" type="text" name="subject" placeholder="- {{ contact.subject }}">
+				<textarea id="message" type="text" name="message" placeholder="- {{ contact.message }}"></textarea>
+				<button type="submit">{% include "_includes/rectangle-button" with {text: 'send'} %}</button>
+			</form>
 		</div>
 	</div>
 </div>

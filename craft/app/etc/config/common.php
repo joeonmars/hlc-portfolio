@@ -149,6 +149,7 @@ $configArray = array(
 		'app.etc.errors.DbConnectException',
 		'app.etc.errors.ErrorException',
 		'app.etc.errors.ErrorHandler',
+		'app.etc.errors.EtException',
 		'app.etc.errors.Exception',
 		'app.etc.errors.HttpException',
 		'app.etc.errors.TemplateLoaderException',

@@ -2766,7 +2766,7 @@ Craft.FieldLayoutDesigner.TabDrag = Craft.FieldLayoutDesigner.BaseDrag.extend({
 				$hiddenFields = $fields.filter('.hidden').remove();
 
 			$fields = $fields.not($hiddenFields);
-			$fields.append('<a class="settings icon" title="'+Craft.t('Edit')+'"></a>');
+			$fields.prepend('<a class="settings icon" title="'+Craft.t('Edit')+'"></a>');
 
 			for (var i = 0; i < $fields.length; i++)
 			{
@@ -2843,7 +2843,7 @@ Craft.FieldLayoutDesigner.FieldDrag = Craft.FieldLayoutDesigner.BaseDrag.extend(
 		{
 			// Create a new field based on that one
 			var $field = this.$draggee.clone().removeClass('unused');
-			$field.append('<a class="settings icon" title="'+Craft.t('Edit')+'"></a>');
+			$field.prepend('<a class="settings icon" title="'+Craft.t('Edit')+'"></a>');
 			this.designer.initField($field);
 
 			// Hide the unused field
@@ -3577,30 +3577,35 @@ Craft.ImageHandler = Garnish.Base.extend({
 				if (response.html)
 				{
 					Craft.ImageUpload.$modalContainerDiv.empty().append(response.html);
+
 					if (!this.modal)
 					{
-						this.modal = new Craft.ImageModal({postParameters: settings.postParameters, cropAction: settings.cropAction});
-						this.modal.setContainer(Craft.ImageUpload.$modalContainerDiv);
+						this.modal = new Craft.ImageModal(Craft.ImageUpload.$modalContainerDiv, {
+							postParameters: settings.postParameters,
+							cropAction:     settings.cropAction
+						});
+
 						this.modal.imageHandler = _this;
 					}
-
-					var modal = this.modal;
-
-					modal.bindButtons();
-					modal.addListener(modal.$saveBtn, 'click', 'saveImage');
-					modal.addListener(modal.$cancelBtn, 'click', 'cancel');
-
-					modal.show();
-					modal.removeListener(Garnish.Modal.$shade, 'click');
-
-					setTimeout(function()
+					else
 					{
-						Craft.ImageUpload.$modalContainerDiv.find('img').load(function()
+						this.modal.show();
+					}
+
+					this.modal.bindButtons();
+					this.modal.addListener(this.modal.$saveBtn, 'click', 'saveImage');
+					this.modal.addListener(this.modal.$cancelBtn, 'click', 'cancel');
+
+					this.modal.removeListener(Garnish.Modal.$shade, 'click');
+
+					setTimeout($.proxy(function()
+					{
+						Craft.ImageUpload.$modalContainerDiv.find('img').load($.proxy(function()
 						{
 							var profileTool = new Craft.ImageAreaTool(settings.areaToolOptions);
-							profileTool.showArea(modal);
-						});
-					}, 1);
+							profileTool.showArea(this.modal);
+						}, this));
+					}, this), 1);
 				}
 			},
 			allowedExtensions: ['jpg', 'jpeg', 'gif', 'png'],
@@ -3653,9 +3658,9 @@ Craft.ImageModal = Garnish.Modal.extend({
 	imageHandler: null,
 
 
-	init: function(settings)
+	init: function($container, settings)
 	{
-		this.base();
+		this.base($container, settings);
 		this._postParameters = settings.postParameters;
 		this._cropAction = settings.cropAction;
 	},
@@ -3689,7 +3694,6 @@ Craft.ImageModal = Garnish.Modal.extend({
 
 		Craft.postActionRequest(this._cropAction, params, $.proxy(function(response)
 		{
-
 			if (response.error)
 			{
 				alert(response.error);

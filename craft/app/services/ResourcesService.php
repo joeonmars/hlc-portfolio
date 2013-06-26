@@ -211,11 +211,6 @@ class ResourcesService extends BaseApplicationComponent
 
 		$content = IOHelper::getFileContents($path);
 
-		if (!$content)
-		{
-			throw new HttpException(404);
-		}
-
 		// Normalize URLs in CSS files
 		$mimeType = IOHelper::getMimeTypeByExtension($path);
 		if (strpos($mimeType, 'css') !== false)
