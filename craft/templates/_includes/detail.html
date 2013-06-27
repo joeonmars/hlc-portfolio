@@ -1,0 +1,59 @@
+{% set albumSlug = craft.request.getQuery('album') %}
+{% set albumEntry = craft.entries.section('album').slug(albumSlug).find()[0] %}
+
+{% set songSlug = craft.request.getQuery('song') %}
+{% set songEntry = craft.entries.section('song').slug(songSlug).find()[0] %}
+
+<div class="songDetailContainer">
+
+	<h3>
+		<span>{{ songEntry.year }}</span>
+		{{ songEntry.title }}
+	</h3>
+
+	<ul>
+		{% if songEntry.composer|length %}
+			<li>
+				<h4>composer</h4>
+				<p>{{ songEntry.composer }}</p>
+			</li>
+		{% endif %}
+
+		{% if songEntry.performer|length %}
+			<li>
+				<h4>performer</h4>
+				<p>{{ songEntry.performer }}</p>
+			</li>
+		{% endif %}
+
+		{% if songEntry.duration|length %}
+			<li>
+				<h4>duration</h4>
+				<p>{{ songEntry.duration }}</p>
+			</li>
+		{% endif %}
+
+		{% if songEntry.instruments|length %}
+			<li>
+				<h4>instruments</h4>
+				<ul>
+				{% for instrument in songEntry.instruments %}
+					<p>{{ instrument.name }}</p>
+				{% endfor %}
+				</ul>
+			</li>
+		{% endif %}
+	</ul>
+
+	<p>{{ songEntry.description }}</p>
+
+
+	{% if songEntry.allowDownload == 'y' %}
+		<a href="{{ songEntry.audio[0].url }}"><h4>download</h4></a>
+	{% endif %}
+
+	{% for suggestedSong in songEntry.suggestedSongs %}
+		<a href="/album/{{ albumEntry.slug }}/song/{{ suggestedSong.slug }}" target="_self">{{ suggestedSong.title }}</a>
+	{% endfor %}
+
+</div>
