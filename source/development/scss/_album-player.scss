@@ -3,20 +3,29 @@
 	min-width: 600px;
 
 	>.top, >.middle, >.bottom{
+		font-size: 0;
+
 		>ul{
+			display: inline-block;
+			vertical-align: middle;
+			width: 80%;
 			height: 100%;
 			overflow: hidden;
 			
 			>li{
-				width: 80%;
-				overflow: hidden;
-
 				>h4{
 					overflow: hidden;
 					white-space: nowrap;
 					text-overflow: ellipsis;
 				}
 			}
+		}
+
+		>i{
+			width: 20%;
+			display: inline-block;
+			vertical-align: middle;
+			text-align: center;
 		}
 	}
 

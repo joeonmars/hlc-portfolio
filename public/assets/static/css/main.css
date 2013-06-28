@@ -248,18 +248,26 @@ textarea {
   width: 50%;
   min-width: 600px;
 }
-.albumPlayer > .top > ul, .albumPlayer > .middle > ul, .albumPlayer > .bottom > ul {
-  height: 100%;
-  overflow: hidden;
+.albumPlayer > .top, .albumPlayer > .middle, .albumPlayer > .bottom {
+  font-size: 0;
 }
-.albumPlayer > .top > ul > li, .albumPlayer > .middle > ul > li, .albumPlayer > .bottom > ul > li {
+.albumPlayer > .top > ul, .albumPlayer > .middle > ul, .albumPlayer > .bottom > ul {
+  display: inline-block;
+  vertical-align: middle;
   width: 80%;
+  height: 100%;
   overflow: hidden;
 }
 .albumPlayer > .top > ul > li > h4, .albumPlayer > .middle > ul > li > h4, .albumPlayer > .bottom > ul > li > h4 {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+.albumPlayer > .top > i, .albumPlayer > .middle > i, .albumPlayer > .bottom > i {
+  width: 20%;
+  display: inline-block;
+  vertical-align: middle;
+  text-align: center;
 }
 .albumPlayer > .top, .albumPlayer > .bottom {
   height: 40px;

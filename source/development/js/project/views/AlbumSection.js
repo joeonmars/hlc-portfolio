@@ -2,6 +2,7 @@ goog.provide('hlc.views.AlbumSection');
 
 goog.require('hlc.models.AlbumModel');
 goog.require('hlc.views.Section');
+goog.require('hlc.views.AlbumPlayer');
 goog.require('goog.events.EventTarget');
 goog.require('goog.events');
 goog.require('goog.dom');
@@ -14,7 +15,6 @@ hlc.views.AlbumSection = function(domElement){
   goog.base(this, domElement);
 
   this.albumModel = null;
-  this.currentSong = null;
 
   this.backgroundDomElement = goog.dom.getElementByClass('background', this.domElement);
 
@@ -30,6 +30,10 @@ hlc.views.AlbumSection = function(domElement){
   this._loaderImage = new Image();
 
   this._crossfadeTimer = new goog.Timer(20000);
+
+  // album player
+  var albumPlayerDomElement = goog.dom.query('.albumPlayer', domElement)[0];
+  this.albumPlayer = new hlc.views.AlbumPlayer(albumPlayerDomElement);
 };
 goog.inherits(hlc.views.AlbumSection, hlc.views.Section);
 
@@ -44,8 +48,8 @@ hlc.views.AlbumSection.prototype.init = function(){
 
 	console.log(this.albumModel);
 
-	// set current song
-	this.currentSong = this.albumModel.songs[0];
+	// set album player
+	this.albumPlayer.init(this.albumModel.songs);
 
 	// set initial background opacity
 	goog.style.setOpacity(this._bg1DomElement, 0);
@@ -55,6 +59,11 @@ hlc.views.AlbumSection.prototype.init = function(){
 	// set crossfade timer event
 	goog.events.listen(this._crossfadeTimer, goog.Timer.TICK, this.onCrossfadeTick, false, this);
 
+	// listen for song event
+	goog.events.listen(this.albumPlayer, hlc.views.AlbumPlayer.EventType.PLAY, this.onPlay, false, this);
+	goog.events.listen(this.albumPlayer, hlc.views.AlbumPlayer.EventType.PAUSE, this.onPause, false, this);
+	goog.events.listen(this.albumPlayer, hlc.views.AlbumPlayer.EventType.SONG_CHANGED, this.onSongChanged, false, this);
+
 	// listen for album scroll event
 	goog.events.listen(hlc.main.controllers.albumScrollController,
 		hlc.controllers.AlbumScrollController.EventType.SCROLL_FINISH, this.onScrollFinish, false, this);
@@ -62,7 +71,9 @@ hlc.views.AlbumSection.prototype.init = function(){
 
 
 hlc.views.AlbumSection.prototype.onCrossfadeTick = function(e){
-	var nextArtwork = this.currentSong.getNextArtwork(this._currentArtwork);
+	var currentSong = this.albumPlayer.getCurrentSong();
+
+	var nextArtwork = currentSong.getNextArtwork(this._currentArtwork);
 
 	if(nextArtwork !== this._currentArtwork) {
 		this._nextArtwork = nextArtwork;
@@ -98,20 +109,37 @@ hlc.views.AlbumSection.prototype.crossfade = function() {
 };
 
 
+hlc.views.AlbumSection.prototype.onPlay = function(e){
+	this._crossfadeTimer.start();
+};
+
+
+hlc.views.AlbumSection.prototype.onPause = function(e){
+	this._crossfadeTimer.stop();
+};
+
+
+hlc.views.AlbumSection.prototype.onSongChanged = function(e){
+
+};
+
+
 hlc.views.AlbumSection.prototype.onScrollFinish = function(e){
 	if(e.albumSection === this) {
+		
 		// if no background image displays, load it immediately
 		if(goog.style.getStyle(this._currentBgDomElement, 'background-image').length === 0) {
 			this._crossfadeTimer.dispatchTick();
 		}
 
-		// kick off cross fade timer, play songs
-		this._crossfadeTimer.start();
-		this.currentSong.play();
+		// play songs
+		this.albumPlayer.play();
+
 	}else {
-		// pause cross fade timer, stop songs
-		this._crossfadeTimer.stop();
-		this.currentSong.pause();
+
+		// stop songs
+		this.albumPlayer.pause();
+
 	}
 };
 
