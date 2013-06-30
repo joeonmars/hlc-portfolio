@@ -84,7 +84,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 }
 
 .icon-sprite, .icon-download, .icon-facebook, .icon-googleplus, .icon-logo-strip-left, .icon-logo-strip-right, .icon-mediaplayer-nextbutton, .icon-mediaplayer-pausebutton, .icon-mediaplayer-playbutton, .icon-mediaplayer-prevbutton, .icon-mediaplayer-soundbutton, .icon-mediaplayer-soundhandle, .icon-mediaplayer-soundslider, .icon-twitter, #sidebar > .songDetailContainer > .download > a > i, #media-player > .fullColumn > div.playbackControl > .cell > .button.prevButton, #media-player > .fullColumn > div.playbackControl > .cell > .prevButton.triangleButton, #media-player > .fullColumn > div.playbackControl > .cell > .prevButton.rectangleButton, #media-player > .fullColumn > div.playbackControl > .cell > .prevButton.diamondButton, #media-player > .fullColumn > div.playbackControl > .cell > .button.playButton, #media-player > .fullColumn > div.playbackControl > .cell > .playButton.triangleButton, #media-player > .fullColumn > div.playbackControl > .cell > .playButton.rectangleButton, #media-player > .fullColumn > div.playbackControl > .cell > .playButton.diamondButton, #media-player > .fullColumn > div.playbackControl > .cell > .button.playButton.pause, #media-player > .fullColumn > div.playbackControl > .cell > .playButton.pause.triangleButton, #media-player > .fullColumn > div.playbackControl > .cell > .playButton.pause.rectangleButton, #media-player > .fullColumn > div.playbackControl > .cell > .playButton.pause.diamondButton, #media-player > .fullColumn > div.playbackControl > .cell > .button.nextButton, #media-player > .fullColumn > div.playbackControl > .cell > .nextButton.triangleButton, #media-player > .fullColumn > div.playbackControl > .cell > .nextButton.rectangleButton, #media-player > .fullColumn > div.playbackControl > .cell > .nextButton.diamondButton, #media-player > .fullColumn > div.soundControl > .soundButton, #media-player > .fullColumn > div.soundControl > .slider, #media-player > .fullColumn > div.soundControl > .slider > .sliderContainer > .handle, #media-player > .fullColumn > div.shareControl > .cell > .button.facebook, #media-player > .fullColumn > div.shareControl > .cell > .facebook.triangleButton, #media-player > .fullColumn > div.shareControl > .cell > .facebook.rectangleButton, #media-player > .fullColumn > div.shareControl > .cell > .facebook.diamondButton, #media-player > .fullColumn > div.shareControl > .cell > .button.twitter, #media-player > .fullColumn > div.shareControl > .cell > .twitter.triangleButton, #media-player > .fullColumn > div.shareControl > .cell > .twitter.rectangleButton, #media-player > .fullColumn > div.shareControl > .cell > .twitter.diamondButton, #media-player > .fullColumn > div.shareControl > .cell > .button.googleplus, #media-player > .fullColumn > div.shareControl > .cell > .googleplus.triangleButton, #media-player > .fullColumn > div.shareControl > .cell > .googleplus.rectangleButton, #media-player > .fullColumn > div.shareControl > .cell > .googleplus.diamondButton, #home .logo h1 > span:before, #home .logo h1 > span:after {
-  background: url('../images/icon-s55b087aa3c.png') no-repeat;
+  background: url('../images/icon-s740022187c.png') no-repeat;
 }
 
 .icon-download {
@@ -1124,10 +1124,10 @@ textarea {
   text-align: center;
 }
 #awards .column.middle ul > li {
-  margin: 20px 0 40px 0;
+  margin: 15px 0 35px 0;
 }
 #awards .column.middle ul > li > a {
-  font-size: 16px;
+  font-size: 14px;
   font-family: "Poly", serif;
   line-height: 22.4px;
 }
@@ -1284,6 +1284,53 @@ textarea {
 }
 .masthead > .hud > .nav > li {
   display: inline-block;
+}
+
+#footer {
+  position: absolute;
+  left: 25px;
+  bottom: 20px;
+  font-size: 12px;
+  color: white;
+  -webkit-transition: bottom 0.2s ease-out;
+  -moz-transition: bottom 0.2s ease-out;
+  -o-transition: bottom 0.2s ease-out;
+  transition: bottom 0.2s ease-out;
+}
+#footer.black {
+  color: black;
+}
+#footer.black #credits {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+}
+#footer.black a {
+  color: black !important;
+}
+#footer.up {
+  bottom: 100px;
+}
+#footer #credits {
+  overflow: hidden;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  opacity: 1;
+  -webkit-transition: opacity 0.5s, height 0.5s ease-out;
+  -moz-transition: opacity 0.5s, height 0.5s ease-out;
+  -o-transition: opacity 0.5s, height 0.5s ease-out;
+  transition: opacity 0.5s, height 0.5s ease-out;
+}
+#footer #credits > h3 {
+  text-transform: uppercase;
+}
+#footer #copyright {
+  padding-top: 10px;
+  text-transform: capitalize;
+}
+#footer #copyright > a {
+  color: white;
+}
+#footer #copyright > a:hover {
+  text-decoration: underline;
 }
 
 #main-container {

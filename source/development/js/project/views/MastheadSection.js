@@ -108,6 +108,13 @@ hlc.views.MastheadSection.prototype.toPage = function(page){
 		goog.dom.classes.remove(this.marqueeDom, 'hide');
 	}
 
+	// animate footer
+	if(page !== this.pages['home']) {
+		hlc.main.views.footer.blackify(true);
+	}else {
+		hlc.main.views.footer.blackify(false);
+	}
+
 	// set nav active button
 	this.nav.setActiveButton( this.nav.buttons[pageIndex] );
 };

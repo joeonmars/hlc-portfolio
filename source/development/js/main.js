@@ -7,6 +7,7 @@ goog.require('goog.style');
 goog.require('soy');
 goog.require('hlc.templates');
 goog.require('hlc.views.AlbumSection');
+goog.require('hlc.views.Footer');
 goog.require('hlc.views.Preloader');
 goog.require('hlc.views.Sidebar');
 goog.require('hlc.views.MainHud');
@@ -54,6 +55,7 @@ hlc.main.create = function(e) {
 	hlc.main.views.preloader = new hlc.views.Preloader();
 	hlc.main.views.sidebar = new hlc.views.Sidebar();
 	hlc.main.views.mainHud = new hlc.views.MainHud();
+	hlc.main.views.footer = new hlc.views.Footer();
 	hlc.main.views.mastheadSection = new hlc.views.MastheadSection(goog.dom.getElementByClass('masthead'));
 	hlc.main.views.albumSections = hlc.main.controllers.albumScrollController.albumSections;
 };
@@ -68,6 +70,7 @@ hlc.main.onPreload = function(e) {
 	hlc.main.views.sidebar.init();
 	hlc.main.views.mainHud.init();
 	hlc.main.views.mastheadSection.init();
+	hlc.main.views.footer.init();
 };
 
 hlc.main.controllers = {};

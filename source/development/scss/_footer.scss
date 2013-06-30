@@ -1,0 +1,51 @@
+$footer_bottom: 20px;
+
+#footer{
+	position: absolute;
+	left: 25px;
+	bottom: $footer_bottom;
+	font-size: 12px;
+	color: white;
+	@include transition(bottom 0.2s ease-out);
+
+	&.black{
+		color: black;
+
+		#credits{
+			border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+		}
+
+		a{
+			color: black !important;
+		}
+	}
+
+	&.up{
+		bottom: $footer_bottom + $media_player_height;
+	}
+
+	#credits{
+		overflow: hidden;
+		padding-bottom: 10px;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+		opacity: 1;
+		@include transition(opacity 0.5s, height 0.5s ease-out);
+
+		>h3{
+			text-transform: uppercase;
+		}
+	}
+
+	#copyright{
+		padding-top: 10px;
+		text-transform: capitalize;
+
+		>a{
+			color: white;
+
+			&:hover{
+				text-decoration: underline;
+			}
+		}
+	}
+}

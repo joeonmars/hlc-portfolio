@@ -38,6 +38,14 @@ hlc.controllers.MainScrollController.prototype.scrollTo = function(scrollPositio
 	this._tweener = TweenMax.to(this._mainScrollDomElement, .8, {
 		scrollTo: {y: y},
 		ease: Power2.easeOut,
+		onStart: function() {
+			var ev = {
+				type: hlc.controllers.MainScrollController.EventType.SCROLL_START,
+				scrollPosition: this.scrollPosition
+			};
+			this.dispatchEvent(ev);
+		},
+		onStartScope: this,
 		onComplete: function() {
 			var ev = {
 				type: hlc.controllers.MainScrollController.EventType.SCROLL_FINISH,
@@ -56,6 +64,7 @@ hlc.controllers.MainScrollController.prototype.onResize = function(e){
 
 
 hlc.controllers.MainScrollController.EventType = {
+	SCROLL_START: 'scroll_start',
 	SCROLL_FINISH: 'scroll_finish'
 };
 

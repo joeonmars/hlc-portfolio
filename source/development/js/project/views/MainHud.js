@@ -35,6 +35,9 @@ hlc.views.MainHud.prototype.init = function(){
 	hlc.main.controllers.windowController.addDispatcher(this);
 
 	goog.events.listen(hlc.main.controllers.mainScrollController,
+		hlc.controllers.MainScrollController.EventType.SCROLL_START, this.onScrollStart, false, this);
+
+	goog.events.listen(hlc.main.controllers.mainScrollController,
 		hlc.controllers.MainScrollController.EventType.SCROLL_FINISH, this.onScrollFinish, false, this);
 
 	goog.events.listen(this.sidebarButton, 'click', this.onClick, false, this);
@@ -56,6 +59,13 @@ hlc.views.MainHud.prototype.hideBottom = function(){
 };
 
 
+hlc.views.MainHud.prototype.onScrollStart = function(e){
+	if(e.scrollPosition === hlc.controllers.MainScrollController.ScrollPosition.MASTHEAD) {
+		this.hideBottom();
+	}
+};
+
+
 hlc.views.MainHud.prototype.onScrollFinish = function(e){
 	if(e.scrollPosition === hlc.controllers.MainScrollController.ScrollPosition.MASTHEAD) {
 		this.hideBottom();
@@ -69,11 +79,13 @@ hlc.views.MainHud.prototype.onScrollFinish = function(e){
 
 hlc.views.MainHud.prototype.onPlaylistShow = function(e){
 	this.mediaPlayer.hide();
+	hlc.main.views.footer.up(false);
 };
 
 
 hlc.views.MainHud.prototype.onPlaylistHide = function(e){
 	this.mediaPlayer.show();
+	hlc.main.views.footer.up(true);
 };
 
 
@@ -88,7 +100,6 @@ hlc.views.MainHud.prototype.onClick = function(e){
 		break;
 
 		case this.homeButton:
-		goog.dom.classes.add(this.bottomContainer, 'hide');
 		hlc.main.controllers.mainScrollController.scrollTo(hlc.controllers.MainScrollController.ScrollPosition.MASTHEAD);
 		break;
 	}
