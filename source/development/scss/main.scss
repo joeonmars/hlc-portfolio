@@ -1,12 +1,8 @@
-// --- Image Sprites ---
-$icon-sprite-dimensions: true;
-$icon-layout:smart;
-
 @import "global";
 @import "album";
 @import "sidebar";
 @import "main-hud";
-@import "masthead-section";
+@import "masthead-section"; 
 
 #main-container{
 	width: 100%;
@@ -21,6 +17,7 @@ $icon-layout:smart;
 
 #main-scroller{
 	display: inline-block;
+	vertical-align: top;
 	width: 100%;
 	height: 100%;
 	@include single-transition(width, 0.5s, ease-out);
@@ -34,9 +31,10 @@ $icon-layout:smart;
 
 #sidebar{
 	display: inline-block;
+	vertical-align: top;
 	width: $sidebar_width;
 	height: 100%;
-	overflow: hidden;
+	overflow: scroll;
 	white-space: normal;
 }
 

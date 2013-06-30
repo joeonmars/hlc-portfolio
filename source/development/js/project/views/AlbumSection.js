@@ -132,6 +132,9 @@ hlc.views.AlbumSection.prototype.onScrollFinish = function(e){
 			this._crossfadeTimer.dispatchTick();
 		}
 
+		// go to current song
+		this.albumPlayer.gotoSong();
+		
 		// play songs
 		this.albumPlayer.play();
 

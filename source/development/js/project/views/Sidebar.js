@@ -29,6 +29,12 @@ goog.inherits(hlc.views.Sidebar, goog.events.EventTarget);
 hlc.views.Sidebar.prototype.init = function(){
 	hlc.main.controllers.windowController.addDispatcher(this);
 	goog.events.listen(this, 'resize', this.onResize, false, this);
+
+	// listen for song change event from every album player
+	goog.array.forEach(hlc.main.views.albumSections, function(albumSection) {
+		var albumPlayer = albumSection.albumPlayer;
+		goog.events.listen(albumPlayer, hlc.views.AlbumPlayer.EventType.SONG_CHANGED, this.onSongChanged, false, this);
+	}, this);
 };
 
 
@@ -93,6 +99,14 @@ hlc.views.Sidebar.prototype.loadContent = function(albumId, songId){
 
 hlc.views.Sidebar.prototype.onLoaded = function(albumId, songId) {
 	this.domElement.innerHTML = this._contentDomElements[albumId][songId];
+};
+
+
+hlc.views.Sidebar.prototype.onSongChanged = function(e) {
+	var songId = e.song.songId;
+	var albumId = e.song.album.albumId;
+
+	this.loadContent(albumId, songId);
 };
 
 

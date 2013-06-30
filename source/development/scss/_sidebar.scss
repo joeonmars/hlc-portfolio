@@ -1,3 +1,146 @@
 #sidebar{
 	background: white;
+	padding: 60px;
+	@include box-sizing(border-box);
+
+	>.songDetailContainer{
+
+		>h4{
+			padding-top: 40px;
+			padding-bottom: 15px;
+			font-size: 40px;
+			font-style: italic;
+			text-transform: capitalize;
+			color: $color_purple;
+			font-family: $font_poly;
+
+			>span{
+				display: block;
+				color: $color_greenishgray;
+				font-family: $font_sans_boldcond;
+				font-style: normal;
+				font-size: 20px;
+			}
+		}
+
+		>.section{
+			border-top: 1px solid $color_greenishgray;
+			padding: 26px 0 26px 0;
+
+			h3{
+				color: $color_purple;
+				font-family: $font_sans_boldcond;
+				font-size: 20px;
+				text-transform: uppercase;
+			}
+		}
+
+		>.info{
+			>ul{
+				font-size: 0;
+				padding-bottom: 20px;
+
+				>li{
+					display: inline-block;
+					vertical-align: top;
+					width: 50%;
+					margin: 6px 0 6px 0;
+
+					>h5{
+						color: $color_greenishgray;
+						font-family: $font_sans_boldcond;
+						font-size: 14px;
+						text-transform: uppercase;
+					}
+
+					>p{
+						color: $color_purple;
+						font-style: italic;
+						font-family: $font_poly;
+						font-size: 16px;
+						text-transform: capitalize;
+						line-height: 24px;
+						-webkit-font-smoothing: antialiased;
+					}
+				}
+			}
+
+			>.description{
+				font-size: 14px;
+				color: $color_purple;
+				font-family: $font_poly;
+				line-height: 14px * 1.6;
+				-webkit-font-smoothing: antialiased;
+
+				>p{
+					margin-bottom: 15px;
+				}
+			}
+		}
+
+		>.download{
+			>a{
+				opacity: 1;
+				@include single-transition(opacity, 0.2s);
+
+				&:hover{
+					opacity: .8;
+				}
+
+				>h3{
+					display: inline-block;
+				}
+
+				>i{
+					display: inline-block;
+					margin-left: 4px;
+					@include icon-sprite("download");
+				}
+			}
+		}
+
+		>.suggestedSongs{
+			li{
+				margin: 10px 0 10px 0;
+
+				>a{
+					position: relative;
+					display: block;
+					width: 100%;
+					height: 40px;
+					background-color: $color_purple;
+
+					&:hover{
+						>.background{
+							opacity: 0.05;
+						}
+					}
+
+					>.background{
+						width: 100%;
+						height: 100%;
+						background-size: cover;
+						background-position: center;
+						opacity: 1;
+						@include single-transition(opacity, 0.2s);
+					}
+
+					>p{
+						position: absolute;
+						top: (40px - 18px) / 2;
+						width: 100%;
+						overflow: hidden;
+						white-space: nowrap;
+						text-overflow: ellipsis;
+						font-style: italic;
+						text-align: center;
+						text-transform: capitalize;
+						font-family: $font_poly;
+						font-size: 18px;
+						color: white;
+					}
+				}
+			}
+		}
+	}
 }

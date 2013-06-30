@@ -5,6 +5,7 @@
 			font-size: 64px;
 			text-align: center;
 			text-transform: uppercase;
+			letter-spacing: -2px;
 
 			>span{
 				display: block;
@@ -12,6 +13,22 @@
 				font-size: 30px;
 				letter-spacing: 1px;
 				opacity: .8;
+
+				&:before{
+					content: '';
+					display: inline-block;
+					vertical-align: middle;
+					margin-right: 15px;
+					@include icon-sprite("logo-strip-left");
+				}
+
+				&:after{
+					content: '';
+					display: inline-block;
+					vertical-align: middle;
+					margin-left: 15px;
+					@include icon-sprite("logo-strip-right");
+				}
 			}
 		}
 	}

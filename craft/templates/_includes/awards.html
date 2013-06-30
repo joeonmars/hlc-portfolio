@@ -1,14 +1,24 @@
 <div id="awards" class="page">
 	<div class="centerColumn">
-		<ul>
-			{% for award in awards.eventList %}
-				<li>
-					<a {% if award.url %}href="{{award.url}}"{% endif %} target="_blank">
-						<span>{{ award.year }}</span>
-						{{ award.title }}
-					</a>
-				</li>
-			{% endfor %}
-		</ul>
+
+		<div class="column left">
+		</div>
+
+		<div class="column middle">
+			<ul>
+				{% for award in awards.eventList %}
+					<li>
+						<a {% if award.url %}href="{{award.url}}"{% endif %} target="_blank">
+							<span>{{ award.year }}</span>
+							{{ award.title }}
+						</a>
+					</li>
+				{% endfor %}
+			</ul>
+		</div>
+
+		<div class="column right">
+		</div>
+
 	</div>
 </div>

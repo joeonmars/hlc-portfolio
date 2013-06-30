@@ -21,7 +21,7 @@ hlc.views.AlbumPlayer = function(domElement){
   this._currentTime = 0;
 
   // create and added circular progress bar
-  this.circularProgressBar = new hlc.views.common.CircularProgressBar(20);
+  this.circularProgressBar = new hlc.views.common.CircularProgressBar(24);
   var circularProgressBarContainer = goog.dom.query('.progressIcon', this.domElement)[0];
   goog.dom.appendChild(circularProgressBarContainer, this.circularProgressBar.domElement);
 };
@@ -46,7 +46,7 @@ hlc.views.AlbumPlayer.prototype.gotoSong = function(index){
 	}
 
 	// handle current song
-	this._currentSong = this._songs[index];
+	this._currentSong = goog.isNumber(index) ? this._songs[index] : this._currentSong;
 
 	// add audio events
   goog.events.listen(this._currentSong.audio, 'loadedmetadata', function(e) {
@@ -84,6 +84,8 @@ hlc.views.AlbumPlayer.prototype.gotoSong = function(index){
 
 hlc.views.AlbumPlayer.prototype.nextSong = function(){
 	var currentIndex = goog.array.indexOf(this._songs, this._currentSong);
+  currentIndex ++;
+
 	if(currentIndex > this._songs.length-1) currentIndex = 0;
 
 	this.gotoSong(currentIndex);
@@ -92,6 +94,8 @@ hlc.views.AlbumPlayer.prototype.nextSong = function(){
 
 hlc.views.AlbumPlayer.prototype.prevSong = function(){
 	var currentIndex = goog.array.indexOf(this._songs, this._currentSong);
+  currentIndex --;
+
 	if(currentIndex < 0) currentIndex = this._songs.length-1;
 
 	this.gotoSong(currentIndex);

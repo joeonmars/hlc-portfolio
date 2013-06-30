@@ -6,54 +6,74 @@
 
 <div class="songDetailContainer">
 
-	<h3>
+	<h4>
 		<span>{{ songEntry.year }}</span>
 		{{ songEntry.title }}
-	</h3>
+	</h4>
 
-	<ul>
+	<div class="info section">
+		<ul>
 		{% if songEntry.composer|length %}
 			<li>
-				<h4>composer</h4>
+				<h5>composer</h5>
 				<p>{{ songEntry.composer }}</p>
 			</li>
 		{% endif %}
 
 		{% if songEntry.performer|length %}
 			<li>
-				<h4>performer</h4>
+				<h5>performer</h5>
 				<p>{{ songEntry.performer }}</p>
 			</li>
 		{% endif %}
 
 		{% if songEntry.duration|length %}
 			<li>
-				<h4>duration</h4>
+				<h5>duration</h5>
 				<p>{{ songEntry.duration }}</p>
 			</li>
 		{% endif %}
 
 		{% if songEntry.instruments|length %}
 			<li>
-				<h4>instruments</h4>
-				<ul>
+				<h5>instruments</h5>
+				<p>
 				{% for instrument in songEntry.instruments %}
-					<p>{{ instrument.name }}</p>
+					{{ instrument.name }}{{ loop.last ? "" : ", " }}
 				{% endfor %}
-				</ul>
+				</p>
 			</li>
 		{% endif %}
-	</ul>
+		</ul>
 
-	<p>{{ songEntry.description }}</p>
-
+		<div class="description section">
+			{{ songEntry.description }}
+		</div>
+	</div>
 
 	{% if songEntry.allowDownload == 'y' %}
-		<a href="{{ songEntry.audio[0].url }}"><h4>download</h4></a>
+	<div class="download section">
+		<a href="{{ songEntry.audio[0].url }}">
+			<h3>download</h3>
+			<i></i>
+		</a>
+	</div>
 	{% endif %}
 
-	{% for suggestedSong in songEntry.suggestedSongs %}
-		<a href="/album/{{ albumEntry.slug }}/song/{{ suggestedSong.slug }}" target="_self">{{ suggestedSong.title }}</a>
-	{% endfor %}
+	{% if songEntry.suggestedSongs|length %}
+	<div class="suggestedSongs section">
+		<h3>you may also like</h3>
+		<ul>
+		{% for suggestedSong in songEntry.suggestedSongs %}
+			<li>
+				<a href="/album/{{ albumEntry.slug }}/song/{{ suggestedSong.slug }}" target="_self">
+					<div class="background" style="background-image: url({{ albumEntry.cover[0].url }});"></div>
+					<p>{{ suggestedSong.title }}</p>
+				</a>
+			</li>
+		{% endfor %}
+		</ul>
+	</div>
+	{% endif %}
 
 </div>

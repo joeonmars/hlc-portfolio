@@ -18,10 +18,12 @@ goog.require('hlc.views.mastheadpages.ContactPage');
 hlc.views.MastheadSection = function(domElement){
   goog.base(this, domElement);
 
-  this.pagesDomElement = goog.dom.query('.pages', this.domElement)[0];
-  this.headingDomElement = goog.dom.query('.marquee .heading', this.domElement)[0];
-  this.marqueeDomElement = goog.dom.query('.marquee > div')[0];
-  this.colorOverlayDomElement = goog.dom.query('.colorOverlay', this.domElement)[0];
+  this.pagesDom = goog.dom.query('.pages', this.domElement)[0];
+  this.marqueeContainerDom = goog.dom.query('.marqueeContainer', this.domElement)[0];
+  this.marqueeDom = goog.dom.query('.marquee', this.domElement)[0];
+  this.marqueeContentDom = goog.dom.query('.content', this.marqueeDom)[0];
+  this.headingDom = goog.dom.query('.heading', this.marqueeDom)[0];
+  this.colorOverlayDom = goog.dom.query('.colorOverlay', this.domElement)[0];
   this.albumButton = goog.dom.query('.albumButton', this.domElement)[0];
   this.nav = null;
   this.pages = null;
@@ -79,31 +81,31 @@ hlc.views.MastheadSection.prototype.toPage = function(page){
 
 	if(this._pageTweener) this._pageTweener.kill();
 
-	this._pageTweener = TweenMax.to(this.pagesDomElement, .7, {
+	this._pageTweener = TweenMax.to(this.pagesDom, .7, {
 		scrollTo: {x: pageOffsetLeft},
 		ease: Power2.easeInOut
 	});
 
 	// animate heading
-	var headingWidth = goog.style.getSize(this.headingDomElement).width;
+	var headingWidth = goog.style.getSize(this.headingDom).width;
 	var pageIndex = goog.array.indexOf(this.indexedPages, this.pageToLoad);
 	var headingOffsetLeft = pageIndex * headingWidth;
 
 	if(this._headingTweener) this._headingTweener.kill();
 
-	this._headingTweener = TweenMax.to(this.headingDomElement, .5, {
+	this._headingTweener = TweenMax.to(this.headingDom, .5, {
 		scrollTo: {x: headingOffsetLeft},
 		ease: Power2.easeInOut
 	});
 
 	// animate color overlay
-	goog.style.setOpacity(this.colorOverlayDomElement, (pageIndex > 0) ? 1 : 0);
+	goog.style.setOpacity(this.colorOverlayDom, (pageIndex > 0) ? 1 : 0);
 
 	// animate marquee
 	if(pageIndex === 0) {
-		goog.dom.classes.add(this.marqueeDomElement, 'hide');
+		goog.dom.classes.add(this.marqueeDom, 'hide');
 	}else {
-		goog.dom.classes.remove(this.marqueeDomElement, 'hide');
+		goog.dom.classes.remove(this.marqueeDom, 'hide');
 	}
 
 	// set nav active button
@@ -148,6 +150,12 @@ hlc.views.MastheadSection.prototype.onNavigate = function(e){
 hlc.views.MastheadSection.prototype.onResize = function(e){
 	goog.base(this, 'onResize', e);
 	
+	// set marquee heading position
+	var marqueeHeight = goog.style.getSize(this.marqueeContainerDom).height * .38; //percent set in css;
+	var headingHeight = goog.style.getSize(this.headingDom).height;
+	goog.style.setStyle(this.marqueeContentDom, 'margin-top', (marqueeHeight - headingHeight) * .5 + 'px');
+
+	//
 	if(this.pageToLoad) {
 		this._scrollOnResizeDelay.start();
 	}

@@ -19,7 +19,7 @@ hlc.models.AlbumModel = function(albumId, albumData){
 
   var songsObj = albumData['songs'];
   goog.object.forEach(songsObj, function(songData, songId) {
-    var songModel = new hlc.models.SongModel( songId, songData );
+    var songModel = new hlc.models.SongModel( songId, songData, this );
     this.songs.push(songModel);
   }, this);
 };

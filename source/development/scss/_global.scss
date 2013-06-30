@@ -43,6 +43,13 @@
     font-style: normal;
 }
 
+// --- Image Sprites ---
+$icon-sprite-dimensions: true;
+$icon-layout:smart;
+
+@import "icon/*.png"; 
+@include all-icon-sprites;
+
 // --- variables ---
 $min_width: 768px;
 $min_height: 640px;
@@ -55,8 +62,10 @@ $font_poly: "Poly", serif;
 $font_barkentina: "barkentina_1regular", serif;
 
 $color_purple: #535362;
+$color_lightpurple: #747484;
+$color_greenishgray: #CECEBF;
 
-$sidebar_width: 400px;
+$sidebar_width: 500px;
 
 // --- mixins ---
 @mixin staticBackgroundImage($filename) {
@@ -85,6 +94,7 @@ body{
   min-width: $min-width;
   min-height: $min-height;
   font-family: $font_sans;
+  -webkit-font-smoothing: antialiased;
   //font-size: 62.5%; //1em = 10px;
 }
 
@@ -102,6 +112,10 @@ p{
 
 a{
   text-decoration: none;
+
+  &:visited {
+    color: $color_lightpurple;
+  }
 }
 
 textarea{

@@ -1,27 +1,48 @@
 <div id="media-player">
 
-	<div class="playbackControls">
-		<div class="prevSongButton"></div>
-		<div class="playButton"></div>
-		<div class="nextSongButton"></div>
-	</div>
+	<div class="fullColumn">
 
-	<div class="soundControls">
-		<div class="muteButton"></div>
-		<div class="slider">
-			<div class="volumeBar"></div>
-			<div class="sliderThumb"></div>
+		<div class="playbackControl">
+			<div class="cell left">
+				<div class="prevButton button"></div>
+			</div>
+			<div class="cell middle">
+				<div class="playButton button"></div>
+			</div>
+			<div class="cell right">
+				<div class="nextButton button"></div>
+			</div>
 		</div>
-	</div>
 
-	<div class="progressControls">
-		<canvas></canvas>
-		<div class="playhead"></div>
-	</div>
+		<div class="soundControl">
+			<div class="soundButton button"></div>
+			<div class="slider">
+				<div class="sliderContainer">
+					<div class="bar"></div>
+					<div class="handle"></div>
+				</div>
+			</div>
+		</div>
 
-	<div class="shareControls">
-		<div class="facebook"></div>
-		<div class="twitter"></div>
+		<div class="progressControl">
+			<div class="fullColumn">
+				<canvas></canvas>
+				<div class="playhead"></div>
+			</div>
+		</div>
+
+		<div class="shareControl">
+			<div class="cell left">
+				<div class="facebook button"></div>
+			</div>
+			<div class="cell middle">
+				<div class="twitter button"></div>
+			</div>
+			<div class="cell right">
+				<div class="googleplus button"></div>
+			</div>
+		</div>
+
 	</div>
 
 </div>
