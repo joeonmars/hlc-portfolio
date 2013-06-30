@@ -33,6 +33,14 @@ hlc.views.MastheadNav.prototype.setActiveButton = function(button){
 };
 
 
+hlc.views.MastheadNav.prototype.setBlack = function(toggle){
+	goog.array.forEach(this.buttons, function(button) {
+		if(toggle === true) goog.dom.classes.add(button, 'black');
+		else goog.dom.classes.remove(button, 'black');
+	});
+};
+
+
 hlc.views.MastheadNav.prototype.onClick = function(e){
 	// set token
 	var dataUrl = e.currentTarget.getAttribute('data-url');

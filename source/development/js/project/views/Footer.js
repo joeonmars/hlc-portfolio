@@ -14,6 +14,7 @@ hlc.views.Footer = function(){
 
   this.domElement = goog.dom.getElement('footer');
   this.creditsDom = goog.dom.getElement('credits');
+  this.expandButton = goog.dom.query('.expandButton', this.creditsDom)[0];
 };
 goog.inherits(hlc.views.Footer, goog.events.EventTarget);
 
@@ -33,15 +34,22 @@ hlc.views.Footer.prototype.up = function(toggle){
 };
 
 
-hlc.views.Footer.prototype.blackify = function(toggle){
-	if(toggle === true) goog.dom.classes.add(this.domElement, 'black');
-	else goog.dom.classes.remove(this.domElement, 'black');
+hlc.views.Footer.prototype.setBlack = function(toggle){
+	if(toggle === true) {
+		goog.dom.classes.add(this.domElement, 'black');
+		goog.dom.classes.add(this.expandButton, 'black');
+	}else {
+		goog.dom.classes.remove(this.domElement, 'black');
+		goog.dom.classes.remove(this.expandButton, 'black');
+	}
 };
 
 
 hlc.views.Footer.prototype.onScrollStart = function(e){
 	if(e.scrollPosition === hlc.controllers.MainScrollController.ScrollPosition.MASTHEAD) {
 		this.up(false);
+	}else {
+		this.setBlack(false);
 	}
 };
 

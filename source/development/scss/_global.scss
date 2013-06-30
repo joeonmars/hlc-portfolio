@@ -118,6 +118,11 @@ a{
   }
 }
 
+i{
+  display: inline-block;
+  vertical-align: middle; 
+}
+
 textarea{
   resize: none;
 }
@@ -158,18 +163,86 @@ textarea{
   height: 100%;
 }
 
+// --- triangle button --
 .triangleButton{
   @extend .button;
-  background: white;
+  overflow: hidden;
+  //outline: 1px solid white;
+
+  $triangle_button_size: 114px;
+
+  >.content{
+    >.background{
+      position: absolute;
+      width: 114px;
+      height: 114px;
+      background-image: url("#{$static_images_path}triangle-button-white.png");
+    }
+
+    >h3{
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      text-transform: uppercase;
+      color: black;
+      font-size: 12px;
+    }
+  }
 
   &.upwards, &.downwards{
-    width: 114px;
-    height: 57px;
+    width: $triangle_button_size;
+    height: $triangle_button_size / 2;
   }
 
   &.leftwards, &.rightwards{
-    width: 57px;
-    height: 114px;
+    width: $triangle_button_size / 2;
+    height: $triangle_button_size;
+  }
+
+  &.upwards{
+    .background{
+      top: 0;
+      left: 0;
+    }
+
+    h3{
+      top: 32px;
+    }
+  }
+
+  &.downwards{
+    .background{
+      top: - $triangle_button_size / 2;
+      left: 0;
+    }
+
+    h3{
+      top: 16px;
+    }
+  }
+
+  &.leftwards{
+    .background{
+      top: 0;
+      left: 0;
+    }
+
+    h3{
+      top: 52px;
+      left: 6px;
+    }
+  }
+
+  &.rightwards{
+    .background{
+      top: 0;
+      left: - $triangle_button_size / 2;
+    }
+
+    h3{
+      top: 52px;
+      left: 0px;
+    }
   }
 }
 
@@ -223,16 +296,85 @@ textarea{
 // --- diamond button ---
 .diamondButton{
   @extend .button;
+  position: relative;
   width: 100px;
   height: 100px;
   display: table-cell;
   vertical-align: middle;
-  font-size: 12px;
-  text-transform: uppercase;
-  color: white;
-  border: 1px solid white;
+  //border: 1px solid white;
+
+  &.black{
+    >h3{
+      color: black;
+    }
+
+    >.background{
+      outline: 1px solid black;
+      background-color: rgba(0, 0, 0, 0);
+    }
+  }
+
+  >.background{
+    position: absolute;
+    top: (100px - 70px) / 2;
+    left: (100px - 70px) / 2;
+    width: 70px;
+    height: 70px;
+    outline: 1px solid white;
+    background-color: rgba(255, 255, 255, 0);
+    @include rotate(45deg);
+    @include transition(background-color 0.2s ease-out, outline 0.2s ease-out);
+  }
+
+  >h3{
+    position: relative;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: white;
+    z-index: 1;
+    @include single-transition(color 0.2s ease-out);
+  }
 
   &.active{
-    background: black;
+    >h3{
+      color: black;
+    }
+
+    >.background{
+      background-color: rgba(255, 255, 255, 1);
+      outline: 1px solid white;
+    }
+
+    &.black{
+      >h3{
+        color: white;
+      }
+
+      >.background{
+        background-color: rgba(0, 0, 0, 1);
+        outline: 1px solid black;
+      }
+    }
+  }
+}
+
+// --- expand button --
+.expandButton{
+  @extend .button;
+  
+  &.upwards{
+    @include icon-sprite("expand-button-up-white-small");
+
+    &.black{
+      @include icon-sprite("expand-button-up-black-small");
+    }
+  }
+
+  &.dowmwards{
+    @include icon-sprite("expand-button-down-white-small");
+
+    &.black{
+      @include icon-sprite("expand-button-down-black-small");
+    }
   }
 }

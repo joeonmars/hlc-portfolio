@@ -24,10 +24,12 @@ hlc.views.MastheadSection = function(domElement){
   this.marqueeContentDom = goog.dom.query('.content', this.marqueeDom)[0];
   this.headingDom = goog.dom.query('.heading', this.marqueeDom)[0];
   this.colorOverlayDom = goog.dom.query('.colorOverlay', this.domElement)[0];
-  this.albumButton = goog.dom.query('.albumButton', this.domElement)[0];
+  this.albumButtonDom = goog.dom.query('.albumButton', this.domElement)[0];
   this.nav = null;
   this.pages = null;
   this.pageToLoad = null;
+
+  this.albumButton = new hlc.views.common.TriangleButton(this.albumButtonDom);
 
   this._pageTweener = null;
   this._headingTweener = null;
@@ -59,7 +61,10 @@ hlc.views.MastheadSection.prototype.init = function(){
 	];
 
 	// listen for events
-	goog.events.listen(this.albumButton, 'click', this.onClick, false, this);
+	goog.events.listen(this.albumButtonDom, 'click', this.onClick, false, this);
+
+	goog.events.listen(hlc.main.controllers.mainScrollController,
+		hlc.controllers.MainScrollController.EventType.SCROLL_START, this.onScrollStart, false, this);
 
 	goog.events.listen(hlc.main.controllers.mainScrollController,
 		hlc.controllers.MainScrollController.EventType.SCROLL_FINISH, this.onScrollFinish, false, this);
@@ -108,11 +113,13 @@ hlc.views.MastheadSection.prototype.toPage = function(page){
 		goog.dom.classes.remove(this.marqueeDom, 'hide');
 	}
 
-	// animate footer
+	// change ui color
 	if(page !== this.pages['home']) {
-		hlc.main.views.footer.blackify(true);
+		hlc.main.views.footer.setBlack(true);
+		this.nav.setBlack(true);
 	}else {
-		hlc.main.views.footer.blackify(false);
+		hlc.main.views.footer.setBlack(false);
+		this.nav.setBlack(false);
 	}
 
 	// set nav active button
@@ -122,19 +129,32 @@ hlc.views.MastheadSection.prototype.toPage = function(page){
 
 hlc.views.MastheadSection.prototype.onClick = function(e){
 	switch(e.currentTarget) {
-		case this.albumButton:
-		goog.dom.classes.add(this.albumButton, 'hide');
+		case this.albumButtonDom:
+		goog.dom.classes.add(this.albumButtonDom, 'hide');
 		hlc.main.controllers.mainScrollController.scrollTo(hlc.controllers.MainScrollController.ScrollPosition.ALBUM);
 		break;
 	}
 };
 
 
+hlc.views.MastheadSection.prototype.onScrollStart = function(e){
+	if(e.scrollPosition === hlc.controllers.MainScrollController.ScrollPosition.MASTHEAD) {
+		if(!this.pageToLoad || this.pageToLoad === this.pages['home']) {
+			hlc.main.views.footer.setBlack(false);
+		}else {
+			hlc.main.views.footer.setBlack(true);
+		}
+	}
+};
+
+
 hlc.views.MastheadSection.prototype.onScrollFinish = function(e){
 	if(e.scrollPosition === hlc.controllers.MainScrollController.ScrollPosition.MASTHEAD) {
-		goog.dom.classes.remove(this.albumButton, 'hide');
+		this.albumButton.show();
+		this.albumButton.startAnimation();
 	}else {
-		goog.dom.classes.add(this.albumButton, 'hide');
+		this.albumButton.hide();
+		this.albumButton.stopAnimation();
 	}
 };
 

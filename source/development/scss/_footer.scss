@@ -15,7 +15,7 @@ $footer_bottom: 20px;
 			border-bottom: 1px solid rgba(0, 0, 0, 0.3);
 		}
 
-		a{
+		a, p{
 			color: black !important;
 		}
 	}
@@ -31,8 +31,58 @@ $footer_bottom: 20px;
 		opacity: 1;
 		@include transition(opacity 0.5s, height 0.5s ease-out);
 
+		&.hide{
+			height: 0 !important;
+			opacity: 0 !important;
+		}
+
+		&.hideDetail{
+			height: 23px;
+			opacity: 1;
+		}
+
 		>h3{
+			font-size: 14px;
+			font-family: $font_sans_boldcond;
 			text-transform: uppercase;
+
+			>.expandButton{
+				display: inline-block;
+				vertical-align: -2px;
+				margin-left: 5px;
+			}
+		}
+
+		>ul{
+			margin-top: 5px;
+
+			>li{
+				margin: 5px 0 5px 0;
+
+				>h5{
+					text-transform: uppercase;
+					font-size: 12px;
+					padding: 4px 0 4px 0;
+				}
+
+				a, p{
+					color: white;
+					font-family: $font_sans;
+				}
+
+				a{
+					text-decoration: underline;
+					@include single-transition(opacity, 0.2s);
+
+					&:hover{
+						opacity: .8;
+					}
+				}
+
+				i{
+					margin-right: 5px;
+				}
+			}
 		}
 	}
 

@@ -52,10 +52,20 @@
 					vertical-align: middle;
 				}
 
-				$download_button_width: 180px;
+				$download_button_width: 230px;
 
 				>a{
 					width: $download_button_width;
+
+					>.rectangleButton{
+						width: 100%;
+
+						i{
+							vertical-align: baseline;
+							margin-right: 5px;
+							@include icon-sprite("download-small");
+						}
+					}
 				}
 
 				>.heading{

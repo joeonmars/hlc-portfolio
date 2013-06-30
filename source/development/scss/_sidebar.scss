@@ -93,6 +93,7 @@
 
 				>i{
 					display: inline-block;
+					vertical-align: baseline;
 					margin-left: 4px;
 					@include icon-sprite("download");
 				}

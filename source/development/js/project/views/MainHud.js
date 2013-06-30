@@ -7,6 +7,7 @@ goog.require('goog.dom.query');
 goog.require('goog.dom.classes');
 goog.require('hlc.views.MediaPlayer');
 goog.require('hlc.views.Playlist');
+goog.require('hlc.views.common.TriangleButton');
 
 /**
  * @constructor
@@ -15,11 +16,14 @@ hlc.views.MainHud = function(){
   goog.base(this);
 
   this.domElement = goog.dom.getElement('main-hud');
-  this.sidebarButton = goog.dom.query('.sidebarButton', this.domElement)[0];
-  this.playlistButton = goog.dom.query('.playlistButton', this.domElement)[0];
-  this.homeButton = goog.dom.query('.homeButton', this.domElement)[0];
-  this.playlistButton = goog.dom.query('.playlistButton', this.domElement)[0];
+  this.sidebarButtonDom = goog.dom.query('.sidebarButton', this.domElement)[0];
+  this.playlistButtonDom = goog.dom.query('.playlistButton', this.domElement)[0];
+  this.homeButtonDom = goog.dom.query('.homeButton', this.domElement)[0];
   this.bottomContainer = goog.dom.query('.bottom', this.domElement)[0];
+
+  this.playlistButton = new hlc.views.common.TriangleButton(this.playlistButtonDom);
+  this.homeButton = new hlc.views.common.TriangleButton(this.homeButtonDom);
+  this.sidebarButton = new hlc.views.common.TriangleButton(this.sidebarButtonDom);
 
   this.playlist = new hlc.views.Playlist();
   this.mediaPlayer = new hlc.views.MediaPlayer();
@@ -31,6 +35,8 @@ hlc.views.MainHud.prototype.init = function(){
 	this.mediaPlayer.init();
 	this.playlist.init();
 
+	this.playlistButton.startAnimation();
+
 	goog.events.listen(this, 'resize', this.onResize, false, this);
 	hlc.main.controllers.windowController.addDispatcher(this);
 
@@ -40,9 +46,9 @@ hlc.views.MainHud.prototype.init = function(){
 	goog.events.listen(hlc.main.controllers.mainScrollController,
 		hlc.controllers.MainScrollController.EventType.SCROLL_FINISH, this.onScrollFinish, false, this);
 
-	goog.events.listen(this.sidebarButton, 'click', this.onClick, false, this);
-	goog.events.listen(this.playlistButton, 'click', this.onClick, false, this);
-	goog.events.listen(this.homeButton, 'click', this.onClick, false, this);
+	goog.events.listen(this.sidebarButtonDom, 'click', this.onClick, false, this);
+	goog.events.listen(this.playlistButtonDom, 'click', this.onClick, false, this);
+	goog.events.listen(this.homeButtonDom, 'click', this.onClick, false, this);
 
 	goog.events.listen(this.playlist, hlc.views.Playlist.EventType.SHOW, this.onPlaylistShow, false, this);
 	goog.events.listen(this.playlist, hlc.views.Playlist.EventType.HIDE, this.onPlaylistHide, false, this);
@@ -68,38 +74,40 @@ hlc.views.MainHud.prototype.onScrollStart = function(e){
 
 hlc.views.MainHud.prototype.onScrollFinish = function(e){
 	if(e.scrollPosition === hlc.controllers.MainScrollController.ScrollPosition.MASTHEAD) {
+		this.homeButton.stopAnimation();
 		this.hideBottom();
-		goog.dom.classes.add(this.sidebarButton, 'hide');
+		this.sidebarButton.stopAnimation();
+		this.sidebarButton.hide();
 	}else {
+		this.homeButton.startAnimation();
 		this.showBottom();
-		goog.dom.classes.remove(this.sidebarButton, 'hide');
+		this.sidebarButton.startAnimation();
+		this.sidebarButton.show();
 	}
 };
 
 
 hlc.views.MainHud.prototype.onPlaylistShow = function(e){
 	this.mediaPlayer.hide();
-	hlc.main.views.footer.up(false);
 };
 
 
 hlc.views.MainHud.prototype.onPlaylistHide = function(e){
 	this.mediaPlayer.show();
-	hlc.main.views.footer.up(true);
 };
 
 
 hlc.views.MainHud.prototype.onClick = function(e){
 	switch(e.currentTarget) {
-		case this.sidebarButton:
+		case this.sidebarButtonDom:
 		hlc.main.views.sidebar.toggle();
 		break;
 
-		case this.playlistButton:
+		case this.playlistButtonDom:
 		this.playlist.toggle();
 		break;
 
-		case this.homeButton:
+		case this.homeButtonDom:
 		hlc.main.controllers.mainScrollController.scrollTo(hlc.controllers.MainScrollController.ScrollPosition.MASTHEAD);
 		break;
 	}
@@ -107,9 +115,9 @@ hlc.views.MainHud.prototype.onClick = function(e){
 
 
 hlc.views.MainHud.prototype.onResize = function(e){
-	var sidebarButtonSize = goog.style.getSize(this.sidebarButton);
-	var sidebarButtonY = (e.mainViewportSize.height - sidebarButtonSize.height ) / 2;
-	goog.style.setStyle(this.sidebarButton, {'top': sidebarButtonY + 'px', 'right': e.scrollbarWidth + sidebarButtonSize.width + 'px'});
+	var sidebarButtonDomSize = goog.style.getSize(this.sidebarButtonDom);
+	var sidebarButtonDomY = (e.mainViewportSize.height - sidebarButtonDomSize.height ) / 2;
+	goog.style.setStyle(this.sidebarButtonDom, {'top': sidebarButtonDomY + 'px', 'right': e.scrollbarWidth + sidebarButtonDomSize.width + 'px'});
 
 	goog.style.setStyle(this.bottomContainer, 'top', e.mainViewportSize.height + 'px');
 };
