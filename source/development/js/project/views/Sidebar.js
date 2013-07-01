@@ -21,6 +21,8 @@ hlc.views.Sidebar = function(){
   	'albumId': {'songId': ''}
   };
 
+  this._slideTweener = null;
+
   this._request = new goog.net.XhrIo();
 };
 goog.inherits(hlc.views.Sidebar, goog.events.EventTarget);
@@ -50,14 +52,26 @@ hlc.views.Sidebar.prototype.slideIn = function(){
 	var mainViewportWidth = hlc.main.controllers.windowController.getMainViewportSize().width;
 	var targetMainScrollerWidth = mainViewportWidth - this._size.width;
 
-	goog.style.setStyle(this._mainScrollerDomElement, 'width', targetMainScrollerWidth + 'px');
+	this._slideTweener = TweenMax.to(this._mainScrollerDomElement, .8, {
+		'width': targetMainScrollerWidth,
+		'ease': Cubic.easeInOut,
+		'onUpdate': function() {
+			hlc.main.views.mainHud.mediaPlayer.onResize();
+		}
+	});
 };
 
 
 hlc.views.Sidebar.prototype.slideOut = function(){
 	this.isSlidedIn = false;
 
-	goog.style.setStyle(this._mainScrollerDomElement, 'width', '100%');
+	this._slideTweener = TweenMax.to(this._mainScrollerDomElement, .8, {
+		'width': '100%',
+		'ease': Cubic.easeInOut,
+		'onUpdate': function() {
+			hlc.main.views.mainHud.mediaPlayer.onResize();
+		}
+	});
 };
 
 

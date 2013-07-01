@@ -105,7 +105,8 @@ hlc.views.MediaPlayer.prototype.onAudioEvent = function(e){
 
 
 hlc.views.MediaPlayer.prototype.onResize = function(e){
-	goog.style.setStyle(this.domElement, 'padding-right', e.scrollbarWidth + 'px');
+	var scrollbarWidth = e ? e.scrollbarWidth : hlc.main.controllers.windowController.getScrollbarWidth();
+	goog.style.setStyle(this.domElement, 'padding-right', scrollbarWidth + 'px');
 
 	var fullColumnWidth = goog.style.getSize(this._fullColumn).width;
 	var playbackControlsWidth = goog.style.getSize(this._playbackControlDom).width;

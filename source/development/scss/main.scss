@@ -21,7 +21,6 @@
 	vertical-align: top;
 	width: 100%;
 	height: 100%;
-	@include single-transition(width, 0.5s, ease-out);
 	white-space: normal;
 
 	>.viewport{
