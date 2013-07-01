@@ -37,6 +37,8 @@ hlc.views.MainHud.prototype.init = function(){
 
 	this.playlistButton.startAnimation();
 
+	this.sidebarButton.hide();
+
 	goog.events.listen(this, 'resize', this.onResize, false, this);
 	hlc.main.controllers.windowController.addDispatcher(this);
 
@@ -68,6 +70,7 @@ hlc.views.MainHud.prototype.hideBottom = function(){
 hlc.views.MainHud.prototype.onScrollStart = function(e){
 	if(e.scrollPosition === hlc.controllers.MainScrollController.ScrollPosition.MASTHEAD) {
 		this.hideBottom();
+		this.sidebarButton.hide();
 	}
 };
 

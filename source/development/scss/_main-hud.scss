@@ -12,11 +12,6 @@
 
 	.sidebarButton{
 		right: 0;
-		@include single-transition(right, 0.2s, ease-out);
-
-		&.hide{
-			right: -57px !important;
-		}
 	}
 
 	>.top{

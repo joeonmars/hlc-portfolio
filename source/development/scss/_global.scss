@@ -172,6 +172,8 @@ textarea{
   $triangle_button_size: 114px;
 
   >.content{
+    @include single-transition(transform, 0.2s, ease-out);
+
     >.background{
       position: absolute;
       width: 114px;
@@ -242,6 +244,32 @@ textarea{
     h3{
       top: 52px;
       left: 0px;
+    }
+  }
+
+  &.hide{
+    &.upwards{
+      >.content{
+        @include translateY( $triangle_button_size / 2 );
+      }
+    }
+
+    &.downwards{
+      >.content{
+        @include translateY( - $triangle_button_size / 2 );
+      }
+    }
+
+    &.leftwards{
+      >.content{
+        @include translateX( $triangle_button_size / 2 );
+      }
+    }
+
+    &.rightwards{
+      >.content{
+        @include translateX( - $triangle_button_size / 2 );
+      }
     }
   }
 }
