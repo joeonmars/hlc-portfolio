@@ -10,7 +10,7 @@ hlc.views.mastheadpages.ContactPage = function(){
 	var domElement = goog.dom.getElement('contact');
 	var url = hlc.Url.ORIGIN + 'contact';
 
-  goog.base(this, domElement, url);
+  goog.base(this, domElement, url, 'contact');
 };
 goog.inherits(hlc.views.mastheadpages.ContactPage, hlc.views.mastheadpages.MastheadPage);
 

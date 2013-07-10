@@ -24,6 +24,8 @@ hlc.views.MediaPlayer = function(){
 
   this._playhead = goog.dom.getElementByClass('playhead', this.domElement);
   this._playButton = goog.dom.getElementByClass('playButton', this.domElement);
+  this._prevButton = goog.dom.getElementByClass('prevButton', this.domElement);
+  this._nextButton = goog.dom.getElementByClass('nextButton', this.domElement);
 
   this._size = goog.style.getSize(this.domElement);
 
@@ -43,6 +45,8 @@ hlc.views.MediaPlayer.prototype.init = function(){
 		hlc.controllers.MainScrollController.EventType.SCROLL_FINISH, this.onScrollFinish, false, this);
 
 	goog.events.listen(this._playButton, 'click', this.onClick, false, this);
+	goog.events.listen(this._prevButton, 'click', this.onClick, false, this);
+	goog.events.listen(this._nextButton, 'click', this.onClick, false, this);
 
 	goog.events.listen(this, ['play', 'pause', 'timeupdate'], this.onAudioEvent, false, this);
 };
@@ -75,6 +79,14 @@ hlc.views.MediaPlayer.prototype.onClick = function(e){
 		}else {
 			hlc.main.controllers.soundController.pause();
 		}
+		break;
+
+		case this._prevButton:
+		hlc.main.controllers.albumScrollController.currentAlbumSection.albumPlayer.prevSong();
+		break;
+
+		case this._nextButton:
+		hlc.main.controllers.albumScrollController.currentAlbumSection.albumPlayer.nextSong();
 		break;
 
 		default:

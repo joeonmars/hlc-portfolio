@@ -13,6 +13,7 @@
 
 	>.viewport{
 		white-space: nowrap;
+		font-size: 0;
 	}
 }
 
@@ -34,7 +35,6 @@
 	vertical-align: top;
 	width: $sidebar_width;
 	height: 100%;
-	overflow: scroll;
 	white-space: normal;
 }
 

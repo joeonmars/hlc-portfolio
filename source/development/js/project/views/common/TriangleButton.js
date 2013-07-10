@@ -29,6 +29,12 @@ hlc.views.common.TriangleButton = function(domElement){
 goog.inherits(hlc.views.common.TriangleButton, goog.events.EventTarget);
 
 
+hlc.views.common.TriangleButton.prototype.setText = function(text){
+  var textDom = goog.dom.query('h3', this.domElement)[0];
+  textDom.innerHTML = text;
+};
+
+
 hlc.views.common.TriangleButton.prototype.startAnimation = function(){
 	this.timer.start();
 };
@@ -46,6 +52,12 @@ hlc.views.common.TriangleButton.prototype.show = function(){
 
 hlc.views.common.TriangleButton.prototype.hide = function(){
   goog.dom.classes.add(this.domElement, 'hide');
+};
+
+
+hlc.views.common.TriangleButton.prototype.toggle = function(){
+  if(goog.dom.classes.has(this.domElement, 'hide')) this.show();
+  else this.hide();
 };
 
 

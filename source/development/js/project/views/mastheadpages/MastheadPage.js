@@ -8,13 +8,15 @@ goog.require('goog.net.XhrIo');
 /**
  * @constructor
  */
-hlc.views.mastheadpages.MastheadPage = function(domElement, url){
+hlc.views.mastheadpages.MastheadPage = function(domElement, url, title){
   goog.base(this);
 
   this.setParentEventTarget( hlc.main.views.mastheadSection );
 
   this.domElement = domElement;
   this.parentDomElement = goog.dom.getParentElement(this.domElement);
+
+  this.title = title;
 
   this.isLoaded = false;
 

@@ -51,7 +51,7 @@ goog.inherits(hlc.models.SongModel, goog.events.EventTarget);
 
 hlc.models.SongModel.prototype.getDefaultArtwork = function(){
   if(this.artwork.length < 1) {
-    var defaultArtwork = hlc.Url.STATIC_IMAGES + 'artwork-fallback.jpg';
+    var defaultArtwork = hlc.Url.STATIC_IMAGES + 'backgrounds/artwork-fallback.jpg';
     return defaultArtwork;
   }else {
     return this.artwork[0];
@@ -60,7 +60,7 @@ hlc.models.SongModel.prototype.getDefaultArtwork = function(){
 
 
 hlc.models.SongModel.prototype.getNextArtwork = function(artwork){
-  if(!artwork) {
+  if(!artwork || artwork === this.getDefaultArtwork()) {
     return this.getDefaultArtwork();
   }
 

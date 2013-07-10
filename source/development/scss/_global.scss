@@ -171,6 +171,36 @@ textarea{
 
   $triangle_button_size: 114px;
 
+  &:hover{
+    &.upwards{
+      .arrow{
+        opacity: .4;
+        @include translateY(-2px);
+      }
+    }
+
+    &.downwards{
+      .arrow{
+        opacity: .4;
+        @include translateY(2px);
+      }
+    }
+
+    &.leftwards{
+      .arrow{
+        opacity: .4;
+        @include translateX(-2px);
+      }
+    }
+
+    &.rightwards{
+      .arrow{
+        opacity: .4;
+        @include translateX(2px);
+      }
+    }
+  }
+
   >.content{
     @include single-transition(transform, 0.2s, ease-out);
 
@@ -188,6 +218,11 @@ textarea{
       text-transform: uppercase;
       color: black;
       font-size: 12px;
+    }
+
+    >.arrow{
+      position: relative;
+      @include transition(opacity .2s, transform .2s);
     }
   }
 
@@ -210,6 +245,12 @@ textarea{
     h3{
       top: 32px;
     }
+
+    .arrow{
+      top: 5px;
+      margin: 0 auto;
+      @include icon-sprite("triangle-arrow-upwards");
+    }
   }
 
   &.downwards{
@@ -220,6 +261,12 @@ textarea{
 
     h3{
       top: 16px;
+    }
+
+    .arrow{
+      top: 44px;
+      margin: 0 auto;
+      @include icon-sprite("triangle-arrow-downwards");
     }
   }
 
@@ -233,6 +280,12 @@ textarea{
       top: 52px;
       left: 6px;
     }
+
+    .arrow{
+      top: 50px;
+      left: 5px;
+      @include icon-sprite("triangle-arrow-leftwards");
+    }
   }
 
   &.rightwards{
@@ -244,6 +297,12 @@ textarea{
     h3{
       top: 52px;
       left: 0px;
+    }
+
+    .arrow{
+      top: 50px;
+      left: 44px;
+      @include icon-sprite("triangle-arrow-rightwards");
     }
   }
 

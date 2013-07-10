@@ -120,17 +120,13 @@ hlc.views.AlbumSection.prototype.onPause = function(e){
 
 
 hlc.views.AlbumSection.prototype.onSongChanged = function(e){
-
+	this._currentArtwork = null;
+	this._crossfadeTimer.dispatchTick();
 };
 
 
 hlc.views.AlbumSection.prototype.onScrollFinish = function(e){
 	if(e.albumSection === this) {
-		
-		// if no background image displays, load it immediately
-		if(goog.style.getStyle(this._currentBgDomElement, 'background-image').length === 0) {
-			this._crossfadeTimer.dispatchTick();
-		}
 
 		// go to current song
 		this.albumPlayer.gotoSong();

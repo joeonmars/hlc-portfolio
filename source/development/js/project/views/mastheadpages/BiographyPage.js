@@ -10,7 +10,7 @@ hlc.views.mastheadpages.BiographyPage = function(){
 	var domElement = goog.dom.getElement('biography');
 	var url = hlc.Url.ORIGIN + 'biography';
 
-  goog.base(this, domElement, url);
+  goog.base(this, domElement, url, 'biography');
 };
 goog.inherits(hlc.views.mastheadpages.BiographyPage, hlc.views.mastheadpages.MastheadPage);
 

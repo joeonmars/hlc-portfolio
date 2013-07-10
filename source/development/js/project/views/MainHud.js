@@ -54,6 +54,11 @@ hlc.views.MainHud.prototype.init = function(){
 
 	goog.events.listen(this.playlist, hlc.views.Playlist.EventType.SHOW, this.onPlaylistShow, false, this);
 	goog.events.listen(this.playlist, hlc.views.Playlist.EventType.HIDE, this.onPlaylistHide, false, this);
+
+	goog.events.listen(hlc.main.views.sidebar, hlc.views.Sidebar.EventType.SLIDE_IN, this.onSidebarSlideIn, false, this);
+	goog.events.listen(hlc.main.views.sidebar, hlc.views.Sidebar.EventType.SLIDED_OUT, this.onSidebarSlidedOut, false, this);
+
+	goog.events.listen(hlc.main.views.mastheadSection, hlc.views.MastheadSection.EventType.PAGE_LOADED, this.onMastheadPageLoaded, false, this);
 };
 
 
@@ -97,6 +102,21 @@ hlc.views.MainHud.prototype.onPlaylistShow = function(e){
 
 hlc.views.MainHud.prototype.onPlaylistHide = function(e){
 	this.mediaPlayer.show();
+};
+
+
+hlc.views.MainHud.prototype.onMastheadPageLoaded = function(e){
+	this.homeButton.setText(e.target.title);
+};
+
+
+hlc.views.MainHud.prototype.onSidebarSlideIn = function(e){
+	this.sidebarButton.hide();
+};
+
+
+hlc.views.MainHud.prototype.onSidebarSlidedOut = function(e){
+	this.sidebarButton.show();
 };
 
 

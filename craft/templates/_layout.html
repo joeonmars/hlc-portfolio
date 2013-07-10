@@ -66,7 +66,7 @@
 					</div>
 					
 					<div class="bottom hide">
-						{% include "_includes/triangle-button" with {text: 'hsin-lei', classes: 'homeButton upwards'} %}
+						{% include "_includes/triangle-button" with {text: '', classes: 'homeButton upwards'} %}
 						{% include "_includes/media-player" %}
 					</div>
 				</div>
@@ -78,6 +78,8 @@
 			</div>
 
 			<div id="sidebar">
+				<div class="content"></div>
+				{% include "_includes/sidebar-close-button" %}
 			</div>
 			
 			<div id="footer">

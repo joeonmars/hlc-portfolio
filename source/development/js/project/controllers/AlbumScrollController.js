@@ -23,6 +23,8 @@ hlc.controllers.AlbumScrollController = function(){
   goog.array.forEach(this._albumDomElements, function(albumDomElement) {
   	this.albumSections.push( new hlc.views.AlbumSection( albumDomElement ) );
   }, this);
+
+  this.currentAlbumSection = this.albumSections[0];
 };
 goog.inherits(hlc.controllers.AlbumScrollController, goog.events.EventTarget);
 goog.addSingletonGetter(hlc.controllers.AlbumScrollController);
@@ -56,10 +58,12 @@ hlc.controllers.AlbumScrollController.prototype.locateAlbum = function(){
 		scrollTo: {y: albumDomY},
 		ease: Power2.easeOut,
 		onComplete: function() {
+			this.currentAlbumSection = this.albumSections[albumId];
+
 			var ev = {
 				type: hlc.controllers.AlbumScrollController.EventType.SCROLL_FINISH,
 				scrollPosition: this.scrollPosition,
-				albumSection: this.albumSections[albumId]
+				albumSection: this.currentAlbumSection
 			};
 			this.dispatchEvent(ev);
 		},
