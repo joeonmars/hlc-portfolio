@@ -11,8 +11,10 @@ hlc.controllers.SoundController = function() {
 	this.volume = 1;
 	this.currentSound = null;
 
-  // listen for audio events
-  goog.events.listen(this, ['play', 'pause', 'timeupdate', 'canplaythrough'], this.onAudioEvent, false, this);
+  // listen for all audio events
+  goog.events.listen(this,
+  	['loadedmetadata', 'play', 'pause', 'ended', 'timeupdate', 'canplaythrough'],
+  	this.onAudioEvent, false, this);
 };
 goog.inherits(hlc.controllers.SoundController, goog.events.EventTarget);
 goog.addSingletonGetter(hlc.controllers.SoundController);
@@ -56,20 +58,24 @@ hlc.controllers.SoundController.prototype.setVolume = function(volume) {
 };
 
 
-hlc.controllers.SoundController.prototype.onAudioEvent = function(e) {
-	this.currentSound = e.target;
+hlc.controllers.SoundController.prototype.setCurrentSound = function(sound) {
+	this.currentSound = sound;
+};
 
+
+hlc.controllers.SoundController.prototype.onAudioEvent = function(e) {
 	switch(e.type) {
 		case 'play':
+		//console.log("PLAY", this);
 		this.setVolume(this.volume);
 		break;
 
 		case 'pause':
-
+		//console.log("PAUSE", this);
 		break;
 
 		case 'canplaythrough':
-		console.log(e.audio, 'can play through.');
+		//console.log(e.audio, 'can play through.');
 		break;
 
 		default:

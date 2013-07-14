@@ -14,6 +14,7 @@ hlc.views.Footer = function(){
 
   this.domElement = goog.dom.getElement('footer');
   this.creditsDom = goog.dom.getElement('credits');
+  this.photographyDom = goog.dom.query('[data-id = "photography"]', this.creditsDom)[0];
   this.expandButton = goog.dom.query('.expandButton', this.creditsDom)[0];
 };
 goog.inherits(hlc.views.Footer, goog.events.EventTarget);
@@ -42,6 +43,20 @@ hlc.views.Footer.prototype.setBlack = function(toggle){
 		goog.dom.classes.remove(this.domElement, 'black');
 		goog.dom.classes.remove(this.expandButton, 'black');
 	}
+};
+
+
+hlc.views.Footer.prototype.setPhotographyCopyright = function(copyright) {
+	var pDom = goog.dom.query('p', this.photographyDom)[0];
+
+	if(goog.object.getCount(copyright) === 0) {
+		// hide the photography copyright dom
+		pDom.innerHTML = '';
+		return;
+	}
+
+	pDom.innerHTML = '<a href="' + copyright['workUrl'] + '" target="_blank">' + copyright['workTitle'] + '</a>' +
+		' by <a href="' + copyright['authorUrl'] + '" target="_blank">' + copyright['authorName'] + '</a>';
 };
 
 

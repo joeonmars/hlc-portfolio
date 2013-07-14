@@ -43,15 +43,13 @@ hlc.models.SongModel = function(songId, songData, album){
   	this.audio.setAttribute('src', mp3Url);
   	this.audio.setAttribute('type', 'audio/mpeg');
   }
-
-  goog.events.listen(this.audio, ['play', 'pause', 'canplaythrough', 'timeupdate'], this.onAudioEvent, false, this);
 };
 goog.inherits(hlc.models.SongModel, goog.events.EventTarget);
 
 
 hlc.models.SongModel.prototype.getDefaultArtwork = function(){
   if(this.artwork.length < 1) {
-    var defaultArtwork = hlc.Url.STATIC_IMAGES + 'backgrounds/artwork-fallback.jpg';
+    var defaultArtwork = {url: hlc.Url.STATIC_IMAGES + 'backgrounds/artwork-fallback.jpg'};
     return defaultArtwork;
   }else {
     return this.artwork[0];
@@ -68,6 +66,24 @@ hlc.models.SongModel.prototype.getNextArtwork = function(artwork){
   var nextIndex = (currentIndex === this.artwork.length - 1) ? 0 : currentIndex+1;
 
   return this.artwork[nextIndex];
+};
+
+
+hlc.models.SongModel.prototype.activate = function(){
+  goog.events.listen(this.audio,
+    ['loadedmetadata', 'play', 'pause', 'ended', 'canplaythrough', 'timeupdate'],
+    this.onAudioEvent, false, this);
+
+  hlc.main.controllers.soundController.setCurrentSound(this);
+};
+
+
+hlc.models.SongModel.prototype.deactivate = function(){
+  goog.events.unlisten(this.audio,
+    ['loadedmetadata', 'play', 'pause', 'ended', 'canplaythrough', 'timeupdate'],
+    this.onAudioEvent, false, this);
+
+  this.stop();
 };
 
 

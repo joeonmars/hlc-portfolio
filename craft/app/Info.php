@@ -12,7 +12,7 @@ namespace Craft;
  */
 
 define('CRAFT_VERSION', '1.0');
-define('CRAFT_BUILD', '2278');
-define('CRAFT_RELEASE_DATE', '1372121261');
+define('CRAFT_BUILD', '2280');
+define('CRAFT_RELEASE_DATE', '1373649630');
 define('CRAFT_MIN_BUILD_REQUIRED', '2262');
 define('CRAFT_TRACK', 'stable');

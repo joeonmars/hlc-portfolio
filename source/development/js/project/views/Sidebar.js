@@ -38,6 +38,11 @@ hlc.views.Sidebar.prototype.init = function(){
 	// listen for click event
 	goog.events.listen(this.closeButtonDom, 'click', this.onClick, false, this);
 
+	// listen for album scroll event
+	goog.events.listen(hlc.main.controllers.albumScrollController,
+		hlc.controllers.AlbumScrollController.EventType.SCROLL_FINISH,
+		this.onAlbumScrollFinish, false, this);
+
 	// listen for song change event from every album player
 	goog.array.forEach(hlc.main.views.albumSections, function(albumSection) {
 		var albumPlayer = albumSection.albumPlayer;
@@ -148,6 +153,15 @@ hlc.views.Sidebar.prototype.onClick = function(e) {
 
 hlc.views.Sidebar.prototype.onLoaded = function(albumId, songId) {
 	this.contentDom.innerHTML = this._contentDomElements[albumId][songId];
+};
+
+
+hlc.views.Sidebar.prototype.onAlbumScrollFinish = function(e) {
+	var song = e.albumSection.albumPlayer.getCurrentSong();
+	var songId = song.songId;
+	var albumId = song.albumId;
+
+	this.loadContent(albumId, songId);
 };
 
 

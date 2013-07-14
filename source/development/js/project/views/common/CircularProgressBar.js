@@ -13,7 +13,7 @@ hlc.views.common.CircularProgressBar = function(size){
   var strokeWidth = 2;
   this._radius = size / 2 - strokeWidth / 2;
 
-  this._progress = 0;
+  this._progress = null;
 
   this.domElement = goog.dom.createDom('canvas', {
   	'className': 'circularProgressBar',
@@ -21,7 +21,10 @@ hlc.views.common.CircularProgressBar = function(size){
   	'height': size
   });
 
+  paper = new paper.PaperScope();
   paper.setup(this.domElement);
+
+  this._view = paper.view;
 
 	this._backPath = new paper.Path.Circle(paper.view.center, this._radius);
 	this._backPath.strokeColor = 'white';
@@ -32,6 +35,8 @@ hlc.views.common.CircularProgressBar = function(size){
 	this._progressPath.strokeColor = 'white';
 	this._progressPath.strokeWidth = strokeWidth;
 	this._progressPath.strokeCap = 'butt';
+
+	this.setProgress(0);
 };
 goog.inherits(hlc.views.common.CircularProgressBar, goog.events.EventTarget);
 
@@ -55,4 +60,6 @@ hlc.views.common.CircularProgressBar.prototype.setProgress = function(progress) 
 
 	this._progressPath.add(center.add(start));
 	this._progressPath.arcTo(center.add(middle), center.add(end));
+
+	this._view.draw();
 };

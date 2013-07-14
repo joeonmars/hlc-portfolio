@@ -36,6 +36,9 @@ hlc.controllers.AlbumScrollController.prototype.init = function(){
   }, this);
 
 	goog.events.listen(this._albumScrollDomElement, 'scroll', this.onScroll, false, this);
+
+	goog.events.listen(hlc.main.controllers.mainScrollController,
+		hlc.controllers.MainScrollController.EventType.SCROLL_FINISH, this.onMainScrollFinish, false, this);
 };
 
 
@@ -71,6 +74,13 @@ hlc.controllers.AlbumScrollController.prototype.locateAlbum = function(){
 	});
 
 	//console.log('nearest album is ', albumDom, ' y = ' + albumDomY);
+};
+
+
+hlc.controllers.AlbumScrollController.prototype.onMainScrollFinish = function(e){
+	if(e.scrollPosition === hlc.controllers.MainScrollController.ScrollPosition.ALBUM) {
+		this._locateDelay.start();
+	}
 };
 
 

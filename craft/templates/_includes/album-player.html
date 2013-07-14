@@ -2,29 +2,39 @@
 	
 		<div class="top">
 			<ul>
+				<li><h4>no song</h4></li>
 				{% for song in songs %}
-					<li><h4 data-id="{{ song.slug }}">{{ song.title }}</h4></li>
+				<li><h4>{{ song.title }}</h4></li>
 				{% endfor %}
+				<li><h4>no song</h4></li>
 			</ul>
-			<i class="arrowButton upwards"></i>
+			<div class="buttonContainer">
+				<div class="arrowButton upwards"></div>
+			</div>
 		</div>
 
 		<div class="middle">
 			<ul>
+				<li><h4>no song</h4></li>
 				{% for song in songs %}
-					<li><h4 data-id="{{ song.slug }}">{{ song.title }}</h4></li>
+				<li><h4>{{ song.title }}</h4></li>
 				{% endfor %}
+				<li><h4>no song</h4></li>
 			</ul>
-			<i class="progressIcon"></i>
+			<div class="progressIcon"></div>
 		</div>
 
 		<div class="bottom">
 			<ul>
+				<li><h4>no song</h4></li>
 				{% for song in songs %}
-					<li><h4 data-id="{{ song.slug }}">{{ song.title }}</h4></li>
+				<li><h4>{{ song.title }}</h4></li>
 				{% endfor %}
+				<li><h4>no song</h4></li>
 			</ul>
-			<i class="arrowButton downwards"></i>
+			<div class="buttonContainer">
+				<div class="arrowButton downwards"></div>
+			</div>
 		</div>
 	
 </div>

@@ -11,7 +11,19 @@
 					"title": "{{ song.title }}",
 					"artwork": [
 						{% for artwork in song.artwork %}
-						"{{artwork.url}}"{{ loop.last ? "" : "," }}
+							{
+								"url": "{{artwork.url}}",
+								"copyright": {
+									{% if artwork.authorName|length > 1 %}
+									"authorName": "{{artwork.authorName}}",
+									"authorUrl": "{{artwork.authorUrl}}",
+									{% endif %}
+									{% if artwork.workTitle|length > 1 %}
+									"workTitle": "{{artwork.workTitle}}",
+									"workUrl": "{{artwork.workUrl}}"
+									{% endif %}
+								}
+							}{{ loop.last ? "" : "," }}
 						{% endfor %}
 					],
 					"assets": [
