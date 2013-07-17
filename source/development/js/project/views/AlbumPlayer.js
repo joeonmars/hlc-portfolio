@@ -31,7 +31,7 @@ hlc.views.AlbumPlayer = function(domElement){
 
   // create and added circular progress bar
   this.circularProgressBar = new hlc.views.common.CircularProgressBar(24);
-  var circularProgressBarContainer = goog.dom.query('.progressIcon', this.domElement)[0];
+  var circularProgressBarContainer = goog.dom.query('.middle .iconContainer', this.domElement)[0];
   goog.dom.appendChild(circularProgressBarContainer, this.circularProgressBar.domElement);
 };
 goog.inherits(hlc.views.AlbumPlayer, goog.events.EventTarget);

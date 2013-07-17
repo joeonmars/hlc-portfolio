@@ -76,7 +76,7 @@ hlc.views.AlbumSection.prototype.onCrossfadeTick = function(e){
 	var currentSong = this.albumPlayer.getCurrentSong();
 
 	var nextArtwork = currentSong.getNextArtwork(this._currentArtwork);
-
+	
 	if(nextArtwork !== this._currentArtwork) {
 		this._nextArtwork = nextArtwork;
 	}else {
@@ -154,9 +154,12 @@ hlc.views.AlbumSection.prototype.onScrollFinish = function(e){
 		this._isAtSection = false;
 
 		// stop song
-		this.albumPlayer.getCurrentSong().deactivate();
-		this.albumPlayer.deactivate();
 		this.albumPlayer.stop();
+
+		goog.Timer.callOnce(function() {
+			this.albumPlayer.getCurrentSong().deactivate();
+			this.albumPlayer.deactivate();
+		}, 0, this);
 
 	}
 };

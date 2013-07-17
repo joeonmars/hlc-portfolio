@@ -17,6 +17,7 @@ hlc.models.SongModel = function(songId, songData, album){
   this.songId = songId;
   this.songTitle = songData['title'];
   this.artwork = songData['artwork'];
+  this.defaultArtwork = {url: hlc.Url.STATIC_IMAGES + 'backgrounds/artwork-fallback.jpg'};
   this.album = album;
 
   // audio waveform data
@@ -49,8 +50,7 @@ goog.inherits(hlc.models.SongModel, goog.events.EventTarget);
 
 hlc.models.SongModel.prototype.getDefaultArtwork = function(){
   if(this.artwork.length < 1) {
-    var defaultArtwork = {url: hlc.Url.STATIC_IMAGES + 'backgrounds/artwork-fallback.jpg'};
-    return defaultArtwork;
+    return this.defaultArtwork;
   }else {
     return this.artwork[0];
   }
@@ -58,7 +58,7 @@ hlc.models.SongModel.prototype.getDefaultArtwork = function(){
 
 
 hlc.models.SongModel.prototype.getNextArtwork = function(artwork){
-  if(!artwork || artwork === this.getDefaultArtwork()) {
+  if(!artwork || artwork === this.defaultArtwork) {
     return this.getDefaultArtwork();
   }
 
@@ -82,8 +82,6 @@ hlc.models.SongModel.prototype.deactivate = function(){
   goog.events.unlisten(this.audio,
     ['loadedmetadata', 'play', 'pause', 'ended', 'canplaythrough', 'timeupdate'],
     this.onAudioEvent, false, this);
-
-  this.stop();
 };
 
 

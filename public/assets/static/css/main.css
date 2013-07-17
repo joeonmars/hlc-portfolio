@@ -642,7 +642,7 @@ textarea {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
-.albumPlayer > .top > i, .albumPlayer > .middle > i, .albumPlayer > .bottom > i {
+.albumPlayer > .top > .iconContainer, .albumPlayer > .middle > .iconContainer, .albumPlayer > .bottom > .iconContainer {
   width: 20%;
   display: inline-block;
   vertical-align: middle;
@@ -1604,8 +1604,7 @@ textarea {
   width: 100%;
   height: 65%;
   white-space: nowrap;
-  overflow-y: scroll;
-  overflow-x: hidden;
+  overflow: hidden;
   padding-top: 20px;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
