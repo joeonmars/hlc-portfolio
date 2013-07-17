@@ -78,15 +78,18 @@ hlc.views.AlbumPlayer.prototype.gotoSong = function(index, delta){
   var middleY = middleScrollerHeight * middleSongIndex;
   var bottomY = sideScrollerHeight * bottomSongIndex;
 
-  var topStartTime = (delta === -1 ? 0 : .5);
-  var middleStartTime = .25;
-  var bottomStartTime = (delta === 1 ? 0 : .5);
+  var topTweener = TweenMax.to(this.topScroller, .4, {scrollTo: {y: topY}, ease:Power2.easeOut});
+  var middleTweener = TweenMax.to(this.middleScroller, .4, {scrollTo: {y: middleY}, ease:Power2.easeOut});
+  var bottomTweener = TweenMax.to(this.bottomScroller, .4, {scrollTo: {y: bottomY}, ease:Power2.easeOut});
 
   this.scrollerTweener.kill();
   this.scrollerTweener.clear();
-  this.scrollerTweener.add(TweenMax.to(this.topScroller, .4, {scrollTo: {y: topY}, ease:Expo.easeOut})/*, topStartTime*/);
-  this.scrollerTweener.add(TweenMax.to(this.middleScroller, .4, {scrollTo: {y: middleY}, ease:Expo.easeOut})/*, middleStartTime*/);
-  this.scrollerTweener.add(TweenMax.to(this.bottomScroller, .4, {scrollTo: {y: bottomY}, ease:Expo.easeOut})/*, bottomStartTime*/);
+
+  if(delta === -1) {
+    this.scrollerTweener.add([topTweener, middleTweener, bottomTweener], '+=0', 'start', .15);
+  }else {
+    this.scrollerTweener.add([bottomTweener, middleTweener, topTweener], '+=0', 'start', .15);
+  }
 };
 
 

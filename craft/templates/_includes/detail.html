@@ -66,7 +66,7 @@
 		<ul>
 		{% for suggestedSong in songEntry.suggestedSongs %}
 			<li>
-				<a href="/album/{{ albumEntry.slug }}/song/{{ suggestedSong.slug }}" target="_self">
+				<a href="/album/{{ albumEntry.slug }}/{{ suggestedSong.slug }}" target="_self">
 					<div class="background" style="background-image: url({{ albumEntry.cover[0].url }});"></div>
 					<p>{{ suggestedSong.title }}</p>
 				</a>
