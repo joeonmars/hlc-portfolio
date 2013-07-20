@@ -31,7 +31,12 @@ hlc.views.AlbumSection = function(domElement){
 
   this._crossfadeTimer = new goog.Timer(20000);
 
+  this._crossfadeDelay = new goog.async.Delay( function() {
+  	this._crossfadeTimer.dispatchTick();
+  }, 2000, this );
+
   this._isAtSection = false;
+  this._hasCrossfadeOnce = false;
 
   // album player
   var albumPlayerDomElement = goog.dom.query('.albumPlayer', domElement)[0];
@@ -93,6 +98,8 @@ hlc.views.AlbumSection.prototype.onCrossfadeTick = function(e){
 
 
 hlc.views.AlbumSection.prototype.crossfade = function() {
+	this._hasCrossfadeOnce = true;
+
 	// set current artwork
 	this._currentArtwork = this._nextArtwork;
 	this._nextArtwork = null;
@@ -127,7 +134,7 @@ hlc.views.AlbumSection.prototype.onPause = function(e){
 
 hlc.views.AlbumSection.prototype.onSongChanged = function(e){
 	this._currentArtwork = null;
-	this._crossfadeTimer.dispatchTick();
+	this._crossfadeDelay.start( this._hasCrossfadeOnce ? undefined : 0 );
 
 	if(this._isAtSection) {
 		this.albumPlayer.getCurrentSong().activate();

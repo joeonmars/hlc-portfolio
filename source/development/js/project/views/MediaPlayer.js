@@ -6,6 +6,7 @@ goog.require('goog.dom');
 goog.require('goog.dom.query');
 goog.require('goog.dom.classes');
 goog.require('hlc.views.mediaplayercontrols.SoundControl');
+goog.require('hlc.views.mediaplayercontrols.SoundVisualizer');
 
 /**
  * @constructor
@@ -17,6 +18,7 @@ hlc.views.MediaPlayer = function(){
   this.parentDomElement = goog.dom.getParentElement(this.domElement);
 
   this._fullColumn = goog.dom.getElementByClass('fullColumn', this.domElement);
+  this._canvasDom = goog.dom.query('canvas', this._fullColumn)[0];
   this._playbackControlDom = goog.dom.getElementByClass('playbackControl', this.domElement);
   this._soundControlDom = goog.dom.getElementByClass('soundControl', this.domElement);
   this._progressControlDom = goog.dom.getElementByClass('progressControl', this.domElement);
@@ -30,6 +32,7 @@ hlc.views.MediaPlayer = function(){
   this._size = goog.style.getSize(this.domElement);
 
   this.soundControl = new hlc.views.mediaplayercontrols.SoundControl(this, this._soundControlDom);
+  this.soundVisualizer = new hlc.views.mediaplayercontrols.SoundVisualizer(this, this._canvasDom);
 
   // register media player to sound controller
   hlc.main.controllers.soundController.addDispatcher(this);
@@ -48,7 +51,8 @@ hlc.views.MediaPlayer.prototype.init = function(){
 	goog.events.listen(this._prevButton, 'click', this.onClick, false, this);
 	goog.events.listen(this._nextButton, 'click', this.onClick, false, this);
 
-	goog.events.listen(this, ['play', 'pause', 'timeupdate'], this.onAudioEvent, false, this);
+	goog.events.listen(this, hlc.models.SongModel.EventType.HTML_AUDIO_EVENTS, this.onAudioEvent, false, this);
+	goog.events.listen(this, hlc.models.SongModel.EventType.AUDIO_DATA_LOAD, this.onAudioDataLoad, false, this);
 };
 
 
@@ -108,11 +112,18 @@ hlc.views.MediaPlayer.prototype.onAudioEvent = function(e){
 		case 'timeupdate':
 		var progress = e.audio.currentTime / e.audio.duration;
 		goog.style.setStyle(this._playhead, 'width', progress * 100 + '%');
+
+		this.soundVisualizer.updateProgress(progress);
 		break;
 
 		default:
 		break;
 	}
+};
+
+
+hlc.views.MediaPlayer.prototype.onAudioDataLoad = function(e){
+	this.soundVisualizer.draw(e.audioData);
 };
 
 
@@ -127,4 +138,6 @@ hlc.views.MediaPlayer.prototype.onResize = function(e){
 
 	var progressControlDomWidth = fullColumnWidth - playbackControlsWidth - soundControlsWidth - shareControlDomWidth;
 	goog.style.setStyle(this._progressControlDom, 'width', progressControlDomWidth + 'px');
+
+	this.soundVisualizer.onResize(e);
 };

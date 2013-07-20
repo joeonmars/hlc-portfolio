@@ -5,6 +5,7 @@ goog.require('goog.events');
 goog.require('goog.dom');
 goog.require('goog.string');
 goog.require('goog.userAgent');
+goog.require('goog.net.BulkLoader');
 
 /**
  * @constructor
@@ -20,7 +21,15 @@ hlc.models.SongModel = function(songId, songData, album){
   this.defaultArtwork = {url: hlc.Url.STATIC_IMAGES + 'backgrounds/artwork-fallback.jpg'};
   this.album = album;
 
-  // audio waveform data
+  // audio data
+  var url = songData['audioData'];
+  this.jsonLoader = null;
+  if(url) {
+    this.jsonLoader = new goog.net.BulkLoader( [url] );
+    goog.events.listenOnce(this.jsonLoader, goog.net.EventType.SUCCESS, this.onAudioDataLoadSuccess, false, this);
+    goog.events.listenOnce(this.jsonLoader, goog.net.EventType.ERROR, this.onAudioDataLoadError, false, this);
+  }
+
   this.audioData = null;
 
   // HTML audio
@@ -70,18 +79,17 @@ hlc.models.SongModel.prototype.getNextArtwork = function(artwork){
 
 
 hlc.models.SongModel.prototype.activate = function(){
-  goog.events.listen(this.audio,
-    ['loadedmetadata', 'play', 'pause', 'ended', 'canplaythrough', 'timeupdate'],
-    this.onAudioEvent, false, this);
+  goog.events.listen(this.audio, hlc.models.SongModel.EventType.HTML_AUDIO_EVENTS, this.onAudioEvent, false, this);
+
+  if(this.jsonLoader) this.jsonLoader.load();
+  else this.dispatchAudioDataLoadEvent();
 
   hlc.main.controllers.soundController.setCurrentSound(this);
 };
 
 
 hlc.models.SongModel.prototype.deactivate = function(){
-  goog.events.unlisten(this.audio,
-    ['loadedmetadata', 'play', 'pause', 'ended', 'canplaythrough', 'timeupdate'],
-    this.onAudioEvent, false, this);
+  goog.events.unlisten(this.audio, hlc.models.SongModel.EventType.HTML_AUDIO_EVENTS, this.onAudioEvent, false, this);
 };
 
 
@@ -110,10 +118,48 @@ hlc.models.SongModel.prototype.setVolume = function(volume){
 };
 
 
+hlc.models.SongModel.prototype.dispatchAudioDataLoadEvent = function(){
+  this.dispatchEvent({
+    target: this,
+    type: hlc.models.SongModel.EventType.AUDIO_DATA_LOAD,
+    audioData: this.audioData || []
+  });
+};
+
+
 hlc.models.SongModel.prototype.onAudioEvent = function(e){
   this.dispatchEvent({
     target: this,
     type: e.type,
     audio: e.target
   });
+};
+
+
+hlc.models.SongModel.prototype.onAudioDataLoadSuccess = function(e) {
+  // read and post-process data
+  this.audioData = goog.array.map(e.target.getResponseTexts(), goog.json.unsafeParse)[0]['data'];
+
+  var accumulated = 0;
+  for ( var i = 0; i < this.audioData.length; i ++ ) {
+    this.audioData[ i ] = accumulated += this.audioData[ i ];
+  }
+
+  this.dispatchAudioDataLoadEvent();
+
+  // dispose json loader
+  this.jsonLoader.dispose();
+  this.jsonLoader = null;
+};
+
+
+hlc.models.SongModel.prototype.onAudioDataLoadError = function(e) {
+  this.jsonLoader.dispose();
+  this.jsonLoader = null;
+};
+
+
+hlc.models.SongModel.EventType = {
+  HTML_AUDIO_EVENTS: ['loadedmetadata', 'play', 'pause', 'ended', 'canplaythrough', 'timeupdate'],
+  AUDIO_DATA_LOAD: 'audio_data_load'
 };

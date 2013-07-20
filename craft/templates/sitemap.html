@@ -30,7 +30,8 @@
 						{% for audio in song.audio %}
 						"{{audio.url}}"{{ loop.last ? "" : "," }}
 						{% endfor %}
-					]
+					],
+					"audioData": "{{ song.audioData[0].url }}"
 				}{{ loop.last ? "" : "," }}
 				{% endfor %}
 			}

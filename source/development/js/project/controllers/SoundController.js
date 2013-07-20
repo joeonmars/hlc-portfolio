@@ -12,9 +12,8 @@ hlc.controllers.SoundController = function() {
 	this.currentSound = null;
 
   // listen for all audio events
-  goog.events.listen(this,
-  	['loadedmetadata', 'play', 'pause', 'ended', 'timeupdate', 'canplaythrough'],
-  	this.onAudioEvent, false, this);
+  goog.events.listen(this, hlc.models.SongModel.EventType.HTML_AUDIO_EVENTS, this.onAudioEvent, false, this);
+  goog.events.listen(this, hlc.models.SongModel.EventType.AUDIO_DATA_LOAD, this.onAudioDataLoad, false, this);
 };
 goog.inherits(hlc.controllers.SoundController, goog.events.EventTarget);
 goog.addSingletonGetter(hlc.controllers.SoundController);
@@ -82,6 +81,13 @@ hlc.controllers.SoundController.prototype.onAudioEvent = function(e) {
 		break;
 	}
 
+	goog.array.forEach(this._dispatchers, function(dispatcher) {
+		dispatcher.dispatchEvent(e);
+	});
+};
+
+
+hlc.controllers.SoundController.prototype.onAudioDataLoad = function(e) {
 	goog.array.forEach(this._dispatchers, function(dispatcher) {
 		dispatcher.dispatchEvent(e);
 	});
