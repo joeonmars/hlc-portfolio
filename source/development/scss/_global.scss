@@ -71,6 +71,7 @@ $color_purple: #535362;
 $color_lightpurple: #747484;
 $color_greenishgray: #CECEBF;
 
+$triangle_button_size: 114px;
 $sidebar_width: 500px;
 
 // --- mixins ---
@@ -175,8 +176,6 @@ textarea{
   overflow: hidden;
   //outline: 1px solid white;
 
-  $triangle_button_size: 114px;
-
   &:hover{
     &.upwards{
       .arrow{
@@ -203,6 +202,18 @@ textarea{
       .arrow{
         opacity: .4;
         @include translateX(2px);
+      }
+    }
+  }
+
+  &.black{
+    >.content{
+      >.background{
+        background-image: url("#{$static_images_path}triangle-button-black.png");
+      }
+
+      >h3{
+        color: white;
       }
     }
   }

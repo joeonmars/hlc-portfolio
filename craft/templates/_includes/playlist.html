@@ -6,7 +6,7 @@
 			<div class="viewport">
 				{% for album in craft.entries.section('album').find() %}
 					<div class="album">
-						<div class="heading" style="background-image: url({{ album.cover[0].url }});">
+						<div class="heading" style="background-image: url({{ SERVER_PATH }}{{ album.cover[0].url }});">
 							{{ album.title }}
 						</div>
 						<ul class="songs">

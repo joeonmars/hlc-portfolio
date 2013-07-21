@@ -94,7 +94,6 @@ $footer_bottom: 20px;
 	}
 
 	#copyright{
-		padding-top: 10px;
 		text-transform: capitalize;
 
 		>a{
@@ -104,5 +103,9 @@ $footer_bottom: 20px;
 				text-decoration: underline;
 			}
 		}
+	}
+
+	#like-buttons{
+		margin: 10px 0 5px 0;
 	}
 }

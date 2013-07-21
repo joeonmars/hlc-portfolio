@@ -17,11 +17,20 @@ hlc.views.MainHud = function(){
 
   this.domElement = goog.dom.getElement('main-hud');
   this.sidebarButtonDom = goog.dom.query('.sidebarButton', this.domElement)[0];
-  this.playlistButtonDom = goog.dom.query('.playlistButton', this.domElement)[0];
+
+  this.playlistButtonContainerDom = goog.dom.query('.playlistButtonContainer', this.domElement)[0];
+  this.playlistButtonDom = goog.dom.query('.playlistButton', this.playlistButtonContainerDom)[0];
+  this.playlistCloseButtonDom = goog.dom.query('.playlistCloseButton', this.playlistButtonContainerDom)[0];
+
+  if(Modernizr.csstransforms3d) {
+  	goog.dom.classes.add(this.playlistButtonContainerDom, 'use3d');
+  }
+
   this.homeButtonDom = goog.dom.query('.homeButton', this.domElement)[0];
   this.bottomContainer = goog.dom.query('.bottom', this.domElement)[0];
 
   this.playlistButton = new hlc.views.common.TriangleButton(this.playlistButtonDom);
+  this.playlistCloseButton = new hlc.views.common.TriangleButton(this.playlistCloseButtonDom);
   this.homeButton = new hlc.views.common.TriangleButton(this.homeButtonDom);
   this.sidebarButton = new hlc.views.common.TriangleButton(this.sidebarButtonDom);
 
@@ -50,10 +59,12 @@ hlc.views.MainHud.prototype.init = function(){
 
 	goog.events.listen(this.sidebarButtonDom, 'click', this.onClick, false, this);
 	goog.events.listen(this.playlistButtonDom, 'click', this.onClick, false, this);
+	goog.events.listen(this.playlistCloseButtonDom, 'click', this.onClick, false, this);
 	goog.events.listen(this.homeButtonDom, 'click', this.onClick, false, this);
 
-	goog.events.listen(this.playlist, hlc.views.Playlist.EventType.SHOW, this.onPlaylistShow, false, this);
-	goog.events.listen(this.playlist, hlc.views.Playlist.EventType.HIDE, this.onPlaylistHide, false, this);
+	goog.events.listen(this.playlist, hlc.views.Playlist.EventType.SHOW_START, this.onPlaylistShowStart, false, this);
+	goog.events.listen(this.playlist, hlc.views.Playlist.EventType.HIDE_START, this.onPlaylistHideStart, false, this);
+	goog.events.listen(this.playlist, hlc.views.Playlist.EventType.HIDE_FINISH, this.onPlaylistHideFinish, false, this);
 
 	goog.events.listen(hlc.main.views.sidebar, hlc.views.Sidebar.EventType.SLIDE_IN, this.onSidebarSlideIn, false, this);
 	goog.events.listen(hlc.main.views.sidebar, hlc.views.Sidebar.EventType.SLIDED_OUT, this.onSidebarSlidedOut, false, this);
@@ -95,12 +106,25 @@ hlc.views.MainHud.prototype.onScrollFinish = function(e){
 };
 
 
-hlc.views.MainHud.prototype.onPlaylistShow = function(e){
+hlc.views.MainHud.prototype.onPlaylistShowStart = function(e){
 	this.mediaPlayer.hide();
+
+	goog.dom.classes.add(this.playlistButtonContainerDom, 'flip');
+
+	this.playlistButton.stopAnimation();
+	this.playlistCloseButton.startAnimation();
 };
 
 
-hlc.views.MainHud.prototype.onPlaylistHide = function(e){
+hlc.views.MainHud.prototype.onPlaylistHideStart = function(e){
+	goog.dom.classes.remove(this.playlistButtonContainerDom, 'flip');
+
+	this.playlistButton.startAnimation();
+	this.playlistCloseButton.stopAnimation();
+};
+
+
+hlc.views.MainHud.prototype.onPlaylistHideFinish = function(e){
 	this.mediaPlayer.show();
 };
 
@@ -127,7 +151,10 @@ hlc.views.MainHud.prototype.onClick = function(e){
 		break;
 
 		case this.playlistButtonDom:
-		this.playlist.toggle();
+		case this.playlistCloseButtonDom:
+		if(!this.playlist.isTweening()) {
+			this.playlist.toggle();
+		}
 		break;
 
 		case this.homeButtonDom:

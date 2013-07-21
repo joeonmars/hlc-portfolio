@@ -2,9 +2,8 @@ goog.provide('hlc.main');
 
 goog.require('goog.fx.anim');
 goog.require('goog.dom');
-goog.require('goog.dom.query');
-goog.require('goog.style');
 goog.require('soy');
+goog.require('hlc.data.Data');
 goog.require('hlc.templates');
 goog.require('hlc.views.AlbumSection');
 goog.require('hlc.views.Footer');
@@ -74,9 +73,10 @@ hlc.main.onPreload = function(e) {
 	hlc.main.views.footer.init();
 };
 
+hlc.main.assets = null;
+hlc.main.data = hlc.data.Data.getInstance();
 hlc.main.controllers = {};
 hlc.main.views = {};
-hlc.main.assets = null;
 
 // export
 goog.exportProperty(window, 'hlc', hlc);

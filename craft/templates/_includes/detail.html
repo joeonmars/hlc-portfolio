@@ -4,6 +4,8 @@
 {% set songSlug = craft.request.getQuery('song') %}
 {% set songEntry = craft.entries.section('song').slug(songSlug).find()[0] %}
 
+{% set SERVER_PATH = "http://"~craft.request.serverName~"/" %}
+
 <div class="songDetailContainer">
 
 	<h4>
@@ -53,7 +55,7 @@
 
 	{% if songEntry.allowDownload == 'y' %}
 	<div class="download section">
-		<a href="{{ songEntry.audio[0].url }}">
+		<a href="{{ SERVER_PATH }}{{ songEntry.audio[0].url }}">
 			<h3>download</h3>
 			<i></i>
 		</a>
@@ -67,7 +69,7 @@
 		{% for suggestedSong in songEntry.suggestedSongs %}
 			<li>
 				<a href="/album/{{ albumEntry.slug }}/{{ suggestedSong.slug }}" target="_self">
-					<div class="background" style="background-image: url({{ albumEntry.cover[0].url }});"></div>
+					<div class="background" style="background-image: url({{ SERVER_PATH }}{{ albumEntry.cover[0].url }});"></div>
 					<p>{{ suggestedSong.title }}</p>
 				</a>
 			</li>

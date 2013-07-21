@@ -6,8 +6,62 @@
 		position: relative;
 	}
 
-	.playlistButton{
+	.playlistButtonContainer{
+		width: $triangle_button_size;
 		margin: 0 auto;
+		@include single-transition(transform, .8s, ease-in-out);
+		@include transform-style(preserve-3d);
+
+		>.playlistButton {
+			display: block;
+		}
+
+		>.playlistCloseButton{
+			display: none;
+		}
+
+		&.use3d{
+			>.playlistButton {
+				display: block;
+				@include backface-visibility(hidden);
+			}
+
+			>.playlistCloseButton {
+				display: block;
+				@include backface-visibility(hidden);
+				@include rotateY(180deg);
+			}
+		}
+
+		&.flip{
+			&.use3d{
+				@include rotateY(180deg);
+
+				>.playlistButton, >.playlistCloseButton{
+					display: block;
+				}
+			}
+			
+			>.playlistButton {
+				display: none;
+			}
+
+			>.playlistCloseButton{
+				display: block;
+			}
+		}
+
+		>.playlistButton{
+			position: absolute;
+			top: 0;
+			z-index: 1;
+		}
+
+		>.playlistCloseButton{
+			position: absolute;
+			top: 0;
+			z-index: 0;
+		}
 	}
 
 	.sidebarButton{

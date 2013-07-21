@@ -25,7 +25,7 @@
 			width: 20%;
 			display: inline-block;
 			vertical-align: middle;
-			text-align: center;
+			@include user-select(none);
 		}
 	}
 
@@ -43,6 +43,36 @@
 				padding-bottom: (40px - 18px) / 2;
 			}
 		}
+
+		.arrowButton{
+			margin: 0 auto;
+			@extend .button;
+			@include single-transition(opacity, .2s);
+
+			&:hover{
+				opacity: .5;
+			}
+
+			&.inactive{
+				display: none;
+			}
+		}
+	}
+
+	>.top{
+		.arrowButton{
+			&.upwards{
+				@include icon-sprite("album-player-arrow-up");
+			}
+		}
+	}
+
+	>.bottom{
+		.arrowButton{
+			&.downwards{
+				@include icon-sprite("album-player-arrow-down");
+			}
+		}
 	}
 
 	>.middle{
@@ -56,6 +86,11 @@
 				padding-top: (60px - 44px) / 2;
 				padding-bottom: (60px - 44px) / 2;
 			}
+		}
+
+		canvas{
+			display: block;
+			margin: 0 auto;
 		}
 	}
 }

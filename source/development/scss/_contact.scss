@@ -72,12 +72,16 @@ $form_width: 380px;
 						@include icon-sprite("facebook-page");
 					}
 
+					&.googlePlus{
+						@include icon-sprite("googleplus-page");
+					}
+
 					&.twitter{
 						@include icon-sprite("twitter-page");
 					}
 
 					&.linkedIn{
-
+						@include icon-sprite("linkedin-page");
 					}
 
 					&.vimeo{
@@ -85,7 +89,7 @@ $form_width: 380px;
 					}
 
 					&.youtube{
-						
+						@include icon-sprite("youtube-page");
 					}
 				}
 			}

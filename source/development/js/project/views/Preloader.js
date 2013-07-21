@@ -6,6 +6,7 @@ goog.require('goog.dom');
 goog.require('goog.dom.query');
 goog.require('goog.dom.classes');
 goog.require('goog.net.XhrIo');
+goog.require('goog.net.ImageLoader');
 
 /**
  * @constructor
@@ -13,10 +14,23 @@ goog.require('goog.net.XhrIo');
 hlc.views.Preloader = function(){
   goog.base(this);
 
-  this._sitemapRequest = new goog.net.XhrIo();
-  this._isSitemapLoaded = false;
+  this._isLoaded = false;
 
+  // sitemap json loader
+  this._sitemapRequest = new goog.net.XhrIo();
   this._sitemap = null;
+
+	// image loader
+	this._imageLoader = new goog.net.ImageLoader();
+	goog.events.listen(this._imageLoader, goog.events.EventType.LOAD, this.onImageLoad, false, this);
+	goog.events.listen(this._imageLoader, goog.net.EventType.COMPLETE, this.onImageComplete, false, this);
+
+	goog.array.forEach(hlc.main.data.preloadAssets, function(url) {
+		this._imageLoader.addImage(goog.string.getRandomString(), url);
+	}, this);
+
+	// assets holder
+	this._assets = {};
 };
 goog.inherits(hlc.views.Preloader, goog.events.EventTarget);
 
@@ -36,7 +50,7 @@ hlc.views.Preloader.prototype.load = function(){
 
 
 hlc.views.Preloader.prototype.isLoaded = function(){
-	return this._isSitemapLoaded;
+	return this._isLoaded;
 };
 
 
@@ -46,9 +60,9 @@ hlc.views.Preloader.prototype.onSitemapRequested = function(e){
 		var responseText = this._sitemapRequest.getResponseText();
 		this._sitemap = JSON.parse(responseText);
 
-		this._isSitemapLoaded = true;
-		
-		this.onLoad();
+		this._assets.sitemap = this._sitemap;
+
+		this._imageLoader.start();
 
 	}else {
 
@@ -58,16 +72,20 @@ hlc.views.Preloader.prototype.onSitemapRequested = function(e){
 };
 
 
-hlc.views.Preloader.prototype.onLoad = function(){
-	// check if both sitemap and main assets is loaded
-	if(!this._isSitemapLoaded) return false;
+hlc.views.Preloader.prototype.onImageLoad = function(e){
+	this._assets[e.target.id] = e.target.src;
+};
 
-	var assets = {
-		sitemap: this._sitemap
-	};
 
-	//
-	this.dispatchEvent({type: goog.net.EventType.COMPLETE, assets:assets});
+hlc.views.Preloader.prototype.onImageComplete = function(e){
+	this.onLoadComplete();
+};
+
+
+hlc.views.Preloader.prototype.onLoadComplete = function(){
+	this._isLoaded = true;
+
+	this.dispatchEvent({type: goog.net.EventType.COMPLETE, assets: this._assets});
 };
 
 

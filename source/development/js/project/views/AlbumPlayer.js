@@ -15,6 +15,9 @@ hlc.views.AlbumPlayer = function(domElement){
 
   this.domElement = domElement;
 
+  this.prevButton = goog.dom.query('.top .arrowButton', this.domElement)[0];
+  this.nextButton = goog.dom.query('.bottom .arrowButton', this.domElement)[0];
+
   this.topScroller = goog.dom.query('.top ul', this.domElement)[0];
   this.middleScroller = goog.dom.query('.middle ul', this.domElement)[0];
   this.bottomScroller = goog.dom.query('.bottom ul', this.domElement)[0];
@@ -90,6 +93,15 @@ hlc.views.AlbumPlayer.prototype.gotoSong = function(index, delta){
   }else {
     this.scrollerTweener.add([bottomTweener, middleTweener, topTweener], '+=0', 'start', .15);
   }
+
+  // set button state
+  var isPrevButtonInactive = (index === 0);
+  if(isPrevButtonInactive) goog.dom.classes.add(this.prevButton, 'inactive');
+  else goog.dom.classes.remove(this.prevButton, 'inactive');
+
+  var isNextButtonInactive = (index === this._songs.length-1);
+  if(isNextButtonInactive) goog.dom.classes.add(this.nextButton, 'inactive');
+  else goog.dom.classes.remove(this.nextButton, 'inactive');
 };
 
 
@@ -114,12 +126,13 @@ hlc.views.AlbumPlayer.prototype.prevSong = function(){
 
 
 hlc.views.AlbumPlayer.prototype.activate = function(){
+  goog.events.listen(this.prevButton, 'click', this.onClick, false, this);
+  goog.events.listen(this.nextButton, 'click', this.onClick, false, this);
+
   // listen for audio events from SoundController
   goog.events.listen(this, 'loadedmetadata', this.onLoadedMetaData, false, this);
   goog.events.listen(this, 'timeupdate', this.onTimeUpdate, false, this);
   goog.events.listen(this, 'canplaythrough', this.onCanPlayThrough, false, this);
-  goog.events.listen(this, 'play', this.onPlay, false, this);
-  goog.events.listen(this, 'pause', this.onPause, false, this);
   goog.events.listen(this, 'ended', this.onEnded, false, this);
 
   hlc.main.controllers.soundController.addDispatcher(this);
@@ -127,12 +140,13 @@ hlc.views.AlbumPlayer.prototype.activate = function(){
 
 
 hlc.views.AlbumPlayer.prototype.deactivate = function(){
+  goog.events.unlisten(this.prevButton, 'click', this.onClick, false, this);
+  goog.events.unlisten(this.nextButton, 'click', this.onClick, false, this);
+
   // unlisten for audio events from SoundController
   goog.events.unlisten(this, 'loadedmetadata', this.onLoadedMetaData, false, this);
   goog.events.unlisten(this, 'timeupdate', this.onTimeUpdate, false, this);
   goog.events.unlisten(this, 'canplaythrough', this.onCanPlayThrough, false, this);
-  goog.events.unlisten(this, 'play', this.onPlay, false, this);
-  goog.events.unlisten(this, 'pause', this.onPause, false, this);
   goog.events.unlisten(this, 'ended', this.onEnded, false, this);
 
   hlc.main.controllers.soundController.removeDispatcher(this);
@@ -177,18 +191,24 @@ hlc.views.AlbumPlayer.prototype.onTimeUpdate = function(e){
 };
 
 
-hlc.views.AlbumPlayer.prototype.onPlay = function(e){
-
-};
-
-
-hlc.views.AlbumPlayer.prototype.onPause = function(e){
-
-};
-
-
 hlc.views.AlbumPlayer.prototype.onEnded = function(e){
   this.nextSong();
+};
+
+
+hlc.views.AlbumPlayer.prototype.onClick = function(e){
+  switch(e.currentTarget) {
+    case this.prevButton:
+    this.prevSong();
+    break;
+
+    case this.nextButton:
+    this.nextSong();
+    break;
+
+    default:
+    break;
+  }
 };
 
 

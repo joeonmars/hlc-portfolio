@@ -36,6 +36,11 @@ hlc.views.Playlist.prototype.init = function(){
 };
 
 
+hlc.views.Playlist.prototype.isTweening = function(){
+	return TweenMax.isTweening( this.domElement );
+};
+
+
 hlc.views.Playlist.prototype.show = function(){
 	this.isClosed = false;
 
@@ -54,10 +59,17 @@ hlc.views.Playlist.prototype.show = function(){
 	});
 
 	TweenMax.to(this.domElement, 1.5, {
-		opacity: 1
+		opacity: 1,
+		ease: Quad.easeInOut,
+		onStart: function() {
+			this.dispatchEvent({type: hlc.views.Playlist.EventType.SHOW_START});
+		},
+		onStartScope: this,
+		onComplete: function() {
+			this.dispatchEvent({type: hlc.views.Playlist.EventType.SHOW_FINISH});
+		},
+		onCompleteScope: this
 	});
-
-	this.dispatchEvent({type: hlc.views.Playlist.EventType.SHOW});
 };
 
 
@@ -69,19 +81,23 @@ hlc.views.Playlist.prototype.hide = function(){
 	if(this._middleTweener) this._middleTweener.kill();
 	this._middleTweener = TweenMax.to(this.middleDomElement, 1.5, {
 		width: 0,
-		ease: Strong.easeInOut,
-		onComplete: function() {
-			goog.style.showElement(this.parentDomElement, false);
-			this.isClosed = true;
-
-			this.dispatchEvent({type: hlc.views.Playlist.EventType.HIDE});
-		},
-		onCompleteScope: this
+		ease: Strong.easeInOut
 	});
 
 	TweenMax.to(this.domElement, 1.5, {
 		opacity: 0,
-		ease: Strong.easeIn
+		ease: Quad.easeInOut,
+		onStart: function() {
+			this.dispatchEvent({type: hlc.views.Playlist.EventType.HIDE_START});
+		},
+		onStartScope: this,
+		onComplete: function() {
+			goog.style.showElement(this.parentDomElement, false);
+			this.isClosed = true;
+
+			this.dispatchEvent({type: hlc.views.Playlist.EventType.HIDE_FINISH});
+		},
+		onCompleteScope: this
 	});
 };
 
@@ -111,6 +127,8 @@ hlc.views.Playlist.prototype.onResize = function(e){
 
 
 hlc.views.Playlist.EventType = {
-	SHOW: 'show',
-	HIDE: 'hide'
+	SHOW_START: 'show_start',
+	HIDE_START: 'hide_start',
+	SHOW_FINISH: 'show_finish',
+	HIDE_FINISH: 'hide_finish'
 };

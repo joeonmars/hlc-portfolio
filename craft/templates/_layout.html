@@ -18,12 +18,13 @@
 {% set COMPILE_MODE = "SIMPLE" %}
 {% set PATH_TO_STATIC_ASSETS = "/assets/static" %}
 {% set PATH_TO_PHP = "/php" %}
+{% set SERVER_PATH = "http://"~craft.request.serverName~"/" %}
 
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
 <head>
 	<meta charset="utf-8" />
-	<title>{% if title is defined %}{{ title }} - {% endif %}{{ siteName }}</title>
+	<title>{{ siteName }}</title>
 
 	<link rel="shortcut icon" href="{{PATH_TO_STATIC_ASSETS}}/images/favicon.ico">
 
@@ -37,16 +38,30 @@
 		document.body.style.visibility = 'hidden';
 	</script>
 
-	<!--
-		<header id="header">
-			<h1><a href="{{ siteUrl }}">{{ siteName }}</a></h1>
+	<!-- facebook like button -->
+	<div id="fb-root"></div>
+	<script>(function(d, s, id) {
+	  var js, fjs = d.getElementsByTagName(s)[0];
+	  if (d.getElementById(id)) return;
+	  js = d.createElement(s); js.id = id;
+	  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+	  fjs.parentNode.insertBefore(js, fjs);
+	}(document, 'script', 'facebook-jssdk'));</script>
+	<!-- end -->
 
-			<nav>
-				<ul>
-					<li><a href="{{ url('news') }}" {% if craft.request.firstSegment == 'news' %}class="active"{% endif %}>News</a></li>
-				</ul>
-			</nav>
-		</header>-->
+	<!-- twitter button -->
+	<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+	<!-- end -->
+
+	<!-- google +1 button -->
+	<script type="text/javascript">
+	  (function() {
+	    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+	    po.src = 'https://apis.google.com/js/plusone.js';
+	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+	  })();
+	</script>
+	<!-- end -->
 
 	<div id="main-container">
 
@@ -58,7 +73,10 @@
 					{% include "_includes/playlist" %}
 
 					<div class="top">
-						{% include "_includes/triangle-button" with {text: 'playlist', classes: 'playlistButton downwards'} %}
+						<div class="playlistButtonContainer">
+							{% include "_includes/triangle-button" with {text: 'playlist', classes: 'playlistButton downwards'} %}
+							{% include "_includes/triangle-button" with {text: 'close', classes: 'playlistCloseButton downwards black'} %}
+						</div>
 					</div>
 
 					<div class="right">
@@ -93,10 +111,15 @@
 							</li>
 							<li data-id="developer">
 								<h5>web design & development</h5>
-								<p>Joe Zhou &sdot; <a href="http://www.joeonmars.com/" target="_blank"><i class="icon-joeonmars"></i>joeonmars.com</a></p>
+								<p><a href="mailto:joe@joeonmars.com">Joe Zhou</a> &sdot; <a href="http://www.joeonmars.com/" target="_blank"><i class="icon-joeonmars"></i>joeonmars.com</a></p>
 							</li>
 						</ul>
 					</div>
+				</div>
+				<div id="like-buttons">
+					<div class="fb-like" data-href="{{ SERVER_PATH }}" data-send="false" data-layout="button_count" data-width="100" data-show-faces="false"></div>
+					<a href="https://twitter.com/share" class="twitter-share-button" data-url="{{ SERVER_PATH }}" data-count="none">Tweet</a>
+					<div class="g-plusone" data-size="medium" data-annotation="none" data-width="120"></div>
 				</div>
 				<div id="copyright">
 					Copyright &copy; {{ now.year }} <a href="mailto:{{ contact.emailAddress }}">Hsin-Lei Chen</a>, All rights reserved
