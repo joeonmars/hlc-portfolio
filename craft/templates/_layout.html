@@ -16,20 +16,54 @@
 {% endif %}
 
 {% set COMPILE_MODE = "SIMPLE" %}
-{% set PATH_TO_STATIC_ASSETS = "/assets/static" %}
-{% set PATH_TO_PHP = "/php" %}
 {% set SERVER_PATH = "http://"~craft.request.serverName~"/" %}
+{% set PATH_TO_STATIC_ASSETS = SERVER_PATH~"assets/static" %}
+{% set PATH_TO_PHP = SERVER_PATH~"php" %}
 
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
 <head>
 	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, minimum-scale=1, maximum-scale=1">
+	<meta name="keywords" content="{{ meta.metaKeywords }}">
+	<meta name="description" content="{{ meta.metaDescription }}">
+
+	<meta content="{{ SERVER_PATH }}" property="og:url">
+	<meta content="{{ siteName }}" property="og:title">
+	<meta content="{{ meta.metaDescription }}" property="og:description"/>
+	<meta content={% if meta.facebookImage|length > 1 %}"{{ meta.facebookImage[0].url }}"{% else %}"{{PATH_TO_STATIC_ASSETS}}/images/miscellaneous/facebook.png"{% endif %} property="og:image">
+
 	<title>{{ siteName }}</title>
 
-	<link rel="shortcut icon" href="{{PATH_TO_STATIC_ASSETS}}/images/favicon.ico">
+	<link rel="apple-touch-icon" href=
+		{% if meta.iconIphone|length > 1 %}
+			"{{ meta.iconIphone[0].url }}"
+		{% else %}
+			"{{PATH_TO_STATIC_ASSETS}}/images/miscellaneous/icon-iphone.png"
+		{% endif %}>
 
-	<link rel="home" href="{{ siteUrl }}" />
+	<link rel="apple-touch-icon" sizes="72x72" href=
+		{% if meta.iconIpad|length > 1 %}
+			"{{ meta.iconIpad[0].url }}"
+		{% else %}
+			"{{PATH_TO_STATIC_ASSETS}}/images/miscellaneous/icon-ipad.png"
+		{% endif %}>
 
+	<link rel="apple-touch-icon" sizes="114x114" href=
+		{% if meta.iconIphoneRetina|length > 1 %}
+			"{{ meta.iconIphoneRetina[0].url }}"
+		{% else %}
+			"{{PATH_TO_STATIC_ASSETS}}/images/miscellaneous/icon-iphone4.png"
+		{% endif %}>
+
+	<link rel="apple-touch-icon" sizes="144x144" href=
+		{% if meta.iconIpadRetina|length > 1 %}
+			"{{ meta.iconIpadRetina[0].url }}"
+		{% else %}
+			"{{PATH_TO_STATIC_ASSETS}}/images/miscellaneous/icon-ipad3.png"
+		{% endif %}>
+
+	<link rel="shortcut icon" href="{{PATH_TO_STATIC_ASSETS}}/images/miscellaneous/favicon.ico">
 	<link rel="stylesheet" type="text/css" href="{{PATH_TO_STATIC_ASSETS}}/css/main.css">
 </head>
 
