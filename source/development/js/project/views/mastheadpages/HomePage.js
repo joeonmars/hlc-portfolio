@@ -10,7 +10,7 @@ hlc.views.mastheadpages.HomePage = function(){
 	var domElement = goog.dom.getElement('home');
 	var url = hlc.Url.INCLUDES + 'home';
 
-  goog.base(this, domElement, url, 'home');
+  goog.base(this, domElement, url, 'home', 'home');
 };
 goog.inherits(hlc.views.mastheadpages.HomePage, hlc.views.mastheadpages.MastheadPage);
 

@@ -1,7 +1,7 @@
-<div class="triangleButton {{ classes }}">
+<a class="triangleButton {{ classes }}" {% if href %}href={{ href }}{% endif %}>
 	<div class="content">
 		<div class="background"></div>
 		<div class="arrow"></div>
 		<h3>{{ text }}</h3>
 	</div>
-</div>
+</a>

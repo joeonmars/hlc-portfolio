@@ -133,8 +133,11 @@ hlc.views.MastheadSection.prototype.toPage = function(page){
 hlc.views.MastheadSection.prototype.onClick = function(e){
 	switch(e.currentTarget) {
 		case this.albumButtonDom:
+		e.preventDefault();
+		var token = this.albumButtonDom.getAttribute('href');
+		hlc.main.controllers.navigationController.setToken(token);
+
 		goog.dom.classes.add(this.albumButtonDom, 'hide');
-		hlc.main.controllers.mainScrollController.scrollTo(hlc.controllers.MainScrollController.ScrollPosition.ALBUM);
 		break;
 	}
 };

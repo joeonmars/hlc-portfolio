@@ -16,10 +16,10 @@
 
 		<div class="hud">
 			<ul class="nav">
-				<li>{% include "_includes/diamond-button" with {text: 'home', dataUrl: 'home'} %}</li>
-				<li>{% include "_includes/diamond-button" with {text: 'biography', dataUrl: 'biography'} %}</li>
-				<li>{% include "_includes/diamond-button" with {text: 'awards', dataUrl: 'awards'} %}</li>
-				<li>{% include "_includes/diamond-button" with {text: 'contact', dataUrl: 'contact'} %}</li>
+				<li>{% include "_includes/diamond-button" with {text: 'home', href: '/home'} %}</li>
+				<li>{% include "_includes/diamond-button" with {text: 'biography', href: '/biography'} %}</li>
+				<li>{% include "_includes/diamond-button" with {text: 'awards', href: '/awards'} %}</li>
+				<li>{% include "_includes/diamond-button" with {text: 'contact', href: '/contact'} %}</li>
 			</ul>
 		</div>
 
@@ -45,7 +45,7 @@
 		</div>
 		
 		<div class="bottom">
-			{% include "_includes/triangle-button" with {text: 'albums', classes: 'albumButton upwards'} %}
+			{% include "_includes/triangle-button" with {text: 'albums', classes: 'albumButton upwards', href: '/album'} %}
 		</div>
 	</div>
 

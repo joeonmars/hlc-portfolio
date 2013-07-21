@@ -70,6 +70,10 @@ hlc.controllers.NavigationController.prototype.setToken = function(token, title)
 		if(!goog.string.startsWith(token, '/')) {
 			token = ('/').concat(token);
 		}
+	}else {
+		if(goog.string.startsWith(token, '/')) {
+			token = token.substring(1);
+		}
 	}
 
 	this._navHistory.setToken(token ,title);

@@ -8,7 +8,7 @@ goog.require('goog.net.XhrIo');
 /**
  * @constructor
  */
-hlc.views.mastheadpages.MastheadPage = function(domElement, url, title){
+hlc.views.mastheadpages.MastheadPage = function(domElement, url, title, token){
   goog.base(this);
 
   this.setParentEventTarget( hlc.main.views.mastheadSection );
@@ -17,6 +17,7 @@ hlc.views.mastheadpages.MastheadPage = function(domElement, url, title){
   this.parentDomElement = goog.dom.getParentElement(this.domElement);
 
   this.title = title;
+  this.token = token;
 
   this._url = url;
   this._request = new goog.net.XhrIo();
@@ -33,7 +34,7 @@ hlc.views.mastheadpages.MastheadPage.prototype.load = function(){
 	}else if(!this._request) {
 
 		this.onLoaded();
-		
+
 	}
 };
 
@@ -58,7 +59,9 @@ hlc.views.mastheadpages.MastheadPage.prototype.onLoaded = function(){
 	}
 
 	var ev = {
-		type: hlc.views.MastheadSection.EventType.PAGE_LOADED
+		type: hlc.views.MastheadSection.EventType.PAGE_LOADED,
+		title: this.title,
+		token: this.token
 	};
 
 	this.dispatchEvent(ev);

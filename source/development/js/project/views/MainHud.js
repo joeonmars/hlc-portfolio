@@ -130,7 +130,8 @@ hlc.views.MainHud.prototype.onPlaylistHideFinish = function(e){
 
 
 hlc.views.MainHud.prototype.onMastheadPageLoaded = function(e){
-	this.homeButton.setText(e.target.title);
+	this.homeButton.setText(e.title);
+	this.homeButtonDom.setAttribute('href', '/' + e.token);
 };
 
 
@@ -158,7 +159,9 @@ hlc.views.MainHud.prototype.onClick = function(e){
 		break;
 
 		case this.homeButtonDom:
-		hlc.main.controllers.mainScrollController.scrollTo(hlc.controllers.MainScrollController.ScrollPosition.MASTHEAD);
+		e.preventDefault();
+		var token = this.homeButtonDom.getAttribute('href');
+		hlc.main.controllers.navigationController.setToken(token);
 		break;
 	}
 };

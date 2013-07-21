@@ -42,7 +42,9 @@ hlc.views.MastheadNav.prototype.setBlack = function(toggle){
 
 
 hlc.views.MastheadNav.prototype.onClick = function(e){
+	e.preventDefault();
+
 	// set token
-	var dataUrl = e.currentTarget.getAttribute('data-url');
-	hlc.main.controllers.navigationController.setToken(dataUrl);
+	var token = e.currentTarget.getAttribute('href');
+	hlc.main.controllers.navigationController.setToken(token);
 };

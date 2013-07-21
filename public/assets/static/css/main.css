@@ -415,6 +415,7 @@ textarea {
 }
 
 .triangleButton {
+  display: block;
   overflow: hidden;
 }
 .triangleButton:hover.upwards .arrow {

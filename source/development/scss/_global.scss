@@ -172,6 +172,7 @@ textarea{
 
 // --- triangle button --
 .triangleButton{
+  display: block;
   @extend .button;
   overflow: hidden;
   //outline: 1px solid white;

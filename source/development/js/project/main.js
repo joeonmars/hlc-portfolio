@@ -70,11 +70,13 @@ hlc.main.onPreload = function(e) {
 	hlc.main.views.mainHud.init();
 	hlc.main.views.mastheadSection.init();
 	hlc.main.views.footer.init();
-	
+
 	hlc.main.controllers.navigationController.init();
 
-	// test token
-	//hlc.main.controllers.navigationController.setToken('home');
+	// set default token
+	if(hlc.main.controllers.navigationController.getToken() === '') {
+		hlc.main.controllers.navigationController.setToken('home');
+	}
 };
 
 hlc.main.assets = null;

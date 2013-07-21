@@ -22,6 +22,9 @@ goog.addSingletonGetter(hlc.controllers.MainScrollController);
 hlc.controllers.MainScrollController.prototype.init = function(){
   hlc.main.controllers.windowController.addDispatcher(this);
 	goog.events.listen(this, 'resize', this.onResize, false, this);
+
+	hlc.main.controllers.navigationController.addDispatcher(this);
+	goog.events.listen(this, goog.history.EventType.NAVIGATE, this.onNavigate, false, this);
 };
 
 
@@ -55,6 +58,15 @@ hlc.controllers.MainScrollController.prototype.scrollTo = function(scrollPositio
 		},
 		onCompleteScope: this
 	});
+};
+
+
+hlc.controllers.MainScrollController.prototype.onNavigate = function(e){
+	if(this.scrollPosition === hlc.controllers.MainScrollController.ScrollPosition.ALBUM) {
+		if(!goog.string.startsWith(e.token, 'album')) this.scrollTo(hlc.controllers.MainScrollController.ScrollPosition.MASTHEAD);
+	}else if(this.scrollPosition === hlc.controllers.MainScrollController.ScrollPosition.MASTHEAD) {
+		if(goog.string.startsWith(e.token, 'album')) this.scrollTo(hlc.controllers.MainScrollController.ScrollPosition.ALBUM);
+	}
 };
 
 
