@@ -73,6 +73,9 @@ hlc.views.MastheadSection.prototype.init = function(){
 
 	hlc.main.controllers.navigationController.addDispatcher(this);
 	goog.events.listen(this, goog.history.EventType.NAVIGATE, this.onNavigate, false, this);
+
+	// show default page
+	this.toPage( this.pages['home'] );
 };
 
 

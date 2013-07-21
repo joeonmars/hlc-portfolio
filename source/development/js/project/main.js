@@ -37,7 +37,6 @@ hlc.main = function() {
 
 	// init navigation controller
 	//hlc.controllers.NavigationController.Implementation = hlc.controllers.NavigationController.HASH;
-	hlc.main.controllers.navigationController.init();
 
 	// start main preloader
 	goog.events.listenOnce(hlc.main.views.preloader, goog.net.EventType.COMPLETE, hlc.main.onPreload, false, this);
@@ -71,6 +70,11 @@ hlc.main.onPreload = function(e) {
 	hlc.main.views.mainHud.init();
 	hlc.main.views.mastheadSection.init();
 	hlc.main.views.footer.init();
+	
+	hlc.main.controllers.navigationController.init();
+
+	// test token
+	//hlc.main.controllers.navigationController.setToken('home');
 };
 
 hlc.main.assets = null;

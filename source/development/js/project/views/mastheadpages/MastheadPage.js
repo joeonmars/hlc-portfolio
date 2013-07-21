@@ -18,8 +18,6 @@ hlc.views.mastheadpages.MastheadPage = function(domElement, url, title){
 
   this.title = title;
 
-  this.isLoaded = false;
-
   this._url = url;
   this._request = new goog.net.XhrIo();
 };
@@ -27,17 +25,21 @@ goog.inherits(hlc.views.mastheadpages.MastheadPage, goog.events.EventTarget);
 
 
 hlc.views.mastheadpages.MastheadPage.prototype.load = function(){
-	if(!this.isLoaded) {
+	if(this._request && !this._request.isActive()) {
+
 		goog.events.listenOnce(this._request, "complete", this.onAjaxCallback, false, this);
 		this._request.send(this._url);
-	}else{
+
+	}else if(!this._request) {
+
 		this.onLoaded();
+		
 	}
 };
 
 
 hlc.views.mastheadpages.MastheadPage.prototype.cancel = function(){
-	if(!this.isLoaded) {
+	if(this._request && this._request.isActive()) {
 		goog.events.unlisten(this._request, "complete", this.onAjaxCallback, false, this);
 		this._request.abort();
 	}
@@ -50,6 +52,11 @@ hlc.views.mastheadpages.MastheadPage.prototype.getOffsetLeft = function(){
 
 
 hlc.views.mastheadpages.MastheadPage.prototype.onLoaded = function(){
+	if(this._request) {
+		this._request.dispose();
+		this._request = null;
+	}
+
 	var ev = {
 		type: hlc.views.MastheadSection.EventType.PAGE_LOADED
 	};
@@ -62,9 +69,7 @@ hlc.views.mastheadpages.MastheadPage.prototype.onAjaxCallback = function(e){
 	if(this._request.isSuccess()) {
 
 		var responseText = this._request.getResponseText();
-		//console.log(responseText);
-
-		this.isLoaded = true;
+		this.domElement.innerHTML = responseText;
 
 		this.onLoaded();
 

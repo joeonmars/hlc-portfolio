@@ -32,16 +32,16 @@
 						<h2>awards</h2>
 						<h2>contact</h2>
 					</div>
-					<a href="/resume.pdf">{% include "_includes/rectangle-button" with {text: 'download resume', classes: 'download'} %}</a>
+					<a href="{{ SERVER_PATH }}{{ resume.downloads[0].url }}">{% include "_includes/rectangle-button" with {text: 'download resume', classes: 'download'} %}</a>
 				</div>
 			</div>
 		</div>
 
 		<div class="pages">
-			{% include "_includes/home" %}
-			{% include "_includes/biography" %}
-			{% include "_includes/awards" %}
-			{% include "_includes/contact" %}
+			<div id="home" class="page"></div>
+			<div id="biography" class="page"></div>
+			<div id="awards" class="page"></div>
+			<div id="contact" class="page"></div>
 		</div>
 		
 		<div class="bottom">
