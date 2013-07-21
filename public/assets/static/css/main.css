@@ -83,164 +83,210 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
   font-style: normal;
 }
 
-.icon-sprite, .icon-download-small, .icon-download, .icon-expand-button-down-black-small, .icon-expand-button-down-white-small, .icon-expand-button-up-black-small, .icon-expand-button-up-white-small, .icon-facebook, .icon-googleplus, .icon-joeonmars, .icon-logo-strip-left, .icon-logo-strip-right, .icon-mail, .icon-mediaplayer-nextbutton, .icon-mediaplayer-pausebutton, .icon-mediaplayer-playbutton, .icon-mediaplayer-prevbutton, .icon-mediaplayer-soundbutton, .icon-mediaplayer-soundhandle, .icon-mediaplayer-soundslider, .icon-sidebar-close-button-arrow, .icon-sidebar-close-button, .icon-triangle-arrow-downwards, .icon-triangle-arrow-leftwards, .icon-triangle-arrow-rightwards, .icon-triangle-arrow-upwards, .icon-twitter, .triangleButton.upwards .arrow, .triangleButton.downwards .arrow, .triangleButton.leftwards .arrow, .triangleButton.rightwards .arrow, .expandButton.upwards, .expandButton.upwards.black, .expandButton.dowmwards, .expandButton.dowmwards.black, #sidebar > .content > .songDetailContainer > .download > a > i, #sidebar > .closeButton > .content, #sidebar > .closeButton > .content > .arrow, #media-player > .fullColumn > div.playbackControl > .cell > .button.prevButton, #media-player > .fullColumn > div.playbackControl > .cell > .prevButton.triangleButton, #media-player > .fullColumn > div.playbackControl > .cell > .prevButton.rectangleButton, #media-player > .fullColumn > div.playbackControl > .cell > .prevButton.diamondButton, #media-player > .fullColumn > div.playbackControl > .cell > .prevButton.expandButton, #media-player > .fullColumn > div.playbackControl > .cell > .button.playButton, #media-player > .fullColumn > div.playbackControl > .cell > .playButton.triangleButton, #media-player > .fullColumn > div.playbackControl > .cell > .playButton.rectangleButton, #media-player > .fullColumn > div.playbackControl > .cell > .playButton.diamondButton, #media-player > .fullColumn > div.playbackControl > .cell > .playButton.expandButton, #media-player > .fullColumn > div.playbackControl > .cell > .button.playButton.pause, #media-player > .fullColumn > div.playbackControl > .cell > .playButton.pause.triangleButton, #media-player > .fullColumn > div.playbackControl > .cell > .playButton.pause.rectangleButton, #media-player > .fullColumn > div.playbackControl > .cell > .playButton.pause.diamondButton, #media-player > .fullColumn > div.playbackControl > .cell > .playButton.pause.expandButton, #media-player > .fullColumn > div.playbackControl > .cell > .button.nextButton, #media-player > .fullColumn > div.playbackControl > .cell > .nextButton.triangleButton, #media-player > .fullColumn > div.playbackControl > .cell > .nextButton.rectangleButton, #media-player > .fullColumn > div.playbackControl > .cell > .nextButton.diamondButton, #media-player > .fullColumn > div.playbackControl > .cell > .nextButton.expandButton, #media-player > .fullColumn > div.soundControl > .soundButton, #media-player > .fullColumn > div.soundControl > .slider, #media-player > .fullColumn > div.soundControl > .slider > .sliderContainer > .handle, #media-player > .fullColumn > div.shareControl > .cell > .button.facebook, #media-player > .fullColumn > div.shareControl > .cell > .facebook.triangleButton, #media-player > .fullColumn > div.shareControl > .cell > .facebook.rectangleButton, #media-player > .fullColumn > div.shareControl > .cell > .facebook.diamondButton, #media-player > .fullColumn > div.shareControl > .cell > .facebook.expandButton, #media-player > .fullColumn > div.shareControl > .cell > .button.twitter, #media-player > .fullColumn > div.shareControl > .cell > .twitter.triangleButton, #media-player > .fullColumn > div.shareControl > .cell > .twitter.rectangleButton, #media-player > .fullColumn > div.shareControl > .cell > .twitter.diamondButton, #media-player > .fullColumn > div.shareControl > .cell > .twitter.expandButton, #media-player > .fullColumn > div.shareControl > .cell > .button.googleplus, #media-player > .fullColumn > div.shareControl > .cell > .googleplus.triangleButton, #media-player > .fullColumn > div.shareControl > .cell > .googleplus.rectangleButton, #media-player > .fullColumn > div.shareControl > .cell > .googleplus.diamondButton, #media-player > .fullColumn > div.shareControl > .cell > .googleplus.expandButton, #home .logo h1 > span:before, #home .logo h1 > span:after, #contact .send i, .masthead > .marqueeContainer > .marquee > .content > a > .rectangleButton i {
-  background: url('../images/icon-sd54bc2fb9d.png') no-repeat;
+.icon-sprite, .icon-diamond-button-black, .icon-diamond-button-white, .icon-download-small, .icon-download, .icon-expand-button-down-black-small, .icon-expand-button-down-white-small, .icon-expand-button-up-black-small, .icon-expand-button-up-white-small, .icon-facebook-page, .icon-facebook, .icon-googleplus, .icon-joeonmars, .icon-mail, .icon-mediaplayer-nextbutton, .icon-mediaplayer-pausebutton, .icon-mediaplayer-playbutton, .icon-mediaplayer-prevbutton, .icon-mediaplayer-soundbutton, .icon-mediaplayer-soundhandle, .icon-mediaplayer-soundslider, .icon-sidebar-close-button-arrow, .icon-sidebar-close-button, .icon-triangle-arrow-downwards, .icon-triangle-arrow-leftwards, .icon-triangle-arrow-rightwards, .icon-triangle-arrow-upwards, .icon-twitter-page, .icon-twitter, .icon-vimeo-page, .triangleButton.upwards .arrow, .triangleButton.downwards .arrow, .triangleButton.leftwards .arrow, .triangleButton.rightwards .arrow, .diamondButton > .backgrounds > div.white, .diamondButton > .backgrounds > div.whiteActive, .diamondButton > .backgrounds > div.black, .diamondButton > .backgrounds > div.blackActive, .expandButton.upwards, .expandButton.upwards.black, .expandButton.downwards, .expandButton.downwards.black, #sidebar > .content > .songDetailContainer > .download > a > i, #sidebar > .closeButton > .content, #sidebar > .closeButton > .content > .arrow, #media-player > .fullColumn > div.playbackControl > .cell > .button.prevButton, #media-player > .fullColumn > div.playbackControl > .cell > .prevButton.triangleButton, #media-player > .fullColumn > div.playbackControl > .cell > .prevButton.rectangleButton, #media-player > .fullColumn > div.playbackControl > .cell > .prevButton.diamondButton, #media-player > .fullColumn > div.playbackControl > .cell > .prevButton.expandButton, #media-player > .fullColumn > div.playbackControl > .cell > .button.playButton, #media-player > .fullColumn > div.playbackControl > .cell > .playButton.triangleButton, #media-player > .fullColumn > div.playbackControl > .cell > .playButton.rectangleButton, #media-player > .fullColumn > div.playbackControl > .cell > .playButton.diamondButton, #media-player > .fullColumn > div.playbackControl > .cell > .playButton.expandButton, #media-player > .fullColumn > div.playbackControl > .cell > .button.playButton.pause, #media-player > .fullColumn > div.playbackControl > .cell > .playButton.pause.triangleButton, #media-player > .fullColumn > div.playbackControl > .cell > .playButton.pause.rectangleButton, #media-player > .fullColumn > div.playbackControl > .cell > .playButton.pause.diamondButton, #media-player > .fullColumn > div.playbackControl > .cell > .playButton.pause.expandButton, #media-player > .fullColumn > div.playbackControl > .cell > .button.nextButton, #media-player > .fullColumn > div.playbackControl > .cell > .nextButton.triangleButton, #media-player > .fullColumn > div.playbackControl > .cell > .nextButton.rectangleButton, #media-player > .fullColumn > div.playbackControl > .cell > .nextButton.diamondButton, #media-player > .fullColumn > div.playbackControl > .cell > .nextButton.expandButton, #media-player > .fullColumn > div.soundControl > .soundButton, #media-player > .fullColumn > div.soundControl > .slider, #media-player > .fullColumn > div.soundControl > .slider > .sliderContainer > .handle, #media-player > .fullColumn > div.shareControl > .cell > .button.facebook, #media-player > .fullColumn > div.shareControl > .cell > .facebook.triangleButton, #media-player > .fullColumn > div.shareControl > .cell > .facebook.rectangleButton, #media-player > .fullColumn > div.shareControl > .cell > .facebook.diamondButton, #media-player > .fullColumn > div.shareControl > .cell > .facebook.expandButton, #media-player > .fullColumn > div.shareControl > .cell > .button.twitter, #media-player > .fullColumn > div.shareControl > .cell > .twitter.triangleButton, #media-player > .fullColumn > div.shareControl > .cell > .twitter.rectangleButton, #media-player > .fullColumn > div.shareControl > .cell > .twitter.diamondButton, #media-player > .fullColumn > div.shareControl > .cell > .twitter.expandButton, #media-player > .fullColumn > div.shareControl > .cell > .button.googleplus, #media-player > .fullColumn > div.shareControl > .cell > .googleplus.triangleButton, #media-player > .fullColumn > div.shareControl > .cell > .googleplus.rectangleButton, #media-player > .fullColumn > div.shareControl > .cell > .googleplus.diamondButton, #media-player > .fullColumn > div.shareControl > .cell > .googleplus.expandButton, #contact .socialContainer > ul > li > a.facebook, #contact .socialContainer > ul > li > a.twitter, #contact .socialContainer > ul > li > a.vimeo, #contact .send i, .masthead > .marqueeContainer > .marquee > .content > a > .rectangleButton i {
+  background: url('../images/icon-sa96dc4e792.png') no-repeat;
+}
+
+.icon-diamond-button-black {
+  background-position: 0 -436px;
+  height: 100px;
+  width: 100px;
+}
+
+.icon-diamond-button-white {
+  background-position: 0 -236px;
+  height: 100px;
+  width: 100px;
 }
 
 .icon-download-small {
-  background-position: 0 -42px;
+  background-position: 0 -46px;
   height: 9px;
   width: 14px;
 }
 
 .icon-download {
-  background-position: -67px -42px;
+  background-position: -43px -20px;
   height: 13px;
   width: 17px;
 }
 
 .icon-expand-button-down-black-small {
-  background-position: -96px -42px;
+  background-position: -60px -20px;
   height: 14px;
   width: 12px;
 }
 
 .icon-expand-button-down-white-small {
-  background-position: -84px -42px;
+  background-position: -72px -20px;
   height: 14px;
   width: 12px;
 }
 
 .icon-expand-button-up-black-small {
-  background-position: -108px -42px;
+  background-position: 0 0;
   height: 14px;
   width: 12px;
 }
 
 .icon-expand-button-up-white-small {
-  background-position: -120px -42px;
+  background-position: -24px -46px;
   height: 14px;
   width: 12px;
 }
 
+.icon-facebook-page {
+  background-position: -62px 0;
+  height: 20px;
+  width: 20px;
+}
+
 .icon-facebook {
-  background-position: -71px -2px;
+  background-position: -84px -20px;
   height: 26px;
   width: 26px;
 }
 
 .icon-googleplus {
-  background-position: -97px -2px;
+  background-position: -65px -46px;
   height: 26px;
   width: 26px;
 }
 
 .icon-joeonmars {
-  background-position: -57px -42px;
+  background-position: -14px -46px;
   height: 10px;
   width: 10px;
 }
 
-.icon-logo-strip-left {
-  background-position: 0 0;
-  height: 1px;
-  width: 136px;
-}
-
-.icon-logo-strip-right {
-  background-position: 0 -1px;
-  height: 1px;
-  width: 136px;
-}
-
 .icon-mail {
-  background-position: -42px -42px;
+  background-position: -28px -20px;
   height: 10px;
   width: 15px;
 }
 
 .icon-mediaplayer-nextbutton {
-  background-position: -50px -80px;
+  background-position: 0 -136px;
   height: 40px;
   width: 50px;
 }
 
 .icon-mediaplayer-pausebutton {
-  background-position: 0 -140px;
+  background-position: 0 -96px;
   height: 40px;
   width: 40px;
 }
 
 .icon-mediaplayer-playbutton {
-  background-position: -40px -140px;
+  background-position: -64px -96px;
   height: 40px;
   width: 40px;
 }
 
 .icon-mediaplayer-prevbutton {
-  background-position: 0 -80px;
+  background-position: 0 -196px;
   height: 40px;
   width: 50px;
 }
 
 .icon-mediaplayer-soundbutton {
-  background-position: -27px -2px;
+  background-position: -82px 0;
   height: 20px;
   width: 20px;
 }
 
 .icon-mediaplayer-soundhandle {
-  background-position: -47px -2px;
+  background-position: -40px -96px;
   height: 40px;
   width: 24px;
 }
 
 .icon-mediaplayer-soundslider {
-  background-position: 0 -56px;
+  background-position: 0 -72px;
   height: 24px;
   width: 120px;
 }
 
 .icon-sidebar-close-button-arrow {
-  background-position: -18px -2px;
+  background-position: -30px 0;
   height: 15px;
   width: 9px;
 }
 
 .icon-sidebar-close-button {
-  background-position: -100px -80px;
+  background-position: -50px -136px;
   height: 60px;
   width: 30px;
 }
 
 .icon-triangle-arrow-downwards {
-  background-position: -28px -42px;
+  background-position: 0 -20px;
   height: 9px;
   width: 14px;
 }
 
 .icon-triangle-arrow-leftwards {
-  background-position: 0 -2px;
+  background-position: -12px 0;
   height: 14px;
   width: 9px;
 }
 
 .icon-triangle-arrow-rightwards {
-  background-position: -9px -2px;
+  background-position: -21px 0;
   height: 14px;
   width: 9px;
 }
 
 .icon-triangle-arrow-upwards {
-  background-position: -14px -42px;
+  background-position: -14px -20px;
   height: 9px;
   width: 14px;
 }
 
+.icon-twitter-page {
+  background-position: -36px -46px;
+  height: 20px;
+  width: 29px;
+}
+
 .icon-twitter {
-  background-position: -80px -140px;
+  background-position: -91px -46px;
   height: 26px;
   width: 26px;
+}
+
+.icon-vimeo-page {
+  background-position: -39px 0;
+  height: 20px;
+  width: 23px;
+}
+
+.ui-sprite, .ui-contact-heading-bar-left, .ui-contact-heading-bar-right, .ui-logo-strip-left, .ui-logo-strip-right, #home .logo h1 > span:before, #home .logo h1 > span:after, #contact .heading > .bar.left, #contact .heading > .bar.right {
+  background: url('../images/ui-s2fab0331a3.png') no-repeat;
+}
+
+.ui-contact-heading-bar-left {
+  background-position: 0 -3px;
+  height: 1px;
+  width: 100px;
+}
+
+.ui-contact-heading-bar-right {
+  background-position: 0 -2px;
+  height: 1px;
+  width: 100px;
+}
+
+.ui-logo-strip-left {
+  background-position: 0 -1px;
+  height: 1px;
+  width: 136px;
+}
+
+.ui-logo-strip-right {
+  background-position: 0 0;
+  height: 1px;
+  width: 136px;
 }
 
 html, body {
@@ -312,7 +358,7 @@ textarea {
   background: linear-gradient(left, #595968 50%, #4f4f5d 50%);
 }
 
-.button, .triangleButton, .rectangleButton, .diamondButton, .expandButton, #playlist .viewport .album > .songs li > .iconWrapper > i {
+.button, .triangleButton, .rectangleButton, .diamondButton, .expandButton, #playlist .viewport .album > .songs li > a > .iconWrapper > i {
   -webkit-user-select: none;
   -moz-user-select: none;
   user-select: none;
@@ -418,7 +464,7 @@ textarea {
 .triangleButton.upwards .arrow {
   top: 5px;
   margin: 0 auto;
-  background-position: -14px -42px;
+  background-position: -14px -20px;
   height: 9px;
   width: 14px;
 }
@@ -432,7 +478,7 @@ textarea {
 .triangleButton.downwards .arrow {
   top: 44px;
   margin: 0 auto;
-  background-position: -28px -42px;
+  background-position: 0 -20px;
   height: 9px;
   width: 14px;
 }
@@ -447,7 +493,7 @@ textarea {
 .triangleButton.leftwards .arrow {
   top: 50px;
   left: 5px;
-  background-position: 0 -2px;
+  background-position: -12px 0;
   height: 14px;
   width: 9px;
 }
@@ -462,7 +508,7 @@ textarea {
 .triangleButton.rightwards .arrow {
   top: 50px;
   left: 44px;
-  background-position: -9px -2px;
+  background-position: -21px 0;
   height: 14px;
   width: 9px;
 }
@@ -554,27 +600,50 @@ textarea {
 .diamondButton.black > h3 {
   color: black;
 }
-.diamondButton.black > .background {
-  outline: 1px solid black;
-  background-color: rgba(0, 0, 0, 0);
+.diamondButton.black > .backgrounds > div.white, .diamondButton.black > .backgrounds > div.whiteActive {
+  opacity: 0;
 }
-.diamondButton > .background {
+.diamondButton.black > .backgrounds > div.black {
+  opacity: 1;
+}
+.diamondButton > .backgrounds {
   position: absolute;
-  top: 15px;
-  left: 15px;
-  width: 70px;
-  height: 70px;
-  outline: 1px solid white;
-  background-color: rgba(255, 255, 255, 0);
-  -webkit-transform: rotate(45deg);
-  -moz-transform: rotate(45deg);
-  -ms-transform: rotate(45deg);
-  -o-transform: rotate(45deg);
-  transform: rotate(45deg);
-  -webkit-transition: background-color 0.2s ease-out, outline 0.2s ease-out;
-  -moz-transition: background-color 0.2s ease-out, outline 0.2s ease-out;
-  -o-transition: background-color 0.2s ease-out, outline 0.2s ease-out;
-  transition: background-color 0.2s ease-out, outline 0.2s ease-out;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.diamondButton > .backgrounds > div {
+  position: absolute;
+  top: 0;
+  left: 0;
+  -webkit-transition: opacity 0.4s;
+  -moz-transition: opacity 0.4s;
+  -o-transition: opacity 0.4s;
+  transition: opacity 0.4s;
+}
+.diamondButton > .backgrounds > div.white {
+  background-position: 0 -236px;
+  height: 100px;
+  width: 100px;
+}
+.diamondButton > .backgrounds > div.whiteActive {
+  background-position: 0 -336px;
+  height: 100px;
+  width: 100px;
+  opacity: 0;
+}
+.diamondButton > .backgrounds > div.black {
+  background-position: 0 -436px;
+  height: 100px;
+  width: 100px;
+  opacity: 0;
+}
+.diamondButton > .backgrounds > div.blackActive {
+  background-position: 0 -536px;
+  height: 100px;
+  width: 100px;
+  opacity: 0;
 }
 .diamondButton > h3 {
   position: relative;
@@ -590,35 +659,39 @@ textarea {
 .diamondButton.active > h3 {
   color: black;
 }
-.diamondButton.active > .background {
-  background-color: white;
-  outline: 1px solid white;
+.diamondButton.active > .backgrounds > div.white {
+  opacity: 0;
+}
+.diamondButton.active > .backgrounds > div.whiteActive {
+  opacity: 1;
 }
 .diamondButton.active.black > h3 {
   color: white;
 }
-.diamondButton.active.black > .background {
-  background-color: black;
-  outline: 1px solid black;
+.diamondButton.active.black > .backgrounds > div.black, .diamondButton.active.black > .backgrounds > div.white, .diamondButton.active.black > .backgrounds > div.whiteActive {
+  opacity: 0;
+}
+.diamondButton.active.black > .backgrounds > div.blackActive {
+  opacity: 1;
 }
 
 .expandButton.upwards {
-  background-position: -120px -42px;
+  background-position: -24px -46px;
   height: 14px;
   width: 12px;
 }
 .expandButton.upwards.black {
-  background-position: -108px -42px;
+  background-position: 0 0;
   height: 14px;
   width: 12px;
 }
-.expandButton.dowmwards {
-  background-position: -84px -42px;
+.expandButton.downwards {
+  background-position: -72px -20px;
   height: 14px;
   width: 12px;
 }
-.expandButton.dowmwards.black {
-  background-position: -96px -42px;
+.expandButton.downwards.black {
+  background-position: -60px -20px;
   height: 14px;
   width: 12px;
 }
@@ -839,7 +912,7 @@ textarea {
   display: inline-block;
   vertical-align: baseline;
   margin-left: 4px;
-  background-position: -67px -42px;
+  background-position: -43px -20px;
   height: 13px;
   width: 17px;
 }
@@ -905,7 +978,7 @@ textarea {
   transform: translateX(2px);
 }
 #sidebar > .closeButton > .content {
-  background-position: -100px -80px;
+  background-position: -50px -136px;
   height: 60px;
   width: 30px;
   -webkit-transition: -webkit-transform 0.5s ease-out;
@@ -917,7 +990,7 @@ textarea {
   position: relative;
   top: 22px;
   left: 16px;
-  background-position: -18px -2px;
+  background-position: -30px 0;
   height: 15px;
   width: 9px;
   -webkit-transition: -webkit-transform 0.2s;
@@ -979,22 +1052,22 @@ textarea {
   margin: 0 auto;
 }
 #media-player > .fullColumn > div.playbackControl > .cell > .button.prevButton, #media-player > .fullColumn > div.playbackControl > .cell > .prevButton.triangleButton, #media-player > .fullColumn > div.playbackControl > .cell > .prevButton.rectangleButton, #media-player > .fullColumn > div.playbackControl > .cell > .prevButton.diamondButton, #media-player > .fullColumn > div.playbackControl > .cell > .prevButton.expandButton {
-  background-position: 0 -80px;
+  background-position: 0 -196px;
   height: 40px;
   width: 50px;
 }
 #media-player > .fullColumn > div.playbackControl > .cell > .button.playButton, #media-player > .fullColumn > div.playbackControl > .cell > .playButton.triangleButton, #media-player > .fullColumn > div.playbackControl > .cell > .playButton.rectangleButton, #media-player > .fullColumn > div.playbackControl > .cell > .playButton.diamondButton, #media-player > .fullColumn > div.playbackControl > .cell > .playButton.expandButton {
-  background-position: 0 -140px;
+  background-position: 0 -96px;
   height: 40px;
   width: 40px;
 }
 #media-player > .fullColumn > div.playbackControl > .cell > .button.playButton.pause, #media-player > .fullColumn > div.playbackControl > .cell > .playButton.pause.triangleButton, #media-player > .fullColumn > div.playbackControl > .cell > .playButton.pause.rectangleButton, #media-player > .fullColumn > div.playbackControl > .cell > .playButton.pause.diamondButton, #media-player > .fullColumn > div.playbackControl > .cell > .playButton.pause.expandButton {
-  background-position: -40px -140px;
+  background-position: -64px -96px;
   height: 40px;
   width: 40px;
 }
 #media-player > .fullColumn > div.playbackControl > .cell > .button.nextButton, #media-player > .fullColumn > div.playbackControl > .cell > .nextButton.triangleButton, #media-player > .fullColumn > div.playbackControl > .cell > .nextButton.rectangleButton, #media-player > .fullColumn > div.playbackControl > .cell > .nextButton.diamondButton, #media-player > .fullColumn > div.playbackControl > .cell > .nextButton.expandButton {
-  background-position: -50px -80px;
+  background-position: 0 -136px;
   height: 40px;
   width: 50px;
 }
@@ -1009,14 +1082,14 @@ textarea {
   display: inline-block;
   vertical-align: middle;
   margin-right: 8px;
-  background-position: -27px -2px;
+  background-position: -82px 0;
   height: 20px;
   width: 20px;
 }
 #media-player > .fullColumn > div.soundControl > .slider {
   display: inline-block;
   vertical-align: middle;
-  background-position: 0 -56px;
+  background-position: 0 -72px;
   height: 24px;
   width: 120px;
 }
@@ -1041,7 +1114,7 @@ textarea {
   position: absolute;
   top: 0;
   left: 50%;
-  background-position: -47px -2px;
+  background-position: -40px -96px;
   height: 40px;
   width: 24px;
 }
@@ -1127,17 +1200,17 @@ textarea {
   opacity: 1;
 }
 #media-player > .fullColumn > div.shareControl > .cell > .button.facebook, #media-player > .fullColumn > div.shareControl > .cell > .facebook.triangleButton, #media-player > .fullColumn > div.shareControl > .cell > .facebook.rectangleButton, #media-player > .fullColumn > div.shareControl > .cell > .facebook.diamondButton, #media-player > .fullColumn > div.shareControl > .cell > .facebook.expandButton {
-  background-position: -71px -2px;
+  background-position: -84px -20px;
   height: 26px;
   width: 26px;
 }
 #media-player > .fullColumn > div.shareControl > .cell > .button.twitter, #media-player > .fullColumn > div.shareControl > .cell > .twitter.triangleButton, #media-player > .fullColumn > div.shareControl > .cell > .twitter.rectangleButton, #media-player > .fullColumn > div.shareControl > .cell > .twitter.diamondButton, #media-player > .fullColumn > div.shareControl > .cell > .twitter.expandButton {
-  background-position: -80px -140px;
+  background-position: -91px -46px;
   height: 26px;
   width: 26px;
 }
 #media-player > .fullColumn > div.shareControl > .cell > .button.googleplus, #media-player > .fullColumn > div.shareControl > .cell > .googleplus.triangleButton, #media-player > .fullColumn > div.shareControl > .cell > .googleplus.rectangleButton, #media-player > .fullColumn > div.shareControl > .cell > .googleplus.diamondButton, #media-player > .fullColumn > div.shareControl > .cell > .googleplus.expandButton {
-  background-position: -97px -2px;
+  background-position: -65px -46px;
   height: 26px;
   width: 26px;
 }
@@ -1270,10 +1343,10 @@ textarea {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-#playlist .viewport .album > .songs li:hover > h4 {
+#playlist .viewport .album > .songs li:hover > a > h4 {
   color: black;
 }
-#playlist .viewport .album > .songs li > h4 {
+#playlist .viewport .album > .songs li > a > h4 {
   display: inline-block;
   vertical-align: middle;
   width: 80%;
@@ -1289,22 +1362,22 @@ textarea {
   -o-transition: color 0.5s;
   transition: color 0.5s;
 }
-#playlist .viewport .album > .songs li > h4.active {
+#playlist .viewport .album > .songs li > a > h4.active {
   color: black;
 }
-#playlist .viewport .album > .songs li > h4 > span {
+#playlist .viewport .album > .songs li > a > h4 > span {
   display: block;
   margin-top: 4px;
   font-size: 14px;
   font-family: "MyriadPro-Regular", sans-serif;
 }
-#playlist .viewport .album > .songs li > .iconWrapper {
+#playlist .viewport .album > .songs li > a > .iconWrapper {
   display: inline-block;
   vertical-align: middle;
   width: 20%;
   overflow: hidden;
 }
-#playlist .viewport .album > .songs li > .iconWrapper > i {
+#playlist .viewport .album > .songs li > a > .iconWrapper > i {
   float: right;
   width: 30px;
   height: 30px;
@@ -1384,7 +1457,7 @@ textarea {
   display: inline-block;
   vertical-align: middle;
   margin-right: 15px;
-  background-position: 0 0;
+  background-position: 0 -1px;
   height: 1px;
   width: 136px;
 }
@@ -1393,7 +1466,7 @@ textarea {
   display: inline-block;
   vertical-align: middle;
   margin-left: 15px;
-  background-position: 0 -1px;
+  background-position: 0 0;
   height: 1px;
   width: 136px;
 }
@@ -1485,6 +1558,82 @@ textarea {
 #contact {
   text-align: center;
 }
+#contact > .centerColumn > div {
+  margin-bottom: 40px;
+}
+#contact .heading {
+  position: relative;
+  margin: 15px auto 15px auto;
+  width: 380px;
+  height: 14px;
+}
+#contact .heading > .bar {
+  position: absolute;
+}
+#contact .heading > .bar.left {
+  top: 6.5px;
+  left: 0;
+  background-position: 0 -3px;
+  height: 1px;
+  width: 100px;
+}
+#contact .heading > .bar.right {
+  top: 6.5px;
+  right: 0;
+  background-position: 0 -2px;
+  height: 1px;
+  width: 100px;
+}
+#contact .heading > h4 {
+  font-size: 14px;
+  font-family: "barkentina_1regular", serif;
+  font-style: italic;
+  text-transform: capitalize;
+}
+#contact .emailContainer a {
+  color: black;
+  font-size: 18px;
+  font-family: "barkentina_1regular", serif;
+  text-decoration: underline;
+  -webkit-transition: color 0.4s;
+  -moz-transition: color 0.4s;
+  -o-transition: color 0.4s;
+  transition: color 0.4s;
+}
+#contact .emailContainer a:hover {
+  color: #747484;
+}
+#contact .socialContainer > ul > li {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 10px 0 10px;
+}
+#contact .socialContainer > ul > li > a {
+  display: block;
+  opacity: .8;
+  -webkit-transition: opacity 0.4s;
+  -moz-transition: opacity 0.4s;
+  -o-transition: opacity 0.4s;
+  transition: opacity 0.4s;
+}
+#contact .socialContainer > ul > li > a:hover {
+  opacity: .6;
+}
+#contact .socialContainer > ul > li > a.facebook {
+  background-position: -62px 0;
+  height: 20px;
+  width: 20px;
+}
+#contact .socialContainer > ul > li > a.twitter {
+  background-position: -36px -46px;
+  height: 20px;
+  width: 29px;
+}
+#contact .socialContainer > ul > li > a.vimeo {
+  background-position: -39px 0;
+  height: 20px;
+  width: 23px;
+}
 #contact input, #contact textarea {
   margin: 0 auto;
   display: block;
@@ -1505,7 +1654,7 @@ textarea {
 #contact .send i {
   vertical-align: baseline;
   margin-right: 5px;
-  background-position: -42px -42px;
+  background-position: -28px -20px;
   height: 10px;
   width: 15px;
 }
@@ -1572,7 +1721,7 @@ textarea {
 .masthead > .marqueeContainer > .marquee > .content > a > .rectangleButton i {
   vertical-align: baseline;
   margin-right: 5px;
-  background-position: 0 -42px;
+  background-position: 0 -46px;
   height: 9px;
   width: 14px;
 }
@@ -1653,6 +1802,7 @@ textarea {
 }
 .masthead > .hud > .nav > li {
   display: inline-block;
+  margin: 0 -1px 0 -1px;
 }
 
 #footer {
@@ -1680,7 +1830,7 @@ textarea {
 }
 #footer #credits {
   overflow: hidden;
-  padding-bottom: 10px;
+  padding-bottom: 6px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.3);
   opacity: 1;
   -webkit-transition: opacity 0.5s, height 0.5s ease-out;
@@ -1700,38 +1850,46 @@ textarea {
   font-size: 14px;
   font-family: "MyriadPro-BoldCond", sans-serif;
   text-transform: uppercase;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
 }
 #footer #credits > h3 > .expandButton {
   display: inline-block;
   vertical-align: -2px;
   margin-left: 5px;
 }
-#footer #credits > ul {
-  margin-top: 5px;
+#footer #credits > .outer {
+  height: 0;
+  overflow: hidden;
 }
-#footer #credits > ul > li {
+#footer #credits > .outer > .inner {
+  padding: 5px 0 5px 0;
+}
+#footer #credits > .outer > .inner > li {
   margin: 5px 0 5px 0;
 }
-#footer #credits > ul > li > h5 {
+#footer #credits > .outer > .inner > li > h5 {
   text-transform: uppercase;
   font-size: 12px;
   padding: 4px 0 4px 0;
 }
-#footer #credits > ul > li a, #footer #credits > ul > li p {
+#footer #credits > .outer > .inner > li a, #footer #credits > .outer > .inner > li p {
   color: white;
   font-family: "MyriadPro-Regular", sans-serif;
 }
-#footer #credits > ul > li a {
+#footer #credits > .outer > .inner > li a {
   text-decoration: underline;
   -webkit-transition: opacity 0.2s;
   -moz-transition: opacity 0.2s;
   -o-transition: opacity 0.2s;
   transition: opacity 0.2s;
 }
-#footer #credits > ul > li a:hover {
+#footer #credits > .outer > .inner > li a:hover {
   opacity: .8;
 }
-#footer #credits > ul > li i {
+#footer #credits > .outer > .inner > li i {
   margin-right: 5px;
 }
 #footer #copyright {

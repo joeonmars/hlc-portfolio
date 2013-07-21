@@ -8,7 +8,7 @@ goog.require('goog.dom');
  */
 hlc.views.mastheadpages.AwardsPage = function(){
 	var domElement = goog.dom.getElement('awards');
-	var url = hlc.Url.ORIGIN + 'awards';
+	var url = hlc.Url.INCLUDES + 'awards';
 
   goog.base(this, domElement, url, 'awards');
 

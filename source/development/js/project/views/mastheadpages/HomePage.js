@@ -8,7 +8,7 @@ goog.require('goog.dom');
  */
 hlc.views.mastheadpages.HomePage = function(){
 	var domElement = goog.dom.getElement('home');
-	var url = hlc.Url.ORIGIN + 'home';
+	var url = hlc.Url.INCLUDES + 'home';
 
   goog.base(this, domElement, url, 'home');
 };

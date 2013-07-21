@@ -8,7 +8,7 @@ goog.require('goog.dom');
  */
 hlc.views.mastheadpages.BiographyPage = function(){
 	var domElement = goog.dom.getElement('biography');
-	var url = hlc.Url.ORIGIN + 'biography';
+	var url = hlc.Url.INCLUDES + 'biography';
 
   goog.base(this, domElement, url, 'biography');
 };

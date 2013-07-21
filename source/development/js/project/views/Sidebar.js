@@ -120,7 +120,7 @@ hlc.views.Sidebar.prototype.loadContent = function(albumId, songId){
 	}
 
 	// load new content
-	var url = hlc.Url.ORIGIN + 'detail?album=' + albumId + '&song=' + songId;
+	var url = hlc.Url.INCLUDES + 'detail?album=' + albumId + '&song=' + songId;
 
 	goog.events.listenOnce(this._request, "complete", function(e) {
 
@@ -159,7 +159,7 @@ hlc.views.Sidebar.prototype.onLoaded = function(albumId, songId) {
 hlc.views.Sidebar.prototype.onAlbumScrollFinish = function(e) {
 	var song = e.albumSection.albumPlayer.getCurrentSong();
 	var songId = song.songId;
-	var albumId = song.albumId;
+	var albumId = song.album.albumId;
 
 	this.loadContent(albumId, songId);
 };

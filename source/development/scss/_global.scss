@@ -50,6 +50,12 @@ $icon-layout:smart;
 @import "icon/*.png"; 
 @include all-icon-sprites;
 
+$ui-sprite-dimensions: true;
+$ui-layout:smart;
+
+@import "ui/*.png"; 
+@include all-ui-sprites;
+
 // --- variables ---
 $min_width: 768px;
 $min_height: 640px;
@@ -395,22 +401,51 @@ textarea{
       color: black;
     }
 
-    >.background{
-      outline: 1px solid black;
-      background-color: rgba(0, 0, 0, 0);
+    >.backgrounds{
+      >div{
+        &.white, &.whiteActive{
+          opacity: 0;
+        }
+
+        &.black{
+          opacity: 1;
+        }
+      }
     }
   }
 
-  >.background{
+  >.backgrounds{
     position: absolute;
-    top: (100px - 70px) / 2;
-    left: (100px - 70px) / 2;
-    width: 70px;
-    height: 70px;
-    outline: 1px solid white;
-    background-color: rgba(255, 255, 255, 0);
-    @include rotate(45deg);
-    @include transition(background-color 0.2s ease-out, outline 0.2s ease-out);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    >div{
+      position: absolute;
+      top: 0;
+      left: 0;
+      @include single-transition(opacity, .4s);
+
+      &.white{
+        @include icon-sprite("diamond-button-white");
+      }
+
+      &.whiteActive{
+        @include icon-sprite("diamond-button-white-active");
+        opacity: 0;
+      }
+
+      &.black{
+        @include icon-sprite("diamond-button-black");
+        opacity: 0;
+      }
+
+      &.blackActive{
+        @include icon-sprite("diamond-button-black-active");
+        opacity: 0;
+      }
+    }
   }
 
   >h3{
@@ -427,9 +462,16 @@ textarea{
       color: black;
     }
 
-    >.background{
-      background-color: rgba(255, 255, 255, 1);
-      outline: 1px solid white;
+    >.backgrounds{
+      >div{
+        &.white{
+          opacity: 0;
+        }
+
+         &.whiteActive{
+          opacity: 1;
+        }
+      }
     }
 
     &.black{
@@ -437,9 +479,16 @@ textarea{
         color: white;
       }
 
-      >.background{
-        background-color: rgba(0, 0, 0, 1);
-        outline: 1px solid black;
+      >.backgrounds{
+        >div{
+          &.black, &.white, &.whiteActive{
+            opacity: 0;
+          }
+
+          &.blackActive{
+            opacity: 1;
+          }
+        }
       }
     }
   }
@@ -457,7 +506,7 @@ textarea{
     }
   }
 
-  &.dowmwards{
+  &.downwards{
     @include icon-sprite("expand-button-down-white-small");
 
     &.black{

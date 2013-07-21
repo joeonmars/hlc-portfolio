@@ -130,48 +130,52 @@
 					@include box-sizing(border-box);
 
 					&:hover{
+						>a{
+							>h4{
+								color: black;
+							}
+						}
+					}
+
+					>a{
 						>h4{
-							color: black;
+							display: inline-block;
+							vertical-align: middle;
+							width: 80%;
+							color: #999;
+							font-size: 20px;
+							font-style: italic;
+							font-family: $font_poly;
+							text-transform: capitalize;
+							overflow: hidden;
+							text-overflow:ellipsis;
+							@include single-transition(color, 0.5s);
+
+							&.active{
+								color: black;
+							}
+
+							>span{
+								display: block;
+								margin-top: 4px;
+								font-size: 14px;
+								font-family: $font_sans;
+							}
 						}
-					}
 
-					>h4{
-						display: inline-block;
-						vertical-align: middle;
-						width: 80%;
-						color: #999;
-						font-size: 20px;
-						font-style: italic;
-						font-family: $font_poly;
-						text-transform: capitalize;
-						overflow: hidden;
-						text-overflow:ellipsis;
-						@include single-transition(color, 0.5s);
+						>.iconWrapper{
+							display: inline-block;
+							vertical-align: middle;
+							width: 20%;
+							overflow: hidden;
 
-						&.active{
-							color: black;
-						}
-
-						>span{
-							display: block;
-							margin-top: 4px;
-							font-size: 14px;
-							font-family: $font_sans;
-						}
-					}
-
-					>.iconWrapper{
-						display: inline-block;
-						vertical-align: middle;
-						width: 20%;
-						overflow: hidden;
-
-						>i{
-							@extend .button;
-							float: right;
-							width: 30px;
-							height: 30px;
-							background: #ddd;
+							>i{
+								@extend .button;
+								float: right;
+								width: 30px;
+								height: 30px;
+								background: #ddd;
+							}
 						}
 					}
 

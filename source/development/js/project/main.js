@@ -22,6 +22,7 @@ goog.require('hlc.controllers.SoundController');
 // define global paths
 hlc.Url = {};
 hlc.Url.ORIGIN = window.location.protocol + '//' + window.location.hostname + '/';
+hlc.Url.INCLUDES = hlc.Url.ORIGIN + '_includes/';
 hlc.Url.STATIC_ASSETS = hlc.Url.ORIGIN + 'assets/static/';
 hlc.Url.UPLOAD_ASSETS = hlc.Url.ORIGIN + 'assets/upload/';
 hlc.Url.STATIC_IMAGES = hlc.Url.STATIC_ASSETS + 'images/';

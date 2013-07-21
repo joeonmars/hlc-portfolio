@@ -118,7 +118,7 @@ hlc.views.AlbumSection.prototype.crossfade = function() {
 	this._loaderImage.src = '';
 
 	//
-	hlc.main.views.footer.setPhotographyCopyright(this._currentArtwork['copyright']);
+	//hlc.main.views.footer.setPhotographyCopyright(this._currentArtwork['copyright']);
 };
 
 
@@ -154,7 +154,7 @@ hlc.views.AlbumSection.prototype.onScrollFinish = function(e){
 		this.albumPlayer.play();
 
 		//
-		hlc.main.views.footer.setPhotographyCopyright(this._currentArtwork['copyright']);
+		//hlc.main.views.footer.setPhotographyCopyright(this._currentArtwork['copyright']);
 
 	}else {
 

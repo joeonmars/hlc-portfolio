@@ -26,7 +26,7 @@ $footer_bottom: 20px;
 
 	#credits{
 		overflow: hidden;
-		padding-bottom: 10px;
+		padding-bottom: 6px;
 		border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 		opacity: 1;
 		@include transition(opacity 0.5s, height 0.5s ease-out);
@@ -45,6 +45,8 @@ $footer_bottom: 20px;
 			font-size: 14px;
 			font-family: $font_sans_boldcond;
 			text-transform: uppercase;
+			cursor: pointer;
+			@include user-select(none);
 
 			>.expandButton{
 				display: inline-block;
@@ -53,34 +55,39 @@ $footer_bottom: 20px;
 			}
 		}
 
-		>ul{
-			margin-top: 5px;
+		>.outer{
+			height: 0;
+			overflow: hidden;
 
-			>li{
-				margin: 5px 0 5px 0;
+			>.inner{
+				padding: 5px 0 5px 0;
 
-				>h5{
-					text-transform: uppercase;
-					font-size: 12px;
-					padding: 4px 0 4px 0;
-				}
+				>li{
+					margin: 5px 0 5px 0;
 
-				a, p{
-					color: white;
-					font-family: $font_sans;
-				}
-
-				a{
-					text-decoration: underline;
-					@include single-transition(opacity, 0.2s);
-
-					&:hover{
-						opacity: .8;
+					>h5{
+						text-transform: uppercase;
+						font-size: 12px;
+						padding: 4px 0 4px 0;
 					}
-				}
 
-				i{
-					margin-right: 5px;
+					a, p{
+						color: white;
+						font-family: $font_sans;
+					}
+
+					a{
+						text-decoration: underline;
+						@include single-transition(opacity, 0.2s);
+
+						&:hover{
+							opacity: .8;
+						}
+					}
+
+					i{
+						margin-right: 5px;
+					}
 				}
 			}
 		}

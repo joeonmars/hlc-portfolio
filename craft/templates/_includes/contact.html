@@ -1,21 +1,53 @@
 <div id="contact" class="page">
 	<div class="centerColumn">
-		<div>
-			<h4>{{ contact.emailHeading }}</h4>
+		<div class="emailContainer">
+			<div class="heading">
+				<div class="bar left"></div>
+				<h4>{{ contact.emailHeading }}</h4>
+				<div class="bar right"></div>
+			</div>
 			<a href="mailto:{{ contact.emailAddress }}">{{ contact.emailAddress }}</a>
 		</div>
 
-		<div>
-			<h4>{{ contact.socialHeading }}</h4>
-			<ul class="socialIcons">
+		<div class="socialContainer">
+			<div class="heading">
+				<div class="bar left"></div>
+				<h4>{{ contact.socialHeading }}</h4>
+				<div class="bar right"></div>
+			</div>
+			<ul>
+				{% if contact.facebookUrl|length %}
 				<li><a class="facebook" href="{{ contact.facebookUrl }}" target="_blank"></a></li>
+				{% endif %}
+
+				{% if contact.twitterUrl|length %}
 				<li><a class="twitter" href="{{ contact.twitterUrl }}" target="_blank"></a></li>
+				{% endif %}
+
+				{% if contact.googlePlusUrl|length %}
 				<li><a class="googlePlus" href="{{ contact.googlePlusUrl }}" target="_blank"></a></li>
+				{% endif %}
+
+				{% if contact.linkedinUrl|length %}
+				<li><a class="linkedIn" href="{{ contact.linkedinUrl }}" target="_blank"></a></li>
+				{% endif %}
+
+				{% if contact.vimeoUrl|length %}
+				<li><a class="vimeo" href="{{ contact.vimeoUrl }}" target="_blank"></a></li>
+				{% endif %}
+
+				{% if contact.youtubeUrl|length %}
+				<li><a class="youtube" href="{{ contact.youtubeUrl }}" target="_blank"></a></li>
+				{% endif %}
 			</ul>
 		</div>
 
-		<div>
-			<h4>{{ contact.messageFormHeading }}</h4>
+		<div class="messageContainer">
+			<div class="heading">
+				<div class="bar left"></div>
+				<h4>{{ contact.messageFormHeading }}</h4>
+				<div class="bar right"></div>
+			</div>
 			<form method="post" action="{{PATH_TO_PHP}}/contact.php" accept-charset="UTF-8">
 				<input id="fromName" type="text" name="fromName" placeholder="- {{ contact.fromName }}">
 				<input id="fromEmail" type="text" name="fromEmail" placeholder="- {{ contact.fromEmail }}">

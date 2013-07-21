@@ -12,14 +12,16 @@
 						<ul class="songs">
 							{% for song in album.songs %}
 								<li>
-									<h4>
-										{{ song.title }}
-										<span>{{ song.year }}</span>
-									</h4>
-									<div class="iconWrapper">
-										<i class="icon">
-										</i>
-									</div>
+									<a href="/album/{{ album.slug }}/{{ song.slug }}">
+										<h4>
+											{{ song.title }}
+											<span>{{ song.year }}</span>
+										</h4>
+										<div class="iconWrapper">
+											<i class="icon">
+											</i>
+										</div>
+									</a>
 								</li>
 							{% endfor %}
 						</ul>

@@ -20,7 +20,7 @@
 					display: inline-block;
 					vertical-align: middle;
 					margin-right: 15px;
-					@include icon-sprite("logo-strip-left");
+					@include ui-sprite("logo-strip-left");
 				}
 
 				&:after{
@@ -28,7 +28,7 @@
 					display: inline-block;
 					vertical-align: middle;
 					margin-left: 15px;
-					@include icon-sprite("logo-strip-right");
+					@include ui-sprite("logo-strip-right");
 				}
 			}
 		}
