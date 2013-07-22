@@ -10,7 +10,7 @@ hlc.views.mastheadpages.AwardsPage = function(){
 	var domElement = goog.dom.getElement('awards');
 	var url = hlc.Url.INCLUDES + 'awards';
 
-  goog.base(this, domElement, url, 'awards', 'awards');
+  goog.base(this, domElement, url, 'awards');
 
 };
 goog.inherits(hlc.views.mastheadpages.AwardsPage, hlc.views.mastheadpages.MastheadPage);

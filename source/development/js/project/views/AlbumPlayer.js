@@ -51,12 +51,26 @@ hlc.views.AlbumPlayer.prototype.getCurrentSong = function(){
 };
 
 
-hlc.views.AlbumPlayer.prototype.gotoSong = function(index, delta){
+hlc.views.AlbumPlayer.prototype.gotoSongById = function(songId) {
+  var songIndex = goog.array.findIndex(this._songs, function(song) {
+    return song.songId === songId;
+  });
+
+  if(songIndex > -1) {
+    this.gotoSong(songIndex);
+  }
+};
+
+
+hlc.views.AlbumPlayer.prototype.gotoSong = function(index){
   // to determine if go prev(-1) or next(1)
-  var delta = delta || 1;
+  var delta = 1;
 
   if(this._currentSong) {
     this.stop();
+
+    var lastIndex = goog.array.indexOf(this._songs, this._currentSong);
+    delta = (index > lastIndex) ? 1 : -1;
   }
 
   this._currentSong = goog.isNumber(index) ? this._songs[index] : this._currentSong;
@@ -111,7 +125,8 @@ hlc.views.AlbumPlayer.prototype.nextSong = function(){
 
 	if(currentIndex > this._songs.length-1) currentIndex = 0;
 
-	this.gotoSong(currentIndex, 1);
+  var song = this._songs[currentIndex];
+  this.setSongToken(song);
 };
 
 
@@ -121,7 +136,16 @@ hlc.views.AlbumPlayer.prototype.prevSong = function(){
 
 	if(currentIndex < 0) currentIndex = this._songs.length-1;
 
-	this.gotoSong(currentIndex, -1);
+  var song = this._songs[currentIndex];
+  this.setSongToken(song);
+};
+
+
+hlc.views.AlbumPlayer.prototype.setSongToken = function(song){
+  var songId = song.songId;
+  var albumId = song.album.albumId;
+  
+  hlc.main.controllers.navigationController.setToken('/album/'+albumId+'/'+songId);
 };
 
 

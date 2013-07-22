@@ -8,7 +8,7 @@ goog.require('goog.net.XhrIo');
 /**
  * @constructor
  */
-hlc.views.mastheadpages.MastheadPage = function(domElement, url, title, token){
+hlc.views.mastheadpages.MastheadPage = function(domElement, url, title){
   goog.base(this);
 
   this.setParentEventTarget( hlc.main.views.mastheadSection );
@@ -17,7 +17,7 @@ hlc.views.mastheadpages.MastheadPage = function(domElement, url, title, token){
   this.parentDomElement = goog.dom.getParentElement(this.domElement);
 
   this.title = title;
-  this.token = token;
+  this.token = this.domElement.getAttribute('data-token');
 
   this._url = url;
   this._request = new goog.net.XhrIo();

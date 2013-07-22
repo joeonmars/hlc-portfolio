@@ -24,7 +24,7 @@ hlc.controllers.AlbumScrollController = function(){
   	this.albumSections.push( new hlc.views.AlbumSection( albumDomElement ) );
   }, this);
 
-  this.currentAlbumSection = this.albumSections[0];
+  this.currentAlbumSection = null;
 };
 goog.inherits(hlc.controllers.AlbumScrollController, goog.events.EventTarget);
 goog.addSingletonGetter(hlc.controllers.AlbumScrollController);
@@ -39,13 +39,32 @@ hlc.controllers.AlbumScrollController.prototype.init = function(){
 
 	goog.events.listen(hlc.main.controllers.mainScrollController,
 		hlc.controllers.MainScrollController.EventType.SCROLL_FINISH, this.onMainScrollFinish, false, this);
+
+	hlc.main.controllers.navigationController.addDispatcher(this);
+	goog.events.listen(this, goog.history.EventType.NAVIGATE, this.onNavigate, false, this);
 };
 
 
 hlc.controllers.AlbumScrollController.prototype.locateAlbum = function(){
 	var albumDomHeight = hlc.main.controllers.windowController.getMainViewportSize().height;
-	var albumId = Math.round( this._albumScrollDomElement.scrollTop / albumDomHeight );
-	var albumDom = this._albumDomElements[albumId];
+	var albumIndex = Math.round( this._albumScrollDomElement.scrollTop / albumDomHeight );
+	var albumSection = this.albumSections[albumIndex];
+	var albumId = albumSection.albumModel.albumId;
+	var songId = albumSection.albumPlayer.getCurrentSong().songId;
+
+	var token = 'album/' + albumId + '/' + songId;
+
+	if(hlc.main.controllers.navigationController.getToken() === token) {
+		this.scrollToAlbum( this.currentAlbumSection );
+	}else {
+		hlc.main.controllers.navigationController.setToken( token );
+	}
+};
+
+
+hlc.controllers.AlbumScrollController.prototype.scrollToAlbum = function(albumSection, songId){
+	var albumDomHeight = hlc.main.controllers.windowController.getMainViewportSize().height;
+	var albumDom = albumSection.domElement;
 	var albumDomY = albumDom.offsetTop - this._albumScrollDomElement.offsetTop;
 
 	this.scrollPosition = albumDomY;
@@ -61,19 +80,19 @@ hlc.controllers.AlbumScrollController.prototype.locateAlbum = function(){
 		scrollTo: {y: albumDomY},
 		ease: Power2.easeOut,
 		onComplete: function() {
-			this.currentAlbumSection = this.albumSections[albumId];
+			if(this.currentAlbumSection === albumSection) return;
+			else this.currentAlbumSection = albumSection;
 
 			var ev = {
 				type: hlc.controllers.AlbumScrollController.EventType.SCROLL_FINISH,
 				scrollPosition: this.scrollPosition,
-				albumSection: this.currentAlbumSection
+				albumSection: this.currentAlbumSection,
+				songId: songId
 			};
 			this.dispatchEvent(ev);
 		},
 		onCompleteScope: this
 	});
-
-	//console.log('nearest album is ', albumDom, ' y = ' + albumDomY);
 };
 
 
@@ -86,6 +105,26 @@ hlc.controllers.AlbumScrollController.prototype.onMainScrollFinish = function(e)
 
 hlc.controllers.AlbumScrollController.prototype.onScroll = function(e){
 	this._locateDelay.start();
+};
+
+
+hlc.controllers.AlbumScrollController.prototype.onNavigate = function(e){
+	// check if the token contains album id and song id
+	var tokens = e.token.split('/');
+	if(tokens[tokens.length - 1] == '') tokens.pop();
+
+	if(tokens[0] === 'album' && tokens.length > 2) {
+		var albumId = tokens[1];
+		var songId = (tokens.length === 3) ? tokens[2] : null;
+
+		if(!this.currentAlbumSection || this.currentAlbumSection.albumModel.albumId !== albumId) {
+			var albumSection = goog.array.find(this.albumSections, function(albumSection) {
+				return albumSection.albumModel.albumId === albumId;
+			});
+
+			if(albumSection) this.scrollToAlbum(albumSection, songId);
+		}
+	}
 };
 
 

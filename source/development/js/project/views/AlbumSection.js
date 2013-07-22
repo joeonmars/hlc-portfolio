@@ -53,7 +53,9 @@ hlc.views.AlbumSection.prototype.init = function(){
 	var albumData = hlc.main.assets.sitemap['albums'][albumId];
 	this.albumModel = new hlc.models.AlbumModel(albumId, albumData);
 
-	//console.log(this.albumModel);
+	// listen for navigate event
+	hlc.main.controllers.navigationController.addDispatcher(this);
+	goog.events.listen(this, goog.history.EventType.NAVIGATE, this.onNavigate, false, this);
 
 	// listen for crossfade timer event
 	goog.events.listen(this._crossfadeTimer, goog.Timer.TICK, this.onCrossfadeTick, false, this);
@@ -153,6 +155,8 @@ hlc.views.AlbumSection.prototype.onScrollFinish = function(e){
 		this.albumPlayer.activate();
 		this.albumPlayer.play();
 
+		if(e.songId) this.albumPlayer.gotoSongById( e.songId );
+
 		//
 		//hlc.main.views.footer.setPhotographyCopyright(this._currentArtwork['copyright']);
 
@@ -173,7 +177,21 @@ hlc.views.AlbumSection.prototype.onScrollFinish = function(e){
 
 
 hlc.views.AlbumSection.prototype.onNavigate = function(e){
+	// if not at this album section, don't handle deeplink navigation
+	if(!this._isAtSection) return;
 
+	// check if the token contains album id and song id
+	var tokens = e.token.split('/');
+	if(tokens[tokens.length - 1] == '') tokens.pop();
+
+	if(tokens[0] === 'album' && tokens.length === 3) {
+		var albumId = tokens[1];
+		var songId = tokens[2];
+
+		if(this.albumModel.albumId === albumId) {
+			this.albumPlayer.gotoSongById( songId );
+		}
+	}
 };
 
 

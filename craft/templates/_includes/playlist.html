@@ -5,14 +5,14 @@
 		<div class="middle">
 			<div class="viewport">
 				{% for album in craft.entries.section('album').find() %}
-					<div class="album">
+					<div class="album" data-id="{{ album.slug }}">
 						<div class="heading" style="background-image: url({{ SERVER_PATH }}{{ album.cover[0].url }});">
 							{{ album.title }}
 						</div>
 						<ul class="songs">
 							{% for song in album.songs %}
 								<li>
-									<a href="/album/{{ album.slug }}/{{ song.slug }}">
+									<a href="/album/{{ album.slug }}/{{ song.slug }}" data-id="{{ song.slug }}">
 										<h4>
 											{{ song.title }}
 											<span>{{ song.year }}</span>

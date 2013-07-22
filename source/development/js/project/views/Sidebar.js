@@ -24,6 +24,8 @@ hlc.views.Sidebar = function(){
   	'albumId': {'songId': ''}
   };
 
+  this._suggestedSongButtons = [];
+
   this._slideTweener = null;
 
   this._request = new goog.net.XhrIo();
@@ -152,7 +154,30 @@ hlc.views.Sidebar.prototype.onClick = function(e) {
 
 
 hlc.views.Sidebar.prototype.onLoaded = function(albumId, songId) {
+	// remove previous page event listeners
+	if(this._suggestedSongButtons.length > 0) {
+		goog.array.forEach(this._suggestedSongButtons, function(suggestedSongButton) {
+			goog.events.unlisten(suggestedSongButton, 'click', this.onClickSuggestedSongButton, false, this);
+		}, this);
+	}
+
+	// replace dom elements
 	this.contentDom.innerHTML = this._contentDomElements[albumId][songId];
+
+	// add event listeners to new page
+	this._suggestedSongButtons = goog.dom.query('.suggestedSongs a', this.contentDom);
+
+	goog.array.forEach(this._suggestedSongButtons, function(suggestedSongButton) {
+		goog.events.listen(suggestedSongButton, 'click', this.onClickSuggestedSongButton, false, this);
+	}, this);
+};
+
+
+hlc.views.Sidebar.prototype.onClickSuggestedSongButton = function(e){
+	e.preventDefault();
+
+	var token = e.currentTarget.getAttribute('href');
+	hlc.main.controllers.navigationController.setToken( token );
 };
 
 

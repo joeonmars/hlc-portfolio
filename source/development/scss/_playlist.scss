@@ -129,15 +129,19 @@
 					margin: 17px 18px 17px 18px;
 					@include box-sizing(border-box);
 
-					&:hover{
-						>a{
+					>a{
+						&:hover {
 							>h4{
-								color: black;
+								color: #666;
 							}
 						}
-					}
 
-					>a{
+						&.active {
+							>h4{
+								color: #000;
+							}
+						}
+
 						>h4{
 							display: inline-block;
 							vertical-align: middle;
@@ -150,10 +154,6 @@
 							overflow: hidden;
 							text-overflow:ellipsis;
 							@include single-transition(color, 0.5s);
-
-							&.active{
-								color: black;
-							}
 
 							>span{
 								display: block;

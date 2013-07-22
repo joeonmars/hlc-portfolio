@@ -1409,8 +1409,11 @@ textarea {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-#playlist .viewport .album > .songs li:hover > a > h4 {
-  color: black;
+#playlist .viewport .album > .songs li > a:hover > h4 {
+  color: #666;
+}
+#playlist .viewport .album > .songs li > a.active > h4 {
+  color: #000;
 }
 #playlist .viewport .album > .songs li > a > h4 {
   display: inline-block;
@@ -1427,9 +1430,6 @@ textarea {
   -moz-transition: color 0.5s;
   -o-transition: color 0.5s;
   transition: color 0.5s;
-}
-#playlist .viewport .album > .songs li > a > h4.active {
-  color: black;
 }
 #playlist .viewport .album > .songs li > a > h4 > span {
   display: block;

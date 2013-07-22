@@ -20,6 +20,9 @@ hlc.views.Playlist = function(){
   this.colorOverlayDomElement = goog.dom.query('.colorOverlay', this.parentDomElement)[0];
   this.bottomGradientDomElement = goog.dom.query('.gradient', this.domElement)[1];
 
+  this.albumDoms = goog.dom.query('.middle .album', this.domElement);
+  this.songButtons = goog.dom.query('.middle a', this.domElement);
+
   this._middleTweener = null;
 
   this.isClosed = true;
@@ -31,6 +34,9 @@ goog.inherits(hlc.views.Playlist, goog.events.EventTarget);
 hlc.views.Playlist.prototype.init = function(){
 	goog.events.listen(this, 'resize', this.onResize, false, this);
 	hlc.main.controllers.windowController.addDispatcher(this);
+
+	hlc.main.controllers.navigationController.addDispatcher(this);
+	goog.events.listen(this, goog.history.EventType.NAVIGATE, this.onNavigate, false, this);
 
 	this.hide();
 };
@@ -70,6 +76,10 @@ hlc.views.Playlist.prototype.show = function(){
 		},
 		onCompleteScope: this
 	});
+
+	goog.array.forEach(this.songButtons, function(songButton) {
+		goog.events.listen(songButton, 'click', this.onClickSongButton, false, this);
+	}, this);
 };
 
 
@@ -99,6 +109,10 @@ hlc.views.Playlist.prototype.hide = function(){
 		},
 		onCompleteScope: this
 	});
+
+	goog.array.forEach(this.songButtons, function(songButton) {
+		goog.events.unlisten(songButton, 'click', this.onClickSongButton, false, this);
+	}, this);
 };
 
 
@@ -111,8 +125,32 @@ hlc.views.Playlist.prototype.toggle = function(){
 };
 
 
-hlc.views.Playlist.prototype.onClick = function(e){
+hlc.views.Playlist.prototype.onClickSongButton = function(e){
+	e.preventDefault();
 
+	var token = e.currentTarget.getAttribute('href');
+	hlc.main.controllers.navigationController.setToken( token );
+};
+
+
+hlc.views.Playlist.prototype.onNavigate = function(e){
+	// check if the token contains album id and song id
+	var tokens = e.token.split('/');
+	if(tokens[tokens.length - 1] == '') tokens.pop();
+
+	if(tokens[0] === 'album' && tokens.length === 3) {
+		var albumId = tokens[1];
+		var songId = tokens[2];
+
+		var albumDom = goog.dom.query('.middle [data-id="' + albumId + '"]', this.domElement)[0];
+		var songButton = goog.dom.query('[data-id="' + songId + '"]', albumDom)[0];
+
+		if(this._currentSongButton) goog.dom.classes.remove(this._currentSongButton, 'active');
+
+		this._currentSongButton = songButton;
+		
+		goog.dom.classes.add(this._currentSongButton, 'active');
+	}
 };
 
 
