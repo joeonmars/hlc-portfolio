@@ -29,6 +29,11 @@ hlc.views.Sidebar = function(){
   this._slideTweener = null;
 
   this._request = new goog.net.XhrIo();
+
+  this._contentAnimateInTweener = null;
+  this._contentAnimateOutTweener = null;
+
+  this._contentHtml = null;
 };
 goog.inherits(hlc.views.Sidebar, goog.events.EventTarget);
 
@@ -108,10 +113,49 @@ hlc.views.Sidebar.prototype.slideOut = function(){
 };
 
 
+hlc.views.Sidebar.prototype.animateInContent = function(){
+	// replace dom elements
+	this.contentDom.innerHTML = this._contentHtml;
+
+	// add event listeners to new page
+	this._suggestedSongButtons = goog.dom.query('.suggestedSongs a', this.contentDom);
+
+	goog.array.forEach(this._suggestedSongButtons, function(suggestedSongButton) {
+		goog.events.listen(suggestedSongButton, 'click', this.onClickSuggestedSongButton, false, this);
+	}, this);
+
+	// tween it
+	var songDetailContainer = goog.dom.getElementByClass('songDetailContainer', this.contentDom);
+	var detailDoms = goog.dom.getChildren(songDetailContainer);
+
+	this._contentAnimateInTweener = new TimelineMax();
+	this._contentAnimateInTweener.staggerFromTo(detailDoms, .5, {opacity: 0}, {opacity: 1}, .2, '+=0', this.onAnimateInContent, null, this);
+};
+
+
+hlc.views.Sidebar.prototype.animateOutContent = function(){
+	if(this._contentAnimateOutTweener) return;
+
+	var songDetailContainer = goog.dom.getElementByClass('songDetailContainer', this.contentDom);
+	if(!songDetailContainer) return;
+
+	var detailDoms = goog.dom.getChildren(songDetailContainer);
+
+	this._contentAnimateOutTweener = new TimelineMax();
+	this._contentAnimateOutTweener.staggerTo(detailDoms, .5, {opacity: 0}, .2, '+=0', this.onAnimateOutContent, null, this);
+};
+
+
 hlc.views.Sidebar.prototype.loadContent = function(albumId, songId){
 	// cancel current loading
 	goog.events.removeAll(this._request, "complete");
 	this._request.abort();
+
+	// nullify content html before loaded
+	this._contentHtml = null;
+
+	// animate out current content
+	this.animateOutContent();
 
 	// skip loading if content is already loaded
 	if(this._contentDomElements[albumId]) {
@@ -154,22 +198,36 @@ hlc.views.Sidebar.prototype.onClick = function(e) {
 
 
 hlc.views.Sidebar.prototype.onLoaded = function(albumId, songId) {
+	this._contentHtml = this._contentDomElements[albumId][songId];
+	
+	var songDetailContainer = goog.dom.getElementByClass('songDetailContainer', this.contentDom);
+	if(!songDetailContainer) this.animateInContent();
+};
+
+
+hlc.views.Sidebar.prototype.onAnimateInContent = function() {
+	this._contentAnimateInTweener = null;
+};
+
+
+hlc.views.Sidebar.prototype.onAnimateOutContent = function() {
+	this._contentAnimateOutTweener = null;
+
 	// remove previous page event listeners
 	if(this._suggestedSongButtons.length > 0) {
 		goog.array.forEach(this._suggestedSongButtons, function(suggestedSongButton) {
 			goog.events.unlisten(suggestedSongButton, 'click', this.onClickSuggestedSongButton, false, this);
 		}, this);
+
+		this._suggestedSongButtons = [];
 	}
 
-	// replace dom elements
-	this.contentDom.innerHTML = this._contentDomElements[albumId][songId];
+	// remove current content
+	var songDetailContainer = goog.dom.getElementByClass('songDetailContainer', this.contentDom);
+	goog.dom.removeNode(songDetailContainer);
 
-	// add event listeners to new page
-	this._suggestedSongButtons = goog.dom.query('.suggestedSongs a', this.contentDom);
-
-	goog.array.forEach(this._suggestedSongButtons, function(suggestedSongButton) {
-		goog.events.listen(suggestedSongButton, 'click', this.onClickSuggestedSongButton, false, this);
-	}, this);
+	// animate in next content if loaded
+	if(this._contentHtml) this.animateInContent();
 };
 
 
