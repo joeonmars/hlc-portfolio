@@ -50,11 +50,11 @@ hlc.views.mediaplayercontrols.SoundVisualizer.prototype.draw = function(audioDat
     var shape = new paper.Path.Rectangle(point, size);
 
     shape.fillColor = {
-      gradient: {
-        stops: [new paper.Color(1, 1, 1, 0), new paper.Color(1, 1, 1, .2), new paper.Color(1, 1, 1, 0)]
+      'gradient': {
+        'stops': [new paper.Color(1, 1, 1, 0), new paper.Color(1, 1, 1, .2), new paper.Color(1, 1, 1, 0)]
       },
-      origin: shape.bounds.topLeft,
-      destination: shape.bounds.bottomLeft
+      'origin': shape.bounds.topLeft,
+      'destination': shape.bounds.bottomLeft
     };
 
     shapes[i] = shape;

@@ -21,7 +21,7 @@ hlc.views.MainHud = function(){
   this.playlistButtonContainerDom = goog.dom.query('.playlistButtonContainer', this.domElement)[0];
   this.playlistButtonDom = goog.dom.query('.playlistButton', this.playlistButtonContainerDom)[0];
   this.playlistCloseButtonDom = goog.dom.query('.playlistCloseButton', this.playlistButtonContainerDom)[0];
-
+  
   if(Modernizr.csstransforms3d) {
   	goog.dom.classes.add(this.playlistButtonContainerDom, 'use3d');
   }
