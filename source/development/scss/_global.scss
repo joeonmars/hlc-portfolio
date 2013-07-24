@@ -241,6 +241,10 @@ textarea{
     >.arrow{
       position: relative;
       @include transition(opacity .2s, transform .2s);
+
+      &.hide{
+        display: none !important;
+      }
     }
   }
 

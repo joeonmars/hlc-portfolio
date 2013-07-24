@@ -5,6 +5,7 @@ goog.require('goog.events');
 goog.require('goog.dom');
 goog.require('goog.dom.query');
 goog.require('goog.dom.classes');
+goog.require('hlc.views.common.CircularProgressBar');
 
 /**
  * @constructor
@@ -23,7 +24,11 @@ hlc.views.Playlist = function(){
   this.albumDoms = goog.dom.query('.middle .album', this.domElement);
   this.songButtons = goog.dom.query('.middle a', this.domElement);
 
-  this._middleTweener = null;
+  this.tweener = null;
+
+  var circleBackColor = new paper.Color(.52, .52, .52, .2);
+  var circleProgressColor = new paper.Color(.45, .45, .45, 1);
+  this.circularProgressBar = new hlc.views.common.CircularProgressBar(22, circleBackColor, circleProgressColor);
 
   this.isClosed = true;
   goog.style.showElement(this.parentDomElement, false);
@@ -39,6 +44,9 @@ hlc.views.Playlist.prototype.init = function(){
 	goog.events.listen(this, goog.history.EventType.NAVIGATE, this.onNavigate, false, this);
 
 	this.hide();
+
+	// immediately hide
+	this.tweener.progress(1);
 };
 
 
@@ -54,19 +62,9 @@ hlc.views.Playlist.prototype.show = function(){
 
 	this.onResize();
 
-	goog.Timer.callOnce(function() {
-		goog.style.setOpacity(this.colorOverlayDomElement, 1);
-	}, 100, this);
+	if(this.tweener) this.tweener.kill();
 
-	if(this._middleTweener) this._middleTweener.kill();
-	this._middleTweener = TweenMax.to(this.middleDomElement, 1.5, {
-		width: 360,
-		ease: Strong.easeInOut
-	});
-
-	TweenMax.to(this.domElement, 1.5, {
-		opacity: 1,
-		ease: Quad.easeInOut,
+	this.tweener = new TimelineMax({
 		onStart: function() {
 			this.dispatchEvent({type: hlc.views.Playlist.EventType.SHOW_START});
 		},
@@ -77,26 +75,41 @@ hlc.views.Playlist.prototype.show = function(){
 		onCompleteScope: this
 	});
 
+	var middleTweener = TweenMax.to(this.middleDomElement, 1.5, {
+		width: 360,
+		ease: Strong.easeInOut
+	});
+
+	this.tweener.add(middleTweener, 0);
+
+	var domTweener = TweenMax.to(this.domElement, 1.5, {
+		opacity: 1,
+		ease: Quad.easeInOut
+	});
+
+	this.tweener.add(domTweener, 0);
+
+	var colorOverlayTweener = TweenMax.to(this.colorOverlayDomElement, 1, {
+		opacity: 1,
+		ease: Quad.easeInOut
+	});
+
+	this.tweener.add(colorOverlayTweener, .1);
+
+	//
 	goog.array.forEach(this.songButtons, function(songButton) {
 		goog.events.listen(songButton, 'click', this.onClickSongButton, false, this);
 	}, this);
+
+	goog.events.listen(this, 'timeupdate', this.onTimeUpdate, false, this);
+  	hlc.main.controllers.soundController.addDispatcher(this);
 };
 
 
 hlc.views.Playlist.prototype.hide = function(){
-	goog.Timer.callOnce(function() {
-		goog.style.setOpacity(this.colorOverlayDomElement, 0);
-	}, 400, this);
+	if(this.tweener) this.tweener.kill();
 
-	if(this._middleTweener) this._middleTweener.kill();
-	this._middleTweener = TweenMax.to(this.middleDomElement, 1.5, {
-		width: 0,
-		ease: Strong.easeInOut
-	});
-
-	TweenMax.to(this.domElement, 1.5, {
-		opacity: 0,
-		ease: Quad.easeInOut,
+	this.tweener = new TimelineMax({
 		onStart: function() {
 			this.dispatchEvent({type: hlc.views.Playlist.EventType.HIDE_START});
 		},
@@ -110,9 +123,34 @@ hlc.views.Playlist.prototype.hide = function(){
 		onCompleteScope: this
 	});
 
+	var middleTweener = TweenMax.to(this.middleDomElement, 1.5, {
+		width: 0,
+		ease: Strong.easeInOut
+	});
+
+	this.tweener.add(middleTweener, 0);
+
+	var domTweener = TweenMax.to(this.domElement, 1.5, {
+		opacity: 0,
+		ease: Quad.easeInOut
+	});
+
+	this.tweener.add(domTweener, 0);
+
+	var colorOverlayTweener = TweenMax.to(this.colorOverlayDomElement, 1, {
+		opacity: 0,
+		ease: Quad.easeInOut
+	});
+
+	this.tweener.add(colorOverlayTweener, 1);
+
+	//
 	goog.array.forEach(this.songButtons, function(songButton) {
 		goog.events.unlisten(songButton, 'click', this.onClickSongButton, false, this);
 	}, this);
+
+	goog.events.unlisten(this, 'timeupdate', this.onTimeUpdate, false, this);
+  	hlc.main.controllers.soundController.removeDispatcher(this);
 };
 
 
@@ -133,6 +171,15 @@ hlc.views.Playlist.prototype.onClickSongButton = function(e){
 };
 
 
+hlc.views.Playlist.prototype.onTimeUpdate = function(e){
+  var currentTime = e.target.audio.currentTime;
+  var duration = e.target.audio.duration;
+
+  var progress = currentTime / duration;
+  this.circularProgressBar.setProgress(progress);
+};
+
+
 hlc.views.Playlist.prototype.onNavigate = function(e){
 	// check if the token contains album id and song id
 	var tokens = e.token.split('/');
@@ -145,11 +192,18 @@ hlc.views.Playlist.prototype.onNavigate = function(e){
 		var albumDom = goog.dom.query('.middle [data-id="' + albumId + '"]', this.domElement)[0];
 		var songButton = goog.dom.query('[data-id="' + songId + '"]', albumDom)[0];
 
-		if(this._currentSongButton) goog.dom.classes.remove(this._currentSongButton, 'active');
+		if(this._currentSongButton) {
+			goog.dom.classes.remove(this._currentSongButton, 'active');
+			goog.dom.removeNode(this.circularProgressBar.domElement);
+		}
 
 		this._currentSongButton = songButton;
 		
 		goog.dom.classes.add(this._currentSongButton, 'active');
+
+		// add circle progress bar to button
+		var iconWrapper = goog.dom.getElementByClass('iconWrapper', this._currentSongButton);
+		goog.dom.appendChild(iconWrapper, this.circularProgressBar.domElement);
 	}
 };
 

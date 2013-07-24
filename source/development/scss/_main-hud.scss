@@ -18,6 +18,12 @@
 
 		>.playlistCloseButton{
 			display: none;
+
+			i{
+				display: block;
+				margin: 3px auto;
+				@include icon-sprite("close-button-small");
+			}
 		}
 
 		&.use3d{

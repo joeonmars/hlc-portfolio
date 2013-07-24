@@ -1,7 +1,7 @@
 <a class="triangleButton {{ classes }}" {% if href %}href={{ href }}{% endif %}>
 	<div class="content">
 		<div class="background"></div>
-		<div class="arrow"></div>
-		<h3>{{ text }}</h3>
+		<div class="arrow{% if hideArrow == true %} hide{% endif %}"></div>
+		<h3>{{ text | raw }}</h3>
 	</div>
 </a>
