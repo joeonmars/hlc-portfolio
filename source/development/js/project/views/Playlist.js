@@ -142,7 +142,7 @@ hlc.views.Playlist.prototype.hide = function(){
 		ease: Quad.easeInOut
 	});
 
-	this.tweener.add(colorOverlayTweener, 1);
+	this.tweener.add(colorOverlayTweener, 1.4);
 
 	//
 	goog.array.forEach(this.songButtons, function(songButton) {

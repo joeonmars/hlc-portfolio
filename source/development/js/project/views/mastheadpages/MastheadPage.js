@@ -25,6 +25,15 @@ hlc.views.mastheadpages.MastheadPage = function(domElement, url, title){
 goog.inherits(hlc.views.mastheadpages.MastheadPage, goog.events.EventTarget);
 
 
+hlc.views.mastheadpages.MastheadPage.prototype.show = function(){
+	goog.style.showElement(this.domElement, true);
+};
+
+hlc.views.mastheadpages.MastheadPage.prototype.hide = function(){
+	goog.style.showElement(this.domElement, false);
+};
+
+
 hlc.views.mastheadpages.MastheadPage.prototype.load = function(){
 	if(this._request && !this._request.isActive()) {
 
