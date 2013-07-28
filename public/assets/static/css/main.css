@@ -650,11 +650,10 @@ textarea {
 }
 
 .diamondButton {
+  display: block;
   position: relative;
   width: 100px;
   height: 100px;
-  display: table-cell;
-  vertical-align: middle;
 }
 .diamondButton.black > h3 {
   color: black;
@@ -707,15 +706,17 @@ textarea {
 }
 .diamondButton > h3 {
   position: relative;
+  top: 50%;
+  line-height: 0;
   font-size: 12px;
   text-transform: uppercase;
   color: white;
   z-index: 1;
-  -webkit-transition: color 0.2s ease-out 1s;
-  -moz-transition: color 0.2s ease-out 1s;
-  -ms-transition: color 0.2s ease-out 1s;
-  -o-transition: color 0.2s ease-out 1s;
-  transition: color 0.2s ease-out 1s false;
+  -webkit-transition: color 0.2s ease-out;
+  -moz-transition: color 0.2s ease-out;
+  -ms-transition: color 0.2s ease-out;
+  -o-transition: color 0.2s ease-out;
+  transition: color 0.2s ease-out;
 }
 .diamondButton.active > h3 {
   color: black;

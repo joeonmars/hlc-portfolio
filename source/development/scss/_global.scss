@@ -405,12 +405,10 @@ textarea{
 // --- diamond button ---
 .diamondButton{
   @extend .button;
+  display: block;
   position: relative;
   width: 100px;
   height: 100px;
-  display: table-cell;
-  vertical-align: middle;
-  //border: 1px solid white;
 
   &.black{
     >h3{
@@ -466,11 +464,13 @@ textarea{
 
   >h3{
     position: relative;
+    top: 50%;
+    line-height: 0;
     font-size: 12px;
     text-transform: uppercase;
     color: white;
     z-index: 1;
-    @include single-transition(color 0.2s ease-out);
+    @include single-transition(color, 0.2s, ease-out);
   }
 
   &.active{
