@@ -1,3 +1,5 @@
+{% set PATH_TO_PHP = SERVER_PATH~"php" %}
+
 <div class="centerColumn">
 	<div class="emailContainer">
 		<div class="heading">
@@ -52,7 +54,7 @@
 			<input id="fromEmail" type="text" name="fromEmail" placeholder="- {{ contact.fromEmail }}">
 			<input id="subject" type="text" name="subject" placeholder="- {{ contact.subject }}">
 			<textarea id="message" type="text" name="message" placeholder="- {{ contact.message }}"></textarea>
-			<button type="submit">{% include "_includes/rectangle-button" with {text: 'send', classes: 'send'} %}</button>
+			<button type="submit">{% include "_common/rectangle-button" with {text: 'send', classes: 'send'} %}</button>
 		</form>
 	</div>
 </div>

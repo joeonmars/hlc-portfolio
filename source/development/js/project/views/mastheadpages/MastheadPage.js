@@ -21,12 +21,17 @@ hlc.views.mastheadpages.MastheadPage = function(domElement, url, title){
 
   this._url = url;
   this._request = new goog.net.XhrIo();
+
+  this._animateInTweener = new TimelineMax();
+  this._animateOutTweener = new TimelineMax();
 };
 goog.inherits(hlc.views.mastheadpages.MastheadPage, goog.events.EventTarget);
 
 
 hlc.views.mastheadpages.MastheadPage.prototype.show = function(){
 	goog.style.showElement(this.domElement, true);
+
+	this._animateInTweener.restart();
 };
 
 hlc.views.mastheadpages.MastheadPage.prototype.hide = function(){
@@ -56,8 +61,8 @@ hlc.views.mastheadpages.MastheadPage.prototype.cancel = function(){
 };
 
 
-hlc.views.mastheadpages.MastheadPage.prototype.getOffsetLeft = function(){
-	return this.domElement.offsetLeft;
+hlc.views.mastheadpages.MastheadPage.prototype.createPageElements = function(){
+
 };
 
 
@@ -65,6 +70,8 @@ hlc.views.mastheadpages.MastheadPage.prototype.onLoaded = function(){
 	if(this._request) {
 		this._request.dispose();
 		this._request = null;
+
+		this.createPageElements();
 	}
 
 	var ev = {

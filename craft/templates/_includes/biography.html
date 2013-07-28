@@ -1,18 +1,24 @@
 <div class="centerColumn">
 	<ul>
 		<li id="brief">
-			<h3>brief</h3>
-			<p>{{ biography.brief }}</p>
+			{% include "_common/animatic-title" with {text: 'brief', fontSize: 30} %}
+			<div class="outer">
+				<p>{{ biography.brief }}</p>
+			</div>
 		</li>
 
 		<li id="career">
-			<h3>career</h3>
-			<p>{{ biography.career }}</p>
+			{% include "_common/animatic-title" with {text: 'career', fontSize: 30} %}
+			<div class="outer">
+				<p>{{ biography.career }}</p>
+			</div>
 		</li>
 
 		<li id="press">
-			<h3>press</h3>
-			<p>{{ biography.press }}</p>
+			{% include "_common/animatic-title" with {text: 'press', fontSize: 30} %}
+			<div class="outer">
+				<p>{{ biography.press }}</p>
+			</div>
 		</li>
 	</ul>
 </div>
