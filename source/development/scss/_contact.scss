@@ -122,16 +122,11 @@ $form_width: 380px;
 		height: 160px;
 	}
 
-	button{
-		padding: 0;
-		border: none;
-
-		>.send{
-			i{
-				vertical-align: baseline;
-				margin-right: 5px;
-				@include icon-sprite("mail");
-			}
+	.sendButton{
+		i{
+			vertical-align: baseline;
+			margin-right: 5px;
+			@include icon-sprite("mail");
 		}
 	}
 }
