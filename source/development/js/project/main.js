@@ -40,9 +40,11 @@ hlc.main = function() {
 
 	// start main preloader
 	goog.events.listenOnce(hlc.main.views.preloader, goog.net.EventType.COMPLETE, hlc.main.onPreload, false, this);
+	goog.events.listenOnce(hlc.main.views.preloader, hlc.events.EventType.ANIMATE_OUT_COMPLETE, hlc.main.onPreloadAnimateOutComplete, false, this);
 	hlc.main.views.preloader.init();
 	hlc.main.views.preloader.load();
 };
+
 
 hlc.main.create = function(e) {
 	hlc.main.controllers.navigationController = hlc.controllers.NavigationController.getInstance();
@@ -58,6 +60,7 @@ hlc.main.create = function(e) {
 	hlc.main.views.mastheadSection = new hlc.views.MastheadSection(goog.dom.getElementByClass('masthead'));
 	hlc.main.views.albumSections = hlc.main.controllers.albumScrollController.albumSections;
 };
+
 
 hlc.main.onPreload = function(e) {
 	hlc.main.assets = e.assets;
@@ -79,10 +82,17 @@ hlc.main.onPreload = function(e) {
 	}
 };
 
+
+hlc.main.onPreloadAnimateOutComplete = function(e) {
+	console.log('on preload animate out complete');
+};
+
+
 hlc.main.assets = null;
 hlc.main.data = hlc.data.Data.getInstance();
 hlc.main.controllers = {};
 hlc.main.views = {};
+
 
 // export
 goog.exportProperty(window, 'hlc', hlc);

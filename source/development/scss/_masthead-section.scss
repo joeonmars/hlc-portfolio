@@ -99,33 +99,38 @@
 		position: relative;
 		width: 100%;
 		height: 65%;
-		white-space: nowrap;
-		overflow: hidden;
-		padding-top: 20px;
-		@include box-sizing(border-box);
+		overflow-x: hidden;
 
-		>.page{
-			display: inline-block;
-			vertical-align: top;
-			width: 100%;
-			height: 100%;
-			white-space: normal;
+		>.pageContainer{
+			min-height: 80%;
+			padding-top: 20px;
+			@include box-sizing(border-box);
+
+			>.page{
+				display: inline-block;
+				vertical-align: top;
+				width: 100%;
+				height: 100%;
+				white-space: normal;
+			}
 		}
-	}
 
-	>.bottom{
-		position: absolute;
-		width: 100%;
-		height: 0;
-
-		>.albumButton{
+		>.bottom{
 			position: relative;
-			margin: 0 auto;
-			top: -57px;
-			@include single-transition(transform, 0.2s);
+			width: 100%;
+			height: 20%;
+			overflow: hidden;
 
-			&.hide{
-				@include translate(0, 57px);
+			>.albumButton{
+				position: absolute;
+				bottom: 0;
+				left: 50%;
+				margin-left: -57px;
+				@include single-transition(transform, 0.2s);
+
+				&.hide{
+					@include translate(0, 57px);
+				}
 			}
 		}
 	}

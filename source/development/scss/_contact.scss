@@ -103,23 +103,26 @@ $form_width: 380px;
 		margin-top: 12px;
 		margin-bottom: 12px;
 		width: $form_width;
+		outline: none;
 		border: 1px solid rgba(171, 171, 171, .4);
 		background: rgba(255, 255, 255, .4);
 		font-family: $font_poly;
 		font-size: 14px;
 		color: #B0B0B0;
 		-webkit-font-smoothing: antialiased;
+		@include transition(color .2s, border-color .2s);
 	}
 
-	input{
-
+	input:focus, textarea:focus{
+		color: $color_purple;
+		border-color: $color_purple;
 	}
 
 	textarea{
 		height: 160px;
 	}
 
-	.send{
+	.sendButton{
 		i{
 			vertical-align: baseline;
 			margin-right: 5px;

@@ -14,19 +14,18 @@
 				padding-right: 0;
 			}
 
-			>h3{
-				font-family: $font_poly;
-				font-size: 30px;
-				font-style: italic;
-				color: $color_lightpurple;
-				text-decoration: underline;
-				text-transform: capitalize;
+			>.animaticTitle{
+				margin: 10px 0 20px 0;
 			}
 
-			>p{
-				margin-top: 15px;
-				font-size: 13px;
-				line-height: 13px * 1.8;
+			>.outer{
+				margin: 15px auto;
+				overflow: hidden;
+
+				>p{
+					font-size: 13px;
+					line-height: 13px * 1.8;
+				}
 			}
 		}
 	}

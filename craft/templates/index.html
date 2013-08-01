@@ -16,10 +16,10 @@
 
 		<div class="hud">
 			<ul class="nav">
-				<li>{% include "_includes/diamond-button" with {text: 'home', href: '/'~home.token} %}</li>
-				<li>{% include "_includes/diamond-button" with {text: 'biography', href: '/'~biography.token} %}</li>
-				<li>{% include "_includes/diamond-button" with {text: 'awards', href: '/'~awards.token} %}</li>
-				<li>{% include "_includes/diamond-button" with {text: 'contact', href: '/'~contact.token} %}</li>
+				<li>{% include "_common/diamond-button" with {text: 'home', href: '/'~home.token} %}</li>
+				<li>{% include "_common/diamond-button" with {text: 'biography', href: '/'~biography.token} %}</li>
+				<li>{% include "_common/diamond-button" with {text: 'awards', href: '/'~awards.token} %}</li>
+				<li>{% include "_common/diamond-button" with {text: 'contact', href: '/'~contact.token} %}</li>
 			</ul>
 		</div>
 
@@ -32,20 +32,21 @@
 						<h2>awards</h2>
 						<h2>contact</h2>
 					</div>
-					<a href="{{ SERVER_PATH }}{{ resume.downloads[0].url }}">{% include "_includes/rectangle-button" with {text: 'download resume', classes: 'download'} %}</a>
+					<a href="{{ SERVER_PATH }}{{ resume.downloads[0].url }}">{% include "_common/rectangle-button" with {text: 'download resume', classes: 'download'} %}</a>
 				</div>
 			</div>
 		</div>
 
 		<div class="pages">
-			<div id="home" class="page" data-token="{{ home.token }}"></div>
-			<div id="biography" class="page" data-token="{{ biography.token }}"></div>
-			<div id="awards" class="page" data-token="{{ awards.token }}"></div>
-			<div id="contact" class="page" data-token="{{ contact.token }}"></div>
-		</div>
-		
-		<div class="bottom">
-			{% include "_includes/triangle-button" with {text: 'albums', classes: 'albumButton upwards', href: '/album'} %}
+			<div class="pageContainer">
+				<div id="home" class="page" data-token="{{ home.token }}"></div>
+				<div id="biography" class="page" data-token="{{ biography.token }}"></div>
+				<div id="awards" class="page" data-token="{{ awards.token }}"></div>
+				<div id="contact" class="page" data-token="{{ contact.token }}"></div>
+			</div>
+			<div class="bottom">
+				{% include "_common/triangle-button" with {text: 'albums', classes: 'albumButton upwards', href: '/album'} %}
+			</div>
 		</div>
 	</div>
 

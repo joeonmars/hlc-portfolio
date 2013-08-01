@@ -7,6 +7,7 @@ goog.require('goog.dom.query');
 goog.require('goog.dom.classes');
 goog.require('goog.net.XhrIo');
 goog.require('goog.net.ImageLoader');
+goog.require('hlc.events');
 
 /**
  * @constructor
@@ -15,6 +16,11 @@ hlc.views.Preloader = function(){
   goog.base(this);
 
   this._isLoaded = false;
+  this._numTotalAssets = 0;
+  this._numLoadedAssets = 0;
+
+  this._domElement = goog.dom.getElement('preloader');
+  this._progressDom = goog.dom.getElementByClass('progress', this._domElement);
 
   // sitemap json loader
   this._sitemapRequest = new goog.net.XhrIo();
@@ -27,6 +33,7 @@ hlc.views.Preloader = function(){
 
 	goog.array.forEach(hlc.main.data.preloadAssets, function(url) {
 		this._imageLoader.addImage(goog.string.getRandomString(), url);
+		this._numTotalAssets ++;
 	}, this);
 
 	// assets holder
@@ -74,6 +81,11 @@ hlc.views.Preloader.prototype.onSitemapRequested = function(e){
 
 hlc.views.Preloader.prototype.onImageLoad = function(e){
 	this._assets[e.target.id] = e.target.src;
+
+	this._numLoadedAssets ++;
+
+	var percent = Math.round( this._numLoadedAssets / this._numTotalAssets * 100 );
+	this._progressDom.innerHTML = percent + '%';
 };
 
 
@@ -84,6 +96,10 @@ hlc.views.Preloader.prototype.onImageComplete = function(e){
 
 hlc.views.Preloader.prototype.onLoadComplete = function(){
 	this._isLoaded = true;
+
+	TweenMax.to(this._domElement, 1, {opacity: 0, display: 'none', onComplete: function() {
+		this.dispatchEvent( {type: hlc.events.EventType.ANIMATE_OUT_COMPLETE} );
+	}, onCompleteScope: this});
 
 	this.dispatchEvent({type: goog.net.EventType.COMPLETE, assets: this._assets});
 };

@@ -39,5 +39,9 @@
 			}
 		}{{ loop.last ? "" : "," }}
 		{% endfor %}
+	},
+	"contact": {
+		"emailOwner": "{{ contact.emailOwner }}",
+		"emailAddress": "{{ contact.emailAddress }}"
 	}
 }

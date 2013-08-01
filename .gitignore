@@ -3,4 +3,4 @@
 project.sublime-project
 project.sublime-workspace
 /dropbox
-.sass-cache
+/source/development/scss/.sass-cache

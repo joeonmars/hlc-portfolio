@@ -19,6 +19,7 @@ hlc.views.MastheadSection = function(domElement){
   goog.base(this, domElement);
 
   this.pagesDom = goog.dom.query('.pages', this.domElement)[0];
+  this.pageContainerDom = goog.dom.query('.pageContainer', this.pagesDom)[0];
   this.marqueeContainerDom = goog.dom.query('.marqueeContainer', this.domElement)[0];
   this.marqueeDom = goog.dom.query('.marquee', this.domElement)[0];
   this.marqueeContentDom = goog.dom.query('.content', this.marqueeDom)[0];
@@ -31,10 +32,7 @@ hlc.views.MastheadSection = function(domElement){
 
   this.albumButton = new hlc.views.common.TriangleButton(this.albumButtonDom);
 
-  this._pageTweener = null;
   this._headingTweener = null;
-
-  this._scrollOnResizeDelay = new goog.async.Delay(this.toPage, 200, this);
 };
 goog.inherits(hlc.views.MastheadSection, hlc.views.Section);
 
@@ -80,19 +78,16 @@ hlc.views.MastheadSection.prototype.init = function(){
 
 
 hlc.views.MastheadSection.prototype.toPage = function(page){
+	if(this.pageToLoad) {
+		this.pageToLoad.hide();
+	}
+
 	// load page
 	this.pageToLoad = page || this.pageToLoad;
 	this.pageToLoad.load();
 
-	// animate page
-	var pageOffsetLeft = this.pageToLoad.getOffsetLeft();
-
-	if(this._pageTweener) this._pageTweener.kill();
-
-	this._pageTweener = TweenMax.to(this.pagesDom, .7, {
-		scrollTo: {x: pageOffsetLeft},
-		ease: Power2.easeInOut
-	});
+	// show new page
+	this.pageToLoad.show();
 
 	// animate heading
 	var headingWidth = goog.style.getSize(this.headingDom).width;
@@ -137,7 +132,7 @@ hlc.views.MastheadSection.prototype.onClick = function(e){
 		var token = this.albumButtonDom.getAttribute('href');
 		hlc.main.controllers.navigationController.setToken(token);
 
-		goog.dom.classes.add(this.albumButtonDom, 'hide');
+		this.albumButton.hide();
 		break;
 	}
 };
@@ -187,11 +182,6 @@ hlc.views.MastheadSection.prototype.onResize = function(e){
 	var marqueeHeight = goog.style.getSize(this.marqueeContainerDom).height * .38; //percent set in css;
 	var headingHeight = goog.style.getSize(this.headingDom).height;
 	goog.style.setStyle(this.marqueeContentDom, 'margin-top', (marqueeHeight - headingHeight) * .5 + 'px');
-
-	//
-	if(this.pageToLoad) {
-		this._scrollOnResizeDelay.start();
-	}
 };
 
 
