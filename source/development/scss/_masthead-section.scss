@@ -104,8 +104,8 @@
 		>.pageContainer{
 			min-height: 80%;
 			padding-top: 20px;
-			-webkit-overflow-scrolling: touch;
 			@include box-sizing(border-box);
+			@include webkitTouchScroll;
 
 			>.page{
 				display: inline-block;

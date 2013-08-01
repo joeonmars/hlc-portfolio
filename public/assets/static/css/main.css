@@ -962,11 +962,11 @@ textarea {
   width: 100%;
   height: 100%;
   overflow: scroll;
-  -webkit-overflow-scrolling: touch;
   padding: 60px;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
 }
 #sidebar > .content > .songDetailContainer > h4 {
   padding-top: 40px;
@@ -1433,8 +1433,8 @@ textarea {
   height: 100%;
   background: rgba(255, 255, 255, 0.94);
   overflow-y: scroll;
-  -webkit-overflow-scrolling: touch;
   text-align: left;
+  -webkit-overflow-scrolling: touch;
 }
 #playlist .viewport.hide {
   width: 0;
@@ -2035,10 +2035,10 @@ textarea {
 .masthead > .pages > .pageContainer {
   min-height: 80%;
   padding-top: 20px;
-  -webkit-overflow-scrolling: touch;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
 }
 .masthead > .pages > .pageContainer > .page {
   display: inline-block;

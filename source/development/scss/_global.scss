@@ -79,6 +79,11 @@ $sidebar_width: 500px;
   background-image: url(#{$static_images_path}#{$filename});
 };
 
+@mixin webkitTouchScroll() {
+  //-webkit-transform: translateZ(0);
+  -webkit-overflow-scrolling: touch;
+};
+
 // ---
 html, body{
   position: absolute;
