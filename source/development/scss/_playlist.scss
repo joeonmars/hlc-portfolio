@@ -88,6 +88,7 @@
 		height: 100%;
 		background: rgba(255, 255, 255, .94);
 		overflow-y: scroll;
+		-webkit-overflow-scrolling: touch;
 		text-align: left;
 
 		&.hide{
