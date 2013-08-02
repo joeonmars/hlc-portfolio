@@ -5,6 +5,7 @@ goog.require('goog.events');
 goog.require('goog.dom');
 goog.require('goog.dom.query');
 goog.require('goog.dom.classes');
+goog.require('goog.userAgent');
 goog.require('hlc.views.mediaplayercontrols.SoundControl');
 goog.require('hlc.views.mediaplayercontrols.SoundVisualizer');
 
@@ -33,6 +34,8 @@ hlc.views.MediaPlayer = function(){
 
   this.soundControl = new hlc.views.mediaplayercontrols.SoundControl(this, this._soundControlDom);
   this.soundVisualizer = new hlc.views.mediaplayercontrols.SoundVisualizer(this, this._canvasDom);
+
+  goog.style.showElement(this._soundControlDom, !goog.userAgent.MOBILE);
 
   // register media player to sound controller
   hlc.main.controllers.soundController.addDispatcher(this);
@@ -133,7 +136,7 @@ hlc.views.MediaPlayer.prototype.onResize = function(e){
 
 	var fullColumnWidth = goog.style.getSize(this._fullColumn).width;
 	var playbackControlsWidth = goog.style.getSize(this._playbackControlDom).width;
-	var soundControlsWidth = goog.style.getSize(this._soundControlDom).width;
+	var soundControlsWidth = goog.userAgent.MOBILE ? 0 : goog.style.getSize(this._soundControlDom).width;
 	var shareControlDomWidth = goog.style.getSize(this._shareControlDom).width;
 
 	var progressControlDomWidth = fullColumnWidth - playbackControlsWidth - soundControlsWidth - shareControlDomWidth;

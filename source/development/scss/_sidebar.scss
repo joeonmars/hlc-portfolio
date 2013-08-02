@@ -8,7 +8,7 @@
 		overflow: scroll;
 		padding: 60px;
 		@include box-sizing(border-box);
-		@include webkitTouchScroll;
+		@include webkitScroll(touch);
 
 		>.songDetailContainer{
 
