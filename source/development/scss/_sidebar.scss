@@ -101,8 +101,33 @@
 					>i{
 						display: inline-block;
 						vertical-align: baseline;
-						margin-left: 4px;
+						margin-left: 10px;
 						@include icon-sprite("download");
+					}
+				}
+			}
+
+			>.share{
+				>h3{
+					display: inline-block;
+					margin-right: 20px;
+				}
+
+				>a{
+					display: inline-block;
+					margin: 0 8px;
+					@include fadeButton;
+
+					&.facebook{
+						@include icon-sprite("facebook-share");
+					}
+
+					&.twitter{
+						@include icon-sprite("twitter-share");
+					}
+
+					&.googleplus{
+						@include icon-sprite("googleplus-share");
 					}
 				}
 			}

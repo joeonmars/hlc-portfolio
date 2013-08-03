@@ -23,7 +23,6 @@ hlc.views.MediaPlayer = function(){
   this._playbackControlDom = goog.dom.getElementByClass('playbackControl', this.domElement);
   this._soundControlDom = goog.dom.getElementByClass('soundControl', this.domElement);
   this._progressControlDom = goog.dom.getElementByClass('progressControl', this.domElement);
-  this._shareControlDom = goog.dom.getElementByClass('shareControl', this.domElement);
 
   this._playhead = goog.dom.getElementByClass('playhead', this.domElement);
   this._playButton = goog.dom.getElementByClass('playButton', this.domElement);
@@ -137,9 +136,8 @@ hlc.views.MediaPlayer.prototype.onResize = function(e){
 	var fullColumnWidth = goog.style.getSize(this._fullColumn).width;
 	var playbackControlsWidth = goog.style.getSize(this._playbackControlDom).width;
 	var soundControlsWidth = goog.userAgent.MOBILE ? 0 : goog.style.getSize(this._soundControlDom).width;
-	var shareControlDomWidth = goog.style.getSize(this._shareControlDom).width;
 
-	var progressControlDomWidth = fullColumnWidth - playbackControlsWidth - soundControlsWidth - shareControlDomWidth;
+	var progressControlDomWidth = fullColumnWidth - playbackControlsWidth - soundControlsWidth;
 	goog.style.setStyle(this._progressControlDom, 'width', progressControlDomWidth + 'px');
 
 	this.soundVisualizer.onResize(e);

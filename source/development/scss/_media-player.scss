@@ -174,45 +174,6 @@ $media_player_height: 80px;
 				}
 			}
 
-			&.shareControl{
-				//outline: 1px solid gray;
-				margin-top: ($media_player_height - 26px) / 2;
-				width: 7%;
-				max-width: 130px;
-				min-width: 90px;
-				height: 26px;
-				font-size: 0;
-
-				>.cell{
-					&.left, &.middle, &.right{
-						display: inline-block;
-						vertical-align: middle;
-						width: 33.33%;
-					}
-
-					>.button{
-						margin: 0 auto;
-						opacity: .5;
-						@include single-transition(opacity, 0.2s, ease-out);
-
-						&:hover{
-							opacity: 1;
-						}
-
-						&.facebook{
-							@include icon-sprite("facebook");
-						}
-
-						&.twitter{
-							@include icon-sprite("twitter");
-						}
-
-						&.googleplus{
-							@include icon-sprite("googleplus");
-						}
-					}
-				}
-			}
 		}
 	}
 }

@@ -38,11 +38,10 @@
 
 	>.centerColumn{
 		height: 100%;
-		padding: 100px 0 100px 0;
-		@include box-sizing(border-box);
 
 		>.content{
 			position: relative;
+			top: 20%;
 		}
 	}
 
@@ -56,6 +55,10 @@
 			text-transform: uppercase;
 			color: white;
 			-webkit-font-smoothing: antialiased;
+
+			&:first-child{
+				margin-top: 0;
+			}
 		}
 
 		h4{

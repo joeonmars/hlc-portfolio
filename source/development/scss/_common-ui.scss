@@ -1,3 +1,14 @@
+@mixin fadeButton($fromOpacity: 1, $toOpacity: .5, $duration: .2s) {
+  cursor: pointer;
+  opacity: $fromOpacity;
+  @include single-transition(opacity, $duration);
+  @include user-select(none);
+  
+  &:hover, &.active{
+    opacity: $toOpacity;
+  }
+}
+
 // --- triangle button --
 .triangleButton{
   display: block;

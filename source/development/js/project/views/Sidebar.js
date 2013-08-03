@@ -4,6 +4,7 @@ goog.require('goog.events.EventTarget');
 goog.require('goog.events');
 goog.require('goog.dom');
 goog.require('goog.net.XhrIo');
+goog.require('hlc.utils');
 
 /**
  * @constructor
@@ -25,6 +26,7 @@ hlc.views.Sidebar = function(){
   };
 
   this._suggestedSongButtons = [];
+  this._shareButtons = [];
 
   this._slideTweener = null;
 
@@ -122,6 +124,12 @@ hlc.views.Sidebar.prototype.animateInContent = function(){
 
 	goog.array.forEach(this._suggestedSongButtons, function(suggestedSongButton) {
 		goog.events.listen(suggestedSongButton, 'click', this.onClickSuggestedSongButton, false, this);
+	}, this);
+
+	this._shareButtons = goog.dom.query('.share a', this.contentDom);
+
+	goog.array.forEach(this._shareButtons, function(shareButton) {
+		goog.events.listen(shareButton, 'click', this.onClickShareButton, false, this);
 	}, this);
 
 	// tween it
@@ -222,6 +230,14 @@ hlc.views.Sidebar.prototype.onAnimateOutContent = function() {
 		this._suggestedSongButtons = [];
 	}
 
+	if(this._shareButtons.length > 0) {
+		goog.array.forEach(this._shareButtons, function(shareButton) {
+			goog.events.unlisten(shareButton, 'click', this.onClickShareButton, false, this);
+		}, this);
+
+		this._shareButtons = [];
+	}
+
 	// remove current content
 	var songDetailContainer = goog.dom.getElementByClass('songDetailContainer', this.contentDom);
 	goog.dom.removeNode(songDetailContainer);
@@ -236,6 +252,16 @@ hlc.views.Sidebar.prototype.onClickSuggestedSongButton = function(e){
 
 	var token = e.currentTarget.getAttribute('href');
 	hlc.main.controllers.navigationController.setToken( token );
+};
+
+
+hlc.views.Sidebar.prototype.onClickShareButton = function(e){
+	e.preventDefault();
+
+	var url = e.currentTarget.getAttribute('href');
+	var width = e.currentTarget.getAttribute('data-width');
+	var height = e.currentTarget.getAttribute('data-height');
+	hlc.utils.popUpWindow(url, width, height);
 };
 
 
