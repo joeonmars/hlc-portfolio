@@ -130,6 +130,7 @@ $media_player_height: 80px;
 					background-color: black;
 					background-image: url("#{$static_images_path}visualizer-back.jpg");
 					overflow: hidden;
+					cursor: ew-resize;
 
 					&:after{
 						content: '';

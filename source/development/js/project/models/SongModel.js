@@ -108,6 +108,11 @@ hlc.models.SongModel.prototype.stop = function(){
 };
 
 
+hlc.models.SongModel.prototype.setProgress = function(progress){
+  this.audio.currentTime = this.audio.duration * progress;
+};
+
+
 hlc.models.SongModel.prototype.isPaused = function() {
   return this.audio.paused;
 };

@@ -43,6 +43,11 @@ hlc.controllers.SoundController.prototype.pause = function() {
 };
 
 
+hlc.controllers.SoundController.prototype.setProgress = function(progress) {
+	this.currentSound.setProgress(progress);
+};
+
+
 hlc.controllers.SoundController.prototype.isPaused = function() {
 	return this.currentSound.isPaused();
 };

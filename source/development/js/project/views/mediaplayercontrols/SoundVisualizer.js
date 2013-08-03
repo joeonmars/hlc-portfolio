@@ -6,10 +6,9 @@ goog.require('goog.dom');
 /**
  * @constructor
  */
-hlc.views.mediaplayercontrols.SoundVisualizer = function(mediaPlayer, domElement){
+hlc.views.mediaplayercontrols.SoundVisualizer = function(domElement){
   goog.base(this);
 
-  this.mediaPlayer = mediaPlayer;
   this.canvas = domElement;
 
   this.audioData = null;

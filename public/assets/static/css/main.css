@@ -1063,15 +1063,19 @@ textarea {
   margin-bottom: 15px;
 }
 #sidebar > .content > .songDetailContainer > .download > a {
+  cursor: pointer;
   opacity: 1;
   -webkit-transition: opacity 0.2s;
   -moz-transition: opacity 0.2s;
   -ms-transition: opacity 0.2s;
   -o-transition: opacity 0.2s;
   transition: opacity 0.2s false;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
 }
-#sidebar > .content > .songDetailContainer > .download > a:hover {
-  opacity: .8;
+#sidebar > .content > .songDetailContainer > .download > a:hover, #sidebar > .content > .songDetailContainer > .download > a.active {
+  opacity: 0.8;
 }
 #sidebar > .content > .songDetailContainer > .download > a > h3 {
   display: inline-block;
@@ -1103,7 +1107,7 @@ textarea {
   user-select: none;
 }
 #sidebar > .content > .songDetailContainer > .share > a:hover, #sidebar > .content > .songDetailContainer > .share > a.active {
-  opacity: 0.5;
+  opacity: 0.8;
 }
 #sidebar > .content > .songDetailContainer > .share > a.facebook {
   background-position: 0 -49px;
@@ -1339,6 +1343,7 @@ textarea {
   background-color: black;
   background-image: url("/assets/static/images/visualizer-back.jpg");
   overflow: hidden;
+  cursor: ew-resize;
 }
 #media-player > .fullColumn > div.progressControl > .fullColumn:after {
   content: '';

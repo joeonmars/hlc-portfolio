@@ -87,12 +87,7 @@
 
 			>.download{
 				>a{
-					opacity: 1;
-					@include single-transition(opacity, 0.2s);
-
-					&:hover{
-						opacity: .8;
-					}
+					@include fadeButton(1, .8);
 
 					>h3{
 						display: inline-block;
@@ -116,7 +111,7 @@
 				>a{
 					display: inline-block;
 					margin: 0 8px;
-					@include fadeButton;
+					@include fadeButton(1, .8);
 
 					&.facebook{
 						@include icon-sprite("facebook-share");
