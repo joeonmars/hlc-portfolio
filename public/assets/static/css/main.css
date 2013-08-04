@@ -457,6 +457,19 @@ textarea {
   height: 100%;
 }
 
+.grab {
+  cursor: grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+  cursor: url(/assets/static/cursor/openhand.cur), default !important;
+}
+.grab.grabbing {
+  cursor: grabbing;
+  cursor: -moz-grabbing;
+  cursor: -webkit-grabbing;
+  cursor: url(/assets/static/cursor/closehand.cur), default !important;
+}
+
 .triangleButton {
   display: block;
   overflow: hidden;
@@ -2287,7 +2300,8 @@ textarea {
 #album-scroller {
   width: 100%;
   height: 100%;
-  overflow-x: hidden;
-  overflow-y: scroll;
-  -webkit-overflow-scrolling: auto;
+  overflow: hidden;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
 }

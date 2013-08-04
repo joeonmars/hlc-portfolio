@@ -1,6 +1,7 @@
 goog.provide( 'hlc.utils' );
 
 goog.require( 'goog.window' );
+goog.require( 'goog.events.EventHandler' );
 
 hlc.utils.popUpWindow = function(url, width, height, options) {
 	var viewportSize = goog.dom.getViewportSize();
@@ -54,3 +55,47 @@ hlc.utils.runSocialButtonScripts = function() {
 		var scriptTag = goog.dom.createDom('script', {'src': "http://widgets.getglue.com/checkin.js", 'type': "text/javascript"});
 		goog.dom.appendChild(document.body, scriptTag);
 };
+
+
+hlc.utils.getTouchCoordinate = function(e) {
+	var touchX = e.touches ? e.touches[0].pageX : e.clientX;
+	var touchY = e.touches ? e.touches[0].pageY : e.clientY;
+	var coord = {x:touchX, y:touchY};
+	return coord;
+}
+
+
+hlc.utils.grabCursor = function(domElement) {
+	var handler = new goog.events.EventHandler();
+
+	var add = function() {
+		goog.dom.classes.add(domElement, 'grab');
+
+		handler.listen(domElement, 'mousedown', function(e) {
+			e.preventDefault();
+			goog.dom.classes.add(domElement, 'grabbing');
+		});
+
+		handler.listen(domElement, 'mouseup', function(e) {
+			goog.dom.classes.remove(domElement, 'grabbing');
+		});
+	};
+
+	var remove = function() {
+		goog.dom.classes.remove(domElement, 'grab');
+		handler.removeAll();
+	};
+
+	var dispose = function() {
+		remove();
+		handler.dispose();
+	};
+
+	add();
+
+	return {
+		add: add,
+		remove: remove,
+		dispose: dispose
+	};
+}

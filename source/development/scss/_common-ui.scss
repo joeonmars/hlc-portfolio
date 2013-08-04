@@ -1,4 +1,4 @@
-@mixin fadeButton($fromOpacity:1, $toOpacity:.5, $duration:.2s) {
+@mixin fade-button($fromOpacity:1, $toOpacity:.5, $duration:.2s) {
   cursor: pointer;
   opacity: $fromOpacity;
   @include single-transition(opacity, $duration);
@@ -7,6 +7,20 @@
   &:hover, &.active{
     opacity: $toOpacity;
   }
+}
+
+.grab{
+   cursor: grab;
+   cursor: -moz-grab;
+   cursor: -webkit-grab;
+   cursor: url(#{$static_cursor_path}openhand.cur), default !important;
+
+   &.grabbing{
+     cursor: grabbing;
+     cursor: -moz-grabbing;
+     cursor: -webkit-grabbing;
+     cursor: url(#{$static_cursor_path}closehand.cur), default !important;
+   }
 }
 
 // --- triangle button --
