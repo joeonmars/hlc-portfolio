@@ -8,6 +8,7 @@
 		overflow: scroll;
 		padding: 60px;
 		@include box-sizing(border-box);
+		@include webkitScroll(touch);
 
 		>.songDetailContainer{
 
@@ -86,12 +87,7 @@
 
 			>.download{
 				>a{
-					opacity: 1;
-					@include single-transition(opacity, 0.2s);
-
-					&:hover{
-						opacity: .8;
-					}
+					@include fade-button(1, .8);
 
 					>h3{
 						display: inline-block;
@@ -100,8 +96,33 @@
 					>i{
 						display: inline-block;
 						vertical-align: baseline;
-						margin-left: 4px;
+						margin-left: 10px;
 						@include icon-sprite("download");
+					}
+				}
+			}
+
+			>.share{
+				>h3{
+					display: inline-block;
+					margin-right: 20px;
+				}
+
+				>a{
+					display: inline-block;
+					margin: 0 8px;
+					@include fade-button(1, .8);
+
+					&.facebook{
+						@include icon-sprite("facebook-share");
+					}
+
+					&.twitter{
+						@include icon-sprite("twitter-share");
+					}
+
+					&.googleplus{
+						@include icon-sprite("googleplus-share");
 					}
 				}
 			}

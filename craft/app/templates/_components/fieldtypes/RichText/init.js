@@ -33,7 +33,7 @@ config.buttonsCustom.image = {
                 var editor = this;
 				if (typeof this.assetSelectionModal == 'undefined')
 				{
-					this.assetSelectionModal = new Craft.ElementSelectorModal('Asset', {
+					this.assetSelectionModal = Craft.createElementSelectorModal('Asset', {
 						criteria: { kind: 'image' },
 						onSelect: $.proxy(function(elements) {
 							if (elements.length)
@@ -73,7 +73,7 @@ config.buttonsCustom.link = {
                 var editor = this;
 				if (typeof this.entrySelectionModal == 'undefined')
 				{
-					this.entrySelectionModal = new Craft.ElementSelectorModal('Entry', {
+					this.entrySelectionModal = Craft.createElementSelectorModal('Entry', {
 						sources: {{sections|raw}},
 						onSelect: function(elements) {
 							if (elements.length)

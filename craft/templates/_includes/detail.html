@@ -62,6 +62,13 @@
 	</div>
 	{% endif %}
 
+	<div class="share section">
+		<h3>share this song</h3>
+		<a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u={{ SERVER_PATH }}album/{{ albumSlug }}/{{ songSlug }}" target="_blank" data-width=626 data-height=436></a>
+		<a class="twitter" href="https://twitter.com/share?url={{ SERVER_PATH }}album/{{ albumSlug }}/{{ songSlug }}&text={{ songEntry.title | capitalize }}" target="_blank" data-width=550 data-height=420></a>
+		<a class="googleplus" href="https://plus.google.com/share?url={{ SERVER_PATH }}album/{{ albumSlug }}/{{ songSlug }}" target="_blank" data-width=600 data-height=600></a>
+	</div>
+
 	{% if songEntry.suggestedSongs|length %}
 	<div class="suggestedSongs section">
 		<h3>you may also like</h3>

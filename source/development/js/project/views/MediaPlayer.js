@@ -5,6 +5,8 @@ goog.require('goog.events');
 goog.require('goog.dom');
 goog.require('goog.dom.query');
 goog.require('goog.dom.classes');
+goog.require('goog.userAgent');
+goog.require('hlc.views.mediaplayercontrols.ProgressControl');
 goog.require('hlc.views.mediaplayercontrols.SoundControl');
 goog.require('hlc.views.mediaplayercontrols.SoundVisualizer');
 
@@ -22,17 +24,20 @@ hlc.views.MediaPlayer = function(){
   this._playbackControlDom = goog.dom.getElementByClass('playbackControl', this.domElement);
   this._soundControlDom = goog.dom.getElementByClass('soundControl', this.domElement);
   this._progressControlDom = goog.dom.getElementByClass('progressControl', this.domElement);
-  this._shareControlDom = goog.dom.getElementByClass('shareControl', this.domElement);
 
-  this._playhead = goog.dom.getElementByClass('playhead', this.domElement);
   this._playButton = goog.dom.getElementByClass('playButton', this.domElement);
   this._prevButton = goog.dom.getElementByClass('prevButton', this.domElement);
   this._nextButton = goog.dom.getElementByClass('nextButton', this.domElement);
 
   this._size = goog.style.getSize(this.domElement);
 
-  this.soundControl = new hlc.views.mediaplayercontrols.SoundControl(this, this._soundControlDom);
-  this.soundVisualizer = new hlc.views.mediaplayercontrols.SoundVisualizer(this, this._canvasDom);
+  this.progressControl = new hlc.views.mediaplayercontrols.ProgressControl(this._progressControlDom);
+
+  this.soundControl = new hlc.views.mediaplayercontrols.SoundControl(this._soundControlDom);
+
+  this.soundVisualizer = new hlc.views.mediaplayercontrols.SoundVisualizer(this._canvasDom);
+
+  goog.style.showElement(this._soundControlDom, !goog.userAgent.MOBILE);
 
   // register media player to sound controller
   hlc.main.controllers.soundController.addDispatcher(this);
@@ -111,8 +116,7 @@ hlc.views.MediaPlayer.prototype.onAudioEvent = function(e){
 
 		case 'timeupdate':
 		var progress = e.audio.currentTime / e.audio.duration;
-		goog.style.setStyle(this._playhead, 'width', progress * 100 + '%');
-
+		this.progressControl.updateProgress(progress);
 		this.soundVisualizer.updateProgress(progress);
 		break;
 
@@ -128,16 +132,14 @@ hlc.views.MediaPlayer.prototype.onAudioDataLoad = function(e){
 
 
 hlc.views.MediaPlayer.prototype.onResize = function(e){
-	var scrollbarWidth = e ? e.scrollbarWidth : hlc.main.controllers.windowController.getScrollbarWidth();
-	goog.style.setStyle(this.domElement, 'padding-right', scrollbarWidth + 'px');
-
 	var fullColumnWidth = goog.style.getSize(this._fullColumn).width;
 	var playbackControlsWidth = goog.style.getSize(this._playbackControlDom).width;
-	var soundControlsWidth = goog.style.getSize(this._soundControlDom).width;
-	var shareControlDomWidth = goog.style.getSize(this._shareControlDom).width;
+	var soundControlsWidth = goog.userAgent.MOBILE ? 0 : goog.style.getSize(this._soundControlDom).width;
 
-	var progressControlDomWidth = fullColumnWidth - playbackControlsWidth - soundControlsWidth - shareControlDomWidth;
+	var progressControlDomWidth = fullColumnWidth - playbackControlsWidth - soundControlsWidth;
 	goog.style.setStyle(this._progressControlDom, 'width', progressControlDomWidth + 'px');
+
+	this.progressControl.onResize(e);
 
 	this.soundVisualizer.onResize(e);
 };

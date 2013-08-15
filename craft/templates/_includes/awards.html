@@ -5,11 +5,17 @@
 
 	<div class="column middle">
 		<ul>
-			{% for award in awards.eventList %}
+			{% for award in awards.awardList %}
 				<li>
-					<a {% if award.url %}href="{{award.url}}"{% endif %} target="_blank">
-						<span>{{ award.year }}</span>
-						{{ award.title }}
+					<a {% if award.url %}href="{{award.url}}"{% endif %} target="_blank" class="award">
+						<div class="left"></div>
+						<div class="middle">
+							<h6 class="title">{{ award.title }}</h6>
+							<h6 class="event">{{ award.event }}</h6>
+							<div class="divider"></div>
+							<p class="year">{{ award.year }}</p>
+						</div>
+						<div class="right"></div>
 					</a>
 				</li>
 			{% endfor %}

@@ -38,6 +38,8 @@ hlc.controllers.MainScrollController.prototype.scrollTo = function(scrollPositio
 
 	this.scrollPosition = scrollPosition;
 
+	if(this._tweener) this._tweener.kill();
+
 	this._tweener = TweenMax.to(this._mainScrollDomElement, .8, {
 		scrollTo: {y: y},
 		ease: Power2.easeOut,
@@ -79,6 +81,7 @@ hlc.controllers.MainScrollController.EventType = {
 	SCROLL_START: 'scroll_start',
 	SCROLL_FINISH: 'scroll_finish'
 };
+
 
 hlc.controllers.MainScrollController.ScrollPosition = {
 	MASTHEAD: 'masthead',

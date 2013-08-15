@@ -170,7 +170,7 @@ hlc.views.MainHud.prototype.onClick = function(e){
 hlc.views.MainHud.prototype.onResize = function(e){
 	var sidebarButtonDomSize = goog.style.getSize(this.sidebarButtonDom);
 	var sidebarButtonDomY = (e.mainViewportSize.height - sidebarButtonDomSize.height ) / 2;
-	goog.style.setStyle(this.sidebarButtonDom, {'top': sidebarButtonDomY + 'px', 'right': e.scrollbarWidth + sidebarButtonDomSize.width + 'px'});
+	goog.style.setStyle(this.sidebarButtonDom, {'top': sidebarButtonDomY + 'px', 'right': sidebarButtonDomSize.width + 'px'});
 
 	goog.style.setStyle(this.bottomContainer, 'top', e.mainViewportSize.height + 'px');
 };

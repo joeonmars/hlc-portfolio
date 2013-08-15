@@ -60,6 +60,7 @@ $ui-layout:smart;
 $min_width: 768px;
 $min_height: 640px;
 
+$static_cursor_path: "/assets/static/cursor/";
 $static_images_path: "/assets/static/images/";
 
 $font_sans: "MyriadPro-Regular", sans-serif;
@@ -77,6 +78,10 @@ $sidebar_width: 500px;
 // --- mixins ---
 @mixin staticBackgroundImage($filename) {
   background-image: url(#{$static_images_path}#{$filename});
+};
+
+@mixin webkitScroll($value: auto) {
+  -webkit-overflow-scrolling: $value;
 };
 
 // ---

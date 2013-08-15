@@ -16,6 +16,14 @@ hlc.controllers.WindowController = function() {
 	this._mainViewport = goog.dom.query('#main-container > .viewport')[0];
 	this._scrollBarWidth = goog.userAgent.WEBKIT ? 6 : goog.style.getScrollbarWidth();
 
+	// disable dragging viewport for mobile
+	/*
+	if(goog.userAgent.MOBILE) {
+		goog.events.listen(document, 'touchmove', function(e) {
+			e.preventDefault();
+		}, false, this);
+	}*/
+
   // listen for window events
   goog.events.listen(this._viewportSizeMonitor, goog.events.EventType.RESIZE, this.onResize, false, this);
   goog.events.listen(this._window, 'orientationchange', this.onOrientationChange, false, this);

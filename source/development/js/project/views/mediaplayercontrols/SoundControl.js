@@ -10,10 +10,9 @@ goog.require('goog.fx.Dragger');
 /**
  * @constructor
  */
-hlc.views.mediaplayercontrols.SoundControl = function(mediaPlayer, domElement){
+hlc.views.mediaplayercontrols.SoundControl = function(domElement){
   goog.base(this);
 
-  this.mediaPlayer = mediaPlayer;
   this.domElement = domElement;
 
   this.volume = 1;

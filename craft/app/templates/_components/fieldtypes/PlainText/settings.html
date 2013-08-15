@@ -11,7 +11,14 @@
 	errors: settings.getErrors('placeholder')
 }) }}
 
-
+{{ forms.textField({
+	label: "Max Length"|t,
+	id: 'maxLength',
+	name: 'maxLength',
+	value: settings.maxLength,
+	size: 3,
+	errors: settings.getErrors('maxLength')
+}) }}
 
 {{ forms.checkboxField({
 	label: "Allow line breaks"|t,

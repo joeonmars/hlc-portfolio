@@ -22,23 +22,55 @@
 				text-align: center;
 
 				>li{
-					margin: 15px 0 35px 0;
+					>.award{
+						margin: 48px 0;
+						display: inline-block;
+						height: 140px;
+						white-space: nowrap;
 
-					>a{
-						font-size: 14px;
-						font-family: $font_poly;
-						line-height: 16px * 1.4;
+						>div{
+							display: inline-block;
+							vertical-align: middle;
+						}
 
-						>span{
-							display: block;
-							margin: 0 auto;
-							margin-bottom: 12px;
-							width: 80px;
-							font-size: 30px;
-							font-style: italic;
-							font-family: $font_poly;
-							color: $color_lightpurple;
-							text-decoration: underline;
+						>.left{
+							@include ui-sprite("award-left");
+						}
+
+						>.right{
+							@include ui-sprite("award-right");
+						}
+
+						>.middle{
+							padding: 0 5px;
+							width: 300px;
+							max-height: 140px;
+							white-space: normal;
+
+							>.title{
+								padding-top: 15px;
+								font-size: 24px;
+								line-height: 20px;
+								font-family: $font_barkentina;
+							}
+
+							>.event{
+								margin-top: 8px;
+								font-size: 14px;
+								font-family: $font_poly;
+							}
+
+							>.divider{
+								margin: 8px auto;
+								width: 100px;
+								height: 1px;
+								background: rgba(0, 0, 0, .2);
+							}
+
+							>.year{
+								font-size: 14px;
+								font-family: $font_barkentina;
+							}
 						}
 					}
 				}

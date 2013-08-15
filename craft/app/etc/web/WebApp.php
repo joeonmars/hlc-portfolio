@@ -18,6 +18,7 @@ namespace Craft;
  * @property AssetTransformsService      $assetTransforms      The assets sizes service
  * @property ComponentsService           $components           The components service
  * @property ConfigService               $config               The config service
+ * @property ContentService              $content              The content service
  * @property DashboardService            $dashboard            The dashboard service
  * @property DbConnection                $db                   The database
  * @property ElementsService             $elements             The elements service
@@ -44,6 +45,7 @@ namespace Craft;
  * @property SecurityService             $security             The security service
  * @property SystemSettingsService       $systemSettings       The system settings service
  * @property TemplatesService            $templates            The template service
+ * @property TagsService                 $tags                 The tags service
  * @property UpdatesService              $updates              The updates service
  * @property UserGroupsService           $userGroups           The user groups service
  * @property UserPermissionsService      $userPermissions      The user permission service
@@ -147,6 +149,9 @@ class WebApp extends \CWebApplication
 		// Set the target language
 		$this->setLanguage($this->_getTargetLanguage());
 
+		// Check if the app path has changed.  If so, run the requirements check again.
+		$this->_processRequirementsCheck();
+
 		// If the track has changed, put the brakes on the request.
 		if (!$this->updates->isTrackValid())
 		{
@@ -161,58 +166,11 @@ class WebApp extends \CWebApplication
 			}
 		}
 
-		// isDbUpdateNeeded will return true if we're in the middle of a manual or auto-update.
+		// isCraftDbUpdateNeeded will return true if we're in the middle of a manual or auto-update for Craft itself.
 		// If we're in maintenance mode and it's not a site request, show the manual update template.
-		if ($this->updates->isDbUpdateNeeded() || (Craft::isInMaintenanceMode() && $this->request->isCpRequest()) || $this->request->getActionSegments() == array('update', 'cleanUp'))
+		if ($this->updates->isCraftDbUpdateNeeded() || (Craft::isInMaintenanceMode() && $this->request->isCpRequest()) || $this->request->getActionSegments() == array('update', 'cleanUp'))
 		{
-			// Let all non-action CP requests through.
-			if (
-				$this->request->isCpRequest() &&
-				(!$this->request->isActionRequest() || $this->request->getActionSegments() == array('users', 'login'))
-			)
-			{
-				// If this is a request to actually manually update Craft, do it
-				if ($this->request->getSegment(1) == 'manualupdate')
-				{
-					$this->runController('templates/manualUpdate');
-					$this->end();
-				}
-				else
-				{
-					if ($this->updates->isBreakpointUpdateNeeded())
-					{
-						// Load the breakpoint update template
-						$this->runController('templates/breakpointUpdateNotification');
-					}
-					else
-					{
-						if (!$this->request->isAjaxRequest())
-						{
-							if ($this->request->getPathInfo() !== '')
-							{
-								$this->userSession->setReturnUrl($this->request->getPath());
-							}
-						}
-
-						// Show the manual update notification template
-						$this->runController('templates/manualUpdateNotification');
-					}
-				}
-			}
-			// We'll also let action requests to UpdateController through as well.
-			else if ($this->request->isActionRequest() && (($actionSegs = $this->request->getActionSegments()) !== null) && isset($actionSegs[0]) && $actionSegs[0] == 'update')
-			{
-				$controller = $actionSegs[0];
-				$action = isset($actionSegs[1]) ? $actionSegs[1] : 'index';
-				$this->runController($controller.'/'.$action);
-			}
-			else
-			{
-				throw new HttpException(503);
-			}
-
-			// YOU SHALL NOT PASS
-			$this->end();
+			$this->_processUpdateLogic();
 		}
 
 		// Make sure that the system is on, or that the user has permission to access the site/CP while the system is off
@@ -224,6 +182,15 @@ class WebApp extends \CWebApplication
 		{
 			// Set the package components
 			$this->_setPackageComponents();
+
+			// Load the plugins
+			craft()->plugins->loadPlugins();
+
+			// Check if a plugin needs to update the database.
+			if ($this->updates->isPluginDbUpdateNeeded())
+			{
+				$this->_processUpdateLogic();
+			}
 
 			// If this is a non-login, non-validate, non-setPassword CP request, make sure the user has access to the CP
 			if ($this->request->isCpRequest() && !($this->request->isActionRequest() && $this->_isValidActionRequest()))
@@ -243,9 +210,6 @@ class WebApp extends \CWebApplication
 					}
 				}
 			}
-
-			// Load the plugins
-			$this->plugins;
 
 			// If this is an action request, call the controller
 			$this->_processActionRequest();
@@ -756,54 +720,82 @@ class WebApp extends \CWebApplication
 	 */
 	private function _getTargetLanguage()
 	{
-		// CP requests should get "auto" by default
-		if ($this->request->isCpRequest() && !defined('CRAFT_LOCALE'))
+		if (Craft::isInstalled())
 		{
-			define('CRAFT_LOCALE', 'auto');
-		}
-
-		if (defined('CRAFT_LOCALE'))
-		{
-			$locale = strtolower(CRAFT_LOCALE);
-
-			// Get the list of actual site locale IDs
-			$siteLocaleIds = $this->i18n->getSiteLocaleIds();
-
-			// Is it set to "auto"?
-			if ($locale == 'auto')
+			// Will any locale validation be necessary here?
+			if ($this->request->isCpRequest() || defined('CRAFT_LOCALE'))
 			{
-				// If the user is logged in *and* has a primary language set, use that
-				$user = $this->userSession->getUser();
-
-				if ($user && $user->preferredLocale)
+				if ($this->request->isCpRequest())
 				{
-					return $user->preferredLocale;
+					$locale = 'auto';
+				}
+				else
+				{
+					$locale = strtolower(CRAFT_LOCALE);
 				}
 
-				// Otherwise check if the browser's preferred language matches any of the site locales
-				$browserLanguages = $this->request->getBrowserLanguages();
+				// Get the list of actual site locale IDs
+				$siteLocaleIds = $this->i18n->getSiteLocaleIds();
 
-				if ($browserLanguages)
+				// Is it set to "auto"?
+				if ($locale == 'auto')
 				{
-					foreach ($browserLanguages as $language)
+					// If the user is logged in *and* has a primary language set, use that
+					$user = $this->userSession->getUser();
+
+					if ($user && $user->preferredLocale)
 					{
-						if (in_array($language, $siteLocaleIds))
+						return $user->preferredLocale;
+					}
+
+					// Otherwise check if the browser's preferred language matches any of the site locales
+					$browserLanguages = $this->request->getBrowserLanguages();
+
+					if ($browserLanguages)
+					{
+						foreach ($browserLanguages as $language)
 						{
-							return $language;
+							if (in_array($language, $siteLocaleIds))
+							{
+								return $language;
+							}
 						}
+					}
+				}
+
+				// Is it set to a valid site locale?
+				else if (in_array($locale, $siteLocaleIds))
+				{
+					return $locale;
+				}
+			}
+
+			// Use the primary site locale by default
+			return $this->i18n->getPrimarySiteLocaleId();
+		}
+		else
+		{
+			// Just try to find a match between the browser's preferred locales
+			// and the locales Craft has been translated into.
+
+			$browserLanguages = $this->request->getBrowserLanguages();
+
+			if ($browserLanguages)
+			{
+				$appLocaleIds = $this->i18n->getAppLocaleIds();
+
+				foreach ($browserLanguages as $language)
+				{
+					if (in_array($language, $appLocaleIds))
+					{
+						return $language;
 					}
 				}
 			}
 
-			// Is it set to a valid site locale?
-			else if (in_array($locale, $siteLocaleIds))
-			{
-				return $locale;
-			}
+			// Default to the source language.
+			return $this->sourceLanguage;
 		}
-
-		// Use the primary site locale by default
-		return $this->i18n->getPrimarySiteLocaleId();
 	}
 
 	/**
@@ -895,5 +887,72 @@ class WebApp extends \CWebApplication
 		}
 
 		return false;
+	}
+
+	/**
+	 * If there is not cached app path or the existing cached app path does not match the current one, let’s run the requirement checker again.
+	 * This should catch the case where an install is deployed to another server that doesn’t meet Craft’s minimum requirements.
+	 */
+	private function _processRequirementsCheck()
+	{
+		$cachedAppPath = craft()->fileCache->get('appPath');
+		$appPath = $this->path->getAppPath();
+
+		if ($cachedAppPath === false || $cachedAppPath !== $appPath)
+		{
+			$this->runController('templates/requirementscheck');
+		}
+	}
+
+	private function _processUpdateLogic()
+	{
+		// Let all non-action CP requests through.
+		if (
+			$this->request->isCpRequest() &&
+			(!$this->request->isActionRequest() || $this->request->getActionSegments() == array('users', 'login'))
+		)
+		{
+			// If this is a request to actually manually update Craft, do it
+			if ($this->request->getSegment(1) == 'manualupdate')
+			{
+				$this->runController('templates/manualUpdate');
+				$this->end();
+			}
+			else
+			{
+				if ($this->updates->isBreakpointUpdateNeeded())
+				{
+					// Load the breakpoint update template
+					$this->runController('templates/breakpointUpdateNotification');
+				}
+				else
+				{
+					if (!$this->request->isAjaxRequest())
+					{
+						if ($this->request->getPathInfo() !== '')
+						{
+							$this->userSession->setReturnUrl($this->request->getPath());
+						}
+					}
+
+					// Show the manual update notification template
+					$this->runController('templates/manualUpdateNotification');
+				}
+			}
+		}
+		// We'll also let action requests to UpdateController through as well.
+		else if ($this->request->isActionRequest() && (($actionSegs = $this->request->getActionSegments()) !== null) && isset($actionSegs[0]) && $actionSegs[0] == 'update')
+		{
+			$controller = $actionSegs[0];
+			$action = isset($actionSegs[1]) ? $actionSegs[1] : 'index';
+			$this->runController($controller.'/'.$action);
+		}
+		else
+		{
+			throw new HttpException(503);
+		}
+
+		// YOU SHALL NOT PASS
+		$this->end();
 	}
 }

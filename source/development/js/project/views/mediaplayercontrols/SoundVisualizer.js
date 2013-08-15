@@ -6,10 +6,9 @@ goog.require('goog.dom');
 /**
  * @constructor
  */
-hlc.views.mediaplayercontrols.SoundVisualizer = function(mediaPlayer, domElement){
+hlc.views.mediaplayercontrols.SoundVisualizer = function(domElement){
   goog.base(this);
 
-  this.mediaPlayer = mediaPlayer;
   this.canvas = domElement;
 
   this.audioData = null;
@@ -43,6 +42,10 @@ hlc.views.mediaplayercontrols.SoundVisualizer.prototype.draw = function(audioDat
   var shapeAmount = Math.round( this.canvas.width / 2 );
   var shapeWidth = this.canvas.width / shapeAmount;
 
+  var topColor = new paper.Color(1, 1, 1, 0);
+  var midColor = new paper.Color(1, 1, 1, .2);
+  var bottomColor = new paper.Color(1, 1, 1, 0);
+
   for( var i = 0; i < shapeAmount; i ++ ) {
     var shapeHeight = audioData[Math.round(i * (audioData.length / shapeAmount))] / 4;
     var size = new paper.Size(shapeWidth, shapeHeight);
@@ -51,7 +54,7 @@ hlc.views.mediaplayercontrols.SoundVisualizer.prototype.draw = function(audioDat
 
     shape.fillColor = {
       'gradient': {
-        'stops': [new paper.Color(1, 1, 1, 0), new paper.Color(1, 1, 1, .2), new paper.Color(1, 1, 1, 0)]
+        'stops': [topColor, midColor, bottomColor]
       },
       'origin': shape.bounds.topLeft,
       'destination': shape.bounds.bottomLeft
