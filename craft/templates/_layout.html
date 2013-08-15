@@ -12,7 +12,7 @@
 {% if craft.request.getQuery('staticjs') == 'true' or 'local' not in craft.request.serverName %}
 	{% set USE_STATIC_JS = true %}
 {% else %}
-	{% set USE_STATUC_JS = false %}
+	{% set USE_STATIC_JS = false %}
 {% endif %}
 
 {% set COMPILE_MODE = "SIMPLE" %}
