@@ -84,7 +84,7 @@ $.extend(Craft, {
 		var anchor = '';
 
 		// Normalize the params
-		if (Garnish.isObject(params))
+		if ($.isPlainObject(params))
 		{
 			var aParams = [];
 
@@ -1166,6 +1166,8 @@ Craft.BaseElementIndex = Garnish.Base.extend({
 		}
 
 		$('head').append(response.headHtml);
+
+		Craft.cp.setMaxSidebarHeight();
 
 		// More?
 		if (response.more)
@@ -3491,9 +3493,9 @@ Craft.AssetSelectInput = Craft.BaseElementSelectInput.extend({
     requestId: 0,
     hud: null,
 
-	init: function(id, name, elementType, sources, limit)
+	init: function(id, name, elementType, sources, criteria, limit)
 	{
-		this.base(id, name, elementType, sources, limit);
+		this.base(id, name, elementType, sources, criteria, limit);
         this._attachHUDEvents();
 	},
 
@@ -3960,6 +3962,7 @@ Craft.ElementEditor = Garnish.Base.extend({
 				else
 				{
 					this.hud.$body.find('.spinner').addClass('hidden');
+					Garnish.shake(this.hud.$hud);
 				}
 			}, this));
 		},

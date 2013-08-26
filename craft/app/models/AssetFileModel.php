@@ -206,7 +206,7 @@ class AssetFileModel extends BaseElementModel
 	 */
 	public function getExtension()
 	{
-		return pathinfo($this->filename, PATHINFO_EXTENSION);
+		return IOHelper::getExtension($this->filename);
 	}
 
 	/**

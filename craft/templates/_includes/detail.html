@@ -15,27 +15,6 @@
 
 	<div class="info section">
 		<ul>
-		{% if songEntry.composer|length %}
-			<li>
-				<h5>composer</h5>
-				<p>{{ songEntry.composer }}</p>
-			</li>
-		{% endif %}
-
-		{% if songEntry.performer|length %}
-			<li>
-				<h5>performer</h5>
-				<p>{{ songEntry.performer }}</p>
-			</li>
-		{% endif %}
-
-		{% if songEntry.duration|length %}
-			<li>
-				<h5>duration</h5>
-				<p>{{ songEntry.duration }}</p>
-			</li>
-		{% endif %}
-
 		{% if songEntry.instruments|length %}
 			<li>
 				<h5>instruments</h5>
@@ -46,10 +25,32 @@
 				</p>
 			</li>
 		{% endif %}
+
+		{% if songEntry.performers|length %}
+			<li>
+				<h5>performers</h5>
+				<ul>
+				{% for performer in songEntry.performers %}
+					<li><p>{{ performer.role }} - {{ performer.name }}</p></li>
+				{% endfor %}
+				</ul>
+			</li>
+		{% endif %}
+
+		{% if songEntry.duration|length %}
+			<li>
+				<h5>duration</h5>
+				<p>{{ songEntry.duration }}</p>
+			</li>
+		{% endif %}
 		</ul>
 
 		<div class="description section">
-			{{ songEntry.description }}
+			{% if songEntry.description|length %}
+				{{ songEntry.description }}
+			{% else %}
+				<p>Description coming soon.</p>
+			{% endif %}
 		</div>
 	</div>
 

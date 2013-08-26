@@ -59,6 +59,7 @@ class TagSetModel extends BaseModel
 			if (empty($this->_fieldLayout))
 			{
 				$this->_fieldLayout = new FieldLayoutModel();
+				$this->_fieldLayout->type = ElementType::Tag;
 			}
 		}
 

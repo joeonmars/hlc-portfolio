@@ -220,12 +220,51 @@ class TagsService extends BaseApplicationComponent
 	 * Deletes a tag set by its ID.
 	 *
 	 * @param int $tagSetId
+	 * @throws \Exception
 	 * @return bool
-	*/
+	 */
 	public function deleteTagSetById($tagSetId)
 	{
-		$affectedRows = craft()->db->createCommand()->delete('tagsets', array('id' => $tagSetId));
-		return (bool) $affectedRows;
+		if (!$tagSetId)
+		{
+			return false;
+		}
+
+		$transaction = craft()->db->beginTransaction();
+		try
+		{
+			// Delete the field layout
+			$fieldLayoutId = craft()->db->createCommand()
+				->select('fieldLayoutId')
+				->from('tagsets')
+				->where(array('id' => $tagSetId))
+				->queryScalar();
+
+			if ($fieldLayoutId)
+			{
+				craft()->fields->deleteLayoutById($fieldLayoutId);
+			}
+
+			// Grab the tag ids so we can clean the elements table.
+			$tagIds = craft()->db->createCommand()
+				->select('id')
+				->from('tags')
+				->where(array('setId' => $tagSetId))
+				->queryColumn();
+
+			craft()->elements->deleteElementById($tagIds);
+
+			$affectedRows = craft()->db->createCommand()->delete('tagsets', array('id' => $tagSetId));
+
+			$transaction->commit();
+
+			return (bool) $affectedRows;
+		}
+		catch (\Exception $e)
+		{
+			$transaction->rollBack();
+			throw $e;
+		}
 	}
 
 	// Tags

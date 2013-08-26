@@ -42,7 +42,7 @@ body, input, select, textarea { font-family: HelveticaNeue, sans-serif; }
 .last, h2:last-child, h3:last-child, h4:last-child, h5:last-child, h6:last-child, p:last-child, .pane:last-child, .grid:last-child, .field:last-child, .toolbar:last-child, .buttons:last-child { margin-bottom: 0 !important; }
 
 /* icons */
-.icon:before, .menulist ul li a.sel:before, .texticon:before, .datewrapper:before, .timewrapper:before, .element:before, .secure:before, .insecure:before, .go:after, .menubtn:after, .required:after, [data-icon]:before, [data-icon-after]:after { font-family: 'Craft'; speak: none; -webkit-font-feature-settings: "liga", "dlig"; -moz-font-feature-settings: "liga=1, dlig=1"; -moz-font-feature-settings: "liga", "dlig"; -ms-font-feature-settings: "liga", "dlig"; -o-font-feature-settings: "liga", "dlig"; font-feature-settings: "liga", "dlig"; text-rendering: optimizeLegibility; font-weight: normal; font-variant: normal; text-transform: none; line-height: 1; -webkit-font-smoothing: subpixel-antialiased; display: inline-block; text-align: center; font-style: normal; vertical-align: middle; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; }
+.icon:before, .menulist ul li a.sel:before, .texticon:before, .datewrapper:before, .timewrapper:before, .element:before, #help:before, .secure:before, .insecure:before, .go:after, .menubtn:after, .required:after, [data-icon]:before, [data-icon-after]:after { font-family: 'Craft'; speak: none; -webkit-font-feature-settings: "liga", "dlig"; -moz-font-feature-settings: "liga=1, dlig=1"; -moz-font-feature-settings: "liga", "dlig"; -ms-font-feature-settings: "liga", "dlig"; -o-font-feature-settings: "liga", "dlig"; font-feature-settings: "liga", "dlig"; text-rendering: optimizeLegibility; font-weight: normal; font-variant: normal; text-transform: none; line-height: 1; -webkit-font-smoothing: subpixel-antialiased; display: inline-block; text-align: center; font-style: normal; vertical-align: middle; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; }
 
 .secure:before, .insecure:before { margin-top: -3px; font-size: 14px; }
 
@@ -61,6 +61,8 @@ body, input, select, textarea { font-family: HelveticaNeue, sans-serif; }
 .icon.settings:before { content: 'settings'; }
 
 .icon.search:before { content: 'search'; }
+
+.help:before { content: '?'; color: #9d2dcc; }
 
 /* nav */
 .nav { display: block; }
@@ -83,6 +85,8 @@ h1 { margin-bottom: 30px; font-family: HelveticaNeue-Light, HelveticaNeue, sans-
 h2 { margin: 15px 0; font-size: 15px; font-weight: bold; line-height: 1.2; color: #2c2c2c; }
 
 h3 { margin: 15px 0; font-weight: bold; line-height: 1.2; }
+
+h2[data-icon]:before { margin: -4px 6px 0 0; font-size: 19px; }
 
 /* sections */
 section { margin: 30px 0 30px 30px; }
@@ -474,6 +478,8 @@ table.data.collapsed tbody th:not(.thin), table.data.collapsed tbody td:not(.thi
 
 table.data.collapsed tbody td form { display: inline-block; }
 
+table.data.collapsed tbody tr:last-child th:not(:last-child), table.data.collapsed tbody tr:last-child td:not(:last-child) { border-bottom: none; }
+
 .datatablesorthelper, .editabletablesorthelper { background: #fff; -webkit-box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05), 0 1px 5px -1px rgba(0, 0, 0, 0.1); box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05), 0 1px 5px -1px rgba(0, 0, 0, 0.1); }
 
 .datatablesorthelper { margin: -2px -7px; padding: 2px 7px; }
@@ -568,12 +574,15 @@ ul.tree, .tree ul { margin-left: 20px; }
 /* status icons */
 .status { display: inline-block; margin-right: 5px; width: 10px; height: 10px; background: url(../images/status.png) no-repeat 0 -30px; }
 
-.status.on, .status.live, .status.enabled { background-position: 0 0; }
+.status.on, .status.live, .status.active, .status.enabled { background-position: 0 0; }
 
-.status.pending { background-position: 0 -10px; }
+/* green */
+.status.locked, .status.pending { background-position: 0 -10px; }
 
-.status.off, .status.expired { background-position: 0 -20px; }
+/* orange */
+.status.off, .status.suspended, .status.expired { background-position: 0 -20px; }
 
+/* red */
 /* ----------------------------------------
 /*  Progress bar
 /* ----------------------------------------*/

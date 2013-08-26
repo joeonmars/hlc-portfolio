@@ -50,7 +50,7 @@ class EntryVersionModel extends EntryModel
 
 		// Merge the version and entry data
 		$entryData = $attributes['data'];
-		$fieldContent = $entryData['fields'];
+		$fieldContent = isset($entryData['fields']) ? $entryData['fields'] : null;
 		$attributes['versionId'] = $attributes['id'];
 		$attributes['id'] = $attributes['entryId'];
 		$title = $entryData['title'];
@@ -61,7 +61,11 @@ class EntryVersionModel extends EntryModel
 		// Initialize the version
 		$version = parent::populateModel($attributes);
 		$version->getContent()->title = $title;
-		$version->getContent()->setValuesByFieldId($fieldContent);
+
+		if ($fieldContent)
+		{
+			$version->getContent()->setValuesByFieldId($fieldContent);
+		}
 
 		return $version;
 	}

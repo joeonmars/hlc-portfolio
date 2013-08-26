@@ -51,7 +51,7 @@
 	</div>
 
 	<div id="album-scroller">
-		{% for album in craft.entries.section('album').find() %}
+		{% for album in craft.entries.section('album').find()|sortByField('postDate', 'asce') %}
 			<div class="album section" data-id="{{ album.slug }}">
 
 				<div class="background">

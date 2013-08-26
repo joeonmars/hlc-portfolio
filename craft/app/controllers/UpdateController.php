@@ -343,16 +343,23 @@ class UpdateController extends BaseController
 
 		$handle = $this->_getFixedHandle($data);
 
+		$oldVersion = false;
+
+		// Grab the old version from the manifest data before we nuke it.
+		$manifestData = UpdateHelper::getManifestData(UpdateHelper::getUnzipFolderFromUID($uid));
+
+		if ($manifestData)
+		{
+			$oldVersion = UpdateHelper::getLocalVersionFromManifest($manifestData);
+		}
+
 		$return = craft()->updates->updateCleanUp($uid, $handle);
 		if (!$return['success'])
 		{
 			$this->returnJson(array('error' => $return['message']));
 		}
 
-		$manifestData = UpdateHelper::getManifestData(UpdateHelper::getUnzipFolderFromUID($uid));
-		$oldVersion = UpdateHelper::getLocalVersionFromManifest($manifestData);
-
-		if (version_compare($oldVersion, '1.1', '<'))
+		if ($oldVersion && version_compare($oldVersion, '1.1', '<'))
 		{
 			$returnUrl = UrlHelper::getUrl('whats-new');
 		}

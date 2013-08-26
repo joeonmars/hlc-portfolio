@@ -69,8 +69,8 @@ class WebApp extends \CWebApplication
 
 	private $_templatePath;
 	private $_packageComponents;
-	private $_isDbConfigValid = false;
 	private $_pendingEvents;
+	private $_isDbConfigValid = false;
 
 	/**
 	 * Processes resource requests before anything else has a chance to initialize.
@@ -115,6 +115,17 @@ class WebApp extends \CWebApplication
 	}
 
 	/**
+	 * Returns the localization data for a given locale.
+	 *
+	 * @param string $localeId
+	 * @return LocaleData
+	 */
+	public function getLocale($localeId = null)
+	{
+		return craft()->i18n->getLocaleData($localeId);
+	}
+
+	/**
 	 * Returns the current target timezone.
 	 *
 	 * @return string
@@ -134,8 +145,8 @@ class WebApp extends \CWebApplication
 		// If this is a resource request, we should respond with the resource ASAP
 		$this->_processResourceRequest();
 
-		// Database config validation
-		$this->_validateDbConfig();
+		// Validate some basics on the database configuration file.
+		$this->_validateDbConfigFile();
 
 		// Process install requests
 		$this->_processInstallRequest();
@@ -166,9 +177,17 @@ class WebApp extends \CWebApplication
 			}
 		}
 
+		// Set the package components
+		$this->_setPackageComponents();
+
 		// isCraftDbUpdateNeeded will return true if we're in the middle of a manual or auto-update for Craft itself.
 		// If we're in maintenance mode and it's not a site request, show the manual update template.
-		if ($this->updates->isCraftDbUpdateNeeded() || (Craft::isInMaintenanceMode() && $this->request->isCpRequest()) || $this->request->getActionSegments() == array('update', 'cleanUp'))
+		if (
+			$this->updates->isCraftDbUpdateNeeded() ||
+			(Craft::isInMaintenanceMode() && $this->request->isCpRequest()) ||
+			$this->request->getActionSegments() == array('update', 'cleanUp') ||
+			$this->request->getActionSegments() == array('update', 'rollback')
+		)
 		{
 			$this->_processUpdateLogic();
 		}
@@ -180,9 +199,6 @@ class WebApp extends \CWebApplication
 			($this->request->isCpRequest()) && $this->userSession->checkPermission('accessCpWhenSystemIsOff')
 		)
 		{
-			// Set the package components
-			$this->_setPackageComponents();
-
 			// Load the plugins
 			craft()->plugins->loadPlugins();
 
@@ -240,6 +256,10 @@ class WebApp extends \CWebApplication
 
 	/**
 	 * Creates a controller instance based on a route.
+	 *
+	 * @param string $route
+	 * @param mixed $owner
+	 * @return array|null
 	 */
 	public function createController($route, $owner = null)
 	{
@@ -248,29 +268,41 @@ class WebApp extends \CWebApplication
 			$route = $this->defaultController;
 		}
 
-		$routeParts = explode('/', $route);
-		$controllerId = ucfirst(array_shift($routeParts));
-		$action = implode('/', $routeParts);
+		$routeParts = array_filter(explode('/', $route));
 
-		$class = __NAMESPACE__.'\\'.$controllerId.'Controller';
+		// First check if the controller class is a combination of the first two segments.
+		// That way FooController won't steal all of Foo_BarController's requests.
+		if (isset($routeParts[1]))
+		{
+			$controllerId = ucfirst($routeParts[0]).'_'.ucfirst($routeParts[1]);
+			$class = __NAMESPACE__.'\\'.$controllerId.'Controller';
 
-		if (class_exists($class))
+			if (class_exists($class))
+			{
+				$action = implode('/', array_slice($routeParts, 2));
+			}
+		}
+
+		// If that didn't work, now look for that FooController.
+		if (!isset($action))
+		{
+			$controllerId = ucfirst($routeParts[0]);
+			$class = __NAMESPACE__.'\\'.$controllerId.'Controller';
+
+			if (class_exists($class))
+			{
+				$action = implode('/', array_slice($routeParts, 1));
+			}
+		}
+
+		// Did we find a valid controller?
+		if (isset($action))
 		{
 			return array(
 				Craft::createComponent($class, $controllerId),
 				$this->parseActionParams($action),
 			);
 		}
-	}
-
-	/**
-	 * Returns whether the current db configuration is valid.
-	 *
-	 * @return bool
-	 */
-	public function isDbConfigValid()
-	{
-		return $this->_isDbConfigValid;
 	}
 
 	/**
@@ -507,6 +539,14 @@ class WebApp extends \CWebApplication
 	}
 
 	/**
+	 * @return bool
+	 */
+	public function isDbConfigValid()
+	{
+		return $this->_isDbConfigValid;
+	}
+
+	/**
 	 * Attaches any pending event listeners to the newly-initialized component.
 	 *
 	 * @access private
@@ -550,106 +590,6 @@ class WebApp extends \CWebApplication
 	}
 
 	/**
-	 * Validates that we can connect to the database with the settings in the db config file.
-	 *
-	 * @access private
-	 * @return mixed
-	 * @throws Exception|HttpException
-	 */
-	private function _validateDbConfig()
-	{
-		$messages = array();
-
-		$databaseServerName = $this->config->getDbItem('server');
-		$databaseAuthName = $this->config->getDbItem('user');
-		$databaseName = $this->config->getDbItem('database');
-		$databasePort = $this->config->getDbItem('port');
-		$databaseCharset = $this->config->getDbItem('charset');
-		$databaseCollation = $this->config->getDbItem('collation');
-
-		if (StringHelper::isNullOrEmpty($databaseServerName))
-		{
-			$messages[] = Craft::t('The database server name isn’t set in your db config file.');
-		}
-
-		if (StringHelper::isNullOrEmpty($databaseAuthName))
-		{
-			$messages[] = Craft::t('The database user name isn’t set in your db config file.');
-		}
-
-		if (StringHelper::isNullOrEmpty($databaseName))
-		{
-			$messages[] = Craft::t('The database name isn’t set in your db config file.');
-		}
-
-		if (StringHelper::isNullOrEmpty($databasePort))
-		{
-			$messages[] = Craft::t('The database port isn’t set in your db config file.');
-		}
-
-		if (StringHelper::isNullOrEmpty($databaseCharset))
-		{
-			$messages[] = Craft::t('The database charset isn’t set in your db config file.');
-		}
-
-		if (StringHelper::isNullOrEmpty($databaseCollation))
-		{
-			$messages[] = Craft::t('The database collation isn’t set in your db config file.');
-		}
-
-		if (!empty($messages))
-		{
-			throw new DbConnectException(Craft::t('Database configuration errors: {errors}', array('errors' => implode(PHP_EOL, $messages))));
-		}
-
-		try
-		{
-			$connection = $this->db;
-			if (!$connection)
-			{
-				$messages[] = Craft::t('There is a problem connecting to the database with the credentials supplied in your db config file.');
-			}
-		}
-		// Most likely missing PDO in general or the specific database PDO driver.
-		catch(\CDbException $e)
-		{
-			Craft::log($e->getMessage(), LogLevel::Error);
-			$missingPdo = false;
-
-			// TODO: Multi-db driver check.
-			if (!extension_loaded('pdo'))
-			{
-				$missingPdo = true;
-				$messages[] = Craft::t('Craft requires the PDO extension to operate.');
-			}
-
-			if (!extension_loaded('pdo_mysql'))
-			{
-				$missingPdo = true;
-				$messages[] = Craft::t('Craft requires the PDO_MYSQL driver to operate.');
-			}
-
-			if (!$missingPdo)
-			{
-				Craft::log($e->getMessage(), LogLevel::Error);
-				$messages[] = Craft::t('There is a problem connecting to the database with the credentials supplied in your db config file.');
-			}
-		}
-		catch (\Exception $e)
-		{
-			Craft::log($e->getMessage(), LogLevel::Error);
-			$messages[] = Craft::t('There is a problem connecting to the database with the credentials supplied in your db config file.');
-		}
-
-		if (!empty($messages))
-		{
-			throw new DbConnectException(Craft::t('Database configuration errors: {errors}', array('errors' => implode(PHP_EOL, $messages))));
-		}
-
-		$this->_isDbConfigValid = true;
-	}
-
-	/**
 	 * Sets the package components.
 	 */
 	private function _setPackageComponents()
@@ -680,7 +620,7 @@ class WebApp extends \CWebApplication
 		$isCpRequest = $this->request->isCpRequest();
 
 		// Are they requesting an installer template/action specifically?
-		if ($isCpRequest && $this->request->getSegment(1) === 'install')
+		if ($isCpRequest && $this->request->getSegment(1) === 'install' && !Craft::isInstalled())
 		{
 			$action = $this->request->getSegment(2, 'index');
 			$this->runController('install/'.$action);
@@ -809,65 +749,8 @@ class WebApp extends \CWebApplication
 		if ($this->request->isActionRequest())
 		{
 			$actionSegs = $this->request->getActionSegments();
-
-			// See if there is a first segment.
-			if (isset($actionSegs[0]))
-			{
-				$controller = $actionSegs[0];
-				$action = isset($actionSegs[1]) ? $actionSegs[1] : '';
-
-				// Check for a valid controller
-				$class = __NAMESPACE__.'\\'.ucfirst($controller).'Controller';
-				if (class_exists($class))
-				{
-					$route = $controller.'/'.$action;
-					$this->runController($route);
-					return;
-				}
-				else
-				{
-					// Mayhaps this is a plugin action request.
-					$plugin = strtolower($actionSegs[0]);
-
-					if (($plugin = $this->plugins->getPlugin($plugin)) !== null)
-					{
-						$pluginHandle = $plugin->getClassHandle();
-
-						// Check to see if the second segment is an existing controller.  If no second segment, check for "PluginHandle"Controller, which is a plugin's default controller.
-						// i.e. pluginHandle/testController or pluginHandle/pluginController
-						$controller = (isset($actionSegs[1]) ? ucfirst($pluginHandle).'_'.ucfirst($actionSegs[1]) : ucfirst($pluginHandle)).'Controller';
-
-						if (class_exists(__NAMESPACE__.'\\'.$controller))
-						{
-							// Check to see if there is a 3rd path segment.  If so, use it for the action.  If not, use the default Index for the action.
-							// i.e. pluginHandle/pluginController/index or pluginHandle/pluginController/testAction
-							$action = isset($actionSegs[2]) ? $actionSegs[2] : 'Index';
-
-							$route = substr($controller, 0, strpos($controller, 'Controller')).'/'.$action;
-							$this->runController($route);
-							return;
-						}
-						else
-						{
-							// It's possible the 2nd segment is an action and they are using the plugin's default controller.
-							// i.e. pluginHandle/testAction or pluginHandle/indexAction.
-							// Here, the plugin's default controller is assumed.
-							$controller = ucfirst($pluginHandle).'Controller';
-
-							if (class_exists(__NAMESPACE__.'\\'.$controller))
-							{
-								$action = $actionSegs[1];
-
-								$route = substr($controller, 0, strpos($controller, 'Controller')).'/'.$action;
-								$this->runController($route);
-								return;
-							}
-						}
-					}
-				}
-			}
-
-			throw new HttpException(404);
+			$route = implode('/', $actionSegs);
+			$this->runController($route);
 		}
 	}
 
@@ -954,5 +837,59 @@ class WebApp extends \CWebApplication
 
 		// YOU SHALL NOT PASS
 		$this->end();
+	}
+
+	/**
+	 * Make sure the basics are in place in the db connection file before we actually try to connect later on.
+	 *
+	 * @throws DbConnectException
+	 */
+	private function _validateDbConfigFile()
+	{
+		$messages = array();
+
+		$databaseServerName = craft()->config->getDbItem('server');
+		$databaseAuthName = craft()->config->getDbItem('user');
+		$databaseName = craft()->config->getDbItem('database');
+		$databasePort = craft()->config->getDbItem('port');
+		$databaseCharset = craft()->config->getDbItem('charset');
+		$databaseCollation = craft()->config->getDbItem('collation');
+
+		if (StringHelper::isNullOrEmpty($databaseServerName))
+		{
+			$messages[] = Craft::t('The database server name isn’t set in your db config file.');
+		}
+
+		if (StringHelper::isNullOrEmpty($databaseAuthName))
+		{
+			$messages[] = Craft::t('The database user name isn’t set in your db config file.');
+		}
+
+		if (StringHelper::isNullOrEmpty($databaseName))
+		{
+			$messages[] = Craft::t('The database name isn’t set in your db config file.');
+		}
+
+		if (StringHelper::isNullOrEmpty($databasePort))
+		{
+			$messages[] = Craft::t('The database port isn’t set in your db config file.');
+		}
+
+		if (StringHelper::isNullOrEmpty($databaseCharset))
+		{
+			$messages[] = Craft::t('The database charset isn’t set in your db config file.');
+		}
+
+		if (StringHelper::isNullOrEmpty($databaseCollation))
+		{
+			$messages[] = Craft::t('The database collation isn’t set in your db config file.');
+		}
+
+		if (!empty($messages))
+		{
+			throw new DbConnectException(Craft::t('Database configuration errors: {errors}', array('errors' => implode(PHP_EOL, $messages))));
+		}
+
+		$this->_isDbConfigValid = true;
 	}
 }
