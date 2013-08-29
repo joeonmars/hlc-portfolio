@@ -22,6 +22,12 @@ return array(
       )
     ),
 
+    'hsinleichen.unitedrender.com' => array(
+      'environmentVariables' => array(
+          'siteUrl' => 'http://hsinleichen.unitedrender.com/'
+      )
+    ),
+
     'hsinleichen.joeonmars-staging.com' => array(
       'environmentVariables' => array(
           'siteUrl' => 'http://hsinleichen.joeonmars-staging.com/'
