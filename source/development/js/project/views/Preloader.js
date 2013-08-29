@@ -51,7 +51,7 @@ hlc.views.Preloader.prototype.init = function(){
 
 
 hlc.views.Preloader.prototype.load = function(){
-	var sitemapUrl = hlc.Url.ORIGIN + 'sitemap.html';
+	var sitemapUrl = hlc.Url.ORIGIN + 'sitemap.html';//'http://hsinleichen.joeonmars-staging.com/sitemap.html';//
 	this._sitemapRequest.send(sitemapUrl);
 };
 

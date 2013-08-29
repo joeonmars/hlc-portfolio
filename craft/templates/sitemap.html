@@ -1,20 +1,18 @@
-{% set SERVER_PATH = "http://"~craft.request.serverName~"/" %}
-
 {
 	"albums": {
 		{% for album in craft.entries.section('album').find() %}
 		"{{ album.slug }}": {
 			"title": "{{ album.title }}",
-			"cover": "{{ SERVER_PATH }}{{ album.cover[0].url }}",
+			"cover": "{{ siteUrl }}/{{ album.cover[0].url }}",
 			"songs": {
 				{% for song in album.songs %}
 				"{{ song.slug }}": {
 					"id": "{{ song.slug }}",
-					"title": "{{ song.title }}",
+					"title": "{{ song.title }}﻿",
 					"artwork": [
 						{% for artwork in song.artwork %}
 							{
-								"url": "{{ SERVER_PATH }}{{ artwork.url }}",
+								"url": "{{ siteUrl }}/{{ artwork.url }}",
 								"copyright": {
 									{% if artwork.authorName|length > 1 %}
 									"authorName": "{{artwork.authorName}}",
@@ -30,10 +28,10 @@
 					],
 					"assets": [
 						{% for audio in song.audio %}
-						"{{ SERVER_PATH }}{{ audio.url }}"{{ loop.last ? "" : "," }}
+						"{{ siteUrl }}/{{ audio.url }}"{{ loop.last ? "" : "," }}
 						{% endfor %}
 					],
-					"audioData": "{{ SERVER_PATH }}{{ song.audioData[0].url }}"
+					"audioData": "{{ siteUrl }}/{{ song.audioData[0].url }}"
 				}{{ loop.last ? "" : "," }}
 				{% endfor %}
 			}

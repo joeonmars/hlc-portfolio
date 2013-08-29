@@ -16,21 +16,21 @@
 {% endif %}
 
 {% set COMPILE_MODE = "SIMPLE" %}
-{% set SERVER_PATH = "http://"~craft.request.serverName~"/" %}
-{% set PATH_TO_STATIC_ASSETS = SERVER_PATH~"assets/static" %}
-{% set PATH_TO_PHP = SERVER_PATH~"php" %}
+{% set PATH_TO_STATIC_ASSETS = siteUrl~"/assets/static" %}
+{% set PATH_TO_UPLOAD_ASSETS = siteUrl~"/assets/upload" %}
+{% set PATH_TO_PHP = siteUrl~"/php" %}
 
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
 <head>
-	<meta charset="utf-8" />
+	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, minimum-scale=1, maximum-scale=1">
 	<meta name="keywords" content="{{ meta.metaKeywords }}">
 	<meta name="description" content="{{ meta.metaDescription }}">
 
-	<meta content="{{ SERVER_PATH }}" property="og:url">
+	<meta content="{{ siteUrl }}" property="og:url">
 	<meta content="{{ siteName }}" property="og:title">
-	<meta content="{{ meta.metaDescription }}" property="og:description"/>
+	<meta content="{{ meta.metaDescription }}" property="og:description">
 	<meta content={% if meta.facebookImage|length > 1 %}"{{ meta.facebookImage[0].url }}"{% else %}"{{PATH_TO_STATIC_ASSETS}}/images/miscellaneous/facebook.png"{% endif %} property="og:image">
 
 	<title>{{ siteName }}</title>
@@ -158,8 +158,8 @@
 					</div>
 				</div>
 				<div id="like-buttons">
-					<div class="fb-like" data-href="{{ SERVER_PATH }}" data-send="false" data-layout="button_count" data-width="100" data-show-faces="false"></div>
-					<a href="https://twitter.com/share" class="twitter-share-button" data-url="{{ SERVER_PATH }}" data-count="none">Tweet</a>
+					<div class="fb-like" data-href="{{ siteUrl }}" data-send="false" data-layout="button_count" data-width="100" data-show-faces="false"></div>
+					<a href="https://twitter.com/share" class="twitter-share-button" data-url="{{ siteUrl }}" data-count="none">Tweet</a>
 					<div class="g-plusone" data-size="medium" data-annotation="none" data-width="120"></div>
 				</div>
 				<div id="copyright">
@@ -190,7 +190,6 @@
 	<!-- execute the main js-->
 	<script>
 		document.body.style.visibility = 'visible';
-		//document.body.style.opacity = 0.05;
 		hlc.main();
 	</script>
 </body>
