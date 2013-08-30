@@ -22,9 +22,9 @@ return array(
       )
     ),
 
-    'hsinleichen.unitedrender.com' => array(
+    'hsinleichen.joeonjupiter.com' => array(
       'environmentVariables' => array(
-          'siteUrl' => 'http://hsinleichen.unitedrender.com/'
+          'siteUrl' => 'http://hsinleichen.joeonjupiter.com/'
       )
     ),
 

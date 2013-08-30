@@ -30,18 +30,18 @@ return array(
 		'tablePrefix' => 'craft',
   ),
 
-  'hsinleichen.unitedrender.com' => array(
+  'hsinleichen.joeonjupiter.com' => array(
 		// The database server name or IP address. Usually this is 'localhost' or '127.0.0.1'.
-		'server' => 'hsinleichen.db.11706284.hostedresource.com',
+		'server' => 'localhost',
 
 		// The database username to connect with.
-		'user' => 'hsinleichen',
+		'user' => 'joeonmar_root',
 
 		// The database password to connect with.
-		'password' => 'Reel!321!',
+		'password' => 'joeonmar_root',
 
 		// The name of the database to select.
-		'database' => 'hsinleichen',
+		'database' => 'joeonmar_hsinleichen',
 
 		// The prefix to use when naming tables. This can be no more than 5 characters.
 		'tablePrefix' => 'craft',

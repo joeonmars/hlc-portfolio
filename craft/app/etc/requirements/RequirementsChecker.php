@@ -99,7 +99,7 @@ class RequirementsChecker extends \CComponent
 				true,
 				'<a href="http://buildwithcraft.com">Craft</a>',
 				Craft::t('MySQL {version} or higher is required to run Craft.', array('version' => $requiredMysqlVersion))
-			),/*
+			),
 			new Requirement(
 				Craft::t('MySQL InnoDB support'),
 				craft()->db->getSchema()->isInnoDbEnabled(),
@@ -120,7 +120,7 @@ class RequirementsChecker extends \CComponent
 				true,
 				'<a href="http://buildwithcraft.com">Craft</a>',
 				Craft::t('Craft requires <a href="http://php.net/manual/en/book.curl.php">cURL</a> in order to run.')
-			),*/
+			),
 
 		);
 	}
