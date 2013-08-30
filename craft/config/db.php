@@ -30,7 +30,7 @@ return array(
 		'tablePrefix' => 'craft',
   ),
 
-  'hsinleichen.joeonjupiter.com' => array(
+  'hlc.joeonjupiter.com' => array(
 		// The database server name or IP address. Usually this is 'localhost' or '127.0.0.1'.
 		'server' => 'localhost',
 

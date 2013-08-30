@@ -22,9 +22,9 @@ return array(
       )
     ),
 
-    'hsinleichen.joeonjupiter.com' => array(
+    'hlc.joeonjupiter.com' => array(
       'environmentVariables' => array(
-          'siteUrl' => 'http://hsinleichen.joeonjupiter.com/'
+          'siteUrl' => 'http://hlc.joeonjupiter.com/'
       )
     ),
 
