@@ -968,7 +968,7 @@ Craft.BaseElementIndex = Garnish.Base.extend({
 
 		this.onAfterHtmlInit();
 
-		if (this.settings.mode == 'index')
+		if (this.settings.context == 'index')
 		{
 			this.$scroller = Garnish.$win;
 		}
@@ -1108,7 +1108,7 @@ Craft.BaseElementIndex = Garnish.Base.extend({
 	getControllerData: function()
 	{
 		return {
-			mode:               this.settings.mode,
+			context:            this.settings.context,
 			elementType:        this.elementType,
 			criteria:           this.settings.criteria,
 			disabledElementIds: this.settings.disabledElementIds,
@@ -1401,7 +1401,7 @@ Craft.BaseElementIndex = Garnish.Base.extend({
 },
 {
 	defaults: {
-		mode: 'index',
+		context: 'index',
 		id: null,
 		criteria: null,
 		disabledElementIds: [],
@@ -1652,7 +1652,7 @@ Craft.BaseElementSelectorModal = Garnish.Modal.extend({
 		{
 			// Get the modal body HTML based on the settings
 			var data = {
-				mode:        'modal',
+				context:     'modal',
 				elementType: this.elementType,
 				sources:     this.settings.sources
 			};
@@ -1663,7 +1663,7 @@ Craft.BaseElementSelectorModal = Garnish.Modal.extend({
 
 				// Initialize the element index
 				this.elementIndex = Craft.createElementIndex(this.elementType, this.$body, {
-					mode:               'modal',
+					context:            'modal',
 					id:                 this.settings.id,
 					criteria:           this.settings.criteria,
 					disabledElementIds: this.settings.disabledElementIds,
@@ -2044,7 +2044,6 @@ Craft.AssetIndex = Craft.BaseElementIndex.extend({
 	uploader: null,
 	promptHandler: null,
 	progressBar: null,
-	indexMode: false,
 
 	initialSourceKey: null,
 	isIndexBusy: false,
@@ -2063,13 +2062,10 @@ Craft.AssetIndex = Craft.BaseElementIndex.extend({
 
 	init: function(elementType, $container, settings)
 	{
-
 		this.base(elementType, $container, settings);
 
-
-		if (this.settings.mode == "index")
+		if (this.settings.context == 'index')
 		{
-			this.indexMode = true;
 			this.initIndexMode();
 		}
 	},
@@ -2922,7 +2918,7 @@ Craft.AssetIndex = Craft.BaseElementIndex.extend({
 	{
 		this.base(append)
 
-		if (this.indexMode)
+		if (this.settings.context == 'index')
 		{
 			$elements = this.$elementContainer.children(':not(.disabled)');
 			this._initElementSelect($elements);
@@ -7582,7 +7578,7 @@ Craft.TagSelectInput = Craft.BaseElementSelectInput.extend({
 
 	id: null,
 	name: null,
-	source: null,
+	tagSetId: null,
 	elementId: null,
 	elementSort: null,
 	searchTimeout: null,
@@ -7594,11 +7590,11 @@ Craft.TagSelectInput = Craft.BaseElementSelectInput.extend({
 	$addTagInput: null,
 	$spinner: null,
 
-	init: function(id, name, source, elementId, hasFields)
+	init: function(id, name, tagSetId, elementId, hasFields)
 	{
 		this.id = id;
 		this.name = name;
-		this.source = source;
+		this.tagSetId = tagSetId;
 		this.elementId = elementId;
 
 		this.$container = $('#'+this.id);
@@ -7669,10 +7665,10 @@ Craft.TagSelectInput = Craft.BaseElementSelectInput.extend({
 			}, this), 1);
 		});
 
-        if (hasFields)
-        {
-            this._attachHUDEvents();
-        }
+		if (hasFields)
+		{
+			this._attachHUDEvents();
+		}
 	},
 
 	searchForTags: function()
@@ -7707,8 +7703,8 @@ Craft.TagSelectInput = Craft.BaseElementSelectInput.extend({
 
 			var data = {
 				search:     this.$addTagInput.val(),
-				source:     this.source,
-				excludeIds: excludeIds,
+				tagSetId:   this.tagSetId,
+				excludeIds: excludeIds
 			};
 
 			Craft.postActionRequest('tags/searchForTags', data, $.proxy(function(response)
@@ -7792,28 +7788,28 @@ Craft.TagSelectInput = Craft.BaseElementSelectInput.extend({
 		this.searchMenu = null;
 	},
 
-    _attachHUDEvents: function ()
-    {
-        this.removeListener(this.$elements, 'dlbclick');
-        this.addListener(this.$elements, 'dblclick', $.proxy(this, '_editProperties'));
-    },
+	_attachHUDEvents: function ()
+	{
+		this.removeListener(this.$elements, 'dlbclick');
+		this.addListener(this.$elements, 'dblclick', $.proxy(this, '_editProperties'));
+	},
 
-    _editProperties: function (event)
-    {
-        var $target = $(event.currentTarget);
-        if (!$target.data('ElementEditor'))
-        {
-            var settings = {
-                elementId: $target.attr('data-id'),
-                $trigger: $target,
-                loadContentAction: 'tags/editTagContent',
-                saveContentAction: 'tags/saveTagContent'
-            };
-            $target.data('ElementEditor', new Craft.ElementEditor(settings));
-        }
+	_editProperties: function (event)
+	{
+		var $target = $(event.currentTarget);
+		if (!$target.data('ElementEditor'))
+		{
+			var settings = {
+				elementId: $target.attr('data-id'),
+				$trigger: $target,
+				loadContentAction: 'tags/editTagContent',
+				saveContentAction: 'tags/saveTagContent'
+			};
+			$target.data('ElementEditor', new Craft.ElementEditor(settings));
+		}
 
-        $target.data('ElementEditor').show();
-    }
+		$target.data('ElementEditor').show();
+	}
 
 });
 

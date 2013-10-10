@@ -29,9 +29,10 @@ class TagElementType extends BaseElementType
 	/**
 	 * Returns this element type's sources.
 	 *
+	 * @param string|null $context
 	 * @return array|false
 	 */
-	public function getSources()
+	public function getSources($context = null)
 	{
 		$sources = array();
 
@@ -96,7 +97,7 @@ class TagElementType extends BaseElementType
 	public function modifyElementsQuery(DbCommand $query, ElementCriteriaModel $criteria)
 	{
 		$query
-			->addSelect('tags.name')
+			->addSelect('tags.setId, tags.name')
 			->join('tags tags', 'tags.id = elements.id');
 
 		if ($criteria->name)

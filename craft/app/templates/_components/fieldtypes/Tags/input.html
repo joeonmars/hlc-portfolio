@@ -5,7 +5,7 @@
 <div id="{{ id }}" class="elementselect tagselect">
 	<div class="elements">
 		{% for element in elements %}
-			{% include "_elements/element" with { mode: 'field' } %}
+			{% include "_elements/element" with { context: 'field' } %}
 		{% endfor %}
 	</div>
 
@@ -22,9 +22,9 @@
 	new Craft.TagSelectInput(
 		"{{ id|e('js') }}",
 		"{{ name|e('js') }}",
-		"{{ source|e('js') }}",
+		{{ tagSetId }},
 		{{ elementId ? elementId : 'null' }},
-		{{ fieldCount }}
+		{{ hasFields ? 'true' : 'false' }}
 	);
 {% endset %}
 
