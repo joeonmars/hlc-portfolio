@@ -34,11 +34,11 @@ return array(
       )
     ),
 
-    'www.hsinleichen.com' => array(
+    'hsinlei.com' => array(
     	'cooldownDuration'     => 0,
 
       'environmentVariables' => array(
-          'siteUrl' => 'http://www.hsinleichen.com/'
+          'siteUrl' => 'http://hsinlei.com/'
       )
     )
 );

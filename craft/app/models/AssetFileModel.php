@@ -49,26 +49,32 @@ class AssetFileModel extends BaseElementModel
 	 */
 	function __get($name)
 	{
-		// Is it a transform handle?
-		$transform = craft()->assetTransforms->getTransformByHandle($name);
-
-		if ($transform)
-		{
-			// Duplicate this model and set it to that transform
-			$model = new AssetFileModel();
-
-			// Can't just use getAttributes() here because we'll get thrown into an infinite loop.
-			foreach ($this->attributeNames() as $attributeName)
-			{
-				$model->setAttribute($attributeName, parent::getAttribute($attributeName));
-			}
-
-			$model->setTransform($transform);
-			return $model;
-		}
-		else
+		// Run through the BaseModel/CModel stuff first
+		try
 		{
 			return parent::__get($name);
+		}
+		catch (\Exception $e)
+		{
+			// Is $name a transform handle?
+			$transform = craft()->assetTransforms->getTransformByHandle($name);
+			if ($transform)
+			{
+				// Duplicate this model and set it to that transform
+				$model = new AssetFileModel();
+
+				// Can't just use getAttributes() here because we'll get thrown into an infinite loop.
+				foreach ($this->attributeNames() as $attributeName)
+				{
+					$model->setAttribute($attributeName, parent::getAttribute($attributeName));
+				}
+
+				$model->setTransform($transform);
+				return $model;
+			}
+
+			// Fine, throw the exception
+			throw $e;
 		}
 	}
 
@@ -113,6 +119,21 @@ class AssetFileModel extends BaseElementModel
 		else
 		{
 			return parent::getAttribute($name, $flattenValue);
+		}
+	}
+
+	/**
+	 * Returns an <img> tag based on this asset.
+	 *
+	 * @return \Twig_Markup|null
+	 */
+	public function getImg()
+	{
+		if ($this->kind == 'image')
+		{
+			$img = '<img src="'.$this->url.'" width="'.$this->getWidth().'" height="'.$this->getHeight().'" alt="'.$this->title.'" />';
+			$charset = craft()->templates->getTwig()->getCharset();
+			return new \Twig_Markup($img, $charset);
 		}
 	}
 

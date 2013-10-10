@@ -1,4 +1,4 @@
-/*!
+/**
  * Craft by Pixel & Tonic
  *
  * @package   Craft
@@ -12,7 +12,7 @@
 
 
 
-Craft.postActionRequest('update/getAvailableUpdates', function(response) {
+Craft.postActionRequest('update/getAvailableUpdates', function(response, textStatus) {
 
 	var $loading = $('#loading');
 
@@ -20,14 +20,24 @@ Craft.postActionRequest('update/getAvailableUpdates', function(response) {
 	{
 		$loading.remove();
 
-		if (!response.errors && response.error)
+		if (textStatus != 'success')
 		{
-			response.errors = [response.error];
+			return;
 		}
 
-		if (response.errors && response.errors.length > 0)
+		if (response.error || response.errors)
 		{
-			$('<div/>').appendTo(Craft.cp.$content).html(response.errors[0]);
+			if (response.errors && response.errors.length)
+			{
+				var error = response.errors[0];
+			}
+			else if (response.error)
+			{
+				var error = response.error;
+			}
+
+			$('<div/>').appendTo(Craft.cp.$content).html(error);
+
 			return;
 		}
 

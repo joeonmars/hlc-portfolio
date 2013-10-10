@@ -39,6 +39,12 @@ class TagsController extends BaseController
 	{
 		craft()->userSession->requireAdmin();
 
+		// Breadcrumbs
+		$variables['crumbs'] = array(
+			array('label' => Craft::t('Settings'), 'url' => UrlHelper::getUrl('settings')),
+			array('label' => Craft::t('Tags'),  'url' => UrlHelper::getUrl('settings/tags'))
+		);
+
 		if (!empty($variables['tagSetId']))
 		{
 			if (empty($variables['tagSet']))
@@ -135,7 +141,7 @@ class TagsController extends BaseController
 		$tagSetId = craft()->request->getPost('tagSetId');
 		$excludeIds = craft()->request->getPost('excludeIds', array());
 
-		$notIds = array();
+		$notIds = array('and');
 
 		foreach ($excludeIds as $id)
 		{
@@ -145,7 +151,7 @@ class TagsController extends BaseController
 		$criteria = craft()->elements->getCriteria(ElementType::Tag);
 		$criteria->setId  = $tagSetId;
 		$criteria->search = 'name:'.$search.'*';
-		$criteria->id     = implode(', ', $notIds);
+		$criteria->id     = $notIds;
 		$tags = $criteria->find();
 
 		$return = array();
@@ -162,7 +168,7 @@ class TagsController extends BaseController
 				'name' => $tag->name
 			);
 
-			$tagNameLengths[] = strlen($tag->name);
+			$tagNameLengths[] = mb_strlen($tag->name);
 
 			$normalizedName = StringHelper::normalizeKeywords($tag->name);
 

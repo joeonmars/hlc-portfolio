@@ -87,39 +87,43 @@ class TagsFieldType extends BaseElementFieldType
 		}
 
 		$rawValue = $this->element->getRawContent($this->model->handle);
-		$tagIds = is_array($rawValue) ? array_filter($rawValue) : array();
 
-		foreach ($tagIds as $i => $tagId)
+		if ($rawValue !== null)
 		{
-			if (strncmp($tagId, 'new:', 4) == 0)
+			$tagIds = is_array($rawValue) ? array_filter($rawValue) : array();
+
+			foreach ($tagIds as $i => $tagId)
 			{
-				$name = substr($tagId, 4);
-
-				// Last-minute check
-				$criteria = craft()->elements->getCriteria(ElementType::Tag);
-				$criteria->setId = $tagSetId;
-				$criteria->search = 'name:'.$name;
-				$ids = $criteria->ids();
-
-				if ($ids)
+				if (strncmp($tagId, 'new:', 4) == 0)
 				{
-					$tagIds[$i] = $ids[0];
-				}
-				else
-				{
-					$tag = new TagModel();
-					$tag->setId = $tagSetId;
-					$tag->name = $name;
+					$name = mb_substr($tagId, 4);
 
-					if (craft()->tags->saveTag($tag))
+					// Last-minute check
+					$criteria = craft()->elements->getCriteria(ElementType::Tag);
+					$criteria->setId = $tagSetId;
+					$criteria->search = 'name:'.$name;
+					$ids = $criteria->ids();
+
+					if ($ids)
 					{
-						$tagIds[$i] = $tag->id;
+						$tagIds[$i] = $ids[0];
+					}
+					else
+					{
+						$tag = new TagModel();
+						$tag->setId = $tagSetId;
+						$tag->name = $name;
+
+						if (craft()->tags->saveTag($tag))
+						{
+							$tagIds[$i] = $tag->id;
+						}
 					}
 				}
 			}
-		}
 
-		craft()->relations->saveRelations($this->model->id, $this->element->id, $tagIds);
+			craft()->relations->saveRelations($this->model->id, $this->element->id, $tagIds);
+		}
 	}
 
 	/**
@@ -152,7 +156,7 @@ class TagsFieldType extends BaseElementFieldType
 
 			if (strncmp($source, 'tagset:', 7) == 0)
 			{
-				$this->_tagSetId = (int) substr($source, 7);
+				$this->_tagSetId = (int) mb_substr($source, 7);
 			}
 			else
 			{

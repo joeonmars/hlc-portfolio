@@ -64,7 +64,7 @@ return array(
 		'tablePrefix' => 'craft',
   ),
 
-  'www.hsinleichen.com' => array(
+  'hsinlei.com' => array(
 
   )
 

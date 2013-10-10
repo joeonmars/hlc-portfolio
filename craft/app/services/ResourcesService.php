@@ -16,6 +16,9 @@ namespace Craft;
  */
 class ResourcesService extends BaseApplicationComponent
 {
+
+	const DefaultUserphotoFilename = 'user.gif';
+
 	public $dateParam;
 
 	/**
@@ -36,7 +39,7 @@ class ResourcesService extends BaseApplicationComponent
 				case 'js':
 				{
 					// Route to js/compressed/ if useCompressedJs is enabled
-					if (craft()->config->get('useCompressedJs'))
+					if (craft()->config->get('useCompressedJs') && !craft()->request->getQuery('uncompressed'))
 					{
 						array_splice($segs, 1, 0, 'compressed');
 						$path = implode('/', $segs);
@@ -91,6 +94,25 @@ class ResourcesService extends BaseApplicationComponent
 					}
 				}
 
+				case 'defaultuserphoto':
+				{
+					if (!isset($segs[1]) || !is_numeric($segs[1]))
+					{
+						return;
+					}
+
+					$size = $segs[1];
+					$sourceFile = craft()->path->getResourcesPath().'images/'.self::DefaultUserphotoFilename;
+					$targetFolder = craft()->path->getUserPhotosPath().'__default__/';
+					IOHelper::ensureFolderExists($targetFolder);
+					$targetFile = $targetFolder.$size.'.'.IOHelper::getExtension($sourceFile);
+					craft()->images->loadImage($sourceFile)
+						->resize($size)
+						->saveAs($targetFile);
+
+					return $targetFile;
+				}
+
 				case 'tempuploads':
 				{
 					array_shift($segs);
@@ -141,7 +163,7 @@ class ResourcesService extends BaseApplicationComponent
 						return false;
 					}
 
-					$ext = strtolower($segs[1]);
+					$ext = mb_strtolower($segs[1]);
 					$size = $segs[2];
 
 					$iconPath = $this->_getIconPath($ext, $size);
@@ -212,7 +234,6 @@ class ResourcesService extends BaseApplicationComponent
 		// If there is a timestamp and HTTP_IF_MODIFIED_SINCE exists, check the timestamp against requested file's last modified date.
 		// If the last modified date is less than the timestamp, return a 304 not modified and let the browser serve it from cache.
 		$timestamp = craft()->request->getParam('d', null);
-		$fetchContent = true;
 
 		if ($timestamp !== null && array_key_exists('HTTP_IF_MODIFIED_SINCE', $_SERVER))
 		{
@@ -221,22 +242,19 @@ class ResourcesService extends BaseApplicationComponent
 
 			if ($lastModifiedFileDate && $lastModifiedFileDate <= $requestDate)
 			{
+				// Let the browser serve it from cache.
 				header('HTTP/1.1 304 Not Modified');
-				$fetchContent = false;
-				$content = '';
+				craft()->end();
 			}
 		}
 
-		if ($fetchContent)
-		{
-			// Note that $content may be empty -- they could be requesting a blank text file or something.
-			// It doens't matter. No need to throw a 404.
-			$content = IOHelper::getFileContents($path);
-		}
+		// Note that $content may be empty -- they could be requesting a blank text file or something.
+		// It doens't matter. No need to throw a 404.
+		$content = IOHelper::getFileContents($path);
 
 		// Normalize URLs in CSS files
 		$mimeType = IOHelper::getMimeTypeByExtension($path);
-		if (strpos($mimeType, 'css') !== false)
+		if (mb_strpos($mimeType, 'css') !== false)
 		{
 			$content = preg_replace_callback('/(url\(([\'"]?))(.+?)(\2\))/', array(&$this, '_normalizeCssUrl'), $content);
 		}
@@ -257,7 +275,8 @@ class ResourcesService extends BaseApplicationComponent
 			craft()->request->xSendFile($path);
 		}
 
-		exit(1);
+		// You shall not pass.
+		craft()->end();
 	}
 
 	/**
@@ -276,12 +295,12 @@ class ResourcesService extends BaseApplicationComponent
 		$url = IOHelper::getFolderName(craft()->request->getPath()).$match[3];
 
 		// Make sure this is a resource URL
-		$resourceTrigger = craft()->config->get('resourceTrigger');
-		$resourceTriggerPos = strpos($url, $resourceTrigger);
+		$resourceTrigger = craft()->config->getResourceTrigger();
+		$resourceTriggerPos = mb_strpos($url, $resourceTrigger);
 		if ($resourceTriggerPos !== false)
 		{
 			// Give UrlHelper a chance to add the timestamp
-			$path = substr($url, $resourceTriggerPos+strlen($resourceTrigger));
+			$path = mb_substr($url, $resourceTriggerPos + mb_strlen($resourceTrigger));
 			$url = UrlHelper::getResourceUrl($path);
 		}
 
@@ -297,7 +316,7 @@ class ResourcesService extends BaseApplicationComponent
 	 */
 	private function _getIconPath($ext, $size)
 	{
-		if (strlen($ext) > 4)
+		if (mb_strlen($ext) > 4)
 		{
 			$ext = '';
 		}
@@ -356,7 +375,7 @@ class ResourcesService extends BaseApplicationComponent
 			if ($ext)
 			{
 				$color = imagecolorallocate($image, 153, 153, 153);
-				$text = strtoupper($ext);
+				$text = mb_strtoupper($ext);
 				$font = craft()->path->getAppPath().'etc/assets/helveticaneue-webfont.ttf';
 
 				// Get the bounding box so we can calculate the position
