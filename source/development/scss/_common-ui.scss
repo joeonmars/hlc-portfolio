@@ -9,6 +9,36 @@
   }
 }
 
+.scrollbar{
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 20px;
+  height: 100%;
+
+  &:hover, &.down{
+    >.track{
+      width: 8px !important;
+    }
+  }
+
+  >.track{
+    float: right;
+    width: 4px;
+    height: 100%;
+    background-color: #fff;
+    @include single-transition(width, 0.25s, ease-out);
+
+    >.handle{
+      position: relative;
+      left: 0 !important;
+      width: 100%;
+      @include background(linear-gradient(left, #595968 50%, #4F4F5D 50%));
+    }
+  }
+}
+
+
 .grab{
    cursor: grab;
    cursor: -moz-grab;

@@ -75,6 +75,8 @@ $color_greenishgray: #CECEBF;
 $triangle_button_size: 114px;
 $sidebar_width: 500px;
 
+$default_scrollbar_width: 50px;
+
 // --- mixins ---
 @mixin staticBackgroundImage($filename) {
   background-image: url(#{$static_images_path}#{$filename});
@@ -107,7 +109,7 @@ body{
   min-height: $min-height;
   font-family: $font_sans;
   -webkit-font-smoothing: antialiased;
-  //font-size: 62.5%; //1em = 10px;
+  //opacity: .1;
 }
 
 h1, h2{
@@ -137,18 +139,6 @@ i{
 
 textarea{
   resize: none;
-}
-
-::-webkit-scrollbar {
-    width: 6px;
-}
- 
-::-webkit-scrollbar-track {
-    background: #fff;
-}
- 
-::-webkit-scrollbar-thumb {
-    @include background(linear-gradient(left, #595968 50%, #4F4F5D 50%));
 }
 
 .button{

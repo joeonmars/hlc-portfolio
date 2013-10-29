@@ -5,6 +5,7 @@ goog.require('goog.events');
 goog.require('goog.dom');
 goog.require('goog.net.XhrIo');
 goog.require('hlc.utils');
+goog.require('hlc.views.common.Scroller');
 
 /**
  * @constructor
@@ -13,8 +14,10 @@ hlc.views.Sidebar = function(){
   goog.base(this);
 
   this.domElement = goog.dom.getElement('sidebar');
+  this.outerDom = goog.dom.getElementByClass('outer', this.domElement);
   this.contentDom = goog.dom.getElementByClass('content', this.domElement);
   this.closeButtonDom = goog.dom.getElementByClass('closeButton', this.domElement);
+  this.scrollbarDom = goog.dom.getElementByClass('scrollbar', this.domElement);
 
   this.isSlidedIn = false;
 
@@ -27,6 +30,8 @@ hlc.views.Sidebar = function(){
 
   this._suggestedSongButtons = [];
   this._shareButtons = [];
+
+  this._scroller = new hlc.views.common.Scroller(this.outerDom, this.scrollbarDom);
 
   this._slideTweener = null;
 
@@ -89,6 +94,8 @@ hlc.views.Sidebar.prototype.slideIn = function(){
 	});
 
 	goog.dom.classes.remove(this.closeButtonDom, 'hide');
+
+	this._scroller.activate();
 };
 
 
@@ -112,6 +119,8 @@ hlc.views.Sidebar.prototype.slideOut = function(){
 	});
 
 	goog.dom.classes.add(this.closeButtonDom, 'hide');
+
+	this._scroller.deactivate();
 };
 
 
@@ -138,6 +147,9 @@ hlc.views.Sidebar.prototype.animateInContent = function(){
 
 	this._contentAnimateInTweener = new TimelineMax();
 	this._contentAnimateInTweener.staggerFromTo(detailDoms, .5, {opacity: 0}, {opacity: 1}, .2, '+=0', this.onAnimateInContent, null, this);
+
+	// reset scroller
+	this._scroller.reset();
 };
 
 

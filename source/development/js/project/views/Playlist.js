@@ -6,6 +6,7 @@ goog.require('goog.dom');
 goog.require('goog.dom.query');
 goog.require('goog.dom.classes');
 goog.require('hlc.views.common.CircularProgressBar');
+goog.require('hlc.views.common.Scroller');
 
 /**
  * @constructor
@@ -20,9 +21,12 @@ hlc.views.Playlist = function(){
   this.viewportDomElement = goog.dom.query('.viewport', this.domElement)[0];
   this.colorOverlayDomElement = goog.dom.query('.colorOverlay', this.parentDomElement)[0];
   this.bottomGradientDomElement = goog.dom.query('.gradient', this.domElement)[1];
+  this.scrollbarDomElement = goog.dom.getElementByClass('scrollbar', this.domElement);
 
   this.albumDoms = goog.dom.query('.middle .album', this.domElement);
   this.songButtons = goog.dom.query('.middle a', this.domElement);
+
+  this.scroller = new hlc.views.common.Scroller(this.viewportDomElement, this.scrollbarDomElement);
 
   this.tweener = null;
 
@@ -97,6 +101,9 @@ hlc.views.Playlist.prototype.show = function(){
 	this.tweener.add(colorOverlayTweener, .1);
 
 	//
+	this.scroller.activate();
+	
+	//
 	goog.array.forEach(this.songButtons, function(songButton) {
 		goog.events.listen(songButton, 'click', this.onClickSongButton, false, this);
 	}, this);
@@ -143,6 +150,9 @@ hlc.views.Playlist.prototype.hide = function(){
 	});
 
 	this.tweener.add(colorOverlayTweener, 1.4);
+
+	//
+	this.scroller.deactivate();
 
 	//
 	goog.array.forEach(this.songButtons, function(songButton) {

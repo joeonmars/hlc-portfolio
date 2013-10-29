@@ -133,8 +133,11 @@
 			</div>
 
 			<div id="sidebar">
-				<div class="content"></div>
+				<div class="outer">
+					<div class="content"></div>
+				</div>
 				{% include "_includes/sidebar-close-button" %}
+				{% include "_common/scrollbar" %}
 			</div>
 			
 			<div id="footer">
@@ -174,8 +177,11 @@
 	<!-- third-party -->
 	<script src="{{PATH_TO_STATIC_ASSETS}}/js/third-party/modernizr-latest.js"></script>
 	<script src="{{PATH_TO_STATIC_ASSETS}}/js/third-party/paper-full.min.js"></script>
-	<script src="{{PATH_TO_STATIC_ASSETS}}/js/third-party/greensock/TweenMax.min.js"></script>
 	<script src="{{PATH_TO_STATIC_ASSETS}}/js/third-party/greensock/plugins/ScrollToPlugin.min.js"></script>
+	<script src="{{PATH_TO_STATIC_ASSETS}}/js/third-party/greensock/plugins/CSSPlugin.min.js"></script>
+	<script src="{{PATH_TO_STATIC_ASSETS}}/js/third-party/greensock/plugins/ThrowPropsPlugin.min.js"></script>
+	<script src="{{PATH_TO_STATIC_ASSETS}}/js/third-party/greensock/utils/Draggable.min.js"></script>
+	<script src="{{PATH_TO_STATIC_ASSETS}}/js/third-party/greensock/TweenMax.min.js"></script>
 
 	<!-- project js -->
 	{% if USE_STATIC_JS == true %}
