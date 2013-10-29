@@ -22,6 +22,8 @@ hlc.views.common.Scroller = function(outer, scrollbar){
     'edgeResistance': 0.75,
     'throwProps': true,
     'cursor': 'default',
+    'dragClickables': true,
+    'zIndexBoost': false,
     'onDrag': this.onScrollUpdate,
     'onDragScope': this,
     'onThrowUpdate': this.onScrollUpdate,

@@ -1225,6 +1225,7 @@ textarea {
   white-space: nowrap;
   border: 1px solid #ddd;
   border-top: none;
+  overflow: hidden;
   padding: 0 20px 0 20px !important;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;

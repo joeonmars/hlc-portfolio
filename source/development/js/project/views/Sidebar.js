@@ -1,6 +1,7 @@
 goog.provide('hlc.views.Sidebar');
 
 goog.require('goog.events.EventTarget');
+goog.require('goog.events.EventHandler');
 goog.require('goog.events');
 goog.require('goog.dom');
 goog.require('goog.net.XhrIo');
@@ -36,6 +37,8 @@ hlc.views.Sidebar = function(){
   this._slideTweener = null;
 
   this._request = new goog.net.XhrIo();
+
+  this._contentEventHandler = new goog.events.EventHandler(this);
 
   this._contentAnimateInTweener = null;
   this._contentAnimateOutTweener = null;
@@ -132,21 +135,20 @@ hlc.views.Sidebar.prototype.animateInContent = function(){
 	this._suggestedSongButtons = goog.dom.query('.suggestedSongs a', this.contentDom);
 
 	goog.array.forEach(this._suggestedSongButtons, function(suggestedSongButton) {
-		goog.events.listen(suggestedSongButton, 'click', this.onClickSuggestedSongButton, false, this);
+		this._contentEventHandler.listen(suggestedSongButton, 'click', this.onClickSuggestedSongButton, false, this);
 	}, this);
 
 	this._shareButtons = goog.dom.query('.share a', this.contentDom);
 
 	goog.array.forEach(this._shareButtons, function(shareButton) {
-		goog.events.listen(shareButton, 'click', this.onClickShareButton, false, this);
+		this._contentEventHandler.listen(shareButton, 'click', this.onClickShareButton, false, this);
 	}, this);
 
 	// tween it
 	var songDetailContainer = goog.dom.getElementByClass('songDetailContainer', this.contentDom);
 	var detailDoms = goog.dom.getChildren(songDetailContainer);
 
-	this._contentAnimateInTweener = new TimelineMax();
-	this._contentAnimateInTweener.staggerFromTo(detailDoms, .5, {opacity: 0}, {opacity: 1}, .2, '+=0', this.onAnimateInContent, null, this);
+	this._contentAnimateInTweener = TweenMax.staggerFromTo(detailDoms, .5, {opacity: 0}, {opacity: 1}, .2, this.onAnimateInContent, null, this);
 
 	// reset scroller
 	this._scroller.reset();
@@ -161,8 +163,7 @@ hlc.views.Sidebar.prototype.animateOutContent = function(){
 
 	var detailDoms = goog.dom.getChildren(songDetailContainer);
 
-	this._contentAnimateOutTweener = new TimelineMax();
-	this._contentAnimateOutTweener.staggerTo(detailDoms, .5, {opacity: 0}, .2, '+=0', this.onAnimateOutContent, null, this);
+	this._contentAnimateOutTweener = TweenMax.staggerTo(detailDoms, .5, {opacity: 0}, .2, this.onAnimateOutContent, null, this);
 };
 
 
@@ -234,21 +235,10 @@ hlc.views.Sidebar.prototype.onAnimateOutContent = function() {
 	this._contentAnimateOutTweener = null;
 
 	// remove previous page event listeners
-	if(this._suggestedSongButtons.length > 0) {
-		goog.array.forEach(this._suggestedSongButtons, function(suggestedSongButton) {
-			goog.events.unlisten(suggestedSongButton, 'click', this.onClickSuggestedSongButton, false, this);
-		}, this);
+	this._contentEventHandler.removeAll();
 
-		this._suggestedSongButtons = [];
-	}
-
-	if(this._shareButtons.length > 0) {
-		goog.array.forEach(this._shareButtons, function(shareButton) {
-			goog.events.unlisten(shareButton, 'click', this.onClickShareButton, false, this);
-		}, this);
-
-		this._shareButtons = [];
-	}
+	this._suggestedSongButtons = [];
+	this._shareButtons = [];
 
 	// remove current content
 	var songDetailContainer = goog.dom.getElementByClass('songDetailContainer', this.contentDom);
