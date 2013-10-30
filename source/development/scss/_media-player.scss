@@ -24,11 +24,11 @@ $media_player_height: 80px;
 
 			&.playbackControl{
 				//outline: 1px solid gray;
-				margin-top: ($media_player_height - 40px) / 2;
+				margin-top: ($media_player_height - 50px) / 2;
 				max-width: 230px;
-				min-width: 140px;
+				min-width: 150px;
 				width: 20%;
-				height: 40px;
+				height: 50px;
 				font-size: 0;
 
 				>.cell{
@@ -47,19 +47,19 @@ $media_player_height: 80px;
 						margin: 0 auto;
 
 						&.prevButton{
-							@include icon-sprite("mediaplayer-prevbutton");
+							@include icon-sprite("mediaplayer-prev");
 						}
 
 						&.playButton{
-							@include icon-sprite("mediaplayer-pausebutton");
+							@include icon-sprite("mediaplayer-pause");
 
 							&.pause{
-								@include icon-sprite("mediaplayer-playbutton");
+								@include icon-sprite("mediaplayer-play");
 							}
 						}
 
 						&.nextButton{
-							@include icon-sprite("mediaplayer-nextbutton");
+							@include icon-sprite("mediaplayer-next");
 						}
 					}
 				}
