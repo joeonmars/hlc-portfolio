@@ -157,8 +157,9 @@
 
 							>p{
 								position: absolute;
-								top: (40px - 18px) / 2;
+								top: 0;
 								width: 100%;
+								line-height: 40px;
 								overflow: hidden;
 								white-space: nowrap;
 								text-overflow: ellipsis;
@@ -168,6 +169,8 @@
 								font-family: $font_poly;
 								font-size: 18px;
 								color: white;
+								padding: 0 20px;
+								@include box-sizing(border-box);
 							}
 						}
 					}

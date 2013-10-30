@@ -26,7 +26,6 @@
     float: right;
     width: 4px;
     height: 100%;
-    background-color: #fff;
     @include single-transition(width, 0.25s, ease-out);
 
     >.handle{
