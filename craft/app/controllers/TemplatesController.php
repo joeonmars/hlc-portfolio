@@ -71,6 +71,7 @@ class TemplatesController extends BaseController
 	{
 		$this->_render('_special/breakpointupdate', array(
 			'minBuild'      => CRAFT_MIN_BUILD_REQUIRED,
+			'minBuildURL'   => CRAFT_MIN_BUILD_URL,
 			'targetVersion' => CRAFT_VERSION,
 			'targetBuild'   => CRAFT_BUILD
 		));
@@ -150,6 +151,13 @@ class TemplatesController extends BaseController
 						$template = 'error';
 					}
 				}
+			}
+		}
+		else
+		{
+			if (!craft()->templates->doesTemplateExist($template))
+			{
+				$template = 'error';
 			}
 		}
 

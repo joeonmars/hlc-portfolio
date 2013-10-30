@@ -35,7 +35,7 @@ class ConfigVariable
 	 */
 	function __get($name)
 	{
-		return (string)craft()->config->get($name);
+		return craft()->config->get($name);
 	}
 
 	/**

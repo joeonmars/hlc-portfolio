@@ -47,23 +47,6 @@ return array(
 		'tablePrefix' => 'craft',
   ),
 
-  'hsinleichen.joeonmars-staging.com' => array(
-		// The database server name or IP address. Usually this is 'localhost' or '127.0.0.1'.
-		'server' => 'pdb3.awardspace.com',
-
-		// The database username to connect with.
-		'user' => '1377301_hlc',
-
-		// The database password to connect with.
-		'password' => '1377301_hlc',
-
-		// The name of the database to select.
-		'database' => '1377301_hlc',
-
-		// The prefix to use when naming tables. This can be no more than 5 characters.
-		'tablePrefix' => 'craft',
-  ),
-
   'hsinlei.com' => array(
 		// The database server name or IP address. Usually this is 'localhost' or '127.0.0.1'.
 		'server' => 'localhost',

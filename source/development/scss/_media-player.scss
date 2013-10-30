@@ -9,7 +9,7 @@ $media_player_height: 80px;
 	overflow: hidden;
 	padding: 0 20px 0 20px !important;
 	@include box-sizing(border-box);
-	@include background(linear-gradient(bottom, #F0EFFD, white));
+	@include background(linear-gradient(bottom, #e8e7eb, #ffffff));
 	@include user-select(none);
 
 	>.fullColumn{
@@ -24,42 +24,55 @@ $media_player_height: 80px;
 
 			&.playbackControl{
 				//outline: 1px solid gray;
-				margin-top: ($media_player_height - 50px) / 2;
+				margin-top: ($media_player_height - 46px) / 2;
 				max-width: 230px;
 				min-width: 150px;
 				width: 20%;
-				height: 50px;
+				height: 46px;
 				font-size: 0;
 
 				>.cell{
 					display: inline-block;
 					vertical-align: middle;
 
-					&.left, &.right{
-						width: 35%;
-					}
-
-					&.middle{
-						width: 30%;
+					&.left, &.middle, &.right{
+						width: 33.33333333333333%;
 					}
 
 					>.button{
 						margin: 0 auto;
+						display: block;
 
 						&.prevButton{
 							@include icon-sprite("mediaplayer-prev");
+
+							&:active{
+								@include icon-sprite("mediaplayer-prev-down");
+							}
 						}
 
 						&.playButton{
 							@include icon-sprite("mediaplayer-pause");
 
+							&:active{
+								@include icon-sprite("mediaplayer-pause-down");
+							}
+
 							&.pause{
 								@include icon-sprite("mediaplayer-play");
+
+								&:active{
+									@include icon-sprite("mediaplayer-play-down");
+								}
 							}
 						}
 
 						&.nextButton{
 							@include icon-sprite("mediaplayer-next");
+
+							&:active{
+								@include icon-sprite("mediaplayer-next-down");
+							}
 						}
 					}
 				}

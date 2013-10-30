@@ -33,7 +33,19 @@ class UsersController extends BaseController
 			}
 			else
 			{
-				$this->redirect(UrlHelper::getCpUrl('dashboard'));
+				// They are already logged in.
+				$currentUser = craft()->userSession->getUser();
+
+				// If they can access the control panel, redirect them to the dashboard.
+				if ($currentUser->can('accessCp'))
+				{
+					$this->redirect(UrlHelper::getCpUrl('dashboard'));
+				}
+				else
+				{
+					// Already logged in, but can't access the CP?  Send them to the front-end home page.
+					$this->redirect(UrlHelper::getSiteUrl());
+				}
 			}
 		}
 
@@ -223,29 +235,21 @@ class UsersController extends BaseController
 			// If the user cannot access the CP
 			if (!$user->can('accessCp'))
 			{
+				// Make sure we're looking at the front-end templates path to start with.
+				craft()->path->setTemplatesPath(craft()->path->getSiteTemplatesPath());
+
 				// If they haven't defined a front-end set password template
 				if (!craft()->templates->doesTemplateExist(craft()->config->get('setPasswordPath')))
 				{
 					// Set PathService to use the CP templates path instead
 					craft()->path->setTemplatesPath(craft()->path->getCpTemplatesPath());
+				}
 
-					// Render Craft's set password template on the front-end.
-					$this->renderTemplate($url, array(
-						'code' => $code,
-						'id' => $id,
-						'newUser' => ($user->password ? false : true),
-					));
-				}
-				// They cannot access the CP, but they have a front-end set password template defined.
-				// Set the route variables and let URL manager do it's thing.
-				else
-				{
-					craft()->urlManager->setRouteVariables(array(
-						'code' => $code,
-						'id' => $id,
-						'newUser' => ($user->password ? false : true),
-					));
-				}
+				$this->renderTemplate($url, array(
+					'code' => $code,
+					'id' => $id,
+					'newUser' => ($user->password ? false : true),
+				));
 			}
 			// The user can access the CP, so send them to Craft's set password template in the dashboard.
 			else

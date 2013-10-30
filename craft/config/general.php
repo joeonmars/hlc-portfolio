@@ -28,12 +28,6 @@ return array(
       )
     ),
 
-    'hsinleichen.joeonmars-staging.com' => array(
-      'environmentVariables' => array(
-          'siteUrl' => 'http://hsinleichen.joeonmars-staging.com/'
-      )
-    ),
-
     'hsinlei.com' => array(
     	'cooldownDuration'     => 0,
 

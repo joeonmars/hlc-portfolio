@@ -546,6 +546,17 @@ class WebApp extends \CWebApplication
 	}
 
 	/**
+	 * Returns the system time zone.  Note that this method cannot be in AppBehavior, because Yii will check
+	 * \CApplication->getTimeZone instead.
+	 *
+	 * @return string
+	 */
+	public function getTimeZone()
+	{
+		return $this->getInfo('timezone');
+	}
+
+	/**
 	 * Attaches any pending event listeners to the newly-initialized component.
 	 *
 	 * @access private
@@ -761,8 +772,8 @@ class WebApp extends \CWebApplication
 		if (
 			$this->request->getActionSegments() == array('users', 'login') ||
 			$this->request->getActionSegments() == array('users', 'validate') ||
-			$this->request->getActionSegments() == array('users', 'setPassword') ||
-			$this->request->getActionSegments() == array('users', 'forgotPassword') ||
+			$this->request->getActionSegments() == array('users', 'setpassword') ||
+			$this->request->getActionSegments() == array('users', 'forgotpassword') ||
 			$this->request->getActionSegments() == array('users', 'saveUser'))
 		{
 			return true;
@@ -777,12 +788,15 @@ class WebApp extends \CWebApplication
 	 */
 	private function _processRequirementsCheck()
 	{
-		$cachedAppPath = craft()->fileCache->get('appPath');
-		$appPath = $this->path->getAppPath();
-
-		if ($cachedAppPath === false || $cachedAppPath !== $appPath)
+		if ($this->request->isCpRequest())
 		{
-			$this->runController('templates/requirementscheck');
+			$cachedAppPath = craft()->fileCache->get('appPath');
+			$appPath = $this->path->getAppPath();
+
+			if ($cachedAppPath === false || $cachedAppPath !== $appPath)
+			{
+				$this->runController('templates/requirementscheck');
+			}
 		}
 	}
 

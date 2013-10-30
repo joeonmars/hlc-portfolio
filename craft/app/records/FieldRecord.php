@@ -41,6 +41,7 @@ class FieldRecord extends BaseRecord
 		'url',
 		'ref',
 		'title',
+		'status',
 	);
 
 	/**
