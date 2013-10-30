@@ -178,7 +178,7 @@
 							font-family: $font_poly;
 							text-transform: capitalize;
 							overflow: hidden;
-							text-overflow:ellipsis;
+							text-overflow: ellipsis;
 							@include single-transition(color, 0.5s);
 
 							>span{
