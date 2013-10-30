@@ -3,6 +3,7 @@
 		{% for album in craft.entries.section('album').find() %}
 		"{{ album.slug }}": {
 			"title": "{{ album.title }}",
+			"coverThumbnail": "{{ siteUrl }}/{{ album.coverThumbnail[0].url }}",
 			"cover": "{{ siteUrl }}/{{ album.cover[0].url }}",
 			"songs": {
 				{% for song in album.songs %}

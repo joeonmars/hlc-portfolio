@@ -30,14 +30,16 @@ hlc.views.common.Scroller = function(outer, scrollbar){
     'onThrowUpdateScope': this
   });
 
-  if(!goog.userAgent.MOBILE) {
-    this._draggable.disable();
-  }
-
   this._dragger = new goog.fx.Dragger(this._handleDom);
   this._draggerLimits = new goog.math.Rect(0, 0, 0, 0);
 
   this._eventHandler = new goog.events.EventHandler(this);
+
+  if(goog.userAgent.MOBILE) {
+    this._dragger.setEnabled(false);
+  }else {
+    this._draggable.disable();
+  }
 };
 goog.inherits(hlc.views.common.Scroller, goog.events.EventTarget);
 

@@ -408,7 +408,6 @@ body {
   min-height: 640px;
   font-family: "MyriadPro-Regular", sans-serif;
   -webkit-font-smoothing: antialiased;
-  opacity: .1;
 }
 
 h1, h2 {
