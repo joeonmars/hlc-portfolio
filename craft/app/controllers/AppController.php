@@ -17,19 +17,12 @@ namespace Craft;
 class AppController extends BaseController
 {
 	/**
-	 * Init
-	 */
-	public function init()
-	{
-		// All app actions must be performed by an admin.
-		craft()->userSession->requireAdmin();
-	}
-
-	/**
 	 * Returns update info.
 	 */
 	public function actionCheckForUpdates()
 	{
+		craft()->userSession->requirePermission('performUpdates');
+
 		$forceRefresh = (bool) craft()->request->getPost('forceRefresh');
 		craft()->updates->getUpdates($forceRefresh);
 
@@ -45,6 +38,7 @@ class AppController extends BaseController
 	public function actionGetCpAlerts()
 	{
 		$this->requireAjaxRequest();
+		craft()->userSession->requirePermission('accessCp');
 
 		$path = craft()->request->getRequiredPost('path');
 
@@ -59,6 +53,7 @@ class AppController extends BaseController
 	public function actionShunCpAlert()
 	{
 		$this->requireAjaxRequest();
+		craft()->userSession->requirePermission('accessCp');
 
 		$message = craft()->request->getRequiredPost('message');
 		$user = craft()->userSession->getUser();
@@ -85,6 +80,7 @@ class AppController extends BaseController
 	{
 		$this->requireAjaxRequest();
 		$this->requirePostRequest();
+		craft()->userSession->requireAdmin();
 
 		$response = craft()->et->transferLicenseToCurrentDomain();
 
@@ -106,6 +102,7 @@ class AppController extends BaseController
 	public function actionFetchPackageInfo()
 	{
 		$this->requireAjaxRequest();
+		craft()->userSession->requireAdmin();
 
 		$etResponse = craft()->et->fetchPackageInfo();
 
@@ -156,6 +153,7 @@ class AppController extends BaseController
 	{
 		$this->requirePostRequest();
 		$this->requireAjaxRequest();
+		craft()->userSession->requireAdmin();
 
 		$model = new PackagePurchaseOrderModel(array(
 			'ccTokenId'     => craft()->request->getRequiredPost('ccTokenId'),
@@ -185,6 +183,7 @@ class AppController extends BaseController
 	{
 		$this->requirePostRequest();
 		$this->requireAjaxRequest();
+		craft()->userSession->requireAdmin();
 
 		$package = craft()->request->getRequiredPost('package');
 		$success = craft()->installPackage($package);
@@ -201,6 +200,7 @@ class AppController extends BaseController
 	{
 		$this->requirePostRequest();
 		$this->requireAjaxRequest();
+		craft()->userSession->requireAdmin();
 
 		$package = craft()->request->getRequiredPost('package');
 		$success = craft()->uninstallPackage($package);
@@ -217,6 +217,7 @@ class AppController extends BaseController
 	{
 		$this->requirePostRequest();
 		$this->requireAjaxRequest();
+		craft()->userSession->requireAdmin();
 
 		$model = new TryPackageModel(array(
 			'packageHandle' => craft()->request->getRequiredPost('package'),

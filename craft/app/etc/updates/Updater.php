@@ -189,7 +189,7 @@ class Updater
 		{
 			// Setting new Craft info.
 			Craft::log('Settings new Craft release info in craft_info table.', LogLevel::Info, true);
-			if (!craft()->updates->setNewCraftInfo(CRAFT_VERSION, CRAFT_BUILD, CRAFT_RELEASE_DATE))
+			if (!craft()->updates->updateCraftVersionInfo())
 			{
 				throw new Exception(Craft::t('The update was performed successfully, but there was a problem setting the new info in the database info table.'));
 			}
@@ -438,7 +438,13 @@ class Updater
 
 		if (!IOHelper::fileExists($requirementsFile))
 		{
-			throw new Exception('The Requirements file is required and it does not exist at '.$requirementsFile);
+			throw new Exception(Craft::t('The Requirements file is required and it does not exist at {path}.', array('path' => $requirementsFile)));
+		}
+
+		// Make sure we can write to craft/app/requirements
+		if (!IOHelper::isWritable(craft()->path->getAppPath().'etc/requirements/'))
+		{
+			throw new Exception(Craft::t('Craft needs to be able to write to your craft/app/etc/requirements folder and cannot. Please check your <a href="http://buildwithcraft.com/docs/updating#one-click-updating">permissions</a>.'));
 		}
 
 		$tempFileName = StringHelper::UUID().'.php';
@@ -460,8 +466,9 @@ class Updater
 		{
 			foreach ($checker->getRequirements() as $requirement)
 			{
-				if ($requirement->getResult() == RequirementResult::Failed)
+				if ($requirement->getResult() == InstallStatus::Failed)
 				{
+					Craft::log('Requirement "'.$requirement->getName().'" failed with the message: '.$requirement->getNotes(), LogLevel::Error, true);
 					$errors[] = $requirement->getNotes();
 				}
 			}

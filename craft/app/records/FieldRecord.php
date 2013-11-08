@@ -16,7 +16,6 @@ namespace Craft;
  */
 class FieldRecord extends BaseRecord
 {
-	public $oldHandle;
 	protected $reservedHandleWords = array(
 		'archived',
 		'author',
@@ -40,9 +39,41 @@ class FieldRecord extends BaseRecord
 		'uri',
 		'url',
 		'ref',
-		'title',
+		'size',
 		'status',
+		'title',
 	);
+
+	private $_oldHandle;
+
+	/**
+	 * Init
+	 */
+	public function init()
+	{
+		parent::init();
+
+		// Store the old handle in case it's ever requested.
+		$this->attachEventHandler('onAfterFind', array($this, 'storeOldHandle'));
+	}
+
+	/**
+	 * Store the old handle.
+	 */
+	public function storeOldHandle()
+	{
+		$this->_oldHandle = $this->handle;
+	}
+
+	/**
+	 * Returns the old handle.
+	 *
+	 * @return string
+	 */
+	public function getOldHandle()
+	{
+		return $this->_oldHandle;
+	}
 
 	/**
 	 * @return string
@@ -60,7 +91,8 @@ class FieldRecord extends BaseRecord
 	{
 		return array(
 			'name'         => array(AttributeType::Name, 'required' => true),
-			'handle'       => array(AttributeType::Handle, 'maxLength' => 64, 'required' => true, 'reservedWords' => $this->reservedHandleWords),
+			'handle'       => array(AttributeType::Handle, 'required' => true, 'reservedWords' => $this->reservedHandleWords),
+			'context'      => array(AttributeType::String, 'default' => 'global', 'required' => true),
 			'instructions' => array(AttributeType::String, 'column' => ColumnType::Text),
 			'translatable' => AttributeType::Bool,
 			'type'         => array(AttributeType::ClassName, 'required' => true),
@@ -84,7 +116,7 @@ class FieldRecord extends BaseRecord
 	public function defineIndexes()
 	{
 		return array(
-			array('columns' => array('handle'), 'unique' => true),
+			array('columns' => array('handle', 'context'), 'unique' => true),
 		);
 	}
 
@@ -96,5 +128,20 @@ class FieldRecord extends BaseRecord
 		return array(
 			'ordered' => array('order' => 'name'),
 		);
+	}
+
+	/**
+	 * Set the max field handle length based on the current field column prefix length.
+	 *
+	 * @return array
+	 */
+	public function getAttributeConfigs()
+	{
+		$attributeConfigs = parent::getAttributeConfigs();
+
+		// Field handles must be <= 58 chars so that with "field_" prepended, they're <= 64 chars (MySQL's column name limit).
+		$attributeConfigs['handle']['maxLength'] = 64 - strlen(craft()->content->fieldColumnPrefix);
+
+		return $attributeConfigs;
 	}
 }

@@ -38,6 +38,34 @@ abstract class BaseFieldType extends BaseSavableComponentType implements IFieldT
 	}
 
 	/**
+	 * Performs any actions before a field is saved.
+	 */
+	public function onBeforeSave()
+	{
+	}
+
+	/**
+	 * Performs any actions after a field is saved.
+	 */
+	public function onAfterSave()
+	{
+	}
+
+	/**
+	 * Performs any actions before a field is deleted.
+	 */
+	public function onBeforeDelete()
+	{
+	}
+
+	/**
+	 * Performs any actions after a field is deleted.
+	 */
+	public function onAfterDelete()
+	{
+	}
+
+	/**
 	 * Returns the field's input HTML.
 	 *
 	 * @param string $name
@@ -62,6 +90,26 @@ abstract class BaseFieldType extends BaseSavableComponentType implements IFieldT
 	}
 
 	/**
+	 * Validates the value beyond the checks that were assumed based on the content attribute.
+	 *
+	 * Returns 'true' or any custom validation errors.
+	 *
+	 * @param mixed $value
+	 * @return true|string|array
+	 */
+	public function validate($value)
+	{
+		return true;
+	}
+
+	/**
+	 * Performs any additional actions after the element has been saved.
+	 */
+	public function onAfterElementSave()
+	{
+	}
+
+	/**
 	 * Returns the search keywords that should be associated with this field,
 	 * based on the prepped post data.
 	 *
@@ -74,27 +122,6 @@ abstract class BaseFieldType extends BaseSavableComponentType implements IFieldT
 	}
 
 	/**
-	 * Performs any actions before a field is saved.
-	 */
-	public function onBeforeSave()
-	{
-	}
-
-	/**
-	 * Performs any actions after a field is saved.
-	 */
-	public function onAfterSave()
-	{
-	}
-
-	/**
-	 * Performs any additional actions after the element has been saved.
-	 */
-	public function onAfterElementSave()
-	{
-	}
-
-	/**
 	 * Preps the field value for use.
 	 *
 	 * @param mixed $value
@@ -103,6 +130,26 @@ abstract class BaseFieldType extends BaseSavableComponentType implements IFieldT
 	public function prepValue($value)
 	{
 		return $value;
+	}
+
+	/**
+	 * Modifies an element query that's filtering by this field.
+	 *
+	 * @param DbCommand $query
+	 * @param mixed     $value
+	 * @return null|false
+	 */
+	public function modifyElementsQuery(DbCommand $query, $value)
+	{
+		if ($this->defineContentAttribute())
+		{
+			$handle = $this->model->handle;
+			$query->andWhere(DbHelper::parseParam('content.'.craft()->content->fieldColumnPrefix.$handle, $value, $query->params));
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	/**

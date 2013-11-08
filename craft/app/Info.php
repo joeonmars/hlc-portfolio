@@ -11,9 +11,10 @@ namespace Craft;
  * @link      http://buildwithcraft.com
  */
 
-define('CRAFT_VERSION', '1.2');
-define('CRAFT_BUILD', '2392');
-define('CRAFT_RELEASE_DATE', '1383093520');
-define('CRAFT_MIN_BUILD_REQUIRED', '2321');
-define('CRAFT_MIN_BUILD_URL', 'http://download.buildwithcraft.com/craft/1.1/1.1.2321/Craft-1.1.2321.zip');
+define('CRAFT_VERSION', '1.3');
+define('CRAFT_BUILD', '2416');
+define('CRAFT_SCHEMA_VERSION', '1.3.10');
+define('CRAFT_RELEASE_DATE', '1383881721');
+define('CRAFT_MIN_BUILD_REQUIRED', '2396');
+define('CRAFT_MIN_BUILD_URL', 'http://download.buildwithcraft.com/craft/1.2/1.2.2396/Craft-1.2.2396.zip');
 define('CRAFT_TRACK', 'stable');

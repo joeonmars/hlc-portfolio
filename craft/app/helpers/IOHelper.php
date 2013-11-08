@@ -128,6 +128,54 @@ class IOHelper
 	}
 
 	/**
+	 * If the path exists on the file system, will return the paths of any folders that are contained within it.
+	 *
+	 * @param  string  $path           The folder path to check
+	 * @param  bool    $suppressErrors Whether to suppress any PHP Notices/Warnings/Errors (usually permissions related).
+	 * @return array|bool
+	 */
+	public static function getFolders($path, $suppressErrors = false)
+	{
+		$path = static::normalizePathSeparators($path, $suppressErrors);
+
+		if (static::folderExists($path, $suppressErrors))
+		{
+			$folders = $suppressErrors ? @glob($path.'*', GLOB_ONLYDIR) : glob($path.'*', GLOB_ONLYDIR);
+
+			if ($folders)
+			{
+				foreach ($folders as $key => $folder)
+				{
+					$folders[$key] = static::normalizePathSeparators($folder, $suppressErrors);
+				}
+
+				return $folders;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * If the path exists on the file system, will return the paths of any files that are contained within it.
+	 *
+	 * @param  string  $path           The folder path to check
+	 * @param  bool    $suppressErrors Whether to suppress any PHP Notices/Warnings/Errors (usually permissions related).
+	 * @return array|bool
+	 */
+	public static function getFiles($path, $suppressErrors = false)
+	{
+		$path = static::normalizePathSeparators($path, $suppressErrors);
+
+		if (static::folderExists($path, $suppressErrors))
+		{
+			return $suppressErrors ? @glob($path.'*.*') : glob($path.'*');
+		}
+
+		return false;
+	}
+
+	/**
 	 * Returns the real filesystem path of the given path.
 	 *
 	 * @static
@@ -1275,20 +1323,24 @@ class IOHelper
 	public static function getFileKinds()
 	{
 		return array(
-			'access'      => array('adp','accdb','mdb'),
-			'audio'       => array('wav','aif','aiff','aifc','m4a','wma','mp3','aac','oga'),
-			'excel'       => array('xls', 'xlsx'),
-			'flash'       => array('fla','swf'),
+			'access'      => array('adp','accdb','mdb','accde','accdt','accdr'),
+			'audio'       => array('3gp','aac','act','aif','aiff','aifc','alac','amr','au','dct','dss','dvf','flac','gsm','iklax','ivs','m4a','m4p','mmf','mp3','mpc','msv','oga','ogg','opus','ra','tta','vox','wav','wma','wv'),
+			'excel'       => array('xls', 'xlsx','xlsm','xltx','xltm'),
+			'flash'       => array('fla','flv','swf','swt','swc'),
 			'html'        => array('html','htm'),
 			'illustrator' => array('ai'),
-			'image'       => array('jpg','jpeg','jpe','tiff','tif','png','gif','bmp','webp'),
+			'image'       => array('jfif','jp2','jpx','jpg','jpeg','jpe','tiff','tif','png','gif','bmp','webp','ppm','pgm','pnm','pfm','pam','svg'),
+			'javascript'  => array('js'),
+			'json'        => array('json'),
 			'pdf'         => array('pdf'),
 			'photoshop'   => array('psd','psb'),
 			'php'         => array('php'),
-			'powerpoint'  => array('ppt', 'pptx'),
+			'powerpoint'  => array('ppt','pptx','pps','pptm','potx'),
 			'text'        => array('txt','text'),
-			'video'       => array('mov','m4v','wmv','avi','flv','mp4','ogg','ogv','rm'),
-			'word'        => array('doc','docx')
+			'video'       => array('avchd','asf','asx','avi','flv','fla','mov','m4v','mng','mpeg','mpg','m1s','mp2v','m2v','m2s','mp4','mkv','qt','flv','mp4','ogg','ogv','rm','wmv'),
+			'word'        => array('doc','docx','dot','docm','dotm'),
+			'xml'         => array('xml'),
+
 		);
 	}
 
@@ -1303,6 +1355,7 @@ class IOHelper
 	{
 		$extension = mb_strtolower($extension);
 		$fileKinds = static::getFileKinds();
+
 		foreach ($fileKinds as $kind => $extensions)
 		{
 			if (in_array($extension, $extensions))
@@ -1310,6 +1363,8 @@ class IOHelper
 				return $kind;
 			}
 		}
+
+		return 'unknown';
 	}
 
 	/**

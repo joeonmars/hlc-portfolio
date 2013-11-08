@@ -23,6 +23,16 @@ abstract class BaseElementType extends BaseComponentType implements IElementType
 	protected $componentType = 'ElementType';
 
 	/**
+	 * Returns whether this element type has content.
+	 *
+	 * @return bool
+	 */
+	public function hasContent()
+	{
+		return false;
+	}
+
+	/**
 	 * Returns whether this element type has titles.
 	 *
 	 * @return bool
@@ -43,11 +53,11 @@ abstract class BaseElementType extends BaseComponentType implements IElementType
 	}
 
 	/**
-	 * Returns whether this element type is translatable.
+	 * Returns whether this element type stores data on a per-locale basis.
 	 *
 	 * @return bool
 	 */
-	public function isTranslatable()
+	public function isLocalized()
 	{
 		return false;
 	}
@@ -85,6 +95,58 @@ abstract class BaseElementType extends BaseComponentType implements IElementType
 	}
 
 	/**
+	 * Returns the table view HTML for a given attribute.
+	 *
+	 * @param BaseElementModel $element
+	 * @param string $attribute
+	 * @return string
+	 */
+	public function getTableAttributeHtml(BaseElementModel $element, $attribute)
+	{
+		switch ($attribute)
+		{
+			case 'uri':
+			{
+				$url = $element->getUrl();
+
+				if ($url)
+				{
+					$value = $element->uri;
+
+					if ($value == '__home__')
+					{
+						$value = '<span data-icon="home" title="'.Craft::t('Homepage').'"></span>';
+					}
+
+					return '<a href="'.$url.'" target="_blank" class="go">'.$value.'</a>';
+				}
+				else
+				{
+					return '';
+				}
+			}
+			case 'dateCreated':
+			case 'dateUpdated':
+			{
+				$date = $element->$attribute;
+
+				if ($date)
+				{
+					return $date->localeDate();
+				}
+				else
+				{
+					return '';
+				}
+			}
+			default:
+			{
+				return $element->$attribute;
+			}
+		}
+	}
+
+	/**
 	 * Defines any custom element criteria attributes for this element type.
 	 *
 	 * @return array
@@ -92,6 +154,41 @@ abstract class BaseElementType extends BaseComponentType implements IElementType
 	public function defineCriteriaAttributes()
 	{
 		return array();
+	}
+
+	/**
+	 * Returns the content table name that should be joined in for an elements query.
+	 *
+	 * @param ElementCriteriaModel
+	 * @return string
+	 */
+	public function getContentTableForElementsQuery(ElementCriteriaModel $criteria)
+	{
+		return 'content';
+	}
+
+	/**
+	 * Returns the field column names that should be selected from the content table.
+	 *
+	 * @param ElementCriteriaModel
+	 * @return array
+	 */
+	public function getContentFieldColumnsForElementsQuery(ElementCriteriaModel $criteria)
+	{
+		$contentService = craft()->content;
+		$columns = array();
+
+		$originalFieldContext = $contentService->fieldContext;
+		$contentService->fieldContext = 'global';
+
+		foreach (craft()->fields->getFieldsWithContent() as $field)
+		{
+			$columns[] = array('handle' => $field->handle, 'column' => 'field_'.$field->handle);
+		}
+
+		$contentService->fieldContext = $originalFieldContext;
+
+		return $columns;
 	}
 
 	/**
@@ -106,7 +203,7 @@ abstract class BaseElementType extends BaseComponentType implements IElementType
 	}
 
 	/**
-	 * Modifies an entries query targeting entries of this type.
+	 * Modifies an element query targeting elements of this type.
 	 *
 	 * @param DbCommand $query
 	 * @param ElementCriteriaModel $criteria

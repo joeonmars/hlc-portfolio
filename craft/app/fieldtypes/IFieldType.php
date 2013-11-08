@@ -35,12 +35,32 @@ interface IFieldType extends ISavableComponentType
 	public function prepValueFromPost($value);
 
 	/**
+	 * @param mixed $value
+	 * @return true|string|array
+	 */
+	public function validate($value);
+
+	/**
+	 * @param mixed $value
+	 * @return string
+	 */
+	public function getSearchKeywords($value);
+
+	/**
 	 */
 	public function onBeforeSave();
 
 	/**
 	 */
 	public function onAfterSave();
+
+	/**
+	 */
+	public function onBeforeDelete();
+
+	/**
+	 */
+	public function onAfterDelete();
 
 	/**
 	 */
@@ -51,4 +71,11 @@ interface IFieldType extends ISavableComponentType
 	 * @return mixed
 	 */
 	public function prepValue($value);
+
+	/**
+	 * @param DbCommand $query
+	 * @param mixed     $value
+	 * @return null|false
+	 */
+	public function modifyElementsQuery(DbCommand $query, $value);
 }

@@ -27,6 +27,16 @@ class UserElementType extends BaseElementType
 	}
 
 	/**
+	 * Returns whether this element type has content.
+	 *
+	 * @return bool
+	 */
+	public function hasContent()
+	{
+		return true;
+	}
+
+	/**
 	 * Returns whether this element type can have statuses.
 	 *
 	 * @return bool
@@ -75,8 +85,7 @@ class UserElementType extends BaseElementType
 	 */
 	public function defineSearchableAttributes()
 	{
-		return array('username', 'firstName', 'lastName', 'fullName', 'email'
-		);
+		return array('username', 'firstName', 'lastName', 'fullName', 'email');
 	}
 
 	/**
@@ -88,11 +97,57 @@ class UserElementType extends BaseElementType
 	public function defineTableAttributes($source = null)
 	{
 		return array(
-			array('label' => Craft::t('Name'),       'attribute' => 'username'),
-			array('label' => Craft::t('Email'),      'attribute' => 'email',         'display' => '<a href="mailto:{email}">{email}</a>'),
-			array('label' => Craft::t('Join Date'),  'attribute' => 'dateCreated',   'display' => '{dateCreated.localeDate}'),
-			array('label' => Craft::t('Last Login'), 'attribute' => 'lastLoginDate', 'display' => '{lastLoginDate.localeDate}'),
+			'username'      => Craft::t('Name'),
+			'email'         => Craft::t('Email'),
+			'dateCreated'   => Craft::t('Join Date'),
+			'lastLoginDate' => Craft::t('Last Login'),
 		);
+	}
+
+	/**
+	 * Returns the table view HTML for a given attribute.
+	 *
+	 * @param BaseElementModel $element
+	 * @param string $attribute
+	 * @return string
+	 */
+	public function getTableAttributeHtml(BaseElementModel $element, $attribute)
+	{
+		switch ($attribute)
+		{
+			case 'email':
+			{
+				$email = $element->email;
+
+				if ($email)
+				{
+					return '<a href="mailto:'.$email.'">'.$email.'</a>';
+				}
+				else
+				{
+					return '';
+				}
+			}
+
+			case 'lastLoginDate':
+			{
+				$date = $element->$attribute;
+
+				if ($date)
+				{
+					return $date->localeDate();
+				}
+				else
+				{
+					return '';
+				}
+			}
+
+			default:
+			{
+				return parent::getTableAttributeHtml($element, $attribute);
+			}
+		}
 	}
 
 	/**
@@ -118,7 +173,7 @@ class UserElementType extends BaseElementType
 	}
 
 	/**
-	 * Modifies an entries query targeting entries of this type.
+	 * Modifies an element query targeting elements of this type.
 	 *
 	 * @param DbCommand $query
 	 * @param ElementCriteriaModel $criteria

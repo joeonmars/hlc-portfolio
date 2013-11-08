@@ -16,6 +16,8 @@ namespace Craft;
  */
 class FieldModel extends BaseComponentModel
 {
+	private $_fieldType;
+
 	/**
 	 * Use the translated field name as the string representation.
 	 *
@@ -36,10 +38,38 @@ class FieldModel extends BaseComponentModel
 			'groupId'      => AttributeType::Number,
 			'name'         => AttributeType::String,
 			'handle'       => AttributeType::String,
+			'context'      => AttributeType::String,
 			'instructions' => AttributeType::String,
 			'required'     => AttributeType::Bool,
 			'translatable' => AttributeType::Bool,
+
+			'oldHandle'    => AttributeType::String,
 		));
+	}
+
+	/**
+	 * Returns the field type this field is using.
+	 *
+	 * @return BaseFieldType|null
+	 */
+	public function getFieldType()
+	{
+		if (!isset($this->_fieldType))
+		{
+			$this->_fieldType = craft()->fields->populateFieldType($this);
+
+			// Might not actually exist
+			if (!$this->_fieldType)
+			{
+				$this->_fieldType = false;
+			}
+		}
+
+		// Return 'null' instead of 'false' if it doesn't exist
+		if ($this->_fieldType)
+		{
+			return $this->_fieldType;
+		}
 	}
 
 	/**

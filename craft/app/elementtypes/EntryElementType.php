@@ -27,6 +27,16 @@ class EntryElementType extends BaseElementType
 	}
 
 	/**
+	 * Returns whether this element type has content.
+	 *
+	 * @return bool
+	 */
+	public function hasContent()
+	{
+		return true;
+	}
+
+	/**
 	 * Returns whether this element type has titles.
 	 *
 	 * @return bool
@@ -47,11 +57,11 @@ class EntryElementType extends BaseElementType
 	}
 
 	/**
-	 * Returns whether this element type is translatable.
+	 * Returns whether this element type stores data on a per-locale basis.
 	 *
 	 * @return bool
 	 */
-	public function isTranslatable()
+	public function isLocalized()
 	{
 		return true;
 	}
@@ -124,7 +134,7 @@ class EntryElementType extends BaseElementType
 					$sources[$key] = array(
 						'label'        => $section->name,
 						'hasStructure' => ($type == SectionType::Structure),
-						'data'         => array('type' => $type),
+						'data'         => array('type' => $type, 'handle' => $section->handle),
 						'criteria'     => array('sectionId' => $section->id)
 					);
 
@@ -161,30 +171,66 @@ class EntryElementType extends BaseElementType
 	 */
 	public function defineTableAttributes($source = null)
 	{
-		$attributes = array();
-
 		if ($source && preg_match('/^section:(\d+)$/', $source, $match))
 		{
 			$section = craft()->sections->getSectionById($match[1]);
 		}
 
 		$attributes = array(
-			array('label' => Craft::t('Title'), 'attribute' => 'title'),
-			array('label' => Craft::t('URI'), 'attribute' => 'uri'),
+			'title' => Craft::t('Title'),
+			'uri'   => Craft::t('URI'),
 		);
 
 		if ($source != 'singles')
 		{
 			if (empty($section))
 			{
-				$attributes[] = array('label' => Craft::t('Section'), 'attribute' => 'sectionId', 'display' => '{section}');
+				$attributes['sectionId'] = Craft::t('Section');
 			}
 
-			$attributes[] = array('label' => Craft::t('Post Date'), 'attribute' => 'postDate', 'display' => '{postDate.localeDate}');
-			$attributes[] = array('label' => Craft::t('Expiry Date'), 'attribute' => 'expiryDate', 'display' => '{expiryDate.localeDate}');
+			$attributes['postDate']   = Craft::t('Post Date');
+			$attributes['expiryDate'] = Craft::t('Expiry Date');
 		}
 
 		return $attributes;
+	}
+
+	/**
+	 * Returns the table view HTML for a given attribute.
+	 *
+	 * @param BaseElementModel $element
+	 * @param string $attribute
+	 * @return string
+	 */
+	public function getTableAttributeHtml(BaseElementModel $element, $attribute)
+	{
+		switch ($attribute)
+		{
+			case 'sectionId':
+			{
+				return $element->getSection()->name;
+			}
+
+			case 'postDate':
+			case 'expiryDate':
+			{
+				$date = $element->$attribute;
+
+				if ($date)
+				{
+					return $date->localeDate();
+				}
+				else
+				{
+					return '';
+				}
+			}
+
+			default:
+			{
+				return parent::getTableAttributeHtml($element, $attribute);
+			}
+		}
 	}
 
 	/**
@@ -195,26 +241,26 @@ class EntryElementType extends BaseElementType
 	public function defineCriteriaAttributes()
 	{
 		return array(
-			'type'            => AttributeType::Mixed,
-			'slug'            => AttributeType::String,
-			'sectionId'       => AttributeType::Number,
-			'authorId'        => AttributeType::Number,
-			'authorGroupId'   => AttributeType::Number,
-			'authorGroup'     => AttributeType::String,
-			'section'         => AttributeType::Mixed,
-			'editable'        => AttributeType::Bool,
-			'postDate'        => AttributeType::Mixed,
 			'after'           => AttributeType::Mixed,
-			'before'          => AttributeType::Mixed,
-			'status'          => array(AttributeType::String, 'default' => EntryModel::LIVE),
-			'order'           => array(AttributeType::String, 'default' => 'lft, postDate desc'),
-			'ancestorOf'      => AttributeType::Mixed,
 			'ancestorDist'    => AttributeType::Number,
-			'descendantOf'    => AttributeType::Mixed,
-			'descendantDist'  => AttributeType::Number,
-			'prevSiblingOf'   => AttributeType::Mixed,
-			'nextSiblingOf'   => AttributeType::Mixed,
+			'ancestorOf'      => AttributeType::Mixed,
+			'authorGroup'     => AttributeType::String,
+			'authorGroupId'   => AttributeType::Number,
+			'authorId'        => AttributeType::Number,
+			'before'          => AttributeType::Mixed,
 			'depth'           => AttributeType::Number,
+			'descendantDist'  => AttributeType::Number,
+			'descendantOf'    => AttributeType::Mixed,
+			'editable'        => AttributeType::Bool,
+			'nextSiblingOf'   => AttributeType::Mixed,
+			'order'           => array(AttributeType::String, 'default' => 'lft, postDate desc'),
+			'postDate'        => AttributeType::Mixed,
+			'prevSiblingOf'   => AttributeType::Mixed,
+			'section'         => AttributeType::Mixed,
+			'sectionId'       => AttributeType::Number,
+			'slug'            => AttributeType::String,
+			'status'          => array(AttributeType::String, 'default' => EntryModel::LIVE),
+			'type'            => AttributeType::Mixed,
 		);
 	}
 
@@ -260,7 +306,7 @@ class EntryElementType extends BaseElementType
 	}
 
 	/**
-	 * Modifies an entries query targeting entries of this type.
+	 * Modifies an element query targeting elements of this type.
 	 *
 	 * @param DbCommand $query
 	 * @param ElementCriteriaModel $criteria
@@ -373,18 +419,18 @@ class EntryElementType extends BaseElementType
 
 		if ($criteria->postDate)
 		{
-			$query->andWhere(DbHelper::parseDateParam('entries.postDate', '=', $criteria->postDate, $query->params));
+			$query->andWhere(DbHelper::parseDateParam('entries.postDate', $criteria->postDate, $query->params));
 		}
 		else
 		{
 			if ($criteria->after)
 			{
-				$query->andWhere(DbHelper::parseDateParam('entries.postDate', '>=', $criteria->after, $query->params));
+				$query->andWhere(DbHelper::parseDateParam('entries.postDate', '>='.$criteria->after, $query->params));
 			}
 
 			if ($criteria->before)
 			{
-				$query->andWhere(DbHelper::parseDateParam('entries.postDate', '<', $criteria->before, $query->params));
+				$query->andWhere(DbHelper::parseDateParam('entries.postDate', '<'.$criteria->before, $query->params));
 			}
 		}
 

@@ -27,6 +27,16 @@ class TagElementType extends BaseElementType
 	}
 
 	/**
+	 * Returns whether this element type has content.
+	 *
+	 * @return bool
+	 */
+	public function hasContent()
+	{
+		return true;
+	}
+
+	/**
 	 * Returns this element type's sources.
 	 *
 	 * @param string|null $context
@@ -68,7 +78,7 @@ class TagElementType extends BaseElementType
 	public function defineTableAttributes($source = null)
 	{
 		return array(
-			array('label' => Craft::t('Name'), 'attribute' => 'name'),
+			'name' => Craft::t('Name'),
 		);
 	}
 
@@ -88,7 +98,7 @@ class TagElementType extends BaseElementType
 	}
 
 	/**
-	 * Modifies an entries query targeting entries of this type.
+	 * Modifies an element query targeting elements of this type.
 	 *
 	 * @param DbCommand $query
 	 * @param ElementCriteriaModel $criteria

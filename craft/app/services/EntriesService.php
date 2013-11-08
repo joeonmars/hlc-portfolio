@@ -24,20 +24,14 @@ class EntriesService extends BaseApplicationComponent
 	 */
 	public function getEntryById($entryId)
 	{
-		if ($entryId)
-		{
-			$criteria = craft()->elements->getCriteria(ElementType::Entry);
-			$criteria->id = $entryId;
-			$criteria->status = null;
-			return $criteria->first();
-		}
+		return craft()->elements->getElementById($entryId, ElementType::Entry);
 	}
 
 	/**
 	 * Saves an entry.
 	 *
 	 * @param EntryModel $entry
-	 * @throws Exception
+	 * @throws \Exception
 	 * @return bool
 	 */
 	public function saveEntry(EntryModel $entry)
@@ -148,9 +142,13 @@ class EntriesService extends BaseApplicationComponent
 		$entry->typeId = $entryRecord->typeId = $entryType->id;
 
 		$fieldLayout = $entryType->getFieldLayout();
-		$content = craft()->content->prepElementContentForSave($entry, $fieldLayout);
-		$content->validate();
-		$entry->addErrors($content->getErrors());
+
+		craft()->content->prepElementContentForSave($entry, $fieldLayout);
+
+		if (!craft()->content->validateElementContent($entry, $fieldLayout))
+		{
+			$entry->addErrors($entry->getContent()->getErrors());
+		}
 
 		// Only worry about entry and element locale stuff if it's a channel or structure section
 		// since singles already have all of the locale records they'll ever need
@@ -288,8 +286,8 @@ class EntriesService extends BaseApplicationComponent
 				// Save everything!
 				$entryRecord->save(false);
 
-				$content->elementId = $entry->id;
-				craft()->content->saveContent($content, false);
+				$entry->getContent()->elementId = $entry->id;
+				craft()->content->saveContent($entry->getContent());
 
 				if ($section->type != SectionType::Single)
 				{
@@ -335,7 +333,7 @@ class EntriesService extends BaseApplicationComponent
 				}
 
 				// Perform some post-save operations
-				craft()->content->postSaveOperations($entry, $content);
+				craft()->content->postSaveOperations($entry, $entry->getContent());
 
 				// Fire an 'onSaveEntry' event
 				$this->onSaveEntry(new Event($this, array(

@@ -212,15 +212,15 @@ class InstallService extends BaseApplicationComponent
 
 		craft()->db->createCommand()->createTable('relations', array(
 			'fieldId'   => array('column' => ColumnType::Int, 'null' => false),
-			'parentId'  => array('column' => ColumnType::Int, 'null' => false),
-			'childId'   => array('column' => ColumnType::Int, 'null' => false),
+			'sourceId'  => array('column' => ColumnType::Int, 'null' => false),
+			'targetId'  => array('column' => ColumnType::Int, 'null' => false),
 			'sortOrder' => array('column' => ColumnType::TinyInt),
 		));
 
-		craft()->db->createCommand()->createIndex('relations', 'fieldId,parentId,childId', true);
+		craft()->db->createCommand()->createIndex('relations', 'fieldId,sourceId,targetId', true);
 		craft()->db->createCommand()->addForeignKey('relations', 'fieldId', 'fields', 'id', 'CASCADE');
-		craft()->db->createCommand()->addForeignKey('relations', 'parentId', 'elements', 'id', 'CASCADE');
-		craft()->db->createCommand()->addForeignKey('relations', 'childId', 'elements', 'id', 'CASCADE');
+		craft()->db->createCommand()->addForeignKey('relations', 'sourceId', 'elements', 'id', 'CASCADE');
+		craft()->db->createCommand()->addForeignKey('relations', 'targetId', 'elements', 'id', 'CASCADE');
 
 		Craft::log('Finished creating the relations table.');
 	}
@@ -292,16 +292,17 @@ class InstallService extends BaseApplicationComponent
 		Craft::log('Creating the info table.');
 
 		craft()->db->createCommand()->createTable('info', array(
-			'version'     => array('column' => ColumnType::Char,     'length' => 15,    'null' => false),
-			'build'       => array('column' => ColumnType::Int,      'length' => 11,    'unsigned' => true, 'null' => false),
-			'packages'    => array('column' => ColumnType::Varchar,  'length' => 200),
-			'releaseDate' => array('column' => ColumnType::DateTime, 'null' => false),
-			'siteName'    => array('column' => ColumnType::Varchar,  'length' => 100,   'null' => false),
-			'siteUrl'     => array('column' => ColumnType::Varchar,  'length' => 255,   'null' => false),
-			'timezone'    => array('column' => ColumnType::Varchar,  'length' => 30),
-			'on'          => array('column' => ColumnType::TinyInt,  'length' => 1,     'unsigned' => true, 'default' => false, 'null' => false),
-			'maintenance' => array('column' => ColumnType::TinyInt,  'length' => 1,     'unsigned' => true, 'default' => false, 'null' => false),
-			'track'       => array('column' => ColumnType::Varchar,  'maxLength' => 40, 'required' => true),
+			'version'       => array('column' => ColumnType::Varchar,  'length' => 15,    'null' => false),
+			'build'         => array('column' => ColumnType::Int,      'length' => 11,    'unsigned' => true, 'null' => false),
+			'schemaVersion' => array('column' => ColumnType::Varchar,  'length' => 15,    'null' => false),
+			'packages'      => array('column' => ColumnType::Varchar,  'length' => 200),
+			'releaseDate'   => array('column' => ColumnType::DateTime, 'null' => false),
+			'siteName'      => array('column' => ColumnType::Varchar,  'length' => 100,   'null' => false),
+			'siteUrl'       => array('column' => ColumnType::Varchar,  'length' => 255,   'null' => false),
+			'timezone'      => array('column' => ColumnType::Varchar,  'length' => 30),
+			'on'            => array('column' => ColumnType::TinyInt,  'length' => 1,     'unsigned' => true, 'default' => false, 'null' => false),
+			'maintenance'   => array('column' => ColumnType::TinyInt,  'length' => 1,     'unsigned' => true, 'default' => false, 'null' => false),
+			'track'         => array('column' => ColumnType::Varchar,  'maxLength' => 40, 'required' => true),
 		));
 
 		Craft::log('Finished creating the info table.');
@@ -309,14 +310,15 @@ class InstallService extends BaseApplicationComponent
 		Craft::log('Populating the info table.');
 
 		$info = new InfoModel(array(
-			'version'     => CRAFT_VERSION,
-			'build'       => CRAFT_BUILD,
-			'releaseDate' => CRAFT_RELEASE_DATE,
-			'siteName'    => $inputs['siteName'],
-			'siteUrl'     => $inputs['siteUrl'],
-			'on'          => 1,
-			'maintenance' => 0,
-			'track'       => 'stable',
+			'version'       => CRAFT_VERSION,
+			'build'         => CRAFT_BUILD,
+			'schemaVersion' => CRAFT_SCHEMA_VERSION,
+			'releaseDate'   => CRAFT_RELEASE_DATE,
+			'siteName'      => $inputs['siteName'],
+			'siteUrl'       => $inputs['siteUrl'],
+			'on'            => 1,
+			'maintenance'   => 0,
+			'track'         => 'stable',
 		));
 
 		if (craft()->saveInfo($info))
@@ -737,11 +739,11 @@ class InstallService extends BaseApplicationComponent
 		$newsLayout->setTabs($newsLayoutTabs);
 		$newsLayout->setFields($newsLayoutFields);
 
-		$homepageEntryTypes = $newsSection->getEntryTypes();
-		$homepageEntryType = $homepageEntryTypes[0];
-		$homepageEntryType->setFieldLayout($newsLayout);
+		$newsEntryTypes = $newsSection->getEntryTypes();
+		$newsEntryType = $newsEntryTypes[0];
+		$newsEntryType->setFieldLayout($newsLayout);
 
-		if (craft()->sections->saveEntryType($homepageEntryType))
+		if (craft()->sections->saveEntryType($newsEntryType))
 		{
 			Craft::log('News entry type saved successfully.');
 		}
@@ -756,7 +758,7 @@ class InstallService extends BaseApplicationComponent
 
 		$newsEntry = new EntryModel();
 		$newsEntry->sectionId  = $newsSection->id;
-		$newsEntry->typeId     = $homepageEntryType->id;
+		$newsEntry->typeId     = $newsEntryType->id;
 		$newsEntry->locale     = $inputs['locale'];
 		$newsEntry->authorId   = $this->_user->id;
 		$newsEntry->enabled    = true;

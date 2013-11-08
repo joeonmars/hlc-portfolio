@@ -27,13 +27,50 @@ class GlobalSetElementType extends BaseElementType
 	}
 
 	/**
-	 * Returns whether this element type is translatable.
+	 * Returns whether this element type has content.
 	 *
 	 * @return bool
 	 */
-	public function isTranslatable()
+	public function hasContent()
 	{
 		return true;
+	}
+
+	/**
+	 * Returns whether this element type stores data on a per-locale basis.
+	 *
+	 * @return bool
+	 */
+	public function isLocalized()
+	{
+		return true;
+	}
+
+	/**
+	 * Defines any custom element criteria attributes for this element type.
+	 *
+	 * @return array
+	 */
+	public function defineCriteriaAttributes()
+	{
+		return array(
+			'order' => array(AttributeType::String, 'default' => 'name'),
+			'setId' => AttributeType::Number,
+		);
+	}
+
+	/**
+	 * Modifies an element query targeting elements of this type.
+	 *
+	 * @param DbCommand $query
+	 * @param ElementCriteriaModel $criteria
+	 * @return mixed
+	 */
+	public function modifyElementsQuery(DbCommand $query, ElementCriteriaModel $criteria)
+	{
+		$query
+			->addSelect('globalsets.name, globalsets.handle, globalsets.fieldLayoutId')
+			->join('globalsets globalsets', 'globalsets.id = elements.id');
 	}
 
 	/**

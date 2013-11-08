@@ -56,6 +56,28 @@ $.extend(Craft, {
 	},
 
 	/**
+	 * Escapes some HTML.
+	 *
+	 * @param string str
+	 * @return string
+	 */
+	escapeHtml: function(str)
+	{
+		return $('<div/>').text(str).html();
+	},
+
+	/**
+	 * Formats an ID out of an input name.
+	 *
+	 * @param string inputName
+	 * @return string
+	 */
+	formatInputId: function(inputName)
+	{
+		return this.rtrim(inputName.replace(/[\[\]]+/g, '-'), '-');
+	},
+
+	/**
 	 * Returns whether a package is included in this Craft build.
 	 *
 	 * @return bool
@@ -257,6 +279,16 @@ $.extend(Craft, {
 	getActionUrl: function(path, params)
 	{
 		return Craft.getUrl(path, params, Craft.actionUrl);
+	},
+
+	/**
+	 * Redirects the window to a given URL.
+	 *
+	 * @param string url
+	 */
+	redirectTo: function(url)
+	{
+		document.location.href = this.getUrl(url);
 	},
 
 	/**
@@ -924,9 +956,11 @@ $.extend($.fn, {
 	{
 		return this.each(function()
 		{
-			if (!$.data(this, 'menubtn'))
+			var $btn = $(this);
+
+			if (!$btn.data('menubtn') && $btn.next().hasClass('menu'))
 			{
-				new Garnish.MenuBtn(this);
+				new Garnish.MenuBtn($btn);
 			}
 		});
 	}
@@ -1065,7 +1099,7 @@ Craft.BaseElementIndex = Garnish.Base.extend({
 		}
 
 		// Select the initial source
-		var source = this.instanceState.selectedSource;
+		var source = this.getDefaultSourceKey();
 
 		if (source)
 		{
@@ -1120,6 +1154,11 @@ Craft.BaseElementIndex = Garnish.Base.extend({
 		{
 			this.$search.focus();
 		}
+	},
+
+	getDefaultSourceKey: function()
+	{
+		return this.instanceState.selectedSource;
 	},
 
 	onSourceSelectionChange: function()
@@ -1902,6 +1941,9 @@ Craft.BaseElementSelectorModal = Garnish.Modal.extend({
 	$search: null,
 	$elements: null,
 	$tbody: null,
+	$buttons: null,
+	$cancelBtn: null,
+	$selectBtn: null,
 
 	init: function(elementType, settings)
 	{
@@ -1911,17 +1953,17 @@ Craft.BaseElementSelectorModal = Garnish.Modal.extend({
 		// Build the modal
 		var $container = $('<div class="modal elementselectormodal"></div>').appendTo(Garnish.$bod),
 			$body = $('<div class="body"><div class="spinner big"></div></div>').appendTo($container),
-			$footer = $('<div class="footer"/>').appendTo($container),
-			$buttons = $('<div class="buttons rightalign"/>').appendTo($footer),
-			$cancelBtn = $('<div class="btn">'+Craft.t('Cancel')+'</div>').appendTo($buttons),
-			$selectBtn = $('<div class="btn disabled submit">'+Craft.t('Select')+'</div>').appendTo($buttons);
+			$footer = $('<div class="footer"/>').appendTo($container);
 
 		this.base($container, settings);
 
-		this.$body = $body;
-		this.$selectBtn = $selectBtn;
+		this.$buttons = $('<div class="buttons rightalign"/>').appendTo($footer);
+		this.$cancelBtn = $('<div class="btn">'+Craft.t('Cancel')+'</div>').appendTo(this.$buttons);
+		this.$selectBtn = $('<div class="btn disabled submit">'+Craft.t('Select')+'</div>').appendTo(this.$buttons);
 
-		this.addListener($cancelBtn, 'activate', 'cancel');
+		this.$body = $body;
+
+		this.addListener(this.$cancelBtn, 'activate', 'cancel');
 		this.addListener(this.$selectBtn, 'activate', 'selectElements');
 	},
 
@@ -2033,33 +2075,45 @@ Craft.BaseElementSelectorModal = Garnish.Modal.extend({
 		if (this.elementIndex && this.elementSelect && this.elementSelect.totalSelected)
 		{
 			this.elementSelect.clearMouseUpTimeout();
+			this.hide();
 
 			var $selectedItems = this.elementSelect.getSelectedItems(),
-				elements = [];
+				elementInfo = this.getElementInfo($selectedItems);
 
-			for (var i = 0; i < $selectedItems.length; i++)
-			{
-				var $item = $($selectedItems[i]),
-					$element = $item.find('.element:first');
-
-				elements.push({
-					id:       $item.data('id'),
-					label:    $item.data('label'),
-					status:   $item.data('status'),
-					url:      $element.data('url'),
-					hasThumb: $element.hasClass('hasthumb'),
-					$element: $element
-				});
-			}
-
-			this.hide();
-			this.settings.onSelect(elements);
+			this.onSelect(elementInfo);
 
 			if (this.settings.disableOnSelect)
 			{
-				this.elementIndex.disableElements($selectedItems);
+				this.elementIndex.disableElements(this.elementSelect.getSelectedItems());
 			}
 		}
+	},
+
+	getElementInfo: function($selectedItems)
+	{
+		var info = [];
+
+		for (var i = 0; i < $selectedItems.length; i++)
+		{
+			var $item = $($selectedItems[i]),
+				$element = $item.find('.element:first');
+
+			info.push({
+				id:       $item.data('id'),
+				label:    $item.data('label'),
+				status:   $item.data('status'),
+				url:      $element.data('url'),
+				hasThumb: $element.hasClass('hasthumb'),
+				$element: $element
+			});
+		}
+
+		return info;
+	},
+
+	onSelect: function(elementInfo)
+	{
+		this.settings.onSelect(elementInfo);
 	}
 },
 {
@@ -2158,6 +2212,7 @@ Craft.BaseInputGenerator = Garnish.Base.extend({
 			targetVal = this.generateTargetValue(sourceVal);
 
 		this.$target.val(targetVal);
+		this.$target.trigger('textchange');
 	},
 
 	generateTargetValue: function(sourceVal)
@@ -3921,11 +3976,233 @@ Craft.AssetSelectInput = Craft.BaseElementSelectInput.extend({
  */
 Craft.AssetSelectorModal = Craft.BaseElementSelectorModal.extend({
 
+	$selectTransformBtn: null,
+	$transformSpinner: null,
+	_selectedTransform: null,
+
 	init: function(elementType, settings)
 	{
-		this.base(elementType, settings);
-	}
+		settings = $.extend({}, Craft.AssetSelectorModal.defaults, settings);
 
+		if (settings.canSelectImageTransforms)
+		{
+			if (typeof Craft.AssetSelectorModal.transforms == 'undefined')
+			{
+				var base = this.base;
+
+				this.fetchTransformInfo($.proxy(function()
+				{
+					// Finally call this.base()
+					base.call(this, elementType, settings);
+
+					this.createSelectTransformButton();
+				}, this));
+
+				// Prevent this.base() from getting called until later
+				return;
+			}
+		}
+
+		this.base(elementType, settings);
+
+		if (settings.canSelectImageTransforms)
+		{
+			this.createSelectTransformButton();
+		}
+	},
+
+	fetchTransformInfo: function(callback)
+	{
+		Craft.postActionRequest('assets/getTransformInfo', $.proxy(function(response, textStatus)
+		{
+			if (textStatus == 'success' && response instanceof Array)
+			{
+				Craft.AssetSelectorModal.transforms = response;
+			}
+			else
+			{
+				Craft.AssetSelectorModal.transforms = [];
+			}
+
+			callback();
+
+		}, this));
+	},
+
+	createSelectTransformButton: function()
+	{
+		if (!Craft.AssetSelectorModal.transforms.length)
+		{
+			return;
+		}
+
+		var $btnGroup = $('<div class="btngroup"/>').appendTo(this.$buttons);
+		this.$selectBtn.appendTo($btnGroup);
+
+		this.$selectTransformBtn = $('<div class="btn menubtn disabled">'+Craft.t('Select Transform')+'</div>').appendTo($btnGroup);
+
+		var $menu = $('<div class="menu" data-align="right"></div>').insertAfter(this.$selectTransformBtn),
+			$menuList = $('<ul></ul>').appendTo($menu);
+
+		for (var i = 0; i < Craft.AssetSelectorModal.transforms.length; i++)
+		{
+			$('<li><a data-transform="'+Craft.AssetSelectorModal.transforms[i].handle+'">'+Craft.AssetSelectorModal.transforms[i].name+'</a></li>').appendTo($menuList);
+		}
+
+		new Garnish.MenuBtn(this.$selectTransformBtn, {
+			onOptionSelect: $.proxy(this, 'onSelectTransform')
+		});
+
+		this.$transformSpinner = $('<div class="spinner hidden" style="margin-right: -24px;"/>').insertAfter($btnGroup);
+	},
+
+	onSelectionChange: function(ev)
+	{
+		if (this.elementSelect.totalSelected && this.settings.canSelectImageTransforms && Craft.AssetSelectorModal.transforms.length)
+		{
+			var allowTransforms = true,
+				$selectedItems = this.elementSelect.getSelectedItems();
+
+			for (var i = 0; i < $selectedItems.length; i++)
+			{
+				if (!$('.element.hasthumb:first', $selectedItems[i]).length)
+				{
+					allowTransforms = false;
+					break;
+				}
+			}
+		}
+		else
+		{
+			var allowTransforms = false;
+		}
+
+		if (allowTransforms)
+		{
+			this.$selectTransformBtn.removeClass('disabled');
+		}
+		else if (this.$selectTransformBtn)
+		{
+			this.$selectTransformBtn.addClass('disabled');
+		}
+
+		this.base();
+	},
+
+	onSelectTransform: function(option)
+	{
+		var transform = $(option).data('transform');
+		this.selectImagesWithTransform(transform);
+	},
+
+	selectImagesWithTransform: function(transform)
+	{
+		// First we must get any missing transform URLs
+		if (typeof Craft.AssetSelectorModal.transformUrls[transform] == 'undefined')
+		{
+			Craft.AssetSelectorModal.transformUrls[transform] = {};
+		}
+
+		var $selectedItems = this.elementSelect.getSelectedItems(),
+			imageIdsWithMissingUrls = [];
+
+		for (var i = 0; i < $selectedItems.length; i++)
+		{
+			var $item = $($selectedItems[i]),
+				elementId = $item.data('id');
+
+			if (typeof Craft.AssetSelectorModal.transformUrls[transform][elementId] == 'undefined')
+			{
+				imageIdsWithMissingUrls.push(elementId);
+			}
+		}
+
+		if (imageIdsWithMissingUrls.length)
+		{
+			this.$transformSpinner.removeClass('hidden');
+			this.fetchMissingTransformUrls(imageIdsWithMissingUrls, transform, $.proxy(function()
+			{
+				this.$transformSpinner.addClass('hidden');
+				this.selectImagesWithTransform(transform);
+			}, this));
+		}
+		else
+		{
+			this._selectedTransform = transform;
+			this.selectElements();
+			this._selectedTransform = null;
+		}
+	},
+
+	fetchMissingTransformUrls: function(imageIdsWithMissingUrls, transform, callback)
+	{
+		var elementId = imageIdsWithMissingUrls.pop();
+
+		var data = {
+			fileId: elementId,
+			handle: transform
+		};
+
+		Craft.postActionRequest('assets/generateTransform', data, $.proxy(function(response, textStatus)
+		{
+			Craft.AssetSelectorModal.transformUrls[transform][elementId] = false;
+
+			if (textStatus == 'success')
+			{
+				var parts = response.split(':');
+
+				if (parts[0] == 'success')
+				{
+					Craft.AssetSelectorModal.transformUrls[transform][elementId] = response.replace(/^success:/, '');
+				}
+			}
+
+			// More to load?
+			if (imageIdsWithMissingUrls.length)
+			{
+				this.fetchMissingTransformUrls(imageIdsWithMissingUrls, transform, callback);
+			}
+			else
+			{
+				callback();
+			}
+		}, this));
+	},
+
+	getElementInfo: function($selectedItems)
+	{
+		var info = this.base($selectedItems);
+
+		if (this._selectedTransform)
+		{
+			for (var i = 0; i < info.length; i++)
+			{
+				var elementId = info[i].id;
+
+				if (
+					typeof Craft.AssetSelectorModal.transformUrls[this._selectedTransform][elementId] != 'undefined' &&
+					Craft.AssetSelectorModal.transformUrls[this._selectedTransform][elementId] !== false
+				)
+				{
+					info[i].url = Craft.AssetSelectorModal.transformUrls[this._selectedTransform][elementId];
+				}
+			}
+		}
+
+		return info;
+	},
+
+	onSelect: function(elementInfo)
+	{
+		this.settings.onSelect(elementInfo, this._selectedTransform);
+	}
+},
+{
+	defaults: {
+		canSelectImageTransforms: false
+	},
+
+	transformUrls: {}
 });
 
 // Register it!
@@ -4434,6 +4711,68 @@ Craft.ElementEditor = Garnish.Base.extend({
 		}
 	}
 );
+
+
+/**
+ * Entry index class
+ */
+Craft.EntryIndex = Craft.BaseElementIndex.extend({
+
+	getDefaultSourceKey: function()
+	{
+		if (this.settings.context == 'index' && typeof defaultSectionHandle != 'undefined')
+		{
+			if (defaultSectionHandle == 'singles')
+			{
+				return 'singles';
+			}
+			else
+			{
+				for (var i = 0; i < this.$sources.length; i++)
+				{
+					var $source = $(this.$sources[i]);
+
+					if ($source.data('handle') == defaultSectionHandle)
+					{
+						return $source.data('key');
+					}
+				}
+			}
+		}
+
+		return this.base();
+	},
+
+	onSelectSource: function()
+	{
+		if (this.settings.context == 'index' && typeof history != 'undefined')
+		{
+			if (this.$source.data('key') == 'singles')
+			{
+				var handle = 'singles';
+			}
+			else
+			{
+				var handle = this.$source.data('handle');
+			}
+
+			var uri = 'entries';
+
+			if (handle)
+			{
+				uri += '/'+handle;
+			}
+
+			history.replaceState({}, '', Craft.getUrl(uri));
+		}
+
+		this.base();
+	}
+
+});
+
+// Register it!
+Craft.registerElementIndexClass('Entry', Craft.EntryIndex);
 
 
 /**
@@ -6237,6 +6576,170 @@ Craft.LightSwitch = Garnish.Base.extend({
 	offMargin: -50,
 	defaults: {
 		onChange: function(){}
+	}
+});
+
+
+/**
+ * Password Input
+ */
+Craft.PasswordInput = Garnish.Base.extend({
+
+	$passwordInput: null,
+	$textInput: null,
+	$currentInput: null,
+
+	$showPasswordToggle: null,
+	showingPassword: null,
+
+	init: function(passwordInput, settings)
+	{
+		this.$passwordInput = $(passwordInput);
+		this.settings = $.extend({}, Craft.PasswordInput.defaults, settings);
+
+		// Is this already a password input?
+		if (this.$passwordInput.data('passwordInput'))
+		{
+			Garnish.log('Double-instantiating a password input on an element');
+			this.$passwordInput.data('passwordInput').destroy();
+		}
+
+		this.$passwordInput.data('passwordInput', this);
+
+		this.$showPasswordToggle = $('<a/>').hide();
+		this.$showPasswordToggle.addClass('password-toggle');
+		this.$showPasswordToggle.insertAfter(this.$passwordInput);
+		this.addListener(this.$showPasswordToggle, 'mousedown', 'onToggleMouseDown');
+		this.hidePassword();
+	},
+
+	setCurrentInput: function($input)
+	{
+		if (this.$currentInput)
+		{
+			// Swap the inputs, while preventing the focus animation
+			$input.addClass('focus');
+			this.$currentInput.replaceWith($input);
+			$input.focus();
+			$input.removeClass('focus');
+
+			// Restore the input value
+			$input.val(this.$currentInput.val());
+		}
+
+		this.$currentInput = $input;
+
+		this.addListener(this.$currentInput, 'keypress,keyup,change,blur', 'onInputChange');
+	},
+
+	updateToggleLabel: function(label)
+	{
+		this.$showPasswordToggle.text(label);
+	},
+
+	showPassword: function()
+	{
+		if (this.showingPassword)
+		{
+			return;
+		}
+
+		if (!this.$textInput)
+		{
+			this.$textInput = this.$passwordInput.clone(true);
+			this.$textInput.attr('type', 'text');
+		}
+
+		this.setCurrentInput(this.$textInput);
+		this.updateToggleLabel(Craft.t('Hide'));
+		this.showingPassword = true;
+	},
+
+	hidePassword: function()
+	{
+		// showingPassword could be null, which is acceptable
+		if (this.showingPassword === false)
+		{
+			return;
+		}
+
+		this.setCurrentInput(this.$passwordInput);
+		this.updateToggleLabel(Craft.t('Show'));
+		this.showingPassword = false;
+
+		// Alt key temporarily shows the password
+		this.addListener(this.$passwordInput, 'keydown', 'onKeyDown');
+	},
+
+	togglePassword: function()
+	{
+		if (this.showingPassword)
+		{
+			this.hidePassword();
+		}
+		else
+		{
+			this.showPassword();
+		}
+
+		this.settings.onToggleInput(this.$currentInput);
+	},
+
+	onKeyDown: function(ev)
+	{
+		if (ev.keyCode == Garnish.ALT_KEY && this.$currentInput.val())
+		{
+			this.showPassword();
+			this.$showPasswordToggle.hide();
+			this.addListener(this.$textInput, 'keyup', 'onKeyUp');
+		}
+	},
+
+	onKeyUp: function(ev)
+	{
+		ev.preventDefault();
+
+		if (ev.keyCode == Garnish.ALT_KEY)
+		{
+			this.hidePassword();
+			this.$showPasswordToggle.show();
+		}
+	},
+
+	onInputChange: function()
+	{
+		if (this.$currentInput.val())
+		{
+			this.$showPasswordToggle.show();
+		}
+		else
+		{
+			this.$showPasswordToggle.hide();
+		}
+	},
+
+	onToggleMouseDown: function(ev)
+	{
+		// Prevent focus change
+		ev.preventDefault();
+
+		if (this.$currentInput[0].setSelectionRange)
+		{
+			var selectionStart = this.$currentInput[0].selectionStart,
+				selectionEnd   = this.$currentInput[0].selectionEnd;
+		}
+
+		this.togglePassword();
+
+		if (this.$currentInput[0].setSelectionRange)
+		{
+			this.$currentInput[0].setSelectionRange(selectionStart, selectionEnd);
+		}
+	}
+},
+{
+	defaults: {
+		onToggleInput: $.noop
 	}
 });
 
