@@ -54,7 +54,7 @@
 
 	{% if songEntry.allowDownload == 'y' %}
 	<div class="download section">
-		<a href="{{ siteUrl }}/{{ songEntry.audio[0].url }}" target="_blank">
+		<a href="{{ siteUrl }}{{ songEntry.audio[0].url }}" target="_blank">
 			<h3>download</h3>
 			<i></i>
 		</a>
@@ -63,9 +63,9 @@
 
 	<div class="share section">
 		<h3>share this song</h3>
-		<a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u={{ siteUrl }}/album/{{ albumSlug }}/{{ songSlug }}" target="_blank" data-width=626 data-height=436></a>
-		<a class="twitter" href="https://twitter.com/share?url={{ siteUrl }}/album/{{ albumSlug }}/{{ songSlug }}&text={{ songEntry.title | capitalize }}" target="_blank" data-width=550 data-height=420></a>
-		<a class="googleplus" href="https://plus.google.com/share?url={{ siteUrl }}/album/{{ albumSlug }}/{{ songSlug }}" target="_blank" data-width=600 data-height=600></a>
+		<a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u={{ siteUrl }}album/{{ albumSlug }}/{{ songSlug }}" target="_blank" data-width=626 data-height=436></a>
+		<a class="twitter" href="https://twitter.com/share?url={{ siteUrl }}album/{{ albumSlug }}/{{ songSlug }}&text={{ songEntry.title | capitalize }}" target="_blank" data-width=550 data-height=420></a>
+		<a class="googleplus" href="https://plus.google.com/share?url={{ siteUrl }}album/{{ albumSlug }}/{{ songSlug }}" target="_blank" data-width=600 data-height=600></a>
 	</div>
 
 	{% if songEntry.suggestedSongs|length %}
@@ -84,7 +84,7 @@
 		            {% endfor %}
 		        {% endfor %}
 				<a href="/album/{{ suggestedAlbum.slug }}/{{ suggestedSong.slug }}" target="_self">
-					<div class="background" style="background-image: url({{ siteUrl }}/{{ suggestedAlbum.cover[0].url }});"></div>
+					<div class="background" style="background-image: url({{ siteUrl }}{{ suggestedAlbum.cover[0].url }});"></div>
 					<p>{{ suggestedSong.title }}</p>
 				</a>
 			</li>

@@ -6,7 +6,7 @@
 			<div class="viewport">
 				{% for album in craft.entries.section('album').find()|sortByField('postDate', 'asce') %}
 					<div class="album" data-id="{{ album.slug }}">
-						<div class="heading" style="background-image: url({{ siteUrl }}/{{ album.coverThumbnail[0].url }});">
+						<div class="heading" style="background-image: url({{ siteUrl }}{{ album.coverThumbnail[0].url }});">
 							{{ album.title }}
 						</div>
 						<ul class="songs">
