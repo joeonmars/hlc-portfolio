@@ -141,7 +141,9 @@ hlc.views.MainHud.prototype.onSidebarSlideIn = function(e){
 
 
 hlc.views.MainHud.prototype.onSidebarSlidedOut = function(e){
-	this.sidebarButton.show();
+	if(hlc.main.controllers.mainScrollController.scrollPosition != hlc.controllers.MainScrollController.ScrollPosition.MASTHEAD) {
+		this.sidebarButton.show();
+	}
 };
 
 

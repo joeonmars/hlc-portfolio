@@ -55,6 +55,10 @@ hlc.views.Sidebar.prototype.init = function(){
 	// listen for click event
 	goog.events.listen(this.closeButtonDom, 'click', this.onClick, false, this);
 
+	// listen for main scroll event
+	goog.events.listen(hlc.main.controllers.mainScrollController,
+		hlc.controllers.MainScrollController.EventType.SCROLL_START, this.onMainScrollStart, false, this);
+
 	// listen for album scroll event
 	goog.events.listen(hlc.main.controllers.albumScrollController,
 		hlc.controllers.AlbumScrollController.EventType.SCROLL_FINISH,
@@ -267,6 +271,14 @@ hlc.views.Sidebar.prototype.onClickShareButton = function(e){
 	var width = e.currentTarget.getAttribute('data-width');
 	var height = e.currentTarget.getAttribute('data-height');
 	hlc.utils.popUpWindow(url, width, height);
+};
+
+
+hlc.views.Sidebar.prototype.onMainScrollStart = function(e) {
+	if(e.scrollPosition === hlc.controllers.MainScrollController.ScrollPosition.MASTHEAD
+		&& this.isSlidedIn) {
+		this.slideOut();
+	}
 };
 
 
