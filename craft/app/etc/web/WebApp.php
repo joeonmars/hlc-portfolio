@@ -99,17 +99,9 @@ class WebApp extends \CWebApplication
 		// Attach our own custom Logger
 		Craft::setLogger(new Logger());
 
-		// If we're not in devMode or this is a resource request, we're going to remove some logging routes.
-		if (!$this->config->get('devMode') || ($resourceRequest = $this->request->isResourceRequest()) == true)
+		// If we're not in devMode, we're going to remove some logging routes.
+		if (!$this->config->get('devMode'))
 		{
-			// If it's a resource request, we don't want any logging routes, including craft.log
-			// If it's not a resource request, we'll keep the FileLogRoute around.
-			if ($resourceRequest)
-			{
-				$this->log->removeRoute('FileLogRoute');
-			}
-
-			// Don't need either of these if not in devMode or it's a resource request.
 			$this->log->removeRoute('WebLogRoute');
 			$this->log->removeRoute('ProfileLogRoute');
 		}
@@ -162,13 +154,12 @@ class WebApp extends \CWebApplication
 		mb_http_output('UTF-8');
 		mb_detect_order('auto');
 
-		// If the track has changed, put the brakes on the request.
-		if (!$this->updates->isTrackValid())
+		// Makes sure that the uploaded files are compatible with the current DB schema
+		if (!$this->updates->isSchemaVersionCompatible())
 		{
 			if ($this->request->isCpRequest())
 			{
-				$this->runController('templates/invalidtrack');
-				$this->end();
+				throw new HttpException(200, Craft::t('Craft does not support backtracking to this version.'));
 			}
 			else
 			{
@@ -179,16 +170,22 @@ class WebApp extends \CWebApplication
 		// Set the package components
 		$this->_setPackageComponents();
 
-		// isCraftDbUpdateNeeded will return true if we're in the middle of a manual or auto-update for Craft itself.
+		// isCraftDbMigrationNeeded will return true if we're in the middle of a manual or auto-update for Craft itself.
 		// If we're in maintenance mode and it's not a site request, show the manual update template.
 		if (
-			$this->updates->isCraftDbUpdateNeeded() ||
+			$this->updates->isCraftDbMigrationNeeded() ||
 			(craft()->isInMaintenanceMode() && $this->request->isCpRequest()) ||
 			$this->request->getActionSegments() == array('update', 'cleanUp') ||
 			$this->request->getActionSegments() == array('update', 'rollback')
 		)
 		{
 			$this->_processUpdateLogic();
+		}
+
+		// If there's a new version, but the schema hasn't changed, just update the info table
+		if ($this->updates->hasCraftBuildChanged())
+		{
+			$this->updates->updateCraftVersionInfo();
 		}
 
 		// Make sure that the system is on, or that the user has permission to access the site/CP while the system is off
@@ -591,6 +588,9 @@ class WebApp extends \CWebApplication
 	{
 		if ($this->request->isResourceRequest())
 		{
+			// Don't want to log anything on a resource request.
+			$this->log->removeRoute('FileLogRoute');
+
 			// Get the path segments, except for the first one which we already know is "resources"
 			$segs = array_slice(array_merge($this->request->getSegments()), 1);
 			$path = implode('/', $segs);
@@ -845,6 +845,9 @@ class WebApp extends \CWebApplication
 		}
 		else
 		{
+			// Use our own error template in case the custom 503 template comes with any SQL queries we're not ready for
+			craft()->path->setTemplatesPath(craft()->path->getCpTemplatesPath());
+
 			throw new HttpException(503);
 		}
 

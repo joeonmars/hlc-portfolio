@@ -5,7 +5,7 @@ html, body { height: 100%; }
 
 #login-form .field { margin: 10px 0; }
 
-#forgot-password { position: relative; z-index: 1; display: block; float: right; font-style: normal; font-size: 11px; color: #999; }
+#forgot-password { position: relative; z-index: 1; display: block; float: right; font-style: normal; font-size: 11px; color: #8e98a4; }
 
 #forgot-password:hover { color: #0d78f2; text-decoration: none; }
 

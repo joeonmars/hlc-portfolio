@@ -47,6 +47,8 @@ class AssetTransformsService extends BaseApplicationComponent
 		{
 			return $this->_assetTransforms[$handle];
 		}
+
+		return null;
 	}
 
 
@@ -369,6 +371,10 @@ class AssetTransformsService extends BaseApplicationComponent
 		{
 			return new AssetTransformModel($transform);
 		}
+		else
+		{
+			return null;
+		}
 	}
 
 	/**
@@ -406,6 +412,30 @@ class AssetTransformsService extends BaseApplicationComponent
 			->select('ti.*')
 			->from('assettransformindex ti')
 			->where('ti.id = :id', array(':id' => $transformId))
+			->queryRow();
+
+		if ($entry)
+		{
+			return new AssetTransformIndexModel($entry);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Get a transform index model by a row id.
+	 *
+	 * @param $fileId
+	 * @param $transformHandle
+	 * @return AssetTransformIndexModel|null
+	 */
+	public function getTransformIndexModelByFileIdAndHandle($fileId, $transformHandle)
+	{
+		// Check if an entry exists already
+		$entry =  craft()->db->createCommand()
+			->select('ti.*')
+			->from('assettransformindex ti')
+			->where('ti.fileId = :id AND ti.location = :location', array(':id' => $fileId, ':location' => '_' . $transformHandle))
 			->queryRow();
 
 		if ($entry)
@@ -559,7 +589,7 @@ class AssetTransformsService extends BaseApplicationComponent
 		if (is_null($this->_assetTransforms))
 		{
 			$this->_assetTransforms = array();
-			$models = AssetTransformModel::populateModels(AssetTransformRecord::model()->findAll());
+			$models = AssetTransformModel::populateModels(AssetTransformRecord::model()->ordered()->findAll());
 
 			foreach ($models as $model)
 			{

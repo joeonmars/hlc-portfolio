@@ -51,4 +51,14 @@ class AssetTransformRecord extends BaseRecord
 			array('columns' => array('handle'), 'unique' => true),
 		);
 	}
+
+	/**
+	 * @return array
+	 */
+	public function scopes()
+	{
+		return array(
+			'ordered' => array('order' => 'name'),
+		);
+	}
 }

@@ -137,11 +137,11 @@ class EntriesController extends BaseController
 
 		if ($variables['section']->type == SectionType::Single)
 		{
-			$variables['crumbs'][] = array('label' => 'Singles', 'url' => UrlHelper::getUrl('entries'));
+			$variables['crumbs'][] = array('label' => 'Singles', 'url' => UrlHelper::getUrl('entries/singles'));
 		}
 		else
 		{
-			$variables['crumbs'][] = array('label' => $variables['section']->name, 'url' => UrlHelper::getUrl('entries'));
+			$variables['crumbs'][] = array('label' => $variables['section']->name, 'url' => UrlHelper::getUrl('entries/'.$variables['section']->handle));
 
 			if ($variables['section']->type == SectionType::Structure)
 			{
@@ -243,16 +243,20 @@ class EntriesController extends BaseController
 		craft()->setLanguage(craft()->request->getPost('locale'));
 
 		$entry = $this->_populateEntryModel();
-
-		if (!$entry->postDate)
-		{
-			$entry->postDate = new DateTime();
-		}
-
 		$section = $entry->getSection();
+		$type = $entry->getType();
 
-		if ($section)
+		if ($section && $type)
 		{
+			if (!$entry->postDate)
+			{
+				$entry->postDate = new DateTime();
+			}
+
+			craft()->content->prepElementContentForSave($entry, $type->getFieldLayout(), false);
+
+			craft()->templates->getTwig()->disableStrictVariables();
+
 			$this->renderTemplate($section->template, array(
 				'entry' => $entry
 			));
@@ -274,11 +278,23 @@ class EntriesController extends BaseController
 		{
 			// Make sure the user is allowed to create entries in this section
 			craft()->userSession->requirePermission('createEntries:'.$entry->sectionId);
+
+			// Make sure the user is allowed to publish entries in this section, or that this is disabled
+			if ($entry->enabled && !craft()->userSession->checkPermission('publishEntries:'.$entry->sectionId))
+			{
+				$entry->enabled = false;
+			}
 		}
 		else
 		{
 			// Make sure the user is allowed to edit entries in this section
 			craft()->userSession->requirePermission('editEntries:'.$entry->sectionId);
+
+			if ($entry->enabled)
+			{
+				// Make sure the user is allowed to edit live entries in this section
+				craft()->userSession->requirePermission('publishEntries:'.$entry->sectionId);
+			}
 		}
 
 		if (craft()->entries->saveEntry($entry))
@@ -576,11 +592,13 @@ class EntriesController extends BaseController
 	private function _populateEntryModel()
 	{
 		$entryId = craft()->request->getPost('entryId');
+		$locale  = craft()->request->getPost('locale');
 
 		if ($entryId)
 		{
 			$criteria = craft()->elements->getCriteria(ElementType::Entry);
 			$criteria->id = $entryId;
+			$criteria->locale = $locale;
 			$criteria->status = null;
 			$entry = $criteria->first();
 
@@ -592,12 +610,16 @@ class EntriesController extends BaseController
 		else
 		{
 			$entry = new EntryModel();
+
+			if ($locale)
+			{
+				$entry->locale = $locale;
+			}
 		}
 
 		// Set the entry attributes, defaulting to the existing values for whatever is missing from the post data
 		$entry->sectionId  = craft()->request->getPost('sectionId', $entry->sectionId);
 		$entry->typeId     = craft()->request->getPost('typeId',    $entry->typeId);
-		$entry->locale     = craft()->request->getPost('locale',    $entry->locale);
 		$entry->authorId   = craft()->request->getPost('author',    ($entry->authorId ? $entry->authorId : craft()->userSession->getUser()->id));
 		$entry->slug       = craft()->request->getPost('slug',      $entry->slug);
 		$entry->postDate   = (($postDate   = craft()->request->getPost('postDate'))   ? DateTime::createFromString($postDate,   craft()->timezone) : $entry->postDate);

@@ -77,21 +77,13 @@ class TemplatesController extends BaseController
 		));
 	}
 
-	/**
-	 * Renders the Invalid Track template.
-	 */
-	public function actionInvalidTrack()
-	{
-		$this->_render('_special/invalidtrack');
-	}
-
 	public function actionRequirementsCheck()
 	{
 		// Run the requirements checker
 		$reqCheck = new RequirementsChecker();
 		$reqCheck->run();
 
-		if ($reqCheck->getResult() == InstallStatus::Failure)
+		if ($reqCheck->getResult() == InstallStatus::Failed)
 		{
 			// Coming from Updater.php
 			if (craft()->request->isAjaxRequest())

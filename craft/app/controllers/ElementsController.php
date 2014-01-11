@@ -62,6 +62,7 @@ class ElementsController extends BaseController
 
 		$baseCriteria = craft()->request->getPost('criteria');
 		$criteria = craft()->elements->getCriteria($elementType->getClassHandle(), $baseCriteria);
+		$criteria->limit = 50;
 
 		if ($sourceKey)
 		{
@@ -90,7 +91,7 @@ class ElementsController extends BaseController
 		}
 
 		$variables = array(
-			'viewState'           => $viewState,
+			'viewMode'            => $viewState['mode'],
 			'context'             => $context,
 			'elementType'         => new ElementTypeVariable($elementType),
 			'source'              => (isset($source) ? $source : null),
@@ -102,22 +103,15 @@ class ElementsController extends BaseController
 			case 'table':
 			{
 				// Make sure the attribute is actually allowed
-				$tableAttributes = $elementType->defineTableAttributes($sourceKey);
+				$variables['attributes'] = $elementType->defineTableAttributes($sourceKey);
 
 				// Ordering by an attribute?
-				if (!empty($viewState['order']))
+				if (!empty($viewState['order']) && in_array($viewState['order'], array_keys($variables['attributes'])))
 				{
-					foreach ($tableAttributes as $attribute)
-					{
-						if ($attribute['attribute'] == $viewState['order'])
-						{
-							$criteria->order = $viewState['order'].' '.$viewState['sort'];
-							break;
-						}
-					}
+					$criteria->order = $viewState['order'].' '.$viewState['sort'];
+					$variables['order'] = $viewState['order'];
+					$variables['sort'] = $viewState['sort'];
 				}
-
-				$variables['attributes'] = $tableAttributes;
 
 				break;
 			}

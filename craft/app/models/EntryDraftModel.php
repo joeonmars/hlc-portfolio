@@ -16,7 +16,7 @@ craft()->requirePackage(CraftPackage::PublishPro);
 /**
  *
  */
-class EntryDraftModel extends EntryModel
+class EntryDraftModel extends BaseEntryRevisionModel
 {
 	/**
 	 * @access protected
@@ -24,13 +24,10 @@ class EntryDraftModel extends EntryModel
 	 */
 	protected function defineAttributes()
 	{
-		$attributes = parent::defineAttributes();
-
-		$attributes['draftId'] = AttributeType::Number;
-		$attributes['creatorId'] = AttributeType::Number;
-		$attributes['name'] = AttributeType::String;
-
-		return $attributes;
+		return array_merge(parent::defineAttributes(), array(
+			'draftId' => AttributeType::Number,
+			'name'    => AttributeType::String,
+		));
 	}
 
 	/**
@@ -63,19 +60,9 @@ class EntryDraftModel extends EntryModel
 
 		if ($fieldContent)
 		{
-			$draft->getContent()->setValuesByFieldId($fieldContent);
+			$draft->setContentFromRevision($fieldContent);
 		}
 
 		return $draft;
-	}
-
-	/**
-	 * Returns the draft's creator.
-	 *
-	 * @return UserModel|null
-	 */
-	public function getCreator()
-	{
-		return craft()->users->getUserById($this->creatorId);
 	}
 }

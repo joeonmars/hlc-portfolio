@@ -371,6 +371,7 @@ class PluginsService extends BaseApplicationComponent
 			$this->_enabledPlugins[$lcPluginHandle] = $plugin;
 
 			$this->_importPluginComponents($plugin);
+			$this->_registerPluginServices($plugin->getClassHandle());
 			$plugin->createTables();
 
 			if ($transaction !== null)
@@ -422,6 +423,7 @@ class PluginsService extends BaseApplicationComponent
 			$plugin->isEnabled = true;
 			$this->_enabledPlugins[$lcPluginHandle] = $plugin;
 			$this->_importPluginComponents($plugin);
+			$this->_registerPluginServices($plugin->getClassHandle());
 		}
 
 		$plugin->onBeforeUninstall();

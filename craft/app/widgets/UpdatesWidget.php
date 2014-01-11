@@ -17,6 +17,12 @@ namespace Craft;
 class UpdatesWidget extends BaseWidget
 {
 	/**
+	 * @access protected
+	 * @var bool Whether users should be able to select more than one of this widget type.
+	 */
+	protected $multi = false;
+
+	/**
 	 * Returns the type of widget this is.
 	 *
 	 * @return string
@@ -24,6 +30,20 @@ class UpdatesWidget extends BaseWidget
 	public function getName()
 	{
 		return Craft::t('Updates');
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isSelectable()
+	{
+		// Gotta have update permission to get this widget
+		if (parent::isSelectable() && craft()->userSession->checkPermission('performUpdates'))
+		{
+			return true;
+		}
+
+		return false;
 	}
 
 	/**

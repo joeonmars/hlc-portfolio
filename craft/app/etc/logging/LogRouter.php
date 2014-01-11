@@ -45,7 +45,7 @@ class LogRouter extends \CLogRouter
 			}
 		}
 
-		if ($match)
+		if (is_numeric($match))
 		{
 			array_splice($this->_routes, $match, 1);
 		}

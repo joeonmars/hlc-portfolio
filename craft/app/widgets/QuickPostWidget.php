@@ -155,7 +155,7 @@ class QuickPostWidget extends BaseWidget
 			'entryTypeId' => $entryTypeId,
 		);
 
-		craft()->templates->includeJs('new Craft.QuickPostWidget('.$this->model->id.', '.JsonHelper::encode($params).', function() {');
+		craft()->templates->startJsBuffer();
 
 		$html = craft()->templates->render('_components/widgets/QuickPost/body', array(
 			'section'   => $section,
@@ -163,7 +163,13 @@ class QuickPostWidget extends BaseWidget
 			'settings'  => $this->getSettings()
 		));
 
-		craft()->templates->includeJs('});');
+		$fieldJs = craft()->templates->clearJsBuffer(false);
+
+		craft()->templates->includeJs('new Craft.QuickPostWidget(' .
+			$this->model->id.', ' .
+			JsonHelper::encode($params).', ' .
+			"function() {\n".$fieldJs .
+		"\n});");
 
 		return $html;
 	}

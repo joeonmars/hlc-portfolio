@@ -36,8 +36,16 @@ class AppBehavior extends BaseBehavior
 		{
 			try
 			{
-				// If the db config isn't valid, then we'll assume it's not installed.
-				if (!craft()->db->isDbConnectionValid())
+				// First check to see if DbConnection has even been initialized, yet.
+				if (craft()->getComponent('db'))
+				{
+					// If the db config isn't valid, then we'll assume it's not installed.
+					if (!craft()->db->isDbConnectionValid())
+					{
+						return false;
+					}
+				}
+				else
 				{
 					return false;
 				}
@@ -80,6 +88,16 @@ class AppBehavior extends BaseBehavior
 	public function getBuild()
 	{
 		return $this->getInfo('build');
+	}
+
+	/**
+	 * Returns the installed Craft build.
+	 *
+	 * @return string
+	 */
+	public function getSchemaVersion()
+	{
+		return $this->getInfo('schemaVersion');
 	}
 
 	/**
