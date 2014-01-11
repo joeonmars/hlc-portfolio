@@ -19,7 +19,7 @@ hlc.models.SongModel = function(songId, songData, album){
   this.songTitle = songData['title'];
   this.artwork = songData['artwork'];
   this.album = album;
-  this.defaultArtwork = {url: this.album.albumCover};
+  this.defaultArtwork = this.album.albumCover;
 
   // audio data
   var url = songData['audioData'];

@@ -2254,29 +2254,37 @@ textarea {
   padding: 5px 0 5px 0;
 }
 #footer #credits > .outer > .inner > li {
-  margin: 5px 0 5px 0;
+  margin: 20px 0;
+}
+#footer #credits > .outer > .inner > li:last-child {
+  margin-bottom: 0;
 }
 #footer #credits > .outer > .inner > li > h5 {
+  font-family: "MyriadPro-BoldCond", sans-serif;
   text-transform: uppercase;
   font-size: 12px;
-  padding: 4px 0 4px 0;
+  padding: 6px 0;
 }
-#footer #credits > .outer > .inner > li a, #footer #credits > .outer > .inner > li p {
+#footer #credits > .outer > .inner > li > a {
+  display: block;
   color: white;
-  font-family: "MyriadPro-Regular", sans-serif;
-}
-#footer #credits > .outer > .inner > li a {
-  text-decoration: underline;
+  font-family: "barkentina_1regular", serif;
+  font-size: 16px;
+  font-style: italic;
   -webkit-transition: opacity 0.2s;
   -moz-transition: opacity 0.2s;
   -o-transition: opacity 0.2s;
   transition: opacity 0.2s;
 }
-#footer #credits > .outer > .inner > li a:hover {
-  opacity: .8;
+#footer #credits > .outer > .inner > li > a > span {
+  display: block;
+  font-family: "MyriadPro-Regular", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  opacity: .5;
 }
-#footer #credits > .outer > .inner > li i {
-  margin-right: 5px;
+#footer #credits > .outer > .inner > li > a:hover {
+  opacity: .8;
 }
 #footer #copyright {
   text-transform: capitalize;

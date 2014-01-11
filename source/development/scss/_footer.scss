@@ -63,30 +63,39 @@ $footer_bottom: 20px;
 				padding: 5px 0 5px 0;
 
 				>li{
-					margin: 5px 0 5px 0;
+					margin: 20px 0;
+
+					&:last-child{
+						margin-bottom: 0;
+					}
 
 					>h5{
+						font-family: $font_sans_boldcond;
 						text-transform: uppercase;
 						font-size: 12px;
-						padding: 4px 0 4px 0;
+						padding: 6px 0;
 					}
 
-					a, p{
+					>a{
+						display: block;
 						color: white;
-						font-family: $font_sans;
-					}
+						font-family: $font_barkentina;
+						font-size: 16px;
+						font-style: italic;
 
-					a{
-						text-decoration: underline;
 						@include single-transition(opacity, 0.2s);
+
+						>span{
+							display: block;
+							font-family: $font_sans;
+							font-size: 12px;
+							line-height: 16px;
+							opacity: .5;
+						}
 
 						&:hover{
 							opacity: .8;
 						}
-					}
-
-					i{
-						margin-right: 5px;
 					}
 				}
 			}

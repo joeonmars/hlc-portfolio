@@ -97,6 +97,7 @@ hlc.controllers.AlbumScrollController.prototype.scrollToAlbum = function(albumSe
 	var albumDom = albumSection.domElement;
 	var albumDomY = albumDom.offsetTop - this._albumScrollDomElement.offsetTop;
 
+	//if(this.scrollPosition === albumDomY) return;
 	this.scrollPosition = albumDomY;
 
 	// calculate duration
@@ -109,6 +110,17 @@ hlc.controllers.AlbumScrollController.prototype.scrollToAlbum = function(albumSe
 	this._tweener = TweenMax.to(this._albumScrollDomElement, duration, {
 		scrollTo: {y: albumDomY},
 		ease: Strong.easeOut,
+		onStart: function() {
+			var ev = {
+				type: hlc.controllers.AlbumScrollController.EventType.SCROLL_START,
+				scrollPosition: this.scrollPosition,
+				albumSection: this.currentAlbumSection,
+				songId: songId
+			};
+
+			this.dispatchEvent(ev);
+		},
+		onStartScope: this,
 		onComplete: function() {
 			if(this.currentAlbumSection === albumSection) return;
 			else this.currentAlbumSection = albumSection;
@@ -119,6 +131,7 @@ hlc.controllers.AlbumScrollController.prototype.scrollToAlbum = function(albumSe
 				albumSection: this.currentAlbumSection,
 				songId: songId
 			};
+			
 			this.dispatchEvent(ev);
 		},
 		onCompleteScope: this
@@ -219,5 +232,6 @@ hlc.controllers.AlbumScrollController.prototype.onNavigate = function(e){
 
 
 hlc.controllers.AlbumScrollController.EventType = {
+	SCROLL_START: 'scroll_start',
 	SCROLL_FINISH: 'scroll_finish'
 };

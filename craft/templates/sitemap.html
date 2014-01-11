@@ -4,7 +4,12 @@
 		"{{ album.slug }}": {
 			"title": "{{ album.title }}",
 			"coverThumbnail": "{{ siteUrl }}{{ album.coverThumbnail[0].url }}",
-			"cover": "{{ siteUrl }}{{ album.cover[0].url }}",
+			"cover": {
+				{% set cover = album.cover[0] %}
+				"authorName": "{{cover.authorName}}",
+				"authorUrl": "{{cover.authorUrl}}",
+				"url": "{{ siteUrl }}{{ cover.url }}"
+			},
 			"songs": {
 				{% for song in album.songs %}
 				"{{ song.slug }}": {
@@ -13,17 +18,9 @@
 					"artwork": [
 						{% for artwork in song.artwork %}
 							{
-								"url": "{{ siteUrl }}{{ artwork.url }}",
-								"copyright": {
-									{% if artwork.authorName|length > 1 %}
-									"authorName": "{{artwork.authorName}}",
-									"authorUrl": "{{artwork.authorUrl}}",
-									{% endif %}
-									{% if artwork.workTitle|length > 1 %}
-									"workTitle": "{{artwork.workTitle}}",
-									"workUrl": "{{artwork.workUrl}}"
-									{% endif %}
-								}
+								"authorName": "{{artwork.authorName}}",
+								"authorUrl": "{{artwork.authorUrl}}",
+								"url": "{{ siteUrl }}{{ artwork.url }}"
 							}{{ loop.last ? "" : "," }}
 						{% endfor %}
 					],
