@@ -34,6 +34,12 @@ hlc.views.common.Scroller = function(outer, scrollbar){
   this._draggerLimits = new goog.math.Rect(0, 0, 0, 0);
 
   this._eventHandler = new goog.events.EventHandler(this);
+
+  if(goog.userAgent.MOBILE) {
+    this._dragger.setEnabled(false);
+  }else {
+    this._draggable.disable();
+  }
 };
 goog.inherits(hlc.views.common.Scroller, goog.events.EventTarget);
 
@@ -64,7 +70,7 @@ hlc.views.common.Scroller.prototype.reset = function(){
 
 
 hlc.views.common.Scroller.prototype.scrollTo = function(y){
-  this._draggable.scrollProxy.scrollTop(y);
+  this._outerDom.scrollTop = y;
   this._draggable.update();
 
   this.onScrollUpdate();
@@ -96,8 +102,14 @@ hlc.views.common.Scroller.prototype.onNativeScroll = function(e){
 
 
 hlc.views.common.Scroller.prototype.onScrollUpdate = function() {
-  var scrollTop = - this._draggable.y;
-  
+  var scrollTop;
+
+  if(this._draggable.y > 0 || this._draggable.y < - this._outerDom.scrollTop) {
+    scrollTop = - this._draggable.y;
+  }else {
+    scrollTop = this._outerDom.scrollTop;
+  }
+
   var scrollRatio = scrollTop / this._outerDom.scrollHeight;
   goog.style.setPosition(this._handleDom, 0, this._scrollbarHeight * scrollRatio);
 };

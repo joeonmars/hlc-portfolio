@@ -3,7 +3,8 @@
 		{% for album in craft.entries.section('album').find() %}
 		"{{ album.slug }}": {
 			"title": "{{ album.title }}",
-			"cover": "{{ siteUrl }}/{{ album.cover[0].url }}",
+			"coverThumbnail": "{{ siteUrl }}{{ album.coverThumbnail[0].url }}",
+			"cover": "{{ siteUrl }}{{ album.cover[0].url }}",
 			"songs": {
 				{% for song in album.songs %}
 				"{{ song.slug }}": {
@@ -12,7 +13,7 @@
 					"artwork": [
 						{% for artwork in song.artwork %}
 							{
-								"url": "{{ siteUrl }}/{{ artwork.url }}",
+								"url": "{{ siteUrl }}{{ artwork.url }}",
 								"copyright": {
 									{% if artwork.authorName|length > 1 %}
 									"authorName": "{{artwork.authorName}}",
@@ -28,10 +29,10 @@
 					],
 					"assets": [
 						{% for audio in song.audio %}
-						"{{ siteUrl }}/{{ audio.url }}"{{ loop.last ? "" : "," }}
+						"{{ siteUrl }}{{ audio.url }}"{{ loop.last ? "" : "," }}
 						{% endfor %}
 					],
-					"audioData": "{{ siteUrl }}/{{ song.audioData[0].url }}"
+					"audioData": "{{ siteUrl }}{{ song.audioData[0].url }}"
 				}{{ loop.last ? "" : "," }}
 				{% endfor %}
 			}

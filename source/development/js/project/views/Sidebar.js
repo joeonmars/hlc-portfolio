@@ -149,9 +149,6 @@ hlc.views.Sidebar.prototype.animateInContent = function(){
 	var detailDoms = goog.dom.getChildren(songDetailContainer);
 
 	this._contentAnimateInTweener = TweenMax.staggerFromTo(detailDoms, .5, {opacity: 0}, {opacity: 1}, .2, this.onAnimateInContent, null, this);
-
-	// reset scroller
-	this._scroller.reset();
 };
 
 
@@ -228,6 +225,9 @@ hlc.views.Sidebar.prototype.onLoaded = function(albumId, songId) {
 
 hlc.views.Sidebar.prototype.onAnimateInContent = function() {
 	this._contentAnimateInTweener = null;
+
+	// reset scroller
+	this._scroller.reset();
 };
 
 
@@ -244,6 +244,9 @@ hlc.views.Sidebar.prototype.onAnimateOutContent = function() {
 	var songDetailContainer = goog.dom.getElementByClass('songDetailContainer', this.contentDom);
 	goog.dom.removeNode(songDetailContainer);
 
+	// reset scroller
+	this._scroller.reset();
+	
 	// animate in next content if loaded
 	if(this._contentHtml) this.animateInContent();
 };
