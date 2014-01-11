@@ -1,107 +1,65 @@
-goog.provide('hlc.views.Preloader');
+goog.provide( 'hlc.views.Preloader' );
 
-goog.require('goog.events.EventTarget');
-goog.require('goog.events');
-goog.require('goog.dom');
-goog.require('goog.dom.query');
-goog.require('goog.dom.classes');
-goog.require('goog.net.XhrIo');
-goog.require('goog.net.ImageLoader');
-goog.require('hlc.events');
+goog.require( 'goog.dom' );
+goog.require( 'goog.events.EventTarget' );
+goog.require( 'hlc.views.Loader' );
 
-/**
- * @constructor
- */
-hlc.views.Preloader = function(){
-  goog.base(this);
 
-  this._isLoaded = false;
-  this._numTotalAssets = 0;
-  this._numLoadedAssets = 0;
-
-  this._domElement = goog.dom.getElement('preloader');
-  this._progressDom = goog.dom.getElementByClass('progress', this._domElement);
-
-  // sitemap json loader
-  this._sitemapRequest = new goog.net.XhrIo();
-  this._sitemap = null;
-
-	// image loader
-	this._imageLoader = new goog.net.ImageLoader();
-	goog.events.listen(this._imageLoader, goog.events.EventType.LOAD, this.onImageLoad, false, this);
-	goog.events.listen(this._imageLoader, goog.net.EventType.COMPLETE, this.onImageComplete, false, this);
-
+/** @constructor */
+hlc.views.Preloader = function() {
+	var bulkAssets = {
+		'sitemap': hlc.Url.ORIGIN + 'sitemap.html'
+	};
+	
+	var imageAssets = {};
 	goog.array.forEach(hlc.main.data.preloadAssets, function(url) {
-		this._imageLoader.addImage(goog.string.getRandomString(), url);
-		this._numTotalAssets ++;
-	}, this);
+		goog.object.add(imageAssets, goog.string.getRandomString(), url);
+	});
 
-	// assets holder
-	this._assets = {};
+	goog.base(this, bulkAssets, imageAssets, 4000);
+
+	this.assets = {};
+	this._domElement = goog.dom.getElement('preloader');
+	this._textDom = goog.dom.query('p', this._domElement)[0];
+
+	// animation
+	var fadeInTweener = TweenMax.to(this._domElement, 1, {
+		opacity: 1,
+		display: 'block',
+		ease: Quad.easeOut
+	});
+
+	this._animateInTweener.add(fadeInTweener);
+
+	var fadeOutTweener = TweenMax.to(this._domElement, 1, {
+		opacity: 0,
+		display: 'none',
+		ease: Quad.easeOut
+	});
+
+	this._animateOutTweener.add(fadeOutTweener);
 };
-goog.inherits(hlc.views.Preloader, goog.events.EventTarget);
+goog.inherits(hlc.views.Preloader, hlc.views.Loader);
 
 
 hlc.views.Preloader.prototype.init = function(){
 	goog.events.listen(this, 'resize', this.onResize, false, this);
 	hlc.main.controllers.windowController.addDispatcher(this);
-
-	goog.events.listenOnce(this._sitemapRequest, "complete", this.onSitemapRequested, false, this);
 };
 
 
-hlc.views.Preloader.prototype.load = function(){
-	var sitemapUrl = hlc.Url.ORIGIN + 'sitemap.html';//'http://hsinleichen.joeonmars-staging.com/sitemap.html';//
-	this._sitemapRequest.send(sitemapUrl);
+hlc.views.Preloader.prototype.onProgress = function(e) {
+	goog.base(this, 'onProgress', e);
+	
+	this._textDom.innerHTML = Math.round(e.progress * 100) + '%';
 };
 
 
-hlc.views.Preloader.prototype.isLoaded = function(){
-	return this._isLoaded;
-};
+hlc.views.Preloader.prototype.onBulkSuccess = function(e) {
+	var responseText = e.target.getResponseTexts();
+	this.assets['sitemap'] = JSON.parse(responseText);
 
-
-hlc.views.Preloader.prototype.onSitemapRequested = function(e){
-	if(this._sitemapRequest.isSuccess()) {
-
-		var responseText = this._sitemapRequest.getResponseText();
-		this._sitemap = JSON.parse(responseText);
-
-		this._assets.sitemap = this._sitemap;
-
-		this._imageLoader.start();
-
-	}else {
-
-		console.log(this._sitemapRequest.getLastError(), this);
-
-	}
-};
-
-
-hlc.views.Preloader.prototype.onImageLoad = function(e){
-	this._assets[e.target.id] = e.target.src;
-
-	this._numLoadedAssets ++;
-
-	var percent = Math.round( this._numLoadedAssets / this._numTotalAssets * 100 );
-	this._progressDom.innerHTML = percent + '%';
-};
-
-
-hlc.views.Preloader.prototype.onImageComplete = function(e){
-	this.onLoadComplete();
-};
-
-
-hlc.views.Preloader.prototype.onLoadComplete = function(){
-	this._isLoaded = true;
-
-	TweenMax.to(this._domElement, 1, {opacity: 0, display: 'none', onComplete: function() {
-		this.dispatchEvent( {type: hlc.events.EventType.ANIMATE_OUT_COMPLETE} );
-	}, onCompleteScope: this});
-
-	this.dispatchEvent({type: goog.net.EventType.COMPLETE, assets: this._assets});
+	goog.base(this, 'onBulkSuccess', e);
 };
 
 

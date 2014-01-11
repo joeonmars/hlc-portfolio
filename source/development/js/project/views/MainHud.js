@@ -100,8 +100,11 @@ hlc.views.MainHud.prototype.onScrollFinish = function(e){
 	}else {
 		this.homeButton.startAnimation();
 		this.showBottom();
-		this.sidebarButton.startAnimation();
-		this.sidebarButton.show();
+
+		if(!hlc.main.views.sidebar.isSlidedIn) {
+			this.sidebarButton.startAnimation();
+			this.sidebarButton.show();
+		}
 	}
 };
 

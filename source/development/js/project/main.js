@@ -3,6 +3,7 @@ goog.provide('hlc.main');
 goog.require('goog.fx.anim');
 goog.require('goog.dom');
 goog.require('soy');
+goog.require('hlc.events');
 goog.require('hlc.data.Data');
 goog.require('hlc.templates');
 goog.require('hlc.views.AlbumSection');
@@ -42,7 +43,7 @@ hlc.main = function() {
 	goog.events.listenOnce(hlc.main.views.preloader, goog.net.EventType.COMPLETE, hlc.main.onPreload, false, this);
 	goog.events.listenOnce(hlc.main.views.preloader, hlc.events.EventType.ANIMATE_OUT_COMPLETE, hlc.main.onPreloadAnimateOutComplete, false, this);
 	hlc.main.views.preloader.init();
-	hlc.main.views.preloader.load();
+	hlc.main.views.preloader.start();
 };
 
 
@@ -63,8 +64,8 @@ hlc.main.create = function(e) {
 
 
 hlc.main.onPreload = function(e) {
-	hlc.main.assets = e.assets;
-	console.log(e.assets);
+	hlc.main.assets = e.target.assets;
+	console.log(hlc.main.assets);
 
 	// init components
 	hlc.main.controllers.mainScrollController.init();
