@@ -11,10 +11,11 @@ goog.require('goog.dom.query');
 /**
  * @constructor
  */
-hlc.views.AlbumSection = function(domElement){
+hlc.views.AlbumSection = function(domElement, albumIndex){
   goog.base(this, domElement);
 
   this.albumModel = null;
+  this.albumIndex = albumIndex;
 
   this.backgroundDomElement = goog.dom.getElementByClass('background', this.domElement);
 

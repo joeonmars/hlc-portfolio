@@ -18,7 +18,7 @@ hlc.views.common.Scroller = function(outer, scrollbar){
   this._handleDom = goog.dom.getElementByClass('handle', this._scrollbarDom);
 
   this._draggable = new Draggable(this._outerDom, {
-    'type': "scrollTop",
+    'type': 'scrollTop',
     'edgeResistance': 0.75,
     'throwProps': true,
     'cursor': 'default',

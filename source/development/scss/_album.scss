@@ -1,77 +1,87 @@
 @import "album-player";
 
-.album{
-	>.background{
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		z-index: 0;
-		background-image: url("#{$static_images_path}album-tile.png");
-		//background: #888;
-
-		>div{
+#albums{
+	.album{
+		>.background{
 			position: absolute;
 			width: 100%;
 			height: 100%;
-			background-size: cover;
-			background-position: center;
-			@include single-transition(opacity, 5s);
+			z-index: 0;
+			background-image: url("#{$static_images_path}album-tile.png");
+			//background: #888;
 
-			&.colorOverlay{
-				&.gradientOverlay{
-					@include background(
-						radial-gradient(rgba(140,140,140,.5), rgba(0,0,0,.5))
-					);
-				}
+			>div{
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				background-size: cover;
+				background-position: center;
+				@include single-transition(opacity, 5s);
 
-				&.loaderOverlay{
-					background-image: url("#{$static_images_path}ajax-loader.gif");
-					background-repeat: no-repeat;
-					background-position: center;
-					background-size: 32px 32px;
-					background-color: rgba(0,0,0,.7);
-					@include single-transition(opacity, 0.6s);
+				&.colorOverlay{
+					&.gradientOverlay{
+						@include background(
+							radial-gradient(rgba(140,140,140,.5), rgba(0,0,0,.5))
+						);
+					}
+
+					&.loaderOverlay{
+						background-image: url("#{$static_images_path}ajax-loader.gif");
+						background-repeat: no-repeat;
+						background-position: center;
+						background-size: 32px 32px;
+						background-color: rgba(0,0,0,.7);
+						@include single-transition(opacity, 0.6s);
+					}
 				}
 			}
 		}
-	}
 
-	>.centerColumn{
-		height: 100%;
+		>.centerColumn{
+			height: 100%;
 
-		>.content{
-			position: relative;
-			top: 20%;
-		}
-	}
-
-	.content{
-		>h3{
-			margin-top: 45px;
-			margin-bottom: 10px;
-			padding-left: 95px;
-			font-family: $font_sans_boldcond;
-			font-size: 18px;
-			text-transform: uppercase;
-			color: white;
-			-webkit-font-smoothing: antialiased;
-
-			&:first-child{
-				margin-top: 0;
+			>.content{
+				position: relative;
+				top: 20%;
 			}
 		}
 
-		h4{
-			padding-left: 95px;
-			color: white;
-			font-family: $font_poly;
-			font-style: italic;
-			text-transform: capitalize;
-			-webkit-font-smoothing: antialiased;
+		.content{
+			>h3{
+				margin-top: 45px;
+				margin-bottom: 10px;
+				padding-left: 95px;
+				font-family: $font_sans_boldcond;
+				font-size: 18px;
+				text-transform: uppercase;
+				color: white;
+				-webkit-font-smoothing: antialiased;
+
+				&:first-child{
+					margin-top: 0;
+				}
+			}
+
+			h4{
+				padding-left: 95px;
+				color: white;
+				font-family: $font_poly;
+				font-style: italic;
+				text-transform: capitalize;
+				-webkit-font-smoothing: antialiased;
+			}
+
+			>h4{
+				font-size: 30px;
+			}
 		}
 
-		>h4{
-			font-size: 30px;
+		&:first-child{
+			@include single-box-shadow(rgba(0, 0, 0, .4), 0px, 0px, 10px);
+		}
+
+		&:last-child{
+			@include single-box-shadow(rgba(0, 0, 0, .4), 0px, 4px, 10px);
 		}
 	}
 }

@@ -51,6 +51,7 @@
 	</div>
 
 	<div id="album-scroller">
+		<div id="albums">
 		{% for album in craft.entries.section('album').find()|sortByField('postDate', 'asce') %}
 			<div class="album section" data-id="{{ album.slug }}">
 
@@ -73,6 +74,7 @@
 				
 			</div>
 		{% endfor %}
+		</div>
 	</div>
 
 {% endblock %}
