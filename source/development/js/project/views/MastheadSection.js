@@ -11,6 +11,7 @@ goog.require('hlc.views.mastheadpages.HomePage');
 goog.require('hlc.views.mastheadpages.BiographyPage');
 goog.require('hlc.views.mastheadpages.AwardsPage');
 goog.require('hlc.views.mastheadpages.ContactPage');
+goog.require('hlc.views.DiamondButtonTracker');
 
 /**
  * @constructor
@@ -31,6 +32,9 @@ hlc.views.MastheadSection = function(domElement){
   this.pageToLoad = null;
 
   this.albumButton = new hlc.views.common.TriangleButton(this.albumButtonDom);
+
+  var tracker = hlc.views.DiamondButtonTracker.getInstance();
+  tracker.add(this.albumButtonDom, 'up', new goog.math.Size(114, 57));
 
   this._headingTweener = null;
 };
@@ -126,9 +130,14 @@ hlc.views.MastheadSection.prototype.toPage = function(page){
 
 
 hlc.views.MastheadSection.prototype.onClick = function(e){
+	e.preventDefault();
+
 	switch(e.currentTarget) {
 		case this.albumButtonDom:
-		e.preventDefault();
+		var tracker = hlc.views.DiamondButtonTracker.getInstance();
+		var hasClickedOnShape = tracker.getClickResult(e, true);
+		if(!hasClickedOnShape) return false;
+
 		var token = this.albumButtonDom.getAttribute('href');
 		hlc.main.controllers.navigationController.setToken(token);
 

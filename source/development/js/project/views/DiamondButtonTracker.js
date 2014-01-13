@@ -38,14 +38,31 @@ hlc.views.DiamondButtonTracker.prototype.add = function(button, facing, size){
     ctx.lineTo(size.width/2, size.height);
   }else {
     // triangle
-    if(facing > 0) {
+    switch(facing) {
+      default:
+      case 'down':
       ctx.moveTo(0, 0);
       ctx.lineTo(size.width, 0);
       ctx.lineTo(size.width/2, size.height);
-    }else {
+      break;
+
+      case 'up':
       ctx.moveTo(0, size.height);
       ctx.lineTo(size.width/2, 0);
       ctx.lineTo(size.width, size.height);
+      break;
+
+      case 'left':
+      ctx.moveTo(0, size.height/2);
+      ctx.lineTo(size.width, 0);
+      ctx.lineTo(size.width, size.height);
+      break;
+
+      case 'right':
+      ctx.moveTo(0, 0);
+      ctx.lineTo(size.width, size.height/2);
+      ctx.lineTo(0, size.height);
+      break;
     }
   }
   
