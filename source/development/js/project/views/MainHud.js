@@ -8,6 +8,7 @@ goog.require('goog.dom.classes');
 goog.require('hlc.views.MediaPlayer');
 goog.require('hlc.views.Playlist');
 goog.require('hlc.views.common.TriangleButton');
+goog.require('hlc.views.DiamondButtonTracker');
 
 /**
  * @constructor
@@ -36,6 +37,13 @@ hlc.views.MainHud = function(){
 
   this.playlist = new hlc.views.Playlist();
   this.mediaPlayer = new hlc.views.MediaPlayer();
+
+  // track playlist diamond buttons
+  var tracker = hlc.views.DiamondButtonTracker.getInstance();
+  tracker.add(this.playlistButtonDom, 1, new goog.math.Size(114, 57));
+
+  var tracker = hlc.views.DiamondButtonTracker.getInstance();
+  tracker.add(this.playlistCloseButtonDom, 1, new goog.math.Size(114, 57));
 };
 goog.inherits(hlc.views.MainHud, goog.events.EventTarget);
 
@@ -157,7 +165,20 @@ hlc.views.MainHud.prototype.onClick = function(e){
 		break;
 
 		case this.playlistButtonDom:
+		var tracker = hlc.views.DiamondButtonTracker.getInstance();
+		var hasClickedOnShape = tracker.getClickResult(e);
+		if(!hasClickedOnShape) return false;
+
+		if(!this.playlist.isTweening()) {
+			this.playlist.toggle();
+		}
+		break;
+
 		case this.playlistCloseButtonDom:
+		var tracker = hlc.views.DiamondButtonTracker.getInstance();
+		var hasClickedOnShape = tracker.getClickResult(e, true);
+		if(!hasClickedOnShape) return false;
+
 		if(!this.playlist.isTweening()) {
 			this.playlist.toggle();
 		}
