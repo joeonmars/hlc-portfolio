@@ -186,6 +186,8 @@ return array(
     'PHP_CodeCoverage_Util' => $vendorDir . '/phpunit/php-code-coverage/PHP/CodeCoverage/Util.php',
     'PHP_CodeCoverage_Util_InvalidArgumentHelper' => $vendorDir . '/phpunit/php-code-coverage/PHP/CodeCoverage/Util/InvalidArgumentHelper.php',
     'PHP_CodeCoverage_Version' => $vendorDir . '/phpunit/php-code-coverage/PHP/CodeCoverage/Version.php',
+    'PHP_Invoker' => $vendorDir . '/phpunit/php-invoker/PHP/Invoker.php',
+    'PHP_Invoker_TimeoutException' => $vendorDir . '/phpunit/php-invoker/PHP/Invoker/TimeoutException.php',
     'PHP_Timer' => $vendorDir . '/phpunit/php-timer/PHP/Timer.php',
     'PHP_Token' => $vendorDir . '/phpunit/php-token-stream/PHP/Token.php',
     'PHP_TokenWithScope' => $vendorDir . '/phpunit/php-token-stream/PHP/Token.php',

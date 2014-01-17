@@ -23,11 +23,7 @@
 {% endset %}
 
 
-<<<<<<< HEAD
-{% set continueEditingUrl = 'entries/'~section.handle~'/{id}'~(draftId is defined ? '/drafts/'~draftId : '')~(craft.locale != localeId ? '/'~localeId : '') %}
-=======
 {% set continueEditingUrl = 'entries/'~section.handle~'/{id}'~(draftId is defined ? '/drafts/'~draftId : '')~(craft.hasPackage('Localize') and craft.locale != localeId ? '/'~localeId : '') %}
->>>>>>> 63154a61d900a8a29f5ff150872a0036e6927ed1
 
 
 {% set content %}
@@ -79,20 +75,16 @@
 						id: 'parentId',
 						name: 'parentId',
 						options: parentOptions,
-						value: (entry.getParent() ? entry.getParent().id : null)
+						value: parentId
 					}) }}
 				{% endif %}
 
 				{% if craft.hasPackage('Users') %}
-					{% set authors = [] %}
-					{% for author in craft.users.find({limit: null}) %}
-						{% set authors = authors|merge([{ label: author.name, value: author.id }]) %}
-					{% endfor %}
 					{{ forms.selectField({
 						label: "Author"|t,
 						id: 'author',
 						name: 'author',
-						options: authors,
+						options: authorOptions,
 						value: entry.authorId
 					}) }}
 				{% endif %}

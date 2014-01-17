@@ -5,7 +5,7 @@
  *
  * @package   Craft
  * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2013, Pixel & Tonic, Inc.
+ * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
  * @license   http://buildwithcraft.com/license Craft License Agreement
  * @link      http://buildwithcraft.com
  */
@@ -144,6 +144,7 @@ return array(
 	'Click to change the email address.' => 'メールアドレスを変更するにはクリックしてください。',
 	'Click to set a new password.' => '新しいパスワードを設定するにはクリックしてください。',
 	'Cloud' => 'クラウド',
+	'Collapse' => '倒れる',
 	'Color' => '色',
 	'Column Heading' => '欄の見出し',
 	'Coming soon' => 'もうしばらくお待ちください',
@@ -333,6 +334,7 @@ return array(
 	'Error uploading the file: {error}' => 'ファイルのアップロードにエラーは発生しました：{error}',
 	'Error: Rolling Back…' => 'エラー：復旧中...',
 	'Exp. year' => '有効期限の年',
+	'Expand' => '拡大する',
 	'Expiration Date' => '有効期限の日付',
 	'Expiration month' => '有効期限の月',
 	'Expiry Date' => '有効期限の日付',

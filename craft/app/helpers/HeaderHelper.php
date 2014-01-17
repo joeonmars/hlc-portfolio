@@ -5,7 +5,7 @@
  *
  * @package   Craft
  * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2013, Pixel & Tonic, Inc.
+ * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
  * @license   http://buildwithcraft.com/license Craft License Agreement
  * @link      http://buildwithcraft.com
  */
@@ -144,7 +144,7 @@ class HeaderHelper
 	 * @param string $key
 	 * @return void
 	 */
-	public function removeHeader($key)
+	public static function removeHeader($key)
 	{
 		if (isset(static::$_header[$key]))
 		{

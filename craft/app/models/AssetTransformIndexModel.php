@@ -6,7 +6,7 @@ namespace Craft;
  *
  * @package   Craft
  * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2013, Pixel & Tonic, Inc.
+ * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
  * @license   http://buildwithcraft.com/license Craft License Agreement
  * @link      http://buildwithcraft.com
  */
@@ -39,6 +39,8 @@ class AssetTransformIndexModel extends BaseModel
 			'fileExists'   => AttributeType::Bool,
 			'inProgress'   => AttributeType::Bool,
 			'dateIndexed'  => AttributeType::DateTime,
+			'dateUpdated'  => AttributeType::DateTime,
+			'dateCreated'  => AttributeType::DateTime,
 		);
 	}
 }

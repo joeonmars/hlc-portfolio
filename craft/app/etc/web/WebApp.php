@@ -6,7 +6,7 @@ namespace Craft;
  *
  * @package   Craft
  * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2013, Pixel & Tonic, Inc.
+ * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
  * @license   http://buildwithcraft.com/license Craft License Agreement
  * @link      http://buildwithcraft.com
  */
@@ -85,6 +85,9 @@ class WebApp extends \CWebApplication
 		{
 			Craft::import($alias);
 		}
+
+		// So we can try to translate Yii framework strings
+		craft()->coreMessages->attachEventHandler('onMissingTranslation', array('Craft\LocalizationHelper', 'findMissingTranslation'));
 
 		// Initialize HttpRequestService and LogRouter right away
 		$this->getComponent('request');
@@ -191,6 +194,8 @@ class WebApp extends \CWebApplication
 		// Make sure that the system is on, or that the user has permission to access the site/CP while the system is off
 		if (craft()->isSystemOn() ||
 			($this->request->isActionRequest() && $this->request->getActionSegments() == array('users', 'login')) ||
+			($this->request->isActionRequest() && $this->request->isCpRequest() && $this->request->getActionSegments() == array('users', 'forgotpassword')) ||
+			($this->request->isActionRequest() && $this->request->isCpRequest() && $this->request->getActionSegments() == array('users', 'setpassword')) ||
 			($this->request->isSiteRequest() && $this->userSession->checkPermission('accessSiteWhenSystemIsOff')) ||
 			($this->request->isCpRequest()) && $this->userSession->checkPermission('accessCpWhenSystemIsOff')
 		)
@@ -788,7 +793,21 @@ class WebApp extends \CWebApplication
 	 */
 	private function _processRequirementsCheck()
 	{
-		if ($this->request->isCpRequest())
+		// See if we're in the middle of an update.
+		$update = false;
+
+		if ($this->request->getSegment(1) == 'updates' && $this->request->getSegment(2) == 'go')
+		{
+			$update = true;
+		}
+
+		if (($data = $this->request->getPost('data', null)) !== null && isset($data['handle']))
+		{
+			$update = true;
+		}
+
+		// Only run for CP requests and if we're not in the middle of an update.
+		if ($this->request->isCpRequest() && !$update)
 		{
 			$cachedAppPath = craft()->fileCache->get('appPath');
 			$appPath = $this->path->getAppPath();
@@ -800,6 +819,9 @@ class WebApp extends \CWebApplication
 		}
 	}
 
+	/**
+	 * @throws HttpException
+	 */
 	private function _processUpdateLogic()
 	{
 		// Let all non-action CP requests through.

@@ -6,7 +6,7 @@ namespace Craft;
  *
  * @package   Craft
  * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2013, Pixel & Tonic, Inc.
+ * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
  * @license   http://buildwithcraft.com/license Craft License Agreement
  * @link      http://buildwithcraft.com
  */
@@ -49,7 +49,7 @@ class DropdownFieldType extends BaseOptionsFieldType
 		$options = $this->getOptions();
 
 		// If this is a new entry, look for a default option
-		if ($this->isFresh())
+		if ($value === null && $this->isFresh())
 		{
 			foreach ($options as $option)
 			{

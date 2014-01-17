@@ -6,7 +6,7 @@ namespace Craft;
  *
  * @package   Craft
  * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2013, Pixel & Tonic, Inc.
+ * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
  * @license   http://buildwithcraft.com/license Craft License Agreement
  * @link      http://buildwithcraft.com
  */
@@ -121,7 +121,7 @@ class AssetTransformsService extends BaseApplicationComponent
 	 */
 	public function updateTransforms(AssetFileModel $fileModel, $transformsToUpdate)
 	{
-		if (!in_array(IOHelper::getExtension($fileModel->filename), ImageHelper::getAcceptedExtensions()))
+		if (!ImageHelper::isImageManipulatable(IOHelper::getExtension($fileModel->filename)))
 		{
 			return true;
 		}

@@ -6,7 +6,7 @@ namespace Craft;
  *
  * @package   Craft
  * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2013, Pixel & Tonic, Inc.
+ * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
  * @license   http://buildwithcraft.com/license Craft License Agreement
  * @link      http://buildwithcraft.com
  */
@@ -235,7 +235,18 @@ class AssetFileModel extends BaseElementModel
 	 */
 	public function hasThumb()
 	{
-		return $this->kind == 'image' && $this->_getHeight() && $this->_getWidth();
+		if ($this->kind == 'image' && $this->_getHeight() && $this->_getWidth())
+		{
+			// Gd doesn't process bitmaps
+			if ($this->getExtension() == 'bmp' && craft()->images->isGd())
+			{
+				return false;
+			}
+
+			return true;
+		}
+
+		return false;
 	}
 
 	/**

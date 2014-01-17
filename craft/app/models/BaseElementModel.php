@@ -6,7 +6,7 @@ namespace Craft;
  *
  * @package   Craft
  * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2013, Pixel & Tonic, Inc.
+ * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
  * @license   http://buildwithcraft.com/license Craft License Agreement
  * @link      http://buildwithcraft.com
  */
@@ -20,7 +20,6 @@ abstract class BaseElementModel extends BaseModel
 
 	private $_content;
 	private $_preppedContent;
-	private $_tags;
 
 	private $_nextElement;
 	private $_prevElement;
@@ -184,7 +183,7 @@ abstract class BaseElementModel extends BaseModel
 	 * @param mixed $criteria
 	 * @return ElementCriteriaModel|null
 	 */
-	public function getPrev($criteria = null)
+	public function getPrev($criteria = false)
 	{
 		if ($criteria !== false || !isset($this->_prevElement))
 		{
@@ -446,6 +445,36 @@ abstract class BaseElementModel extends BaseModel
 	}
 
 	/**
+	 * Returns the name of the table this element's content is stored in.
+	 *
+	 * @return string
+	 */
+	public function getContentTable()
+	{
+		return craft()->content->contentTable;
+	}
+
+	/**
+	 * Returns the field column prefix this element's content uses.
+	 *
+	 * @return string
+	 */
+	public function getFieldColumnPrefix()
+	{
+		return craft()->content->fieldColumnPrefix;
+	}
+
+	/**
+	 * Returns the field context this element's content uses.
+	 *
+	 * @return string
+	 */
+	public function getFieldContext()
+	{
+		return craft()->content->fieldContext;
+	}
+
+	/**
 	 * Returns the field with a given handle.
 	 *
 	 * @access protected
@@ -493,39 +522,6 @@ abstract class BaseElementModel extends BaseModel
 		$contentService->fieldContext = $originalFieldContext;
 
 		return $content;
-	}
-
-	/**
-	 * Returns the name of the table this element's content is stored in.
-	 *
-	 * @access protected
-	 * @return string
-	 */
-	protected function getContentTable()
-	{
-		return craft()->content->contentTable;
-	}
-
-	/**
-	 * Returns the field column prefix this element's content uses.
-	 *
-	 * @access protected
-	 * @return string
-	 */
-	protected function getFieldColumnPrefix()
-	{
-		return craft()->content->fieldColumnPrefix;
-	}
-
-	/**
-	 * Returns the field context this element's content uses.
-	 *
-	 * @access protected
-	 * @return string
-	 */
-	protected function getFieldContext()
-	{
-		return craft()->content->fieldContext;
 	}
 
 	/**

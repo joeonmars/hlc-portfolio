@@ -6,7 +6,7 @@ namespace Craft;
  *
  * @package   Craft
  * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2013, Pixel & Tonic, Inc.
+ * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
  * @license   http://buildwithcraft.com/license Craft License Agreement
  * @link      http://buildwithcraft.com
  */
@@ -99,9 +99,9 @@ class ErrorHandler extends \CErrorHandler
 		}
 
 		// Special handling for Twig syntax errors
-		if ($exception instanceof \Twig_Error_Syntax)
+		if ($exception instanceof \Twig_Error)
 		{
-			$this->handleTwigSyntaxError($exception);
+			$this->handleTwigError($exception);
 		}
 		else if ($exception instanceof DbConnectException)
 		{
@@ -114,12 +114,33 @@ class ErrorHandler extends \CErrorHandler
 	}
 
 	/**
+	 * Handles a PHP error.
+	 *
+	 * @param \CErrorEvent $event the PHP error event
+	 */
+	protected function handleError($event)
+	{
+		$trace = debug_backtrace();
+
+		// Was this triggered by a Twig template directly?
+		if (isset($trace[3]['object']) && $trace[3]['object'] instanceof \Twig_Template)
+		{
+			$exception = new \Twig_Error_Runtime($event->message);
+			$this->handleTwigError($exception);
+		}
+		else
+		{
+			parent::handleError($event);
+		}
+	}
+
+	/**
 	 * Handles Twig syntax errors.
 	 *
 	 * @access protected
 	 * @param \Twig_Error $exception
 	 */
-	protected function handleTwigSyntaxError(\Twig_Error $exception)
+	protected function handleTwigError(\Twig_Error $exception)
 	{
 		$templateFile = $exception->getTemplateFile();
 
@@ -134,7 +155,7 @@ class ErrorHandler extends \CErrorHandler
 
 		$this->_error = $data = array(
 			'code'      => 500,
-			'type'      => Craft::t('Template Syntax Error'),
+			'type'      => Craft::t('Template Error'),
 			'errorCode' => $exception->getCode(),
 			'message'   => $exception->getRawMessage(),
 			'file'      => $file,
@@ -177,7 +198,7 @@ class ErrorHandler extends \CErrorHandler
 			'code'      => 'error',
 			'type'      => get_class($exception),
 			'errorCode' => null,
-			'message'   => Craft::t('Craft can’t connect to the database with the credentials in craft/config/db.php.'),
+			'message'   => $exception->getMessage(),
 			'file'      => null,
 			'line'      => null,
 			'trace'     => '',

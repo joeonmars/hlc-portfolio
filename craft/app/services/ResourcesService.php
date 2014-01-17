@@ -6,7 +6,7 @@ namespace Craft;
  *
  * @package   Craft
  * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2013, Pixel & Tonic, Inc.
+ * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
  * @license   http://buildwithcraft.com/license Craft License Agreement
  * @link      http://buildwithcraft.com
  */
@@ -213,6 +213,7 @@ class ResourcesService extends BaseApplicationComponent
 		}
 
 		// Maybe a plugin wants to do something custom with this URL
+		craft()->plugins->loadPlugins();
 		$pluginPaths = craft()->plugins->call('getResourcePath', array($path));
 		foreach ($pluginPaths as $path)
 		{

@@ -6,7 +6,7 @@ namespace Craft;
  *
  * @package   Craft
  * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2013, Pixel & Tonic, Inc.
+ * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
  * @license   http://buildwithcraft.com/license Craft License Agreement
  * @link      http://buildwithcraft.com
  */
@@ -250,7 +250,7 @@ class SearchService extends BaseApplicationComponent
 			'locale'    => $localeId
 		);
 
-		if ($cleanKeywords)
+		if ($cleanKeywords !== null && $cleanKeywords !== false && $cleanKeywords !== '')
 		{
 			// Add padding around keywords
 			$cleanKeywords = $this->_addPadding($cleanKeywords);
@@ -390,9 +390,9 @@ class SearchService extends BaseApplicationComponent
 	/**
 	 * Generates partial WHERE clause for search from given tokens
 	 *
-	 * @access private
+	 * @access   private
 	 * @param array $tokens
-	 * @param string $glue
+	 * @param bool  $inclusive
 	 * @return string|false
 	 */
 	private function _processTokens($tokens = array(), $inclusive = true)
@@ -406,7 +406,7 @@ class SearchService extends BaseApplicationComponent
 			// Get SQL and/or keywords
 			list($sql, $keywords) = $this->_getSqlFromTerm($obj);
 
-			if ($sql === false)
+			if ($sql === false && $inclusive)
 			{
 				return false;
 			}
@@ -451,7 +451,7 @@ class SearchService extends BaseApplicationComponent
 	 * Generates a piece of WHERE clause for fallback (LIKE) search from search term
 	 *
 	 * @access private
-	 * @param object SearchQueryTerm
+	 * @param  SearchQueryTerm $term
 	 * @return array
 	 */
 	private function _getSqlFromTerm(SearchQueryTerm $term)
@@ -493,11 +493,11 @@ class SearchService extends BaseApplicationComponent
 		}
 
 		// Sanatize term
-		if ($term->term)
+		if ($term->term !== null)
 		{
 			$keywords = $this->_normalizeTerm($term->term);
 
-			if ($keywords)
+			if ($keywords !== false && $keywords !== null)
 			{
 				// Create fulltext clause from term
 				if ($this->_isFulltextTerm($keywords) && !$term->subLeft && !$term->exact && !$term->exclude)

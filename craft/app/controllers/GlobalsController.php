@@ -6,7 +6,7 @@ namespace Craft;
  *
  * @package   Craft
  * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2013, Pixel & Tonic, Inc.
+ * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
  * @license   http://buildwithcraft.com/license Craft License Agreement
  * @link      http://buildwithcraft.com
  */
@@ -156,7 +156,11 @@ class GlobalsController extends BaseController
 
 		// Make sure the user is allowed to edit this global set and locale
 		craft()->userSession->requirePermission('editGlobalSet:'.$globalSetId);
-		craft()->userSession->requirePermission('editLocale:'.$localeId);
+
+		if (craft()->hasPackage(CraftPackage::Localize))
+		{
+			craft()->userSession->requirePermission('editLocale:'.$localeId);
+		}
 
 		$criteria = craft()->elements->getCriteria(ElementType::GlobalSet);
 		$criteria->id = $globalSetId;

@@ -6,7 +6,7 @@ namespace Craft;
  *
  * @package   Craft
  * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2013, Pixel & Tonic, Inc.
+ * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
  * @license   http://buildwithcraft.com/license Craft License Agreement
  * @link      http://buildwithcraft.com
  */
@@ -22,18 +22,17 @@ class Image
 	private $_instance;
 	private $_width;
 	private $_height;
-	private $_isGd;
 
 	function __construct()
 	{
-		if (extension_loaded('imagick'))
+		if (craft()->images->isGd())
+		{
+			$this->_instance = new \Imagine\Gd\Imagine();
+		}
+		else
 		{
 			$this->_instance = new \Imagine\Imagick\Imagine();
-			$this->_isGd = false;
 		}
-
-		$this->_instance = new \Imagine\Gd\Imagine();
-		$this->_isGd = true;
 	}
 
 	/**
@@ -76,7 +75,7 @@ class Image
 			throw new Exception(Craft::t('No file exists at the path “{path}”', array('path' => $path)));
 		}
 
-		if (!craft()->images->setMemoryForImage($path))
+		if (!craft()->images->checkMemoryForImage($path))
 		{
 			throw new Exception(Craft::t("Not enough memory available to perform this image operation."));
 		}
@@ -339,7 +338,7 @@ class Image
 	 */
 	private function _getResizeFilter()
 	{
-		return ($this->_isGd ? \Imagine\Image\ImageInterface::FILTER_UNDEFINED : \Imagine\Image\ImageInterface::FILTER_LANCZOS);
+		return (craft()->images->isGd() ? \Imagine\Image\ImageInterface::FILTER_UNDEFINED : \Imagine\Image\ImageInterface::FILTER_LANCZOS);
 	}
 
 	/**

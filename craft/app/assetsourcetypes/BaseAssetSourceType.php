@@ -6,7 +6,7 @@ namespace Craft;
  *
  * @package   Craft
  * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2013, Pixel & Tonic, Inc.
+ * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
  * @license   http://buildwithcraft.com/license Craft License Agreement
  * @link      http://buildwithcraft.com
  */
@@ -274,7 +274,7 @@ abstract class BaseAssetSourceType extends BaseSavableComponentType
 		$uploader->file->save($filePath);
 
 		// We hate Javascript and PHP in our image files.
-		if (IOHelper::getFileKind(IOHelper::getExtension($filePath)) == 'image')
+		if (IOHelper::getFileKind(IOHelper::getExtension($filePath)) == 'image' && ImageHelper::isImageManipulatable(IOHelper::getExtension($filePath)))
 		{
 			craft()->images->cleanImage($filePath);
 		}

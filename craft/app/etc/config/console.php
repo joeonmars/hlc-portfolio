@@ -5,43 +5,10 @@
  *
  * @package   Craft
  * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2013, Pixel & Tonic, Inc.
+ * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
  * @license   http://buildwithcraft.com/license Craft License Agreement
  * @link      http://buildwithcraft.com
  */
-
-/**
- * @param $dbHostname
- * @return string
- */
-function normalizeDbHostname($dbHostname)
-{
-	// MacOS command line db connections apparently want this in numeric format.
-	if (strcasecmp($dbHostname, 'localhost') == 0)
-	{
-		$dbHostname = '127.0.0.1';
-	}
-
-	return $dbHostname;
-}
-
-/**
- * Returns the correct connection string depending on whether a unixSocket is specific or not in the db config.
- *
- * @param $dbConfig
- * @return string
- */
-function processConnectionString($dbConfig)
-{
-	if (!empty($dbConfig['unixSocket']))
-	{
-		return strtolower('mysql:unix_socket='.$dbConfig['unixSocket'].';dbname='.$dbConfig['database'].';');
-	}
-	else
-	{
-		return strtolower('mysql:host='.normalizeDbHostname($dbConfig['server']).';dbname='.$dbConfig['database'].';port='.$dbConfig['port'].';');
-	}
-}
 
 $common = require(CRAFT_APP_PATH.'etc/config/common.php');
 

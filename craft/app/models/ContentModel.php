@@ -6,7 +6,7 @@ namespace Craft;
  *
  * @package   Craft
  * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2013, Pixel & Tonic, Inc.
+ * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
  * @license   http://buildwithcraft.com/license Craft License Agreement
  * @link      http://buildwithcraft.com
  */
@@ -31,7 +31,7 @@ class ContentModel extends BaseModel
 			'id'        => AttributeType::Number,
 			'elementId' => AttributeType::Number,
 			'locale'    => array(AttributeType::Locale, 'default' => craft()->i18n->getPrimarySiteLocaleId()),
-			'title'     => array(AttributeType::String, 'required' => $requiredTitle),
+			'title'     => array(AttributeType::String, 'required' => $requiredTitle, 'maxLength' => 255),
 		);
 
 		if (craft()->isInstalled() && !craft()->isConsole())

@@ -6,7 +6,7 @@ namespace Craft;
  *
  * @package   Craft
  * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2013, Pixel & Tonic, Inc.
+ * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
  * @license   http://buildwithcraft.com/license Craft License Agreement
  * @link      http://buildwithcraft.com
  */
@@ -49,18 +49,18 @@ class DbConnection extends \CDbConnection
 			if (!$missingPdo)
 			{
 				Craft::log($e->getMessage(), LogLevel::Error);
-				$messages[] = Craft::t('There is a problem connecting to the database with the credentials supplied in your db config file.');
+				$messages[] = Craft::t('Craft can’t connect to the database with the credentials in craft/config/db.php.');
 			}
 		}
 		catch (\Exception $e)
 		{
 			Craft::log($e->getMessage(), LogLevel::Error);
-			$messages[] = Craft::t('There is a problem connecting to the database with the credentials supplied in your db config file.');
+			$messages[] = $messages[] = Craft::t('Craft can’t connect to the database with the credentials in craft/config/db.php.');
 		}
 
 		if (!empty($messages))
 		{
-			throw new DbConnectException(Craft::t('Database configuration errors: {errors}', array('errors' => implode(PHP_EOL, $messages))));
+			throw new DbConnectException(Craft::t('{errors}', array('errors' => implode('<br />', $messages))));
 		}
 
 		$this->_isDbConnectionValid = true;

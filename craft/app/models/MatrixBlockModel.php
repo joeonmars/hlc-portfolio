@@ -6,7 +6,7 @@ namespace Craft;
  *
  * @package   Craft
  * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2013, Pixel & Tonic, Inc.
+ * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
  * @license   http://buildwithcraft.com/license Craft License Agreement
  * @link      http://buildwithcraft.com
  */
@@ -72,10 +72,9 @@ class MatrixBlockModel extends BaseElementModel
 	/**
 	 * Returns the name of the table this element's content is stored in.
 	 *
-	 * @access protected
 	 * @return string
 	 */
-	protected function getContentTable()
+	public function getContentTable()
 	{
 		$matrixField = craft()->fields->getFieldById($this->fieldId);
 		return craft()->matrix->getContentTableName($matrixField);
@@ -84,10 +83,9 @@ class MatrixBlockModel extends BaseElementModel
 	/**
 	 * Returns the field column prefix this element's content uses.
 	 *
-	 * @access protected
 	 * @return string
 	 */
-	protected function getFieldColumnPrefix()
+	public function getFieldColumnPrefix()
 	{
 		return 'field_'.$this->getType()->handle.'_';
 	}
@@ -98,7 +96,7 @@ class MatrixBlockModel extends BaseElementModel
 	 * @access protected
 	 * @return string
 	 */
-	protected function getFieldContext()
+	public function getFieldContext()
 	{
 		return 'matrixBlockType:'.$this->typeId;
 	}

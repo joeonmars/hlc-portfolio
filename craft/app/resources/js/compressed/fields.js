@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, Pixel & Tonic, Inc.
+ Copyright (c) 2014, Pixel & Tonic, Inc.
  @license   http://buildwithcraft.com/license Craft License Agreement
  @link      http://buildwithcraft.com
 */

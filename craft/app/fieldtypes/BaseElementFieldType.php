@@ -6,7 +6,7 @@ namespace Craft;
  *
  * @package   Craft
  * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2013, Pixel & Tonic, Inc.
+ * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
  * @license   http://buildwithcraft.com/license Craft License Agreement
  * @link      http://buildwithcraft.com
  */
@@ -171,10 +171,11 @@ abstract class BaseElementFieldType extends BaseFieldType
 
 		$criteria->status = null;
 		$selectionCriteria = array('status' => null);
+		$disabledElementIds = array();
 
 		if (!empty($this->element->id))
 		{
-			$selectionCriteria['id'] = 'not '.$this->element->id;
+			$disabledElementIds[] = $this->element->id;
 		}
 
 		if ($this->allowMultipleSources)
@@ -187,16 +188,17 @@ abstract class BaseElementFieldType extends BaseFieldType
 		}
 
 		return craft()->templates->render('_includes/forms/elementSelect', array(
-			'jsClass'        => $this->inputJsClass,
-			'elementType'    => new ElementTypeVariable($this->getElementType()),
-			'id'             => craft()->templates->formatInputId($name),
-			'storageKey'     => 'field.'.$this->model->id,
-			'name'           => $name,
-			'elements'       => $criteria,
-			'sources'        => $sources,
-			'criteria'       => $selectionCriteria,
-			'limit'          => ($this->allowLimit ? $this->getSettings()->limit : null),
-			'addButtonLabel' => $this->getAddButtonLabel(),
+			'jsClass'            => $this->inputJsClass,
+			'elementType'        => new ElementTypeVariable($this->getElementType()),
+			'id'                 => craft()->templates->formatInputId($name),
+			'storageKey'         => 'field.'.$this->model->id,
+			'name'               => $name,
+			'elements'           => $criteria,
+			'sources'            => $sources,
+			'criteria'           => $selectionCriteria,
+			'disabledElementIds' => $disabledElementIds,
+			'limit'              => ($this->allowLimit ? $this->getSettings()->limit : null),
+			'addButtonLabel'     => $this->getAddButtonLabel(),
 		));
 	}
 

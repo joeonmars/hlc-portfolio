@@ -3,7 +3,7 @@
  *
  * @package   Craft
  * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2013, Pixel & Tonic, Inc.
+ * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
  * @license   http://buildwithcraft.com/license Craft License Agreement
  * @link      http://buildwithcraft.com
  */
@@ -64,6 +64,45 @@ $.extend(Craft, {
 	escapeHtml: function(str)
 	{
 		return $('<div/>').text(str).html();
+	},
+
+	/**
+	 * Returns the text in a string that might contain HTML tags.
+	 *
+	 * @param string str
+	 * @return string
+	 */
+	getText: function(str)
+	{
+		return $('<div/>').html(str).text();
+	},
+
+	/**
+	 * Encodes a URI copmonent. Mirrors PHP's rawurlencode().
+	 *
+	 * @param string str
+	 * @return string
+	 * @see http://stackoverflow.com/questions/1734250/what-is-the-equivalent-of-javascripts-encodeuricomponent-in-php
+	 */
+	encodeUriComponent: function(str)
+	{
+		str = encodeURIComponent(str);
+
+		var differences = {
+			'!': '%21',
+			'*': '%2A',
+			"'": '%27',
+			'(': '%28',
+			')': '%29'
+		};
+
+		for (var chr in differences)
+		{
+			var re = new RegExp('\\'+chr, 'g');
+			str = str.replace(re, differences[chr]);
+		}
+
+		return str;
 	},
 
 	/**
@@ -532,7 +571,7 @@ $.extend(Craft, {
 	ltrim: function(str, chars)
 	{
 		if (!str) return str;
-		if (chars === undefined) chars = ' ';
+		if (chars === undefined) chars = ' \t\n\r\0\x0B';
 		var re = new RegExp('^['+Craft.escapeChars(chars)+']+');
 		return str.replace(re, '');
 	},
@@ -547,7 +586,7 @@ $.extend(Craft, {
 	rtrim: function(str, chars)
 	{
 		if (!str) return str;
-		if (chars === undefined) chars = ' ';
+		if (chars === undefined) chars = ' \t\n\r\0\x0B';
 		var re = new RegExp('['+Craft.escapeChars(chars)+']+$');
 		return str.replace(re, '');
 	},
@@ -1740,6 +1779,7 @@ Craft.BaseElementSelectInput = Garnish.Base.extend({
 	elementType: null,
 	sources: null,
 	criteria: null,
+	disabledElementIds: null,
 	limit: null,
 	storageKey: null,
 
@@ -1753,13 +1793,14 @@ Craft.BaseElementSelectInput = Garnish.Base.extend({
 	$elements: null,
 	$addElementBtn: null,
 
-	init: function(id, name, elementType, sources, criteria, limit, storageKey)
+	init: function(id, name, elementType, sources, criteria, disabledElementIds, limit, storageKey)
 	{
 		this.id = id;
 		this.name = name;
 		this.elementType = elementType;
 		this.sources = sources;
 		this.criteria = criteria;
+		this.disabledElementIds = disabledElementIds;
 		this.limit = limit;
 		this.storageKey = storageKey;
 
@@ -1842,12 +1883,19 @@ Craft.BaseElementSelectInput = Garnish.Base.extend({
 
 		if (!this.modal)
 		{
-			var selectedElementIds = [];
+			if (this.disabledElementIds)
+			{
+				var disabledElementIds = this.disabledElementIds.slice(0);
+			}
+			else
+			{
+				var disabledElementIds = [];
+			}
 
 			for (var i = 0; i < this.$elements.length; i++)
 			{
 				var $element = $(this.$elements[i]);
-				selectedElementIds.push($element.data('id'));
+				disabledElementIds.push($element.data('id'));
 			}
 
 			this.modal = Craft.createElementSelectorModal(this.elementType, {
@@ -1856,7 +1904,7 @@ Craft.BaseElementSelectInput = Garnish.Base.extend({
 				criteria: this.criteria,
 				multiSelect: true,
 				disableOnSelect: true,
-				disabledElementIds: selectedElementIds,
+				disabledElementIds: disabledElementIds,
 				onSelect: $.proxy(this, 'selectElements')
 			});
 		}
@@ -3934,9 +3982,9 @@ Craft.AssetSelectInput = Craft.BaseElementSelectInput.extend({
     requestId: 0,
     hud: null,
 
-	init: function(id, name, elementType, sources, criteria, limit, storageKey)
+	init: function(id, name, elementType, sources, criteria, disabledElementIds, limit, storageKey)
 	{
-		this.base(id, name, elementType, sources, criteria, limit, storageKey);
+		this.base(id, name, elementType, sources, criteria, disabledElementIds, limit, storageKey);
         this._attachHUDEvents();
 	},
 
@@ -4651,6 +4699,13 @@ Craft.ElementEditor = Garnish.Base.extend({
 					{
 						// Update the title
 						this.$trigger.find('.label').text(response.title);
+
+						// Update Live Preview
+						if (typeof Craft.entryPreviewMode != 'undefined')
+						{
+							Craft.entryPreviewMode.updateIframe(true);
+						}
+
 						this.removeHud();
 					}
 					else
@@ -4962,7 +5017,7 @@ Craft.FieldLayoutDesigner = Garnish.Base.extend({
 		if (newName && newName != oldName)
 		{
 			$labelSpan.text(newName);
-			$tab.find('.id-input').attr('name', 'fieldLayout['+encodeURIComponent(newName)+'][]');
+			$tab.find('.id-input').attr('name', 'fieldLayout['+Craft.encodeUriComponent(newName)+'][]');
 		}
 	},
 
@@ -5399,7 +5454,7 @@ Craft.FieldLayoutDesigner.TabDrag = Craft.FieldLayoutDesigner.BaseDrag.extend({
 			for (var i = 0; i < $fields.length; i++)
 			{
 				var $field = $($fields[i]);
-				$field.append('<input class="id-input" type="hidden" name="fieldLayout['+encodeURIComponent(tabName)+'][]" value="'+$field.data('id')+'">');
+				$field.append('<input class="id-input" type="hidden" name="fieldLayout['+Craft.encodeUriComponent(tabName)+'][]" value="'+$field.data('id')+'">');
 			}
 
 			this.designer.fieldDrag.addItems($fields);
@@ -5496,7 +5551,7 @@ Craft.FieldLayoutDesigner.FieldDrag = Craft.FieldLayoutDesigner.BaseDrag.extend(
 		{
 			// Find the field's new tab name
 			var tabName = this.$insertion.parent().parent().find('.tab span').text(),
-				inputName = 'fieldLayout['+encodeURIComponent(tabName)+'][]';
+				inputName = 'fieldLayout['+Craft.encodeUriComponent(tabName)+'][]';
 
 			if (this.draggingUnusedItem)
 			{
@@ -6470,7 +6525,8 @@ Craft.LightSwitch = Garnish.Base.extend({
 	turnOn: function()
 	{
 		this.$innerContainer.stop().animate({marginLeft: 0}, 'fast');
-		this.$input.val('y');
+		this.$input.val('on');
+		this.$outerContainer.addClass('on');
 		this.on = true;
 		this.settings.onChange();
 
@@ -6487,6 +6543,7 @@ Craft.LightSwitch = Garnish.Base.extend({
 	{
 		this.$innerContainer.stop().animate({marginLeft: Craft.LightSwitch.offMargin}, 'fast');
 		this.$input.val('');
+		this.$outerContainer.removeClass('on');
 		this.on = false;
 		this.settings.onChange();
 
@@ -8873,7 +8930,7 @@ Craft.StructureDrag = Garnish.Drag.extend({
 		}
 
 		// Animate things back into place
-		this.$draggee.removeClass('hidden').animate({
+		this.$draggee.stop().removeClass('hidden').animate({
 			height: this.draggeeHeight
 		}, 'fast', $.proxy(function() {
 			this.$draggee.css('height', 'auto');

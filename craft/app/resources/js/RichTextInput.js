@@ -3,7 +3,7 @@
  *
  * @package   Craft
  * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2013, Pixel & Tonic, Inc.
+ * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
  * @license   http://buildwithcraft.com/license Craft License Agreement
  * @link      http://buildwithcraft.com
  */
@@ -185,7 +185,20 @@ Craft.RichTextInput = Garnish.Base.extend({
 		}
 
 		// Initialize Redactor
-		$('#'+this.id).redactor(config);
+		var $textarea = $('#'+this.id);
+		$textarea.redactor(config);
+		var redactor = $textarea.data('redactor');
+
+		if (typeof redactor.fullscreen != 'undefined' && typeof redactor.toggleFullscreen == 'function')
+		{
+			Craft.cp.on('beforeSaveShortcut', function()
+			{
+				if (redactor.fullscreen)
+				{
+					redactor.toggleFullscreen();
+				}
+			});
+		}
 	}
 });
 

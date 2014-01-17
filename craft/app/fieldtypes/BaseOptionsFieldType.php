@@ -6,7 +6,7 @@ namespace Craft;
  *
  * @package   Craft
  * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2013, Pixel & Tonic, Inc.
+ * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
  * @license   http://buildwithcraft.com/license Craft License Agreement
  * @link      http://buildwithcraft.com
  */
@@ -147,13 +147,15 @@ abstract class BaseOptionsFieldType extends BaseFieldType
 			$value = new SingleOptionFieldData($label, $value, true);
 		}
 
-		$value->options = array();
+		$options = array();
 
 		foreach ($this->getOptions() as $option)
 		{
 			$selected = in_array($option['value'], $selectedValues);
-			$value->options[] = new OptionData($option['label'], $option['value'], $selected);
+			$options[] = new OptionData($option['label'], $option['value'], $selected);
 		}
+
+		$value->setOptions($options);
 
 		return $value;
 	}

@@ -3,7 +3,7 @@
  *
  * @package   Craft
  * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2013, Pixel & Tonic, Inc.
+ * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
  * @license   http://buildwithcraft.com/license Craft License Agreement
  * @link      http://buildwithcraft.com
  */
@@ -41,6 +41,7 @@ Craft.EntryTypeSwitcher = Garnish.Base.extend({
 				Craft.cp.$contentTabsContainer.html(response.tabsHtml);
 				this.$fields.html(response.fieldsHtml);
 				Craft.cp.initContentTabs();
+				Craft.initUiElements(this.$fields);
 
 				var html = '';
 

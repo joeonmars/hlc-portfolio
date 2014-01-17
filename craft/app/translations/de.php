@@ -5,7 +5,7 @@
  *
  * @package   Craft
  * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2013, Pixel & Tonic, Inc.
+ * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
  * @license   http://buildwithcraft.com/license Craft License Agreement
  * @link      http://buildwithcraft.com
  */
@@ -144,6 +144,7 @@ return array(
 	'Click to change the email address.' => 'Zum Ändern der E-Mail-Adresse klicken.',
 	'Click to set a new password.' => 'Zum Festlegen eines neuen Passworts klicken.',
 	'Cloud' => 'Cloud',
+	'Collapse' => 'Zusammenbrechen',
 	'Color' => 'Farbe',
 	'Column Heading' => 'Spaltenüberschrift',
 	'Coming soon' => 'Demnächst verfügbar',
@@ -335,6 +336,7 @@ Craft ist das CMS (Fallbearbeitungssystem), das {siteName} antreibt. Es ist eind
 	'Error uploading the file: {error}' => 'Fehler beim Hochladen der Datei: {error}',
 	'Error: Rolling Back…' => 'Fehler: Setze zurück...',
 	'Exp. year' => 'Ablaufjahr',
+	'Expand' => 'Erweitern',
 	'Expiration Date' => 'Ablaufdatum',
 	'Expiration month' => 'Ablaufmonat',
 	'Expiry Date' => 'Ablaufdatum',

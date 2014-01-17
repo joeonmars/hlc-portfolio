@@ -6,7 +6,7 @@ namespace Craft;
  *
  * @package   Craft
  * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2013, Pixel & Tonic, Inc.
+ * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
  * @license   http://buildwithcraft.com/license Craft License Agreement
  * @link      http://buildwithcraft.com
  */
@@ -51,7 +51,7 @@ class CheckboxesFieldType extends BaseOptionsFieldType
 		$options = $this->getOptions();
 
 		// If this is a new entry, look for any default options
-		if ($this->isFresh())
+		if ($values === null && $this->isFresh())
 		{
 			$values = array();
 

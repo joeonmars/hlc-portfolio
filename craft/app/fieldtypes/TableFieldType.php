@@ -6,7 +6,7 @@ namespace Craft;
  *
  * @package   Craft
  * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2013, Pixel & Tonic, Inc.
+ * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
  * @license   http://buildwithcraft.com/license Craft License Agreement
  * @link      http://buildwithcraft.com
  */
@@ -155,7 +155,7 @@ class TableFieldType extends BaseFieldType
 
 		if ($columns)
 		{
-			if ($this->isFresh())
+			if ($value === null && $this->isFresh())
 			{
 				$defaults = $this->getSettings()->defaults;
 

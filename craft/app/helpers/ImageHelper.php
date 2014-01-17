@@ -6,7 +6,7 @@ namespace Craft;
  *
  * @package   Craft
  * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2013, Pixel & Tonic, Inc.
+ * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
  * @license   http://buildwithcraft.com/license Craft License Agreement
  * @link      http://buildwithcraft.com
  */
@@ -42,12 +42,13 @@ class ImageHelper
 	}
 
 	/**
-	 * Return a list of accepted extensions
+	 * Returns if an image is manipulatable or not.
 	 *
+	 * @param $extension
 	 * @return array
 	 */
-	public static function getAcceptedExtensions()
+	public static function isImageManipulatable($extension)
 	{
-		return array('jpg', 'jpeg', 'gif', 'png');
+		return in_array($extension, array('jpg', 'jpeg', 'gif', 'png', 'wbmp', 'xbm'));
 	}
 }

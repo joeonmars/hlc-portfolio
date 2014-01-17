@@ -6,7 +6,7 @@ namespace Craft;
  *
  * @package   Craft
  * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2013, Pixel & Tonic, Inc.
+ * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
  * @license   http://buildwithcraft.com/license Craft License Agreement
  * @link      http://buildwithcraft.com
  */
@@ -100,7 +100,7 @@ class TagsFieldType extends BaseElementFieldType
 					// Last-minute check
 					$criteria = craft()->elements->getCriteria(ElementType::Tag);
 					$criteria->setId = $tagSetId;
-					$criteria->search = 'name:'.$name;
+					$criteria->search = 'name::'.$name;
 					$ids = $criteria->ids();
 
 					if ($ids)

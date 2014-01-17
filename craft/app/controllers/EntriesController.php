@@ -6,7 +6,7 @@ namespace Craft;
  *
  * @package   Craft
  * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2013, Pixel & Tonic, Inc.
+ * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
  * @license   http://buildwithcraft.com/license Craft License Agreement
  * @link      http://buildwithcraft.com
  */
@@ -26,23 +26,57 @@ class EntriesController extends BaseController
 	{
 		$this->_prepEditEntryVariables($variables);
 
-		if (craft()->hasPackage(CraftPackage::PublishPro) && $variables['section']->type == SectionType::Structure)
+		if (craft()->hasPackage(CraftPackage::Users) && $variables['section']->type != SectionType::Single)
 		{
-			// Override the parent?
-			$parentId = craft()->request->getParam('parentId');
+			// Get all the possible authors
+			$currentUser = craft()->userSession->getUser();
+			$excludeAuthorIds = 'not '.$currentUser->id;
 
-			if ($parentId)
+			if ($variables['entry']->authorId && $variables['entry']->authorId != $currentUser->id)
 			{
-				$parent = craft()->entries->getEntryById($parentId);
+				$excludeAuthorIds = array($excludeAuthorIds, $variables['entry']->authorId);
+			}
 
-				if ($parent)
+			$authorOptionCriteria = craft()->elements->getCriteria(ElementType::User);
+			$authorOptionCriteria->can = 'createEntries:'.$variables['section']->id;
+			$authorOptionCriteria->id = $excludeAuthorIds;
+			$authorOptions = $authorOptionCriteria->find();
+
+			// List the current author first
+			if ($variables['entry']->authorId && $variables['entry']->authorId != $currentUser->id)
+			{
+				$currentAuthor = craft()->users->getUserById($variables['entry']->authorId);
+
+				if ($currentAuthor)
 				{
-					$ancestors = $parent->getAncestors();
-					$ancestors[] = $parent;
-					$variables['entry']->setAncestors($ancestors);
+					array_unshift($authorOptions, $currentAuthor);
 				}
 			}
 
+			// Then the current user
+			if (!$variables['entry']->authorId || $variables['entry']->authorId == $currentUser->id)
+			{
+				array_unshift($authorOptions, $currentUser);
+			}
+
+			$variables['authorOptions'] = array();
+
+			foreach ($authorOptions as $authorOption)
+			{
+				$authorLabel = $authorOption->username;
+				$authorFullName = $authorOption->getFullName();
+
+				if ($authorFullName)
+				{
+					$authorLabel .= ' ('.$authorFullName.')';
+				}
+
+				$variables['authorOptions'][] = array('label' => $authorLabel, 'value' => $authorOption->id);
+			}
+		}
+
+		if (craft()->hasPackage(CraftPackage::PublishPro) && $variables['section']->type == SectionType::Structure)
+		{
 			// Get all the possible parent options
 			$parentOptionCriteria = craft()->elements->getCriteria(ElementType::Entry);
 			$parentOptionCriteria->sectionId = $variables['section']->id;
@@ -59,8 +93,8 @@ class EntriesController extends BaseController
 				$idParam = array('and', 'not '.$variables['entry']->id);
 
 				$descendantCriteria = craft()->elements->getCriteria(ElementType::Entry);
-				$descendantCriteria->status = null;
 				$descendantCriteria->descendantOf($variables['entry']);
+				$descendantCriteria->status = null;
 				$descendantIds = $descendantCriteria->ids();
 
 				foreach ($descendantIds as $id)
@@ -89,6 +123,23 @@ class EntriesController extends BaseController
 				$label .= $parentOption->title;
 
 				$variables['parentOptions'][] = array('label' => $label, 'value' => $parentOption->id);
+			}
+
+			// Get the initially selected parent
+			$variables['parentId'] = craft()->request->getParam('parentId');
+
+			if ($variables['parentId'] === null && $variables['entry']->id)
+			{
+				$parentIdCriteria = craft()->elements->getCriteria(ElementType::Entry);
+				$parentIdCriteria->ancestorOf =$variables['entry'];
+				$parentIdCriteria->ancestorDist = 1;
+				$parentIdCriteria->status = null;
+				$parentIds = $parentIdCriteria->ids();
+
+				if ($parentIds)
+				{
+					$variables['parentId'] = $parentIds[0];
+				}
 			}
 		}
 
@@ -195,7 +246,7 @@ class EntriesController extends BaseController
 			if ($templateExists)
 			{
 				craft()->templates->includeJsResource('js/EntryPreviewMode.js');
-				craft()->templates->includeJs('new Craft.EntryPreviewMode('.JsonHelper::encode($variables['entry']->getUrl()).', "'.$variables['entry']->locale.'");');
+				craft()->templates->includeJs('Craft.entryPreviewMode = new Craft.EntryPreviewMode('.JsonHelper::encode($variables['entry']->getUrl()).', "'.$variables['entry']->locale.'");');
 				$variables['showPreviewBtn'] = true;
 			}
 		}
@@ -215,6 +266,8 @@ class EntriesController extends BaseController
 		$variables['showEntryTypes'] = true;
 
 		$this->_prepEditEntryVariables($variables);
+
+		craft()->content->prepElementContentForSave($variables['entry'], $variables['entryType']->getFieldLayout(), false);
 
 		$tabsHtml = '<ul>';
 

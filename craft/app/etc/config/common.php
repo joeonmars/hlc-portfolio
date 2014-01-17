@@ -5,7 +5,7 @@
  *
  * @package   Craft
  * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2013, Pixel & Tonic, Inc.
+ * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
  * @license   http://buildwithcraft.com/license Craft License Agreement
  * @link      http://buildwithcraft.com
  */
@@ -37,6 +37,24 @@ function mergeConfigs(&$baseConfig, $customConfig)
 	else
 	{
 		$baseConfig = array_merge($baseConfig, $customConfig);
+	}
+}
+
+/**
+ * Returns the correct connection string depending on whether a unixSocket is specific or not in the db config.
+ *
+ * @param $dbConfig
+ * @return string
+ */
+function processConnectionString($dbConfig)
+{
+	if (!empty($dbConfig['unixSocket']))
+	{
+		return strtolower('mysql:unix_socket='.$dbConfig['unixSocket'].';dbname=').$dbConfig['database'].';';
+	}
+	else
+	{
+		return strtolower('mysql:host='.$dbConfig['server'].';dbname=').$dbConfig['database'].strtolower(';port='.$dbConfig['port'].';');
 	}
 }
 
@@ -432,9 +450,6 @@ $configArray = array(
 		'app.tests.helpers.StubHelper',
 		'app.tests.unit.AppBehaviorTest',
 		'app.tests.unit.ArrayHelperTest',
-		'app.tests.unit.ContentServiceTest',
-		'app.tests.unit.CraftClassTest',
-		'app.tests.unit.CraftTableTest',
 		'app.tests.unit.EntriesServiceTest',
 		'app.tests.unit.EntryModelTest',
 		'app.tests.unit.HttpRequestsServiceTest',
@@ -501,7 +516,7 @@ $configArray = array(
 	'components' => array(
 
 		'db' => array(
-			'connectionString'  => strtolower('mysql:host='.$dbConfig['server'].';dbname=').$dbConfig['database'].strtolower(';port='.$dbConfig['port'].';'),
+			'connectionString'  => processConnectionString($dbConfig),
 			'emulatePrepare'    => true,
 			'username'          => $dbConfig['user'],
 			'password'          => $dbConfig['password'],
@@ -586,8 +601,8 @@ $cpRoutes['settings/routes'] = array(
 		'variables' => array(
 			'tokens' => array(
 				'year'   => '\d{4}',
-				'month'  => '(?:0[1-9]|1[012])',
-				'day'    => '(?:0[1-9]|[12][0-9]|3[01])',
+				'month'  => '(?:0?[1-9]|1[012])',
+				'day'    => '(?:0?[1-9]|[12][0-9]|3[01])',
 				'number' => '\d+',
 				'page'   => '\d+',
 				'tag'    => '[^\/]+',

@@ -6,7 +6,7 @@ namespace Craft;
  *
  * @package   Craft
  * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2013, Pixel & Tonic, Inc.
+ * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
  * @license   http://buildwithcraft.com/license Craft License Agreement
  * @link      http://buildwithcraft.com
  */
@@ -69,6 +69,15 @@ class MatrixBlockElementType extends BaseElementType
 	 */
 	public function getContentTableForElementsQuery(ElementCriteriaModel $criteria)
 	{
+		if (!$criteria->fieldId && $criteria->id && is_numeric($criteria->id))
+		{
+			$criteria->fieldId = craft()->db->createCommand()
+				->select('fieldId')
+				->from('matrixblocks')
+				->where('id = :id', array(':id' => $criteria->id))
+				->queryScalar();
+		}
+
 		if ($criteria->fieldId && is_numeric($criteria->fieldId))
 		{
 			$matrixField = craft()->fields->getFieldById($criteria->fieldId);

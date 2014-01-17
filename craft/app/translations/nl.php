@@ -5,7 +5,7 @@
  *
  * @package   Craft
  * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2013, Pixel & Tonic, Inc.
+ * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
  * @license   http://buildwithcraft.com/license Craft License Agreement
  * @link      http://buildwithcraft.com
  */
@@ -144,6 +144,7 @@ return array(
 	'Click to change the email address.' => 'Klik om het e-mailadres te wijzigen.',
 	'Click to set a new password.' => 'Klik om een nieuw wachtwoord in te stellen.',
 	'Cloud' => 'Cloud',
+	'Collapse' => 'Ineenstorten',
 	'Color' => 'Kleur',
 	'Column Heading' => 'Kop van de kolom',
 	'Coming soon' => 'Binnenkort',
@@ -325,8 +326,7 @@ return array(
 	'Entry URL Format' => 'Entry URL-Formaat',
 	'Entry URL Formats' => 'Item URL-formaten',
 	'Entry drafts and versioning' => 'Entry ontwerpen en versiebeheer',
-	'Entry is enabled' => 'Invoer is geactiveerd
-',
+	'Entry is enabled' => 'Invoer is geactiveerd',
 	'Entry saved.' => 'Entry bewaard.',
 	'Entry translations' => 'Entry vertalingen',
 	'Entry type saved.' => 'Itemtype opgeslagen.',
@@ -334,6 +334,7 @@ return array(
 	'Error uploading the file: {error}' => 'Fout bij uploaden van bestand: {error}',
 	'Error: Rolling Back…' => 'Fout: Terug rollen...',
 	'Exp. year' => 'Afloopjaar',
+	'Expand' => 'Uitbreiden',
 	'Expiration Date' => 'Vervaldatum',
 	'Expiration month' => 'Vervalmaand',
 	'Expiry Date' => 'Vervaldatum ',

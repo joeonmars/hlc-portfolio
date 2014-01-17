@@ -6,7 +6,7 @@ namespace Craft;
  *
  * @package   Craft
  * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2013, Pixel & Tonic, Inc.
+ * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
  * @license   http://buildwithcraft.com/license Craft License Agreement
  * @link      http://buildwithcraft.com
  */
@@ -58,6 +58,7 @@ class ContentService extends BaseApplicationComponent
 	 * @param BaseElementModel $element
 	 * @param FieldLayoutModel $fieldLayout
 	 * @param bool             $validate
+	 * @throws Exception
 	 * @return bool
 	 */
 	public function saveElementContent(BaseElementModel $element, FieldLayoutModel $fieldLayout, $validate = true)
@@ -69,7 +70,7 @@ class ContentService extends BaseApplicationComponent
 
 		$content = $this->prepElementContentForSave($element, $fieldLayout, $validate);
 
-		if ($this->validateElementContent($element, $fieldLayout))
+		if (!$validate || $this->validateElementContent($element, $fieldLayout))
 		{
 			$this->saveContent($content);
 			$this->postSaveOperations($element, $content);
@@ -151,7 +152,7 @@ class ContentService extends BaseApplicationComponent
 		$content = $element->getContent();
 
 		// Set the required fields from the layout
-		$fieldHandles = array();
+		$attributesToValidate = array('id', 'elementId', 'locale');
 		$requiredFields = array();
 
 		$elementTypeClass = $element->getElementType();
@@ -160,6 +161,7 @@ class ContentService extends BaseApplicationComponent
 		if ($elementType->hasTitles())
 		{
 			$requiredFields[] = 'title';
+			$attributesToValidate[] = 'title';
 		}
 
 		foreach ($fieldLayout->getFields() as $fieldLayoutField)
@@ -168,7 +170,7 @@ class ContentService extends BaseApplicationComponent
 
 			if ($field)
 			{
-				$fieldHandles[] = $field->handle;
+				$attributesToValidate[] = $field->handle;
 
 				if ($fieldLayoutField->required)
 				{
@@ -182,7 +184,7 @@ class ContentService extends BaseApplicationComponent
 			$content->setRequiredFields($requiredFields);
 		}
 
-		return $content->validate($fieldHandles);
+		return $content->validate($attributesToValidate);
 	}
 
 	/**
@@ -336,6 +338,7 @@ class ContentService extends BaseApplicationComponent
 
 			if ($fieldType)
 			{
+				$fieldType->element = $element;
 				$fieldType->onAfterElementSave();
 			}
 		}
@@ -349,6 +352,7 @@ class ContentService extends BaseApplicationComponent
 
 			if ($fieldType)
 			{
+				$fieldType->element = $element;
 				$handle = $field->handle;
 
 				// Set the keywords for the content's locale

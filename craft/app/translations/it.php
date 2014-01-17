@@ -5,7 +5,7 @@
  *
  * @package   Craft
  * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2013, Pixel & Tonic, Inc.
+ * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
  * @license   http://buildwithcraft.com/license Craft License Agreement
  * @link      http://buildwithcraft.com
  */
@@ -144,6 +144,7 @@ return array(
 	'Click to change the email address.' => 'Clicca per modificare l\'indirizzo email.',
 	'Click to set a new password.' => 'Fai click per scegliere una nuova password.',
 	'Cloud' => 'Cloud',
+	'Collapse' => 'Crollare',
 	'Color' => 'Colore',
 	'Column Heading' => 'Intestazione colonna',
 	'Coming soon' => 'Disponibile a breve',
@@ -333,6 +334,7 @@ return array(
 	'Error uploading the file: {error}' => 'Errore di caricamento del file: {error}',
 	'Error: Rolling Back…' => 'Errore: Rollback (ripristino stato precedente) in corso…',
 	'Exp. year' => 'Anno di scadenza',
+	'Expand' => 'Sviluppare',
 	'Expiration Date' => 'Data di Scadenza',
 	'Expiration month' => 'Mese di scadenza',
 	'Expiry Date' => 'Data di Scadenza',
