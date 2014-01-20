@@ -17,6 +17,7 @@ goog.require('hlc.controllers.WindowController');
 goog.require('hlc.controllers.MainScrollController');
 goog.require('hlc.controllers.AlbumScrollController');
 goog.require('hlc.controllers.SoundController');
+goog.require('hlc.controllers.SocialController');
 
 
 // define global paths
@@ -53,6 +54,7 @@ hlc.main.create = function(e) {
 	hlc.main.controllers.mainScrollController = hlc.controllers.MainScrollController.getInstance();
 	hlc.main.controllers.albumScrollController = hlc.controllers.AlbumScrollController.getInstance();
 	hlc.main.controllers.soundController = hlc.controllers.SoundController.getInstance();
+	hlc.main.controllers.socialController = hlc.controllers.SocialController.getInstance();
 
 	hlc.main.views.preloader = new hlc.views.Preloader();
 	hlc.main.views.sidebar = new hlc.views.Sidebar();

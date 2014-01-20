@@ -72,31 +72,6 @@
 		document.body.style.visibility = 'hidden';
 	</script>
 
-	<!-- facebook like button -->
-	<div id="fb-root"></div>
-	<script>(function(d, s, id) {
-	  var js, fjs = d.getElementsByTagName(s)[0];
-	  if (d.getElementById(id)) return;
-	  js = d.createElement(s); js.id = id;
-	  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
-	  fjs.parentNode.insertBefore(js, fjs);
-	}(document, 'script', 'facebook-jssdk'));</script>
-	<!-- end -->
-
-	<!-- twitter button -->
-	<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-	<!-- end -->
-
-	<!-- google +1 button -->
-	<script type="text/javascript">
-	  (function() {
-	    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-	    po.src = 'https://apis.google.com/js/plusone.js';
-	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-	  })();
-	</script>
-	<!-- end -->
-
 	<div id="main-container">
 
 		<div class="viewport">
@@ -160,14 +135,20 @@
 							{% endfor %}
 						</ul>
 					</div>
+									<div id="copyright">
+					Copyright &copy; {{ now.year }} <a href="mailto:{{ contact.emailAddress }}">Hsin-Lei Chen</a>, All rights reserved.
+				</div>
 				</div>
 				<div id="like-buttons">
-					<div class="fb-like" data-href="{{ siteUrl }}" data-send="false" data-layout="button_count" data-width="100" data-show-faces="false"></div>
-					<a href="https://twitter.com/share" class="twitter-share-button" data-url="{{ siteUrl }}" data-count="none">Tweet</a>
-					<div class="g-plusone" data-size="medium" data-annotation="none" data-width="120"></div>
-				</div>
-				<div id="copyright">
-					Copyright &copy; {{ now.year }} <a href="mailto:{{ contact.emailAddress }}">Hsin-Lei Chen</a>, All rights reserved
+					<span class="google">
+						<div class="g-plusone" data-size="medium" data-annotation="none" data-width="120"></div>
+					</span>
+					<span class="twitter">
+						<a href="https://twitter.com/share" class="twitter-share-button" data-url="{{ siteUrl }}" data-count="none">Tweet</a>
+					</span>
+					<span class="facebook">
+						<div class="fb-like" data-href="{{ siteUrl }}" data-send="false" data-layout="button_count" data-width="100" data-show-faces="false"></div>
+					</div>
 				</div>
 			</div>
 
