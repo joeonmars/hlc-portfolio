@@ -31,7 +31,7 @@
 	<meta content="{{ siteUrl }}" property="og:url">
 	<meta content="{{ siteName }}" property="og:title">
 	<meta content="{{ meta.metaDescription }}" property="og:description">
-	<meta content={% if meta.facebookImage|length > 1 %}"{{ meta.facebookImage[0].url }}"{% else %}"{{PATH_TO_STATIC_ASSETS}}/images/misc/facebook.png"{% endif %} property="og:image">
+	<meta content={% if meta.shareImage|length > 1 %}"{{ meta.shareImage[0].url }}"{% else %}"{{PATH_TO_STATIC_ASSETS}}/images/misc/share.png"{% endif %} property="og:image">
 
 	<title>{{ siteName }}</title>
 
@@ -144,10 +144,10 @@
 						<div class="g-plusone" data-size="medium" data-annotation="none" data-width="120"></div>
 					</span>
 					<span class="twitter">
-						<a href="https://twitter.com/share" class="twitter-share-button" data-url="{{ siteUrl }}" data-count="none">Tweet</a>
+						<a href="https://twitter.com/share" class="twitter-share-button" data-url="{{ meta.metaUrl }}" data-count="none">Tweet</a>
 					</span>
 					<span class="facebook">
-						<div class="fb-like" data-href="{{ siteUrl }}" data-send="false" data-layout="button_count" data-width="100" data-show-faces="false"></div>
+						<div class="fb-like" data-href="{{ meta.metaUrl }}" data-send="false" data-layout="button_count" data-width="100" data-show-faces="false"></div>
 					</div>
 				</div>
 			</div>
