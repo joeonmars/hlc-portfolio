@@ -6,6 +6,7 @@ goog.require('goog.dom');
 goog.require('goog.string');
 goog.require('goog.userAgent');
 goog.require('goog.net.BulkLoader');
+goog.require('hlc.utils');
 
 /**
  * @constructor

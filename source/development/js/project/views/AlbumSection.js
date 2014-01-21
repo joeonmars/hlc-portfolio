@@ -7,6 +7,7 @@ goog.require('goog.events.EventTarget');
 goog.require('goog.events');
 goog.require('goog.dom');
 goog.require('goog.dom.query');
+goog.require('hlc.utils');
 
 /**
  * @constructor
@@ -96,7 +97,10 @@ hlc.views.AlbumSection.prototype.onCrossfadeTick = function(e){
 	this._nextBgDomElement = (this._currentBgDomElement === this._bg1DomElement) ? this._bg2DomElement : this._bg1DomElement;
 
 	goog.events.listenOnce(this._loaderImage, 'load', this.crossfade, false, this);
-	this._loaderImage.src = this._nextArtwork['url'];
+
+	var urlObj = this._nextArtwork['url'];
+	var url = (hlc.utils.isTablet() && !hlc.utils.isRetina()) ? urlObj['lowRes'] : urlObj['highRes'];
+	this._loaderImage.src = url;
 };
 
 
@@ -108,8 +112,9 @@ hlc.views.AlbumSection.prototype.crossfade = function() {
 	this._nextArtwork = null;
 
 	// fade in next background, fade out current background
-	var imageUrl = this._currentArtwork['url'];
-	goog.style.setStyle(this._nextBgDomElement, 'background-image', 'url(' + imageUrl + ')');
+	var urlObj = this._currentArtwork['url'];
+	var url = (hlc.utils.isTablet() && !hlc.utils.isRetina()) ? urlObj['lowRes'] : urlObj['highRes'];
+	goog.style.setStyle(this._nextBgDomElement, 'background-image', 'url(' + url + ')');
 	goog.style.setOpacity(this._nextBgDomElement, 1);
 	goog.style.setOpacity(this._currentBgDomElement, 0);
 	goog.style.setOpacity(this._loaderDomElement, 0);

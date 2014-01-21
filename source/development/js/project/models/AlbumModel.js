@@ -14,7 +14,6 @@ hlc.models.AlbumModel = function(albumId, albumData){
 
   this.albumId = albumId;
   this.albumTitle = albumData['title'];
-  this.albumCoverThumbnail = albumData['coverThumbnail'];
   this.albumCover = albumData['cover'];
   this.songs = [];
 

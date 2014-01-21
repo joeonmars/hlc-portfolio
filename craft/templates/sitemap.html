@@ -1,14 +1,22 @@
+{% set tabletArtworkTransform = {
+    width: 1024,
+    height: 1024,
+    mode: 'fit'
+} %}
+
 {
 	"albums": {
 		{% for album in craft.entries.section('album').find() %}
+		{% set cover = album.cover[0] %}
 		"{{ album.slug }}": {
 			"title": "{{ album.title }}",
-			"coverThumbnail": "{{ siteUrl }}{{ album.coverThumbnail[0].url }}",
 			"cover": {
-				{% set cover = album.cover[0] %}
 				"authorName": "{{cover.authorName}}",
 				"authorUrl": "{{cover.authorUrl}}",
-				"url": "{{ siteUrl }}{{ cover.url }}"
+				"url": {
+					"highRes": "{{ siteUrl }}{{ cover.url }}",
+					"lowRes": "{{ siteUrl }}{{ cover.getUrl(tabletArtworkTransform) }}"
+				}
 			},
 			"songs": {
 				{% for song in album.songs %}
@@ -20,7 +28,10 @@
 							{
 								"authorName": "{{artwork.authorName}}",
 								"authorUrl": "{{artwork.authorUrl}}",
-								"url": "{{ siteUrl }}{{ artwork.url }}"
+								"url": {
+									"highRes": "{{ siteUrl }}{{ artwork.url }}",
+									"lowRes": "{{ siteUrl }}{{ artwork.getUrl(tabletArtworkTransform) }}"
+								}
 							}{{ loop.last ? "" : "," }}
 						{% endfor %}
 					],

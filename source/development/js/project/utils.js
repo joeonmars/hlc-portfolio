@@ -2,6 +2,7 @@ goog.provide( 'hlc.utils' );
 
 goog.require( 'goog.window' );
 goog.require( 'goog.events.EventHandler' );
+goog.require( 'goog.userAgent' );
 
 hlc.utils.popUpWindow = function(url, width, height, options) {
 	var viewportSize = goog.dom.getViewportSize();
@@ -99,3 +100,18 @@ hlc.utils.grabCursor = function(domElement) {
 		dispose: dispose
 	};
 }
+
+
+hlc.utils.getBackgroundImageUrl = function(domElement) {
+	return domElement.style.backgroundImage.slice(4, -1);
+};
+
+
+hlc.utils.isTablet = function() {
+	return (goog.userAgent.IPAD || goog.userAgent.ANDROID || goog.userAgent.WINDOWS);
+};
+
+
+hlc.utils.isRetina = function() {
+	return !(window.devicePixelRatio === 1);
+};
