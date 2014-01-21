@@ -52,7 +52,7 @@ hlc.views.AlbumSection.prototype.init = function(){
 
 	// set model
 	var albumId = this.domElement.getAttribute('data-id');
-	var albumData = hlc.main.assets.sitemap['albums'][albumId];
+	var albumData = hlc.main.assets['sitemap']['albums'][albumId];
 	this.albumModel = new hlc.models.AlbumModel(albumId, albumData);
 
 	// listen for navigate event
