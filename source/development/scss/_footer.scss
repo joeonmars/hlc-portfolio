@@ -120,7 +120,9 @@ $footer_bottom: 20px;
 		margin: 10px 0 5px 0;
 		font-size: 0;
 
-		>span{
+		>div{
+			display: inline-block;
+			vertical-align: middle;
 			margin-right: 6px;
 		}
 	}

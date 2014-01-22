@@ -8,8 +8,8 @@
  #}
 
 
-{% set PATH_TO_STATIC_ASSETS = siteUrl~"/assets/static" %}
-{% set PATH_TO_UPLOAD_ASSETS = siteUrl~"/assets/upload" %}
+{% set PATH_TO_STATIC_ASSETS = siteUrl~"assets/static" %}
+{% set PATH_TO_UPLOAD_ASSETS = siteUrl~"assets/upload" %}
 
 {% set albumSlug = craft.request.segments[2] %}
 {% set albumEntry = craft.entries.section('album').slug(albumSlug).find()[0] %}
@@ -20,9 +20,11 @@
 {% set shareImageTransform = {
     width: 154,
     height: 154,
-		mode: 'crop',
+	mode: 'crop',
     position: 'center-center'
 } %}
+
+{% set shareImageUrl = albumEntry.cover[0].getUrl(shareImageTransform) %}
 
 
 <!DOCTYPE html>
@@ -33,10 +35,10 @@
 	<meta name="keywords" content="{{ meta.metaKeywords }}">
 	<meta name="description" content="{{ meta.metaDescription }}">
 
-	<meta content="{{ siteUrl }}" property="og:url">
-	<meta content="{{ siteName }}" property="og:title">
+	<meta content="{{ craft.request.url }}" property="og:url">
+	<meta content='{{ siteName }} - Now Playing "{{ songEntry.title }}"' property="og:title">
 	<meta content='Now listen to the song "{{ songEntry.title }}", or more in the "{{ albumEntry.title }}" album, composed by Hsin-Lei Chen.' property="og:description">
-	<meta content="{{ siteUrl }}{{ albumEntry.cover[0].getUrl(shareImageTransform) }}" property="og:image">
+	<meta content="{{ siteUrl }}{{ shareImageUrl }}" property="og:image">
 
 	<title>{{ siteName }}</title>
 
@@ -44,9 +46,14 @@
 </head>
 
 <body>
+	<img id="image" style="visibility: hidden;" src="{{ siteUrl }}{{ shareImageUrl }}">
+
 	<script>
-		var url = document.location.href.replace('/share/', '/');
-		document.location.href = url;
+		var image = document.getElementById('image');
+		image.addEventListener('load', function() {
+			var url = document.location.href.replace('/share/', '/');
+			document.location.href = url;
+		});
 	</script>
 </body>
 </html>

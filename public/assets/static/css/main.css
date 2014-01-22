@@ -2311,7 +2311,9 @@ textarea {
   margin: 10px 0 5px 0;
   font-size: 0;
 }
-#footer #like-buttons > span {
+#footer #like-buttons > div {
+  display: inline-block;
+  vertical-align: middle;
   margin-right: 6px;
 }
 

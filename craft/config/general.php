@@ -11,6 +11,7 @@ return array(
     '*' => array(
       'omitScriptNameInUrls' => true,
       'defaultImageQuality' => 80,
+      'generateTransformsAfterPageLoad' => false
     ),
 
     'local.hsinleichen.com' => array(
