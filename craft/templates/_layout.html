@@ -27,10 +27,10 @@
 	<meta name="keywords" content="{{ meta.metaKeywords }}">
 	<meta name="description" content="{{ meta.metaDescription }}">
 
-	<meta content="{{ siteUrl }}" property="og:url">
-	<meta content="{{ siteName }}" property="og:title">
+	<meta content="{{ meta.metaUrl }}" property="og:url">
+	<meta content="{{ meta.metaTitle }}" property="og:title">
 	<meta content="{{ meta.metaDescription }}" property="og:description">
-	<meta content={% if meta.shareImage|length > 1 %}"{{ meta.shareImage[0].url }}"{% else %}"{{PATH_TO_STATIC_ASSETS}}/images/misc/share.png"{% endif %} property="og:image">
+	<meta content={% if meta.shareImage|length > 1 %}"{{ meta.shareImage[0].url }}"{% else %}"{{ meta.metaImage }}"{% endif %} property="og:image">
 
 	<title>{{ siteName }}</title>
 

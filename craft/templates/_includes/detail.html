@@ -62,10 +62,16 @@
 	{% endif %}
 
 	<div class="share section">
+		{% set shareUrl = meta.metaUrl~"share/album/"~albumSlug~"/"~songSlug %}
+		{% set shareTitle = meta.metaSongTitle|replace({'%song%': songEntry.title|capitalize}) %}
+		{% set shareDescription = meta.metaSongDescription|replace({'%song%': songEntry.title|capitalize, '%album%': albumEntry.title|capitalize}) %}
+		{% set shareCopy = shareTitle~". "~shareDescription %}
+
 		<h3>share this song</h3>
-		<a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u={{ meta.metaUrl }}share/album/{{ albumSlug }}/{{ songSlug }}" target="_blank" data-width=626 data-height=436></a>
-		<a class="twitter" href="https://twitter.com/share?url={{ meta.metaUrl }}share/album/{{ albumSlug }}/{{ songSlug }}&text={{ songEntry.title | capitalize }}" target="_blank" data-width=550 data-height=420></a>
-		<a class="googleplus" href="https://plus.google.com/share?url={{ meta.metaUrl }}share/album/{{ albumSlug }}/{{ songSlug }}" target="_blank" data-width=600 data-height=600></a>
+		<a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u={{ shareUrl }}" target="_blank" data-width=626 data-height=436></a>
+		<a class="twitter" href="https://twitter.com/share?url={{ shareUrl }}&text={{ shareCopy }}" target="_blank" data-width=550 data-height=420></a>
+		<a class="googleplus" href="https://plus.google.com/share?url={{ shareUrl }}" target="_blank" data-width=600 data-height=600></a>
+		<a class="weibo" href="http://service.weibo.com/share/share.php?title={{ shareCopy }}&url={{ shareUrl }}&pic={% if meta.shareImage|length > 1 %}{{ meta.shareImage[0].url }}{% else %}{{ meta.metaImage }}{% endif %}" target="_blank" data-width=600 data-height=600></a>
 	</div>
 
 	{% if songEntry.suggestedSongs|length %}

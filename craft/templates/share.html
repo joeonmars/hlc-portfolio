@@ -36,8 +36,8 @@
 	<meta name="description" content="{{ meta.metaDescription }}">
 
 	<meta content="{{ craft.request.url }}" property="og:url">
-	<meta content='{{ siteName }} - Now Playing "{{ songEntry.title }}"' property="og:title">
-	<meta content='Now listen to the song "{{ songEntry.title }}", or more in the "{{ albumEntry.title }}" album, composed by Hsin-Lei Chen.' property="og:description">
+	<meta content="meta.metaSongTitle|replace({'%song%': songEntry.title|capitalize})" property="og:title">
+	<meta content="meta.metaSongDescription|replace({'%song%': songEntry.title|capitalize, '%album%': albumEntry.title|capitalize})" property="og:description">
 	<meta content="{{ siteUrl }}{{ shareImageUrl }}" property="og:image">
 
 	<title>{{ siteName }}</title>

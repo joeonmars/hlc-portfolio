@@ -126,6 +126,10 @@
 						&.googleplus{
 							@include icon-sprite("googleplus-share");
 						}
+
+						&.weibo{
+							@include icon-sprite("weibo-share");
+						}
 					}
 				}
 
