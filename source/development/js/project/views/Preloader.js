@@ -7,13 +7,15 @@ goog.require( 'hlc.views.Loader' );
 
 /** @constructor */
 hlc.views.Preloader = function() {
+
 	var bulkAssets = {
 		'sitemap': hlc.Url.ORIGIN + 'sitemap.html'
 	};
 	
 	var imageAssets = {};
-	goog.array.forEach(hlc.main.data.preloadAssets, function(url) {
-		goog.object.add(imageAssets, goog.string.getRandomString(), url);
+
+	goog.object.forEach(hlc.main.data.preloadAssets, function(url, id) {
+		goog.object.add(imageAssets, id, url);
 	});
 
 	goog.base(this, bulkAssets, imageAssets, 4000);
@@ -52,6 +54,14 @@ hlc.views.Preloader.prototype.onProgress = function(e) {
 	goog.base(this, 'onProgress', e);
 	
 	this._textDom.innerHTML = Math.round(e.progress * 100) + '%';
+};
+
+
+hlc.views.Preloader.prototype.onImageLoad = function(e) {
+
+	goog.base(this, 'onImageLoad', e);
+
+	this.assets[e.target.id] = e.target;
 };
 
 

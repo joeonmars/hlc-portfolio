@@ -42,7 +42,7 @@ $footer_bottom: 20px;
 
 		>h3{
 			font-size: 14px;
-			font-family: $font_sans_boldcond;
+			font-family: $font_barkentina;
 			text-transform: uppercase;
 			cursor: pointer;
 			@include user-select(none);
@@ -70,7 +70,7 @@ $footer_bottom: 20px;
 					}
 
 					>h5{
-						font-family: $font_sans_boldcond;
+						font-family: $font_barkentina;
 						text-transform: uppercase;
 						font-size: 12px;
 						padding: 6px 0;
@@ -87,7 +87,7 @@ $footer_bottom: 20px;
 
 						>span{
 							display: block;
-							font-family: $font_sans;
+							font-family: $font_barkentina;
 							font-size: 12px;
 							line-height: 16px;
 							opacity: .5;

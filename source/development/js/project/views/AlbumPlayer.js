@@ -11,6 +11,7 @@ goog.require('hlc.views.common.CircularProgressBar');
  * @constructor
  */
 hlc.views.AlbumPlayer = function(domElement){
+  
   goog.base(this);
 
   this.domElement = domElement;

@@ -1,36 +1,117 @@
 #home{
-	.logo{
-		margin-top: 40px;
-		
-		h1{
-			color: white;
-			font-size: 64px;
-			text-align: center;
-			text-transform: uppercase;
-			letter-spacing: -2px;
+	width: 100%;
+	height: 100%;
+	background-image: url("#{$static_images_path}backgrounds/portrait-background.jpg");
+	background-color: #000;
+	background-size: 100% 100%;
+	color: #fff;
 
-			>span{
-				display: block;
-				text-transform: lowercase;
-				font-size: 30px;
-				letter-spacing: 1px;
-				line-height: 22px;
-				opacity: .8;
+	.portrait{
+		display: block;
+		position: absolute;
+		bottom: 0;
+		left: 15%;
+		min-width: 480px;
+		width: auto;
+		height: 90%;
+	}
 
-				&:before{
-					content: '';
-					display: inline-block;
-					vertical-align: middle;
-					margin-right: 15px;
-					@include ui-sprite("logo-strip-left");
+	.branding-table{
+		position: absolute;
+		display: table;
+		width: 100%;
+		height: 100%;
+
+		>.branding-table-cell{
+			display: table-cell;
+			vertical-align: middle;
+
+			>.branding{
+				position: relative;
+				display: inline-block;
+				left: 60%;
+				width: 40em;
+
+				>h2{
+					font-family: $font_barkentina;
+					padding-bottom: 2em;
+
+					.line{
+						display: block;
+						height: 1px;
+						background-color: #fff;
+
+						&.full{
+							width: 100%;
+						}
+
+						&.left{
+							position: absolute;
+							width: 30%;
+							top: 50%;
+							left: 0;
+						}
+
+						&.right{
+							position: absolute;
+							width: 30%;
+							top: 50%;
+							right: 0;
+						}
+					}
+
+					>.middle{
+						text-align: justify;
+
+						>.text{
+							width: 100%;
+							font-size: 2.2em;
+							letter-spacing: .3em;
+							line-height: (10.8em/2.2);
+							text-transform: uppercase;
+						}
+
+						&:after{
+							content: "";
+							display: inline-block;
+							width: 100%;
+						}
+					}
+
+					>.bottom{
+						position: relative;
+						top: -2em;
+
+						>.text{
+							display: inline-block;
+							width: 100%;
+							text-align: center;
+							font-size: 1.6em;
+							letter-spacing: .2em;
+							text-transform: uppercase;
+						}
+					}
 				}
 
-				&:after{
-					content: '';
-					display: inline-block;
-					vertical-align: middle;
-					margin-left: 15px;
-					@include ui-sprite("logo-strip-right");
+				>h1{
+					display: block;
+					font-family: $font_assasin;
+					font-size: 9em;
+					text-transform: uppercase;
+					letter-spacing: -.03em;
+					width: 100%;
+					white-space: nowrap;
+
+					>span{
+						display: block;
+					}
+				}
+
+				>p{
+					padding: 2.5em 0;
+					font-size: 1.8em;
+					letter-spacing: .06em;
+					line-height: 1.6;
 				}
 			}
 		}

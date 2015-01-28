@@ -5,7 +5,7 @@ $craftPath = '../craft';
 
 // Setup environment-friendly configs
 switch ($_SERVER['HTTP_HOST']) {		
-	case 'hsinleichen.com' :
+	case 'hsinlei.com' :
 		define('ENV', 'live');
 		break;
 

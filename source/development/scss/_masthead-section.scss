@@ -4,13 +4,6 @@
 @import "contact";
 
 .masthead{
-	@include background(
-		radial-gradient(rgba(255,255,255,0), rgba(0,0,0,.4)),
-		url("#{$static_images_path}backgrounds/masthead.jpg")
-		);
-	background-color: #ddd;
-	background-size: cover;
-	background-position: center;
 
 	>.colorOverlay{
 		opacity: 0;
@@ -19,6 +12,9 @@
 	}
 
 	>.marqueeContainer{
+
+		display: none;
+
 		position: relative;
 		width: 100%;
 		height: 35%;
@@ -98,14 +94,15 @@
 	>.pages{
 		position: relative;
 		width: 100%;
-		height: 65%;
+		height: 100%;
 		overflow-x: hidden;
-		@include webkitScroll(touch);
+		//@include webkitScroll(touch);
 
 		>.pageContainer{
-			min-height: 80%;
-			padding-top: 20px;
-			@include box-sizing(border-box);
+			height: 100%;
+			//min-height: 80%;
+			//padding-top: 20px;
+			//@include box-sizing(border-box);
 
 			>.page{
 				display: inline-block;
@@ -144,6 +141,9 @@
 		z-index: 1;
 
 		>.nav{
+
+			display: none;
+
 			position: relative;
 			top: 30px;
 			text-align: center;

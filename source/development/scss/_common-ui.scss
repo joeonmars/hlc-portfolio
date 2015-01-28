@@ -245,7 +245,7 @@
   display: inline-block;
   padding: 10px 20px 10px 20px;
   @include box-sizing(border-box);
-  @include single-box-shadow(rgba(0, 0, 0, 0.2), -1px, -1px, 0px, 0px, inset);
+  @include single-box-shadow(-1px, -1px, 0px, 0px, rgba(0, 0, 0, 0.2), inset);
 
   >.gradient{
     position: absolute;

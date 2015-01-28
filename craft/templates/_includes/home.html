@@ -1,8 +1,27 @@
-<div class="centerColumn">
-	<div class="logo">
-		<h1>
-			{{ home.heading }}
-			<span>{{ home.subHeading }}</span>
-		</h1>
+<img class="portrait" draggable="false">
+
+<div class="branding-table">
+	<div class="branding-table-cell">
+		<div class="branding">
+			<h2>
+				<div class="top">
+					<span class="line full"></span>
+				</div>
+				<div class="middle">
+					<span class="text">{{ home.heading }}</span>
+				</div>
+				<div class="bottom">
+					<span class="line left"></span>
+					<span class="text">{{ home.role }}</span>
+					<span class="line right"></span>
+				</div>
+			</h2>
+			<h1>
+				{% set name = home.fullName|split(' ') %}
+				<span>{{ name[0] }}</span>
+				<span>{{ name[1] }}</span>
+			</h1>
+			<p>{{ home.promotionText }}</p>
+		</div>
 	</div>
 </div>
