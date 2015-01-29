@@ -426,6 +426,10 @@ p {
 
 a {
   text-decoration: none;
+  -moz-user-select: -moz-none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 a:visited {
   color: #747484;
@@ -852,6 +856,234 @@ textarea {
   width: 50%;
   height: 100%;
   background-color: #000;
+}
+
+.frame-button {
+  position: relative;
+  display: inline-block;
+  width: 120px;
+  height: 120px;
+}
+.frame-button > .container {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  display: table;
+  width: 140px;
+  height: 140px;
+}
+.frame-button > .container > .shape {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+}
+.frame-button > .container > h3 {
+  display: table-cell;
+  width: 100%;
+  height: 100%;
+  vertical-align: middle;
+  font-family: "barkentina_1regular", serif;
+  font-size: 10px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: .2em;
+  line-height: 1.6;
+  color: #fff;
+  opacity: .5;
+  -moz-transition: opacity 0.3s ease-in-out;
+  -o-transition: opacity 0.3s ease-in-out;
+  -webkit-transition: opacity 0.3s ease-in-out;
+  transition: opacity 0.3s ease-in-out;
+}
+.frame-button.up .shape {
+  background-image: url("/assets/static/images/frame-button-up.png");
+}
+.frame-button.up .shape.frame-0 {
+  background-position: -0px -0px;
+}
+.frame-button.up .shape.frame-1 {
+  background-position: -140px -0px;
+}
+.frame-button.up .shape.frame-10 {
+  background-position: -280px -0px;
+}
+.frame-button.up .shape.frame-11 {
+  background-position: -420px -0px;
+}
+.frame-button.up .shape.frame-12 {
+  background-position: -0px -140px;
+}
+.frame-button.up .shape.frame-13 {
+  background-position: -140px -140px;
+}
+.frame-button.up .shape.frame-14 {
+  background-position: -280px -140px;
+}
+.frame-button.up .shape.frame-15 {
+  background-position: -420px -140px;
+}
+.frame-button.up .shape.frame-16 {
+  background-position: -0px -280px;
+}
+.frame-button.up .shape.frame-17 {
+  background-position: -140px -280px;
+}
+.frame-button.up .shape.frame-18 {
+  background-position: -280px -280px;
+}
+.frame-button.up .shape.frame-19 {
+  background-position: -420px -280px;
+}
+.frame-button.up .shape.frame-2 {
+  background-position: -0px -420px;
+}
+.frame-button.up .shape.frame-20 {
+  background-position: -140px -420px;
+}
+.frame-button.up .shape.frame-21 {
+  background-position: -280px -420px;
+}
+.frame-button.up .shape.frame-22 {
+  background-position: -420px -420px;
+}
+.frame-button.up .shape.frame-23 {
+  background-position: -0px -560px;
+}
+.frame-button.up .shape.frame-24 {
+  background-position: -140px -560px;
+}
+.frame-button.up .shape.frame-25 {
+  background-position: -280px -560px;
+}
+.frame-button.up .shape.frame-26 {
+  background-position: -420px -560px;
+}
+.frame-button.up .shape.frame-27 {
+  background-position: -0px -700px;
+}
+.frame-button.up .shape.frame-28 {
+  background-position: -0px -700px;
+}
+.frame-button.up .shape.frame-29 {
+  background-position: -0px -700px;
+}
+.frame-button.up .shape.frame-3 {
+  background-position: -140px -700px;
+}
+.frame-button.up .shape.frame-4 {
+  background-position: -280px -700px;
+}
+.frame-button.up .shape.frame-5 {
+  background-position: -420px -700px;
+}
+.frame-button.up .shape.frame-6 {
+  background-position: -0px -840px;
+}
+.frame-button.up .shape.frame-7 {
+  background-position: -140px -840px;
+}
+.frame-button.up .shape.frame-8 {
+  background-position: -280px -840px;
+}
+.frame-button.up .shape.frame-9 {
+  background-position: -420px -840px;
+}
+.frame-button.down .shape {
+  background-image: url("/assets/static/images/frame-button-down.png");
+}
+.frame-button.down .shape.frame-0 {
+  background-position: -0px -0px;
+}
+.frame-button.down .shape.frame-1 {
+  background-position: -140px -0px;
+}
+.frame-button.down .shape.frame-10 {
+  background-position: -280px -0px;
+}
+.frame-button.down .shape.frame-11 {
+  background-position: -420px -0px;
+}
+.frame-button.down .shape.frame-12 {
+  background-position: -0px -140px;
+}
+.frame-button.down .shape.frame-13 {
+  background-position: -140px -140px;
+}
+.frame-button.down .shape.frame-14 {
+  background-position: -280px -140px;
+}
+.frame-button.down .shape.frame-15 {
+  background-position: -420px -140px;
+}
+.frame-button.down .shape.frame-16 {
+  background-position: -0px -280px;
+}
+.frame-button.down .shape.frame-17 {
+  background-position: -140px -280px;
+}
+.frame-button.down .shape.frame-18 {
+  background-position: -280px -280px;
+}
+.frame-button.down .shape.frame-19 {
+  background-position: -420px -280px;
+}
+.frame-button.down .shape.frame-2 {
+  background-position: -0px -420px;
+}
+.frame-button.down .shape.frame-20 {
+  background-position: -140px -420px;
+}
+.frame-button.down .shape.frame-21 {
+  background-position: -280px -420px;
+}
+.frame-button.down .shape.frame-22 {
+  background-position: -420px -420px;
+}
+.frame-button.down .shape.frame-23 {
+  background-position: -0px -560px;
+}
+.frame-button.down .shape.frame-24 {
+  background-position: -140px -560px;
+}
+.frame-button.down .shape.frame-25 {
+  background-position: -280px -560px;
+}
+.frame-button.down .shape.frame-26 {
+  background-position: -420px -560px;
+}
+.frame-button.down .shape.frame-27 {
+  background-position: -0px -700px;
+}
+.frame-button.down .shape.frame-28 {
+  background-position: -0px -700px;
+}
+.frame-button.down .shape.frame-29 {
+  background-position: -0px -700px;
+}
+.frame-button.down .shape.frame-3 {
+  background-position: -140px -700px;
+}
+.frame-button.down .shape.frame-4 {
+  background-position: -280px -700px;
+}
+.frame-button.down .shape.frame-5 {
+  background-position: -420px -700px;
+}
+.frame-button.down .shape.frame-6 {
+  background-position: -0px -840px;
+}
+.frame-button.down .shape.frame-7 {
+  background-position: -140px -840px;
+}
+.frame-button.down .shape.frame-8 {
+  background-position: -280px -840px;
+}
+.frame-button.down .shape.frame-9 {
+  background-position: -420px -840px;
+}
+.frame-button:hover h3 {
+  opacity: 1;
 }
 
 #preloader {
@@ -1799,7 +2031,7 @@ textarea {
   position: relative;
   display: inline-block;
   left: 60%;
-  width: 40em;
+  width: 39em;
 }
 #home .branding-table > .branding-table-cell > .branding > h2 {
   font-family: "barkentina_1regular", serif;
@@ -1831,7 +2063,7 @@ textarea {
 #home .branding-table > .branding-table-cell > .branding > h2 > .middle > .text {
   width: 100%;
   font-size: 2.2em;
-  letter-spacing: .3em;
+  letter-spacing: .2em;
   line-height: 4.90909em;
   text-transform: uppercase;
 }
@@ -1869,6 +2101,14 @@ textarea {
   font-size: 1.8em;
   letter-spacing: .06em;
   line-height: 1.6;
+}
+#home .branding-table > .branding-table-cell > .branding > .buttons {
+  text-align: center;
+}
+#home .branding-table > .branding-table-cell > .branding > .buttons > li {
+  display: inline-block;
+  vertical-align: top;
+  margin: 0 1.6em;
 }
 
 #biography ul {

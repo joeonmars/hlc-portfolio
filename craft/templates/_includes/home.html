@@ -3,6 +3,7 @@
 <div class="branding-table">
 	<div class="branding-table-cell">
 		<div class="branding">
+
 			<h2>
 				<div class="top">
 					<span class="line full"></span>
@@ -16,12 +17,20 @@
 					<span class="line right"></span>
 				</div>
 			</h2>
+
 			<h1>
 				{% set name = home.fullName|split(' ') %}
 				<span>{{ name[0] }}</span>
 				<span>{{ name[1] }}</span>
 			</h1>
+
 			<p>{{ home.promotionText }}</p>
+
+			<ul class="buttons">
+				<li>{% include "_common/frame-button" with {text: 'Listen<br>Now', href: '#', direction: 'down'} %}</li>
+				<li>{% include "_common/frame-button" with {text: 'Biography', href: '#', direction: 'up'} %}</li>
+			</ul>
+
 		</div>
 	</div>
 </div>

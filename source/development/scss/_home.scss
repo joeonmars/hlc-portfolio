@@ -30,7 +30,7 @@
 				position: relative;
 				display: inline-block;
 				left: 60%;
-				width: 40em;
+				width: 39em;
 
 				>h2{
 					font-family: $font_barkentina;
@@ -66,7 +66,7 @@
 						>.text{
 							width: 100%;
 							font-size: 2.2em;
-							letter-spacing: .3em;
+							letter-spacing: .2em;
 							line-height: (10.8em/2.2);
 							text-transform: uppercase;
 						}
@@ -112,6 +112,16 @@
 					font-size: 1.8em;
 					letter-spacing: .06em;
 					line-height: 1.6;
+				}
+
+				>.buttons{
+					text-align: center;
+
+					>li{
+						display: inline-block;
+						vertical-align: top;
+						margin: 0 1.6em;
+					}
 				}
 			}
 		}

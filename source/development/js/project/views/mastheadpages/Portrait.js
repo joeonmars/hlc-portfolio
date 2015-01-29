@@ -21,10 +21,10 @@ hlc.views.mastheadpages.Portrait = function(){
 
 	this._progress = 0;
 
-	this._tweener = new TweenMax(this, 2, {
+	this._tweener = new TweenMax(this, 4, {
 		_progress: this._progress,
 		'paused': true,
-		'ease': Cubic.easeOut,
+		'ease': Sine.easeOut,
 		'onUpdate': this.updateProgress,
 		'onUpdateScope': this,
 		'onComplete': this.onProgressComplete,

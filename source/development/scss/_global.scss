@@ -111,6 +111,7 @@ p{
 
 a{
   text-decoration: none;
+  @include user-select(none);
 
   &:visited {
     color: $color_lightpurple;
