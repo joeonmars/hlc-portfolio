@@ -1,6 +1,7 @@
 goog.provide('hlc.views.mastheadpages.MastheadPage');
 
 goog.require('goog.events.EventTarget');
+goog.require('goog.events.EventHandler');
 goog.require('goog.events');
 goog.require('goog.dom');
 goog.require('goog.net.XhrIo');
@@ -23,6 +24,8 @@ hlc.views.mastheadpages.MastheadPage = function(domElement, url, title){
   this._request = new goog.net.XhrIo();
 
   this._isPageElementsCreated = false;
+
+  this._eventHandler = new goog.events.EventHandler(this);
 
   this._animateInTweener = new TimelineMax();
   this._animateOutTweener = new TimelineMax();
@@ -55,13 +58,15 @@ hlc.views.mastheadpages.MastheadPage.prototype.activate = function(){
 
 hlc.views.mastheadpages.MastheadPage.prototype.deactivate = function(){
 
+	this._eventHandler.removeAll();
 };
 
 
 hlc.views.mastheadpages.MastheadPage.prototype.load = function(){
+
 	if(this._request && !this._request.isActive()) {
 
-		goog.events.listenOnce(this._request, "complete", this.onAjaxCallback, false, this);
+		this._eventHandler.listenOnce(this._request, "complete", this.onAjaxCallback, false, this);
 		this._request.send(this._url);
 
 	}else if(!this._request) {
@@ -73,8 +78,10 @@ hlc.views.mastheadpages.MastheadPage.prototype.load = function(){
 
 
 hlc.views.mastheadpages.MastheadPage.prototype.cancel = function(){
+
 	if(this._request && this._request.isActive()) {
-		goog.events.unlisten(this._request, "complete", this.onAjaxCallback, false, this);
+		
+		this._eventHandler.unlisten(this._request, "complete", this.onAjaxCallback, false, this);
 		this._request.abort();
 	}
 };

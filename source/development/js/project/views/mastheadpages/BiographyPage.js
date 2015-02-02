@@ -19,6 +19,7 @@ goog.inherits(hlc.views.mastheadpages.BiographyPage, hlc.views.mastheadpages.Mas
 hlc.views.mastheadpages.BiographyPage.prototype.createPageElements = function(){
 	goog.base(this, 'createPageElements');
 
+	/*
 	// add title tweeners
 	var animaticTitleDoms = goog.dom.query('.animaticTitle', this.domElement);
 
@@ -36,6 +37,7 @@ hlc.views.mastheadpages.BiographyPage.prototype.createPageElements = function(){
 	});
 
 	this._animateInTweener.add(outerTweeners, .8, "normal", .2);
+	*/
 };
 
 

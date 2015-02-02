@@ -17,6 +17,7 @@ goog.require('hlc.views.DiamondButtonTracker');
  * @constructor
  */
 hlc.views.MastheadSection = function(domElement){
+
   goog.base(this, domElement);
 
   this.pagesDom = goog.dom.query('.pages', this.domElement)[0];
@@ -42,6 +43,7 @@ goog.inherits(hlc.views.MastheadSection, hlc.views.Section);
 
 
 hlc.views.MastheadSection.prototype.init = function(){
+
 	goog.base(this, 'init');
 
 	// create navigation
@@ -50,16 +52,16 @@ hlc.views.MastheadSection.prototype.init = function(){
 	// create pages
 	this.pages = {
 		'home': new hlc.views.mastheadpages.HomePage,
-		'biography': new hlc.views.mastheadpages.BiographyPage,
-		'awards': new hlc.views.mastheadpages.AwardsPage,
-		'contact': new hlc.views.mastheadpages.ContactPage
+		'biography': new hlc.views.mastheadpages.BiographyPage
+		//'awards': new hlc.views.mastheadpages.AwardsPage,
+		//'contact': new hlc.views.mastheadpages.ContactPage
 	};
 
 	this.indexedPages = [
 		this.pages['home'],
-		this.pages['biography'],
-		this.pages['awards'],
-		this.pages['contact']
+		this.pages['biography']
+		//this.pages['awards'],
+		//this.pages['contact']
 	];
 
 	// listen for events
@@ -82,6 +84,7 @@ hlc.views.MastheadSection.prototype.init = function(){
 
 
 hlc.views.MastheadSection.prototype.toPage = function(page){
+
 	if(this.pageToLoad) {
 		this.pageToLoad.hide();
 	}
@@ -130,6 +133,7 @@ hlc.views.MastheadSection.prototype.toPage = function(page){
 
 
 hlc.views.MastheadSection.prototype.onClick = function(e){
+
 	e.preventDefault();
 
 	switch(e.currentTarget) {

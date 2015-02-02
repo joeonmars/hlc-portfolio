@@ -20,6 +20,10 @@
 {% set PATH_TO_UPLOAD_ASSETS = siteUrl~"assets/upload" %}
 {% set PATH_TO_PHP = siteUrl~"/php" %}
 
+{% extends "_global" %}
+
+{% block html %}
+
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
 <head>
@@ -122,7 +126,7 @@
 							{% for staff in credits.staff %}
 							<li {% if staff.id %}data-id="{{ staff.id }}"{% endif %}>
 								<h5>{{ staff.role }}</h5>
-								<a {% if staff.url %}href="{{ staff.url }}"{% elseif staff.name|length == 0 %}href="mailto:{{ contact.emailAddress }}"{% endif %} target="_blank">
+								<a {% if staff.url %}href="{{ staff.url }}"{% elseif staff.name|length == 0 %}href="mailto:{{ contact.email }}"{% endif %} target="_blank">
 								{% if staff.name %}
 									{{ staff.name }}
 								{% else %}
@@ -135,7 +139,7 @@
 						</ul>
 					</div>
 									<div id="copyright">
-					Copyright &copy; {{ now.year }} <a href="mailto:{{ contact.emailAddress }}">Hsin-Lei Chen</a>, All rights reserved.
+					Copyright &copy; {{ now.year }} <a href="mailto:{{ contact.email }}">Hsin-Lei Chen</a>, All rights reserved.
 				</div>
 				</div>
 				<div id="like-buttons">
@@ -180,3 +184,5 @@
 	</script>
 </body>
 </html>
+
+{% endblock %}

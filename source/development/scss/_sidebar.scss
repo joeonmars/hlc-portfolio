@@ -107,28 +107,34 @@
 				>.share{
 					>h3{
 						display: inline-block;
+						vertical-align: middle;
 						margin-right: 20px;
 					}
 
 					>a{
 						display: inline-block;
+						vertical-align: middle;
 						margin: 0 8px;
+						color: $color_purple;
+						font-size: 2em;
 						@include fade-button(1, .8);
+						@extend .fa;
 
 						&.facebook{
-							@include icon-sprite("facebook-share");
+							@extend .fa-facebook-official;
 						}
 
 						&.twitter{
-							@include icon-sprite("twitter-share");
+							@extend .fa-twitter;
 						}
 
 						&.googleplus{
-							@include icon-sprite("googleplus-share");
+							@extend .fa-google-plus;
+							font-size: 1.8em;
 						}
 
 						&.weibo{
-							@include icon-sprite("weibo-share");
+							@extend .fa-weibo;
 						}
 					}
 				}

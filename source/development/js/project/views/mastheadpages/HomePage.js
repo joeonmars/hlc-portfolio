@@ -40,7 +40,8 @@ hlc.views.mastheadpages.HomePage.prototype.activate = function(){
 
 	goog.array.forEach(this._buttons, function(button){
 		button.activate();
-	});
+		this._eventHandler.listen(button.domElement, goog.events.EventType.CLICK, this.onClickButton, false, this);
+	}, this);
 };
 
 
@@ -52,10 +53,15 @@ hlc.views.mastheadpages.HomePage.prototype.deactivate = function(){
 
 	goog.array.forEach(this._buttons, function(button){
 		button.deactivate();
-	});
+	}, this);
 };
 
 
-hlc.views.mastheadpages.HomePage.prototype.onResize = function(e){
+hlc.views.mastheadpages.HomePage.prototype.onClickButton = function(e){
 
+	e.preventDefault();
+
+	// set token
+	var token = e.currentTarget.getAttribute('href');
+	hlc.main.controllers.navigationController.setToken(token);
 };
