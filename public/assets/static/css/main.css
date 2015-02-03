@@ -2801,6 +2801,20 @@ sup {
   height: 100%;
 }
 
+.dummy-scroller {
+  position: absolute;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  height: 100%;
+  visibility: hidden;
+  overflow: auto;
+  padding-right: 50px;
+}
+.dummy-scroller.enabled {
+  visibility: visible;
+}
+
 #biography .group > section button {
   -moz-user-select: -moz-none;
   -ms-user-select: none;
@@ -4051,6 +4065,7 @@ sup {
   overflow-y: hidden;
 }
 #playlist > .left, #playlist > .right {
+  position: relative;
   display: inline-block;
   vertical-align: top;
   width: 2px;
@@ -4070,26 +4085,26 @@ sup {
   height: 100%;
   overflow: hidden;
 }
-#playlist .gradients {
+#playlist .viewport {
   position: absolute;
   top: 0;
   width: 100%;
-  height: 0;
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.94);
+  overflow: hidden;
+  text-align: left;
+  z-index: 0;
 }
-#playlist .gradients > div {
-  position: relative;
-  width: 100%;
-}
-#playlist .gradients > div > .gradient:first-child, #playlist .gradients > div > .gradient:last-child {
+#playlist .viewport:before, #playlist .viewport:after {
+  content: "";
+  display: block;
   position: absolute;
   left: 0;
   width: 100%;
   height: 100px;
+  z-index: 1;
 }
-#playlist .gradients > div > .gradient:first-child {
+#playlist .viewport:before {
   top: 0;
   background: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIgc3RvcC1vcGFjaXR5PSIwLjAiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyYWQpIiAvPjwvc3ZnPiA=');
   background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(100%, rgba(255, 255, 255, 0)));
@@ -4097,7 +4112,7 @@ sup {
   background: -webkit-linear-gradient(top, #ffffff, rgba(255, 255, 255, 0));
   background: linear-gradient(to bottom, #ffffff, rgba(255, 255, 255, 0));
 }
-#playlist .gradients > div > .gradient:last-child {
+#playlist .viewport:after {
   bottom: 0;
   background: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjEuMCIgeDI9IjAuNSIgeTI9IjAuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIgc3RvcC1vcGFjaXR5PSIwLjAiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyYWQpIiAvPjwvc3ZnPiA=');
   background: -webkit-gradient(linear, 50% 100%, 50% 0%, color-stop(0%, #ffffff), color-stop(100%, rgba(255, 255, 255, 0)));
@@ -4105,19 +4120,8 @@ sup {
   background: -webkit-linear-gradient(bottom, #ffffff, rgba(255, 255, 255, 0));
   background: linear-gradient(to top, #ffffff, rgba(255, 255, 255, 0));
 }
-#playlist .viewport {
-  width: 100%;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.94);
-  overflow: auto;
-  text-align: left;
-  padding-right: 50px;
-}
 #playlist .viewport.hide {
   width: 0;
-}
-#playlist .viewport > div:last-child {
-  padding-bottom: 100px;
 }
 #playlist .viewport .album {
   padding: 0 1px 0 1px;
@@ -4128,8 +4132,17 @@ sup {
   color: white;
   text-transform: uppercase;
 }
-#playlist .viewport .album:first-child {
-  margin-top: 90px;
+#playlist .viewport .album:first-child:before {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 90px;
+}
+#playlist .viewport .album:last-child:after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 90px;
 }
 #playlist .viewport .album > .heading {
   font-family: "barkentina_1regular", serif;
@@ -4444,37 +4457,13 @@ sup {
 }
 
 #biography {
-  	/*
-  	ul{
-  		text-align: center;
-  
-  		>li{
-  			display: inline-block;
-  			vertical-align: top;
-  			width: 30%;
-  			padding-right: 2%;
-  			text-align: left;
-  			@include box-sizing(border-box);
-  
-  			&:last-child{
-  				padding-right: 0;
-  			}
-  
-  			>.animaticTitle{
-  				margin: 10px 0 20px 0;
-  			}
-  
-  			>.outer{
-  				margin: 15px auto;
-  				overflow: hidden;
-  
-  				>p{
-  					font-size: 13px;
-  					line-height: 13px * 1.8;
-  				}
-  			}
-  		}
-  	}*/
+  overflow: hidden;
+}
+#biography .inner {
+  position: absolute;
+  width: 100%;
+  display: inline-block;
+  z-index: 0;
 }
 #biography .group {
   width: 100%;
@@ -4897,7 +4886,6 @@ sup {
   position: relative;
   width: 100%;
   height: 100%;
-  overflow-x: hidden;
   background-color: #000;
 }
 .masthead > .pages > .pageContainer {
@@ -4909,29 +4897,6 @@ sup {
   width: 100%;
   height: 100%;
   white-space: normal;
-}
-.masthead > .pages > .bottom {
-  position: relative;
-  width: 100%;
-  height: 20%;
-  overflow: hidden;
-}
-.masthead > .pages > .bottom > .albumButton {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  margin-left: -57px;
-  overflow: visible;
-  -moz-transition: -moz-transform 0.2s;
-  -o-transition: -o-transform 0.2s;
-  -webkit-transition: -webkit-transform 0.2s;
-  transition: transform 0.2s;
-}
-.masthead > .pages > .bottom > .albumButton.hide {
-  -moz-transform: translate(0, 57px);
-  -ms-transform: translate(0, 57px);
-  -webkit-transform: translate(0, 57px);
-  transform: translate(0, 57px);
 }
 .masthead > .hud {
   position: absolute;

@@ -2,42 +2,53 @@ goog.provide('hlc.views.mastheadpages.BiographyPage');
 
 goog.require('hlc.views.mastheadpages.MastheadPage');
 goog.require('hlc.models.AnimationModel');
-goog.require('goog.dom');
+goog.require('hlc.views.common.Scroller');
+goog.require('hlc.views.common.DummyScroller');
 
 /**
  * @constructor
  */
 hlc.views.mastheadpages.BiographyPage = function(){
+
 	var domElement = goog.dom.getElement('biography');
 	var url = hlc.Url.INCLUDES + 'biography';
 
   goog.base(this, domElement, url, 'biography');
+
+  this._scrollbarEl = null;
+  this._dummyEl = null;
+
+  this._scroller = null;
 };
 goog.inherits(hlc.views.mastheadpages.BiographyPage, hlc.views.mastheadpages.MastheadPage);
 
 
 hlc.views.mastheadpages.BiographyPage.prototype.createPageElements = function(){
+
 	goog.base(this, 'createPageElements');
 
-	/*
-	// add title tweeners
-	var animaticTitleDoms = goog.dom.query('.animaticTitle', this.domElement);
+  this._scrollbarEl = goog.dom.getElementByClass('scrollbar', this.domElement);
+  this._dummyEl = goog.dom.getElementByClass('dummy-scroller', this.domElement);
 
-	var titleTweeners = goog.array.map(animaticTitleDoms, function(animaticTitleDom) {
-		return hlc.models.AnimationModel.getAnimaticTitleTweener(animaticTitleDom);
-	});
+  this._scroller = goog.userAgent.MOBILE ?
+  	new hlc.views.common.Scroller(this.domElement, this._scrollbarEl) :
+  	new hlc.views.common.DummyScroller(this.domElement, this._dummyEl, this._scrollbarEl);
+};
 
-	this._animateInTweener.add(titleTweeners, 0, "normal", .1);
 
-	// add paragraph tweeners
-	var outerDoms = goog.dom.query('.outer', this.domElement);
+hlc.views.mastheadpages.BiographyPage.prototype.activate = function(){
 
-	var outerTweeners = goog.array.map(outerDoms, function(outerDom) {
-		return TweenMax.fromTo(outerDom, .8, {opacity: 0}, {opacity: 1, ease: Strong.easeInOut});
-	});
+	goog.base(this, 'activate');
 
-	this._animateInTweener.add(outerTweeners, .8, "normal", .2);
-	*/
+	this._scroller.activate();
+};
+
+
+hlc.views.mastheadpages.BiographyPage.prototype.deactivate = function(){
+
+	goog.base(this, 'deactivate');
+
+	this._scroller.deactivate();
 };
 
 

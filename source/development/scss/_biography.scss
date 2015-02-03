@@ -1,35 +1,12 @@
 #biography{
-	/*
-	ul{
-		text-align: center;
+	overflow: hidden;
 
-		>li{
-			display: inline-block;
-			vertical-align: top;
-			width: 30%;
-			padding-right: 2%;
-			text-align: left;
-			@include box-sizing(border-box);
-
-			&:last-child{
-				padding-right: 0;
-			}
-
-			>.animaticTitle{
-				margin: 10px 0 20px 0;
-			}
-
-			>.outer{
-				margin: 15px auto;
-				overflow: hidden;
-
-				>p{
-					font-size: 13px;
-					line-height: 13px * 1.8;
-				}
-			}
-		}
-	}*/
+	.inner{
+		position: absolute;
+		width: 100%;
+		display: inline-block;
+		z-index: 0;
+	}
 
 	.group{
 		width: 100%;

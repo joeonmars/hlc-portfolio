@@ -10,7 +10,11 @@
 	<div id="playlist">
 		<div class="left"></div>
 		<div class="middle">
+			<div class="dummy-scroller">
+				<div class="inner"></div>
+			</div>
 			<div class="viewport">
+				<div class="inner">
 				{% for album in craft.entries.section('album').find()|sortByField('postDate', 'asce') %}
 					<div class="album" data-id="{{ album.slug }}">
 						<div class="heading" style="background-image: url({{ siteUrl }}{{ album.cover[0].getUrl(coverThumbnailTransform) }});">
@@ -33,11 +37,6 @@
 						</ul>
 					</div>
 				{% endfor %}
-			</div>
-			<div class="gradients">
-				<div>
-					<div class="gradient"></div>
-					<div class="gradient"></div>
 				</div>
 			</div>
 			{% include "_common/scrollbar" %}

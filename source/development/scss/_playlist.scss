@@ -29,6 +29,7 @@
 	}
 
 	>.left, >.right{
+		position: relative;
 		display: inline-block;
 		vertical-align: top;
 		width: 2px;
@@ -52,52 +53,38 @@
 		overflow: hidden;
 	}
 
-	.gradients{
+	.viewport{
 		position: absolute;
 		top: 0;
 		width: 100%;
-		height: 0;
-		@include box-sizing(border-box);
-
-		>div{
-			position: relative;
-			width: 100%;
-
-			>.gradient{
-				&:first-child, &:last-child{
-					position: absolute;
-					left: 0;
-					width: 100%;
-					height: 100px;
-				}
-
-				&:first-child{
-					top: 0;
-					@include background(linear-gradient(top, #fff, rgba(255,255,255,0)));
-				}
-
-				&:last-child{
-					bottom: 0;
-					@include background(linear-gradient(bottom, #fff, rgba(255,255,255,0)));
-				}
-			}
-		}
-	}
-
-	.viewport{
-		width: 100%;
 		height: 100%;
 		background: rgba(255, 255, 255, .94);
-		overflow: auto;
+		overflow: hidden;
 		text-align: left;
-		padding-right: $default_scrollbar_width;
+		z-index: 0;
+
+		&:before, &:after{
+			content: "";
+			display: block;
+			position: absolute;
+			left: 0;
+			width: 100%;
+			height: 100px;
+			z-index: 1;
+		}
+
+		&:before{
+			top: 0;
+			@include background(linear-gradient(top, #fff, rgba(255,255,255,0)));
+		}
+
+		&:after{
+			bottom: 0;
+			@include background(linear-gradient(bottom, #fff, rgba(255,255,255,0)));
+		}
 
 		&.hide{
 			width: 0;
-		}
-
-		>div:last-child{
-			padding-bottom: 100px;
 		}
 
 		.album{
@@ -109,7 +96,21 @@
 			text-transform: uppercase;
 
 			&:first-child{
-				margin-top: 90px;
+				&:before{
+					content: "";
+					display: block;
+					width: 100%;
+					height: 90px;
+				}
+			}
+
+			&:last-child{
+				&:after{
+					content: "";
+					display: block;
+					width: 100%;
+					height: 90px;
+				}
 			}
 
 			>.heading{

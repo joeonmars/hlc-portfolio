@@ -9,9 +9,6 @@ goog.require('goog.async.Delay');
 goog.require('hlc.views.MastheadNav');
 goog.require('hlc.views.mastheadpages.HomePage');
 goog.require('hlc.views.mastheadpages.BiographyPage');
-goog.require('hlc.views.mastheadpages.AwardsPage');
-goog.require('hlc.views.mastheadpages.ContactPage');
-goog.require('hlc.views.DiamondButtonTracker');
 
 /**
  * @constructor
@@ -27,15 +24,9 @@ hlc.views.MastheadSection = function(domElement){
   this.marqueeContentDom = goog.dom.query('.content', this.marqueeDom)[0];
   this.headingDom = goog.dom.query('.heading', this.marqueeDom)[0];
   this.colorOverlayDom = goog.dom.query('.colorOverlay', this.domElement)[0];
-  this.albumButtonDom = goog.dom.query('.albumButton', this.domElement)[0];
   this.nav = null;
   this.pages = null;
   this.pageToLoad = null;
-
-  this.albumButton = new hlc.views.common.TriangleButton(this.albumButtonDom);
-
-  var tracker = hlc.views.DiamondButtonTracker.getInstance();
-  tracker.add(this.albumButtonDom, 'up', new goog.math.Size(114, 57));
 
   this._headingTweener = null;
 };
@@ -53,20 +44,14 @@ hlc.views.MastheadSection.prototype.init = function(){
 	this.pages = {
 		'home': new hlc.views.mastheadpages.HomePage,
 		'biography': new hlc.views.mastheadpages.BiographyPage
-		//'awards': new hlc.views.mastheadpages.AwardsPage,
-		//'contact': new hlc.views.mastheadpages.ContactPage
 	};
 
 	this.indexedPages = [
 		this.pages['home'],
 		this.pages['biography']
-		//this.pages['awards'],
-		//this.pages['contact']
 	];
 
 	// listen for events
-	goog.events.listen(this.albumButtonDom, 'click', this.onClick, false, this);
-
 	goog.events.listen(hlc.main.controllers.mainScrollController,
 		hlc.controllers.MainScrollController.EventType.SCROLL_START, this.onScrollStart, false, this);
 
@@ -132,25 +117,6 @@ hlc.views.MastheadSection.prototype.toPage = function(page){
 };
 
 
-hlc.views.MastheadSection.prototype.onClick = function(e){
-
-	e.preventDefault();
-
-	switch(e.currentTarget) {
-		case this.albumButtonDom:
-		var tracker = hlc.views.DiamondButtonTracker.getInstance();
-		var hasClickedOnShape = tracker.getClickResult(e, true);
-		if(!hasClickedOnShape) return false;
-
-		var token = this.albumButtonDom.getAttribute('href');
-		hlc.main.controllers.navigationController.setToken(token);
-
-		this.albumButton.hide();
-		break;
-	}
-};
-
-
 hlc.views.MastheadSection.prototype.onScrollStart = function(e){
 	if(e.scrollPosition === hlc.controllers.MainScrollController.ScrollPosition.MASTHEAD) {
 		if(!this.pageToLoad || this.pageToLoad === this.pages['home']) {
@@ -164,11 +130,9 @@ hlc.views.MastheadSection.prototype.onScrollStart = function(e){
 
 hlc.views.MastheadSection.prototype.onScrollFinish = function(e){
 	if(e.scrollPosition === hlc.controllers.MainScrollController.ScrollPosition.MASTHEAD) {
-		this.albumButton.show();
-		this.albumButton.startAnimation();
+
 	}else {
-		this.albumButton.hide();
-		this.albumButton.stopAnimation();
+
 	}
 };
 
