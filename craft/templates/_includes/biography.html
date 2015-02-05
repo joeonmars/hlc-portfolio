@@ -67,9 +67,12 @@
 							{% endif %}
 
 							{% if program.thesisEntry|length %}
-							<button data-id="{{ program.thesisEntry[0].slug }}">
-								<div class="icon"></div>
+							<button class="song-button" data-id="{{ program.thesisEntry[0].slug }}">
+								<div class="fill">
+									<div class="bar"></div>
+								</div>
 								<span>{{ program.thesisEntry[0].title }}</span>
+								<div class="icon"></div>
 							</button>
 							{% elseif program.thesisTitle|length %}
 							<p>{{ COPY['thesis'] }}: {{ program.thesisTitle }}</p>
@@ -162,9 +165,12 @@
 					{{ premier.description }}
 
 					{% for entry in premier.entries %}
-					<button data-id="{{ entry.slug }}">
-						<div class="icon"></div>
+					<button class="song-button" data-id="{{ entry.slug }}">
+						<div class="fill">
+							<div class="bar"></div>
+						</div>
 						<span>{{ entry.title }}</span>
+						<div class="icon"></div>
 					</button>
 					{% endfor %}
 				</li>

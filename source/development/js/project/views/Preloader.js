@@ -22,7 +22,7 @@ hlc.views.Preloader = function() {
 
 	this.assets = {};
 	this._domElement = goog.dom.getElement('preloader');
-	this._textDom = goog.dom.query('p', this._domElement)[0];
+	this._progressEl = goog.dom.query('.progress', this._domElement)[0];
 
 	// animation
 	var fadeInTweener = TweenMax.to(this._domElement, 1, {
@@ -53,7 +53,7 @@ hlc.views.Preloader.prototype.init = function(){
 hlc.views.Preloader.prototype.onProgress = function(e) {
 	goog.base(this, 'onProgress', e);
 	
-	this._textDom.innerHTML = Math.round(e.progress * 100) + '%';
+	this._progressEl.innerHTML = Math.round(e.progress * 100);
 };
 
 

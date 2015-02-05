@@ -72,7 +72,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   font-weight: normal;
   font-style: normal;
 }
-.fa, #sidebar > .outer .content .songDetailContainer > .share > a, #biography .group > section button > .icon {
+.fa, #sidebar > .outer .content .songDetailContainer > .share > a, #biography .group > section .song-button > .icon {
   display: inline-block;
   font: normal normal normal 14px/1 FontAwesome;
   font-size: inherit;
@@ -146,11 +146,11 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   float: left;
 }
 
-.fa.pull-left, #sidebar > .outer .content .songDetailContainer > .share > a.pull-left, #biography .group > section button > .pull-left.icon {
+.fa.pull-left, #sidebar > .outer .content .songDetailContainer > .share > a.pull-left, #biography .group > section .song-button > .pull-left.icon {
   margin-right: .3em;
 }
 
-.fa.pull-right, #sidebar > .outer .content .songDetailContainer > .share > a.pull-right, #biography .group > section button > .pull-right.icon {
+.fa.pull-right, #sidebar > .outer .content .songDetailContainer > .share > a.pull-right, #biography .group > section .song-button > .pull-right.icon {
   margin-left: .3em;
 }
 
@@ -550,11 +550,11 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   content: "\f04a";
 }
 
-.fa-play:before, #biography .group > section button > .icon:before {
+.fa-play:before, #biography .group > section .song-button > .icon:before {
   content: "\f04b";
 }
 
-.fa-pause:before {
+.fa-pause:before, #biography .group > section .song-button.active:not(.paused) .icon:before {
   content: "\f04c";
 }
 
@@ -2673,31 +2673,19 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   width: 28px;
 }
 
-.ui-sprite, .ui-award-left, .ui-award-right, .ui-contact-heading-bar-left, .ui-contact-heading-bar-right, .ui-logo-strip-left, .ui-logo-strip-right, #awards .column.middle ul > li > .award > .left, #awards .column.middle ul > li > .award > .right, #contact .heading > .bar.left, #contact .heading > .bar.right {
-  background-image: url('../images/ui-sa56eb62f68.png');
+.ui-sprite, .ui-contact-heading-bar-left, .ui-contact-heading-bar-right, .ui-logo-strip-left, .ui-logo-strip-right, #contact .heading > .bar.left, #contact .heading > .bar.right {
+  background-image: url('../images/ui-s2fab0331a3.png');
   background-repeat: no-repeat;
 }
 
-.ui-award-left {
-  background-position: 0 -4px;
-  height: 140px;
-  width: 43px;
-}
-
-.ui-award-right {
-  background-position: -43px -4px;
-  height: 141px;
-  width: 44px;
-}
-
 .ui-contact-heading-bar-left {
-  background-position: 0 -2px;
+  background-position: 0 -3px;
   height: 1px;
   width: 100px;
 }
 
 .ui-contact-heading-bar-right {
-  background-position: 0 -3px;
+  background-position: 0 -2px;
   height: 1px;
   width: 100px;
 }
@@ -2815,7 +2803,7 @@ sup {
   visibility: visible;
 }
 
-#biography .group > section button {
+#biography .group > section .song-button {
   -moz-user-select: -moz-none;
   -ms-user-select: none;
   -webkit-user-select: none;
@@ -3448,17 +3436,97 @@ sup {
 #preloader {
   position: absolute;
   top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  background: #111;
+  background-image: url("/assets/static/images/backgrounds/portrait-background.png");
+  background-color: #000;
+  background-size: 100% 100%;
   z-index: 1000;
 }
-#preloader > p {
-  position: relative;
+#preloader:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+#preloader > .portrait {
+  position: absolute;
+  z-index: 1;
   top: 50%;
+  left: 50%;
+  margin-left: -24.7em;
+  margin-top: -27.3em;
+  width: 49.4em;
+  height: 54.6em;
+  background-image: url("/assets/static/images/portrait-loader.png");
+  background-size: 100% 100%;
+}
+#preloader > .content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  display: table;
+}
+#preloader > .content > .content-inner {
+  display: table-cell;
+  vertical-align: middle;
+}
+#preloader .counter {
+  position: relative;
+  margin: 0 auto;
   color: white;
-  font-size: 18px;
   text-align: center;
+  width: 23em;
+  height: 21.2em;
+}
+#preloader .counter > .slash {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-size: auto 100%;
+  background-position: center center;
+  background-image: url("/assets/static/images/slash.png");
+}
+#preloader .counter > .number {
+  position: absolute;
+  font-size: 6em;
+  font-family: "Poly", serif;
+  font-style: italic;
+  text-align: center;
+  width: 50%;
+}
+#preloader .counter > .number.progress {
+  left: 0;
+  line-height: 2.5em;
+  width: 55%;
+}
+#preloader .counter > .number.hundred {
+  right: 0;
+  line-height: 4em;
+  width: 45%;
+}
+#preloader .hint {
+  position: relative;
+  margin: 2.5em auto;
+  width: 16em;
+  color: #fff;
+}
+#preloader .hint > p {
+  width: 100%;
+  font-size: 1.8em;
+  font-family: "Poly", serif;
+  font-style: italic;
+  white-space: normal;
+  letter-spacing: .1em;
+  line-height: 1.4;
+  margin-left: 2em;
 }
 
 .albumPlayer {
@@ -3548,6 +3616,9 @@ sup {
   margin: 0 auto;
 }
 
+#albums .album {
+  display: table;
+}
 #albums .album > .background {
   position: absolute;
   width: 100%;
@@ -3567,10 +3638,10 @@ sup {
   transition: opacity 5s;
 }
 #albums .album > .background > div.colorOverlay.gradientOverlay {
-  background: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgY3g9IjUwJSIgY3k9IjUwJSIgcj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzhjOGM4YyIgc3RvcC1vcGFjaXR5PSIwLjUiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwMDAwMDAiIHN0b3Atb3BhY2l0eT0iMC41Ii8+PC9yYWRpYWxHcmFkaWVudD48L2RlZnM+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmFkKSIgLz48L3N2Zz4g');
-  background: -moz-radial-gradient(rgba(140, 140, 140, 0.5), rgba(0, 0, 0, 0.5));
-  background: -webkit-radial-gradient(rgba(140, 140, 140, 0.5), rgba(0, 0, 0, 0.5));
-  background: radial-gradient(rgba(140, 140, 140, 0.5), rgba(0, 0, 0, 0.5));
+  background: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgY3g9IjUwJSIgY3k9IjUwJSIgcj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzc4ODdhMCIgc3RvcC1vcGFjaXR5PSIwLjYiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwMDAwMDAiIHN0b3Atb3BhY2l0eT0iMC45Ii8+PC9yYWRpYWxHcmFkaWVudD48L2RlZnM+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmFkKSIgLz48L3N2Zz4g');
+  background: -moz-radial-gradient(rgba(120, 135, 160, 0.6), rgba(0, 0, 0, 0.9));
+  background: -webkit-radial-gradient(rgba(120, 135, 160, 0.6), rgba(0, 0, 0, 0.9));
+  background: radial-gradient(rgba(120, 135, 160, 0.6), rgba(0, 0, 0, 0.9));
 }
 #albums .album > .background > div.colorOverlay.loaderOverlay {
   background-image: url("/assets/static/images/ajax-loader.gif");
@@ -3584,11 +3655,13 @@ sup {
   transition: opacity 0.6s;
 }
 #albums .album > .centerColumn {
+  display: table-cell;
+  vertical-align: middle;
+  padding: 0 10% 200px 10%;
   height: 100%;
 }
 #albums .album > .centerColumn > .content {
   position: relative;
-  top: 20%;
 }
 #albums .album .content > h3 {
   margin-top: 45px;
@@ -4348,9 +4421,6 @@ sup {
 #home {
   width: 100%;
   height: 100%;
-  background-image: url("/assets/static/images/backgrounds/portrait-background.jpg");
-  background-color: #000;
-  background-size: 100% 100%;
   color: #fff;
 }
 #home .portrait {
@@ -4458,12 +4528,19 @@ sup {
 
 #biography {
   overflow: hidden;
+  background-image: url("/assets/static/images/backgrounds/biography-background.jpg");
+  background-color: #000;
+  background-position: center center;
+  background-size: cover;
 }
 #biography .inner {
   position: absolute;
   width: 100%;
   display: inline-block;
   z-index: 0;
+}
+#biography .scrollbar .track {
+  background-color: #fff;
 }
 #biography .group {
   width: 100%;
@@ -4572,18 +4649,35 @@ sup {
   line-height: 1.6;
   margin: 1.6em 0;
 }
-#biography .group > section button {
+#biography .group > section .song-button {
   position: relative;
   display: block;
   max-width: 100%;
   white-space: nowrap;
-  margin: .5em 0;
+  margin: .8em 0;
   border: 1px solid #fff;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
+  opacity: .4;
+  -moz-transition: opacity 0.5s;
+  -o-transition: opacity 0.5s;
+  -webkit-transition: opacity 0.5s;
+  transition: opacity 0.5s;
+  -webkit-backface-visibility: hidden;
 }
-#biography .group > section button > .icon {
+#biography .group > section .song-button:hover, #biography .group > section .song-button.active {
+  opacity: 1;
+}
+#biography .group > section .song-button.active .bar {
+  opacity: 1;
+  visibility: visible;
+}
+#biography .group > section .song-button:not(.active) .bar {
+  opacity: 0;
+  visibility: hidden;
+}
+#biography .group > section .song-button > .icon {
   position: absolute;
   top: 0;
   left: 0;
@@ -4594,7 +4688,27 @@ sup {
   color: #535362;
   line-height: 2.4em;
 }
-#biography .group > section button > span {
+#biography .group > section .song-button > .fill {
+  position: absolute;
+  padding-left: 2.14286em;
+  font-size: 1.4em;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+}
+#biography .group > section .song-button > .fill > .bar {
+  width: 100%;
+  height: 100%;
+  background-color: #535362;
+  -moz-transition: opacity 0.25s, visibility 0.25s;
+  -o-transition: opacity 0.25s, visibility 0.25s;
+  -webkit-transition: opacity 0.25s, visibility 0.25s;
+  transition: opacity 0.25s, visibility 0.25s;
+}
+#biography .group > section .song-button > span {
+  position: relative;
   display: block;
   padding: 0 1.25em 0 3.39286em;
   font-size: 1.4em;
@@ -4603,74 +4717,6 @@ sup {
   font-family: "Poly", serif;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-#awards > .centerColumn {
-  font-size: 0;
-}
-#awards .column {
-  display: inline-block;
-  vertical-align: top;
-}
-#awards .column.left, #awards .column.right {
-  width: 30%;
-}
-#awards .column.middle {
-  width: 40%;
-}
-#awards .column.middle ul {
-  margin: 0 auto;
-  width: 100%;
-  min-width: 330px;
-  max-width: 400px;
-  text-align: center;
-}
-#awards .column.middle ul > li > .award {
-  margin: 48px 0;
-  display: inline-block;
-  height: 140px;
-  white-space: nowrap;
-}
-#awards .column.middle ul > li > .award > div {
-  display: inline-block;
-  vertical-align: middle;
-}
-#awards .column.middle ul > li > .award > .left {
-  background-position: 0 -4px;
-  height: 140px;
-  width: 43px;
-}
-#awards .column.middle ul > li > .award > .right {
-  background-position: -43px -4px;
-  height: 141px;
-  width: 44px;
-}
-#awards .column.middle ul > li > .award > .middle {
-  padding: 0 5px;
-  width: 300px;
-  max-height: 140px;
-  white-space: normal;
-}
-#awards .column.middle ul > li > .award > .middle > .title {
-  padding-top: 15px;
-  font-size: 24px;
-  line-height: 20px;
-  font-family: "barkentina_1regular", serif;
-}
-#awards .column.middle ul > li > .award > .middle > .event {
-  margin-top: 8px;
-  font-size: 14px;
-  font-family: "Poly", serif;
-}
-#awards .column.middle ul > li > .award > .middle > .divider {
-  margin: 8px auto;
-  width: 100px;
-  height: 1px;
-  background: rgba(0, 0, 0, 0.2);
-}
-#awards .column.middle ul > li > .award > .middle > .year {
-  font-size: 14px;
-  font-family: "barkentina_1regular", serif;
 }
 
 #contact {
@@ -4691,14 +4737,14 @@ sup {
 #contact .heading > .bar.left {
   top: 6.5px;
   left: 0;
-  background-position: 0 -2px;
+  background-position: 0 -3px;
   height: 1px;
   width: 100px;
 }
 #contact .heading > .bar.right {
   top: 6.5px;
   right: 0;
-  background-position: 0 -3px;
+  background-position: 0 -2px;
   height: 1px;
   width: 100px;
 }
@@ -4889,7 +4935,11 @@ sup {
   background-color: #000;
 }
 .masthead > .pages > .pageContainer {
+  width: 100%;
   height: 100%;
+  background-image: url("/assets/static/images/backgrounds/portrait-background.png");
+  background-color: #000;
+  background-size: 100% 100%;
 }
 .masthead > .pages > .pageContainer > .page {
   display: inline-block;

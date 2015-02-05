@@ -12,6 +12,7 @@ goog.require('hlc.utils');
  * @constructor
  */
 hlc.models.SongModel = function(songId, songData, album){
+
   goog.base(this);
 
   this.setParentEventTarget( hlc.main.controllers.soundController );
@@ -20,7 +21,7 @@ hlc.models.SongModel = function(songId, songData, album){
   this.songTitle = songData['title'];
   this.artwork = songData['artwork'];
   this.album = album;
-  this.defaultArtwork = this.album.albumCover;
+  this.defaultArtwork = this.album ? this.album.albumCover : null;
 
   // audio data
   var url = songData['audioData'];
@@ -58,7 +59,25 @@ hlc.models.SongModel = function(songId, songData, album){
 goog.inherits(hlc.models.SongModel, goog.events.EventTarget);
 
 
+hlc.models.SongModel.prototype.disposeInternal = function(){
+
+  this.deactivate();
+
+  this.stop();
+
+  this.defaultArtwork = null;
+
+  if(this.jsonLoader) {
+    this.jsonLoader.dispose();
+    this.jsonLoader = null;
+  }
+
+  goog.base(this, 'disposeInternal');
+};
+
+
 hlc.models.SongModel.prototype.getDefaultArtwork = function(){
+
   if(this.artwork.length < 1) {
     return this.defaultArtwork;
   }else {
@@ -68,6 +87,7 @@ hlc.models.SongModel.prototype.getDefaultArtwork = function(){
 
 
 hlc.models.SongModel.prototype.getNextArtwork = function(artwork){
+
   if(!artwork || artwork === this.defaultArtwork) {
     return this.getDefaultArtwork();
   }
@@ -80,6 +100,7 @@ hlc.models.SongModel.prototype.getNextArtwork = function(artwork){
 
 
 hlc.models.SongModel.prototype.activate = function(){
+
   goog.events.listen(this.audio, hlc.models.SongModel.EventType.HTML_AUDIO_EVENTS, this.onAudioEvent, false, this);
 
   if(this.jsonLoader) this.jsonLoader.load();
@@ -90,41 +111,65 @@ hlc.models.SongModel.prototype.activate = function(){
 
 
 hlc.models.SongModel.prototype.deactivate = function(){
+
   goog.events.unlisten(this.audio, hlc.models.SongModel.EventType.HTML_AUDIO_EVENTS, this.onAudioEvent, false, this);
 };
 
 
 hlc.models.SongModel.prototype.play = function(){
+
 	this.audio.play();
 };
 
 
 hlc.models.SongModel.prototype.pause = function(){
+
 	this.audio.pause();
 };
 
 
 hlc.models.SongModel.prototype.stop = function(){
+
   this.audio.pause();
 };
 
 
+hlc.models.SongModel.prototype.toggle = function(){
+
+  if(this.isPaused()) {
+    this.play();
+  }else {
+    this.pause();
+  }
+};
+
+
+hlc.models.SongModel.prototype.getProgress = function(){
+
+  return (this.audio.currentTime / this.audio.duration);
+};
+
+
 hlc.models.SongModel.prototype.setProgress = function(progress){
+
   this.audio.currentTime = this.audio.duration * progress;
 };
 
 
 hlc.models.SongModel.prototype.isPaused = function() {
+
   return this.audio.paused;
 };
 
 
 hlc.models.SongModel.prototype.setVolume = function(volume){
+
 	this.audio.volume = volume;
 };
 
 
 hlc.models.SongModel.prototype.dispatchAudioDataLoadEvent = function(){
+
   this.dispatchEvent({
     target: this,
     type: hlc.models.SongModel.EventType.AUDIO_DATA_LOAD,
@@ -134,6 +179,7 @@ hlc.models.SongModel.prototype.dispatchAudioDataLoadEvent = function(){
 
 
 hlc.models.SongModel.prototype.onAudioEvent = function(e){
+
   this.dispatchEvent({
     target: this,
     type: e.type,
@@ -143,6 +189,7 @@ hlc.models.SongModel.prototype.onAudioEvent = function(e){
 
 
 hlc.models.SongModel.prototype.onAudioDataLoadSuccess = function(e) {
+
   // read and post-process data
   this.audioData = goog.array.map(e.target.getResponseTexts(), goog.json.unsafeParse)[0]['data'];
 
@@ -160,8 +207,30 @@ hlc.models.SongModel.prototype.onAudioDataLoadSuccess = function(e) {
 
 
 hlc.models.SongModel.prototype.onAudioDataLoadError = function(e) {
+
   this.jsonLoader.dispose();
   this.jsonLoader = null;
+};
+
+
+hlc.models.SongModel.getSongById = function(id) {
+
+  var albumsData = hlc.main.assets.sitemap['albums'];
+
+  for(var albumId in albumsData) {
+
+    var songs = albumsData[albumId]['songs'];
+
+    var song = goog.object.findValue(songs, function(songData) {
+      return (songData['id'] === id);
+    });
+
+    if(song) {
+      return new hlc.models.SongModel(song['id'], song);
+    }
+  }
+
+  return null;
 };
 
 
