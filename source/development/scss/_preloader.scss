@@ -4,23 +4,40 @@
 	left: 0;
 	width: 100%;
 	height: 100%;
-	background-image: url("#{$static_images_path}backgrounds/portrait-background.png");
-	background-color: #000;
-	background-size: 100% 100%;
+	background-color: #fff;
 	z-index: 1000;
 
-	&:before{
-		content: "";
+	>.inner{
+		width: 100%;
+		height: 100%;
+		background-image: url("#{$static_images_path}backgrounds/portrait-background.png");
+		background-color: #000;
+		background-size: 100% 100%;
+		@include user-select(none);
+
+		&:before{
+			content: "";
+			position: absolute;
+			top: 0;
+			left: 0;
+			display: block;
+			width: 100%;
+			height: 100%;
+			background-color: rgba(#000, .2);
+		}
+	}
+
+	>.curtain{
 		position: absolute;
 		top: 0;
 		left: 0;
-		display: block;
 		width: 100%;
 		height: 100%;
-		background-color: rgba(#000, .2);
+		background-color: #000;
+		z-index: 10;
 	}
 
-	>.portrait{
+	.portrait{
 		position: absolute;
 		z-index: 1;
 		top: 50%;
@@ -29,11 +46,11 @@
 		margin-top: (-54.6em/2);
 		width: 49.4em;
 		height: 54.6em;
-		background-image: url("#{$static_images_path}portrait-loader.png");
+		background-image: url("#{$static_images_path}portrait-small.png");
 		background-size: 100% 100%;
 	}
 
-	>.content{
+	.content{
 		position: relative;
 		z-index: 2;
 		width: 100%;
@@ -70,18 +87,56 @@
 			font-family: $font_poly;
 			font-style: italic;
 			text-align: center;
-			width: 50%;
+			width: 40%;
 
-			&.progress{
+			&.numerator{
 				left: 0;
 				line-height: 2.5em;
-				width: 55%;
 			}
 
-			&.hundred{
+			&.denominator{
 				right: 0;
 				line-height: 4em;
-				width: 45%;
+			}
+
+			>.digits{
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				text-align: center;
+				color: transparent;
+				font-size: 0;
+
+				>.ones, >.tens, >.hundreds{
+					position: relative;
+					display: inline-block;
+					vertical-align: top;
+					font-size: 60px;
+					opacity: 1;
+					width: 34px;
+					text-align: center;
+
+					&.hidden{
+						opacity: 0;
+					}
+
+					>span{
+						position: absolute;
+						top: 0;
+						left: 0;
+						width: 100%;
+						color: #fff;
+						visibility: visible;
+						opacity: 1;
+						@include transition(visibility .5s, opacity .5s ease-in-out);
+
+						&.hidden{
+							visibility: hidden;
+							opacity: 0;
+						}
+					}
+				}
 			}
 		}
 	}
@@ -92,7 +147,22 @@
 		width: 16em;
 		color: #fff;
 
+		>.speaker{
+			position: relative;
+			@include icon-sprite("speaker");
+
+			>.wave{
+				position: absolute;
+				top: 0;
+				left: 0;
+				@include icon-sprite("speaker-wave");
+				@include animation( wave-pulse 1s ease-out infinite);
+			}
+		}
+
 		>p{
+			position: absolute;
+			top: -.25em;
 			width: 100%;
 			font-size: 1.8em;
 			font-family: $font_poly;

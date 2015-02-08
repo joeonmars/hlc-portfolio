@@ -98,8 +98,37 @@
 					</div>
 					
 					<div class="bottom hide">
-						{% include "_common/triangle-button" with {text: '', classes: 'homeButton upwards'} %}
 						{% include "_includes/media-player" %}
+					</div>
+				</div>
+
+				<div id="credits">
+					<div class="background"></div>
+					<div class="portrait"></div>
+					<div class="content">
+						<div class="content-inner">
+							<header>
+								<hr class="top">
+								<h3>{{ COPY.credits }}</h3>
+								<button class="close icon-close"></button>
+								<hr class="bottom">
+							</header>
+							<ul class="members">
+							{%- for member in credits.members -%}
+								<li>
+									<h4>{{ COPY[member.role] }}</h4>
+									<div {%if member.url|length %}class="has-link"{% endif %}>
+										<p>{{ member.name }}</p>
+										{%if member.url|length %}
+										<a href="{{ member.url }}" target="_blank">{{ member.url }}</a>
+										{% endif %}
+									</div>
+								</li>
+							{%- endfor -%}
+							</ul>
+							<hr>
+							<p class="copyright">{{ credits.copyright }}</p>
+						</div>
 					</div>
 				</div>
 
@@ -119,40 +148,7 @@
 			</div>
 			
 			<div id="footer">
-				<div id="credits">
-					<h3>credits<div class="expandButton upwards"></div></h3>
-					<div class="outer">
-						<ul class="inner">
-							{% for staff in credits.staff %}
-							<li {% if staff.id %}data-id="{{ staff.id }}"{% endif %}>
-								<h5>{{ staff.role }}</h5>
-								<a {% if staff.url %}href="{{ staff.url }}"{% elseif staff.name|length == 0 %}href="mailto:{{ contact.email }}"{% endif %} target="_blank">
-								{% if staff.name %}
-									{{ staff.name }}
-								{% else %}
-									{{ credits.unknown[0].name }}
-									<span>*{{ credits.unknown[0].note }}</span>
-								{% endif %}
-								</a>
-							</li>
-							{% endfor %}
-						</ul>
-					</div>
-									<div id="copyright">
-					Copyright &copy; {{ now.year }} <a href="mailto:{{ contact.email }}">Hsin-Lei Chen</a>, All rights reserved.
-				</div>
-				</div>
-				<div id="like-buttons">
-					<div class="google">
-						<div class="g-plusone" data-size="medium" data-annotation="none" data-width="120"></div>
-					</div>
-					<div class="twitter">
-						<a href="https://twitter.com/share" class="twitter-share-button" data-url="{{ meta.metaUrl }}" data-count="none">Tweet</a>
-					</div>
-					<div class="facebook">
-						<iframe src="//www.facebook.com/plugins/like.php?href={{ meta.metaUrl }}&amp;width&amp;layout=button_count&amp;action=like&amp;show_faces=false&amp;share=false&amp;height=21&amp;appId=524372607681877" scrolling="no" frameborder="0" style="border:none; overflow:hidden; height:21px;" allowTransparency="true"></iframe>
-					</div>
-				</div>
+				<div class="copyright">{{ credits.copyrightShort }}</div>
 			</div>
 
 		</div>

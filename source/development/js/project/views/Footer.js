@@ -13,22 +13,16 @@ hlc.views.Footer = function(){
   goog.base(this);
 
   this.domElement = goog.dom.getElement('footer');
-  this.creditsDom = goog.dom.getElement('credits');
+  //this.creditsDom = goog.dom.getElement('credits');
 
-  this.photographyDom = goog.dom.query('[data-id = "photography"]', this.creditsDom)[0];
-  this.defaultPhotographyAuthorHTML = goog.dom.query('a', this.photographyDom)[0].outerHTML;
-
-  this.titleDom = goog.dom.query('h3', this.creditsDom)[0];
-  this.expandButton = goog.dom.query('.expandButton', this.creditsDom)[0];
-  this.outerDom = goog.dom.query('.outer', this.creditsDom)[0];
-  this.innerDom = goog.dom.query('.inner', this.creditsDom)[0];
-
-  this.isExpanded = false;
+  //this.photographyDom = goog.dom.query('[data-id = "photography"]', this.creditsDom)[0];
+  //this.defaultPhotographyAuthorHTML = goog.dom.query('a', this.photographyDom)[0].outerHTML;
 };
 goog.inherits(hlc.views.Footer, goog.events.EventTarget);
 
 
 hlc.views.Footer.prototype.init = function(){
+
 	goog.events.listen(hlc.main.controllers.mainScrollController,
 		hlc.controllers.MainScrollController.EventType.SCROLL_START, this.onMainScrollStart, false, this);
 
@@ -37,25 +31,12 @@ hlc.views.Footer.prototype.init = function(){
 
 	goog.events.listen(hlc.main.controllers.albumScrollController,
 		hlc.controllers.AlbumScrollController.EventType.SCROLL_START, this.onAlbumScrollStart, false, this);
-
-	goog.events.listen(this.titleDom, 'click', this.onClick, false, this);
 };
 
 
 hlc.views.Footer.prototype.up = function(toggle){
-	if(toggle === true) goog.dom.classes.add(this.domElement, 'up');
-	else goog.dom.classes.remove(this.domElement, 'up');
-};
 
-
-hlc.views.Footer.prototype.setBlack = function(toggle){
-	if(toggle === true) {
-		goog.dom.classes.add(this.domElement, 'black');
-		goog.dom.classes.add(this.expandButton, 'black');
-	}else {
-		goog.dom.classes.remove(this.domElement, 'black');
-		goog.dom.classes.remove(this.expandButton, 'black');
-	}
+	goog.dom.classes.enable(this.domElement, 'up', toggle);
 };
 
 
@@ -77,8 +58,6 @@ hlc.views.Footer.prototype.updatePhotography = function(artwork) {
 	}
 
 	goog.dom.replaceNode(newAuthorDom, oldAuthorDom);
-
-	if(this.isExpanded) this.open();
 };
 
 
@@ -94,48 +73,36 @@ hlc.views.Footer.prototype.open = function(){
 };
 
 
-hlc.views.Footer.prototype.close = function(){
-	TweenMax.killTweensOf(this.outerDom);
-
-	this.isExpanded = false;
-
-	goog.dom.classes.addRemove(this.expandButton, 'downwards', 'upwards');
-	TweenMax.to(this.outerDom, .5, {height: 0, opacity: 0, ease: Quad.easeInOut});
-};
-
-
-hlc.views.Footer.prototype.toggle = function(){
-	if(this.isExpanded) {
-		this.close();
-	}else {
-		this.open();
-	}
-};
-
-
 hlc.views.Footer.prototype.onMainScrollStart = function(e){
+
 	if(e.scrollPosition === hlc.controllers.MainScrollController.ScrollPosition.MASTHEAD) {
 		this.up(false);
-	}else {
-		this.setBlack(false);
 	}
-
-	this.close();
 };
 
 
 hlc.views.Footer.prototype.onAlbumScrollStart = function(e){
-	this.close();
+
+
 };
 
 
 hlc.views.Footer.prototype.onMainScrollFinish = function(e){
+
 	if(e.scrollPosition !== hlc.controllers.MainScrollController.ScrollPosition.MASTHEAD) {
+
 		this.up(true);
+		goog.events.listen(this.domElement, 'click', this.onClick, false, this);
+
+	}else {
+
+		goog.events.unlisten(this.domElement, 'click', this.onClick, false, this);
 	}
 };
 
 
 hlc.views.Footer.prototype.onClick = function(e){
-	this.toggle();
+
+	console.log("CLICK CREDITS");
+	//hlc.main.views.credits.show();
 };

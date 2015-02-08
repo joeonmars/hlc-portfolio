@@ -105,10 +105,10 @@ hlc.views.MastheadSection.prototype.toPage = function(page){
 
 	// change ui color
 	if(page !== this.pages['home']) {
-		hlc.main.views.footer.setBlack(true);
+		//hlc.main.views.footer.setBlack(true);
 		this.nav.setBlack(true);
 	}else {
-		hlc.main.views.footer.setBlack(false);
+		//hlc.main.views.footer.setBlack(false);
 		this.nav.setBlack(false);
 	}
 
@@ -120,9 +120,9 @@ hlc.views.MastheadSection.prototype.toPage = function(page){
 hlc.views.MastheadSection.prototype.onScrollStart = function(e){
 	if(e.scrollPosition === hlc.controllers.MainScrollController.ScrollPosition.MASTHEAD) {
 		if(!this.pageToLoad || this.pageToLoad === this.pages['home']) {
-			hlc.main.views.footer.setBlack(false);
+			//hlc.main.views.footer.setBlack(false);
 		}else {
-			hlc.main.views.footer.setBlack(true);
+			//hlc.main.views.footer.setBlack(true);
 		}
 	}
 };

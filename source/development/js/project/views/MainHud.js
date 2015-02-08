@@ -27,12 +27,10 @@ hlc.views.MainHud = function(){
   	goog.dom.classes.add(this.playlistButtonContainerDom, 'use3d');
   }
 
-  this.homeButtonDom = goog.dom.query('.homeButton', this.domElement)[0];
   this.bottomContainer = goog.dom.query('.bottom', this.domElement)[0];
 
   this.playlistButton = new hlc.views.common.TriangleButton(this.playlistButtonDom);
   this.playlistCloseButton = new hlc.views.common.TriangleButton(this.playlistCloseButtonDom);
-  this.homeButton = new hlc.views.common.TriangleButton(this.homeButtonDom);
   this.sidebarButton = new hlc.views.common.TriangleButton(this.sidebarButtonDom);
 
   this.playlist = new hlc.views.Playlist();
@@ -43,7 +41,6 @@ hlc.views.MainHud = function(){
   tracker.add(this.playlistButtonDom, 'down', new goog.math.Size(114, 57));
   tracker.add(this.playlistCloseButtonDom, 'down', new goog.math.Size(114, 57));
   tracker.add(this.sidebarButtonDom, 'left', new goog.math.Size(57, 114));
-  tracker.add(this.homeButtonDom, 'up', new goog.math.Size(114, 57));
 };
 goog.inherits(hlc.views.MainHud, goog.events.EventTarget);
 
@@ -68,7 +65,6 @@ hlc.views.MainHud.prototype.init = function(){
 	goog.events.listen(this.sidebarButtonDom, 'click', this.onClick, false, this);
 	goog.events.listen(this.playlistButtonDom, 'click', this.onClick, false, this);
 	goog.events.listen(this.playlistCloseButtonDom, 'click', this.onClick, false, this);
-	goog.events.listen(this.homeButtonDom, 'click', this.onClick, false, this);
 
 	goog.events.listen(this.playlist, hlc.views.Playlist.EventType.SHOW_START, this.onPlaylistShowStart, false, this);
 	goog.events.listen(this.playlist, hlc.views.Playlist.EventType.HIDE_START, this.onPlaylistHideStart, false, this);
@@ -101,12 +97,10 @@ hlc.views.MainHud.prototype.onScrollStart = function(e){
 
 hlc.views.MainHud.prototype.onScrollFinish = function(e){
 	if(e.scrollPosition === hlc.controllers.MainScrollController.ScrollPosition.MASTHEAD) {
-		this.homeButton.stopAnimation();
 		this.hideBottom();
 		this.sidebarButton.stopAnimation();
 		this.sidebarButton.hide();
 	}else {
-		this.homeButton.startAnimation();
 		this.showBottom();
 
 		if(!hlc.main.views.sidebar.isSlidedIn) {
@@ -141,8 +135,7 @@ hlc.views.MainHud.prototype.onPlaylistHideFinish = function(e){
 
 
 hlc.views.MainHud.prototype.onMastheadPageLoaded = function(e){
-	this.homeButton.setText(e.title);
-	this.homeButtonDom.setAttribute('href', '/' + e.token);
+
 };
 
 
@@ -188,19 +181,12 @@ hlc.views.MainHud.prototype.onClick = function(e){
 			this.playlist.toggle();
 		}
 		break;
-
-		case this.homeButtonDom:
-		var hasClickedOnShape = tracker.getClickResult(e, true);
-		if(!hasClickedOnShape) return false;
-
-		var token = this.homeButtonDom.getAttribute('href');
-		hlc.main.controllers.navigationController.setToken(token);
-		break;
 	}
 };
 
 
 hlc.views.MainHud.prototype.onResize = function(e){
+	
 	var sidebarButtonDomSize = goog.style.getSize(this.sidebarButtonDom);
 	var sidebarButtonDomY = (e.mainViewportSize.height - sidebarButtonDomSize.height ) / 2;
 	goog.style.setStyle(this.sidebarButtonDom, {'top': sidebarButtonDomY + 'px', 'right': sidebarButtonDomSize.width + 'px'});

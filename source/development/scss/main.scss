@@ -1,11 +1,12 @@
 @import "global";
+@import "animation";
 @import "common-ui";
 @import "preloader";
 @import "album";
 @import "sidebar";
 @import "main-hud";
 @import "masthead-section";
-@import "footer";
+@import "credits";
 
 #main-container{
 	width: 100%;

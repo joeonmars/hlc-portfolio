@@ -1,0 +1,86 @@
+{
+  "checksum": {
+    "previous": "f6d8d7ce7a7cd4b0313a3195f3252a6e710757374c226f62e3cea3e34baa3798",
+    "current": "f6d8d7ce7a7cd4b0313a3195f3252a6e710757374c226f62e3cea3e34baa3798"
+  },
+  "fonts": [
+    "font/fontcustom/icons.ttf",
+    "font/fontcustom/icons.svg",
+    "font/fontcustom/icons.woff",
+    "font/fontcustom/icons.eot"
+  ],
+  "glyphs": {
+    "close": {
+      "codepoint": 61702,
+      "source": "svg/close.svg"
+    },
+    "facebook": {
+      "codepoint": 61697,
+      "source": "svg/facebook.svg"
+    },
+    "googleplus": {
+      "codepoint": 61698,
+      "source": "svg/googleplus.svg"
+    },
+    "linkedin": {
+      "codepoint": 61703,
+      "source": "svg/linkedin.svg"
+    },
+    "pause": {
+      "codepoint": 61704,
+      "source": "svg/pause.svg"
+    },
+    "play": {
+      "codepoint": 61705,
+      "source": "svg/play.svg"
+    },
+    "twitter": {
+      "codepoint": 61699,
+      "source": "svg/twitter.svg"
+    },
+    "vimeo": {
+      "codepoint": 61696,
+      "source": "svg/vimeo.svg"
+    },
+    "weibo": {
+      "codepoint": 61700,
+      "source": "svg/weibo.svg"
+    },
+    "youtube": {
+      "codepoint": 61701,
+      "source": "svg/youtube.svg"
+    }
+  },
+  "options": {
+    "autowidth": false,
+    "config": "fontcustom.yml",
+    "css_selector": ".icon-{{glyph}}",
+    "debug": false,
+    "font_ascent": 448,
+    "font_descent": 64,
+    "font_design_size": 16,
+    "font_em": 512,
+    "font_name": "icons",
+    "force": true,
+    "input": {
+      "templates": "svg",
+      "vectors": "svg"
+    },
+    "no_hash": true,
+    "output": {
+      "css": "css",
+      "fonts": "font/fontcustom",
+      "preview": "./"
+    },
+    "preprocessor_path": null,
+    "quiet": false,
+    "templates": [
+      "css",
+      "preview"
+    ]
+  },
+  "templates": [
+    "css/icons.css",
+    "./icons-preview.html"
+  ]
+}

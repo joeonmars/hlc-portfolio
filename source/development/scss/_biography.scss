@@ -168,7 +168,7 @@
 
 					&:not(.paused){
 						.icon{
-							@extend .fa-pause;
+							@extend .icon-pause;
 						}
 					}
 				}
@@ -184,14 +184,13 @@
 					position: absolute;
 					top: 0;
 					left: 0;
-					font-size: 1.25em;
-					width: (3em/1.25);
+					font-size: 1.2em;
+					width: (3em/1.2);
 					height: 100%;
 					background-color: #fff;
-					@extend .fa;
-					@extend .fa-play;
+					@extend .icon-play;
 					color: $color_purple;
-					line-height: (3em/1.25);
+					line-height: (3em/1.2);
 				}
 
 				>.fill{

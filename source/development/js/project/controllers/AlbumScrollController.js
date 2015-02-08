@@ -6,6 +6,7 @@ goog.require('goog.events');
 goog.require('goog.dom.query');
 goog.require('goog.async.Delay');
 goog.require('goog.userAgent');
+goog.require('goog.ui.KeyboardShortcutHandler');
 goog.require('hlc.utils');
 
 /**
@@ -33,17 +34,20 @@ hlc.controllers.AlbumScrollController = function(){
 
   this._scrollProps = {y1: 0, y2: 0, t1: 0, t2: 0, startY: 0, endY: 0, originalY: 0};
   this._isDragging = false;
+
+  this._isActivated = false;
+  this._shortcutHandler = new goog.ui.KeyboardShortcutHandler( document );
+  this._eventHandler = new goog.events.EventHandler(this);
 };
 goog.inherits(hlc.controllers.AlbumScrollController, goog.events.EventTarget);
 goog.addSingletonGetter(hlc.controllers.AlbumScrollController);
 
 
 hlc.controllers.AlbumScrollController.prototype.init = function(){
-	goog.array.forEach(this.albumSections, function(albumSection) {
-  	albumSection.init();
-  }, this);
 
-  goog.events.listen(this._albumScrollDomElement, hlc.events.EventType.DOWN, this.onDown, false, this);
+	goog.array.forEach(this.albumSections, function(albumSection) {
+		albumSection.init();
+	}, this);
 
 	goog.events.listen(hlc.main.controllers.mainScrollController,
 		hlc.controllers.MainScrollController.EventType.SCROLL_FINISH, this.onMainScrollFinish, false, this);
@@ -53,7 +57,38 @@ hlc.controllers.AlbumScrollController.prototype.init = function(){
 };
 
 
+hlc.controllers.AlbumScrollController.prototype.activate = function(){
+
+	if(this._isActivated) {
+		return;
+	}else {
+		this._isActivated = true;
+	}
+
+	this._eventHandler.listen(this._albumScrollDomElement, hlc.events.EventType.DOWN, this.onDown, false, this);
+	this._eventHandler.listen( this._shortcutHandler, goog.ui.KeyboardShortcutHandler.EventType.SHORTCUT_TRIGGERED, this.onShortcutTriggered, false, this );
+
+	this._shortcutHandler.registerShortcut('up', 'up');
+	this._shortcutHandler.registerShortcut('down', 'down');
+};
+
+
+hlc.controllers.AlbumScrollController.prototype.deactivate = function(){
+
+	if(!this._isActivated) {
+		return;
+	}else {
+		this._isActivated = false;
+	}
+
+	this._shortcutHandler.unregisterAll();
+
+	this._eventHandler.removeAll();
+};
+
+
 hlc.controllers.AlbumScrollController.prototype.getPrevAlbum = function(){
+
 	var lastAlbumSectionIndex = Math.max(goog.array.indexOf(this.albumSections, this.currentAlbumSection) - 1, 0);
  	var lastAlbumSection = this.albumSections[lastAlbumSectionIndex];
 
@@ -62,6 +97,7 @@ hlc.controllers.AlbumScrollController.prototype.getPrevAlbum = function(){
 
 
 hlc.controllers.AlbumScrollController.prototype.getNextAlbum = function(){
+
  	var nextAlbumSectionIndex = Math.min(goog.array.indexOf(this.albumSections, this.currentAlbumSection) + 1, this.albumSections.length - 1);
  	var nextAlbumSection = this.albumSections[nextAlbumSectionIndex];
 
@@ -70,6 +106,7 @@ hlc.controllers.AlbumScrollController.prototype.getNextAlbum = function(){
 
 
 hlc.controllers.AlbumScrollController.prototype.locateAlbum = function(album){
+
 	var albumSection = null;
 
 	if(album) {
@@ -95,10 +132,10 @@ hlc.controllers.AlbumScrollController.prototype.locateAlbum = function(album){
 
 
 hlc.controllers.AlbumScrollController.prototype.scrollToAlbum = function(albumSection, songId){
+
 	var albumDomHeight = hlc.main.controllers.windowController.getMainViewportSize().height;
 	var albumDomY = albumSection.albumIndex * albumDomHeight;
 
-	//if(this.scrollPosition === albumDomY) return;
 	this.scrollPosition = albumDomY;
 
 	// animate the scroll position
@@ -135,10 +172,11 @@ hlc.controllers.AlbumScrollController.prototype.scrollToAlbum = function(albumSe
 
 
 hlc.controllers.AlbumScrollController.prototype.onDown = function(e){
+
 	this._locateDelay.stop();
 
-	goog.events.listen(document, hlc.events.EventType.MOVE, this.onMove, false, this);
-	goog.events.listen(document, hlc.events.EventType.UP, this.onUp, false, this);
+	this._eventHandler.listen(document, hlc.events.EventType.MOVE, this.onMove, false, this);
+	this._eventHandler.listen(document, hlc.events.EventType.UP, this.onUp, false, this);
 
 	var touchY = hlc.utils.getTouchCoordinate(e).y;
 
@@ -153,6 +191,7 @@ hlc.controllers.AlbumScrollController.prototype.onDown = function(e){
 
 
 hlc.controllers.AlbumScrollController.prototype.onMove = function(e){
+
 	this._isDragging = true;
 
 	var touchY = hlc.utils.getTouchCoordinate(e).y;
@@ -178,8 +217,9 @@ hlc.controllers.AlbumScrollController.prototype.onMove = function(e){
 
 
 hlc.controllers.AlbumScrollController.prototype.onUp = function(e){
-	goog.events.unlisten(document, hlc.events.EventType.MOVE, this.onMove, false, this);
-	goog.events.unlisten(document, hlc.events.EventType.UP, this.onUp, false, this);
+
+	this._eventHandler.unlisten(document, hlc.events.EventType.MOVE, this.onMove, false, this);
+	this._eventHandler.unlisten(document, hlc.events.EventType.UP, this.onUp, false, this);
 
 	if(!this._isDragging) return false;
 	else this._isDragging = false;
@@ -210,8 +250,38 @@ hlc.controllers.AlbumScrollController.prototype.onUp = function(e){
 
 
 hlc.controllers.AlbumScrollController.prototype.onMainScrollFinish = function(e){
+
 	if(e.scrollPosition === hlc.controllers.MainScrollController.ScrollPosition.ALBUM) {
+
 		this._locateDelay.start();
+
+		this.activate();
+
+	}else {
+
+		this.deactivate();
+	}
+};
+
+
+hlc.controllers.AlbumScrollController.prototype.onShortcutTriggered = function(e){
+
+	if(this._tweener && this._tweener.isActive()) return;
+
+	switch(e.identifier) {
+		case 'up':
+		var prevAlbum = this.getPrevAlbum();
+		if(prevAlbum !== this.currentAlbumSection) {
+			this.locateAlbum( prevAlbum );
+		}
+		break;
+
+		case 'down':
+		var nextAlbum = this.getNextAlbum();
+		if(nextAlbum !== this.currentAlbumSection) {
+			this.locateAlbum( nextAlbum );
+		}
+		break;
 	}
 };
 

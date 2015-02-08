@@ -30,7 +30,7 @@
 	}
 
 	>.top, >.bottom{
-		height: 40px;
+		height: 50px;
 		@include background(linear-gradient(left, rgba(0,0,0,0), rgba(15,15,30,.5) 20%, rgba(35,35,35,.5) 80%, rgba(0,0,0,0)));
 
 		>ul{
@@ -39,8 +39,8 @@
 			h4{
 				height: 18px;
 				font-size: 18px;
-				padding-top: (40px - 18px) / 2;
-				padding-bottom: (40px - 18px) / 2;
+				padding-top: (50px - 18px) / 2;
+				padding-bottom: (50px - 18px) / 2;
 			}
 		}
 
@@ -76,15 +76,15 @@
 	}
 
 	>.middle{
-		height: 60px;
+		height: 80px;
 		@include background(linear-gradient(left, rgba(0,0,0,0), rgba(15,15,30,.25) 20%, rgba(35,35,35,.25) 80%, rgba(0,0,0,0)));
 
 		>ul{
 			h4{
 				height: 44px;
 				font-size: 40px;
-				padding-top: (60px - 44px) / 2;
-				padding-bottom: (60px - 44px) / 2;
+				padding-top: (80px - 44px) / 2;
+				padding-bottom: (80px - 44px) / 2;
 			}
 		}
 

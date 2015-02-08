@@ -4,6 +4,10 @@
 {% set songSlug = craft.request.getQuery('song') %}
 {% set songEntry = craft.entries.section('song').slug(songSlug).find()[0] %}
 
+{% extends "_global" %}
+
+{% block html %}
+
 <div class="songDetailContainer">
 
 	<h4>
@@ -47,7 +51,7 @@
 			{% if songEntry.description|length %}
 				{{ songEntry.description }}
 			{% else %}
-				<p>Description coming soon.</p>
+				<p>{{ COPY['no-description'] }}</p>
 			{% endif %}
 		</div>
 	</div>
@@ -55,7 +59,7 @@
 	{% if songEntry.allowDownload == 'y' %}
 	<div class="download section">
 		<a href="{{ siteUrl }}{{ songEntry.audio[0].url }}" target="_blank">
-			<h3>download</h3>
+			<h5>download</h5>
 			<i></i>
 		</a>
 	</div>
@@ -67,7 +71,7 @@
 		{% set shareDescription = meta.metaSongDescription|replace({'%song%': songEntry.title|capitalize, '%album%': albumEntry.title|capitalize}) %}
 		{% set shareCopy = shareTitle~". "~shareDescription %}
 
-		<h3>share this song</h3>
+		<h5>share this song</h5>
 		<a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u={{ shareUrl }}" target="_blank" data-width=626 data-height=436></a>
 		<a class="twitter" href="https://twitter.com/share?url={{ shareUrl }}&text={{ shareCopy }}" target="_blank" data-width=550 data-height=420></a>
 		<a class="googleplus" href="https://plus.google.com/share?url={{ shareUrl }}" target="_blank" data-width=600 data-height=600></a>
@@ -76,7 +80,7 @@
 
 	{% if songEntry.suggestedSongs|length %}
 	<div class="suggestedSongs section">
-		<h3>you may also like</h3>
+		<h5>you may also like</h5>
 		<ul>
 		{% for suggestedSong in songEntry.suggestedSongs %}
 			<li>
@@ -100,3 +104,5 @@
 	{% endif %}
 
 </div>
+
+{% endblock %}

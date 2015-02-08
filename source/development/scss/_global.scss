@@ -9,7 +9,7 @@
 @import "compass/css3/user-interface";
 @import "compass/css3/text-shadow";
 @import "compass/css3/transition";
-@import "font-awesome";
+@import "icons";
 
 // --- web fonts ---
 @import url(http://fonts.googleapis.com/css?family=Poly:400,400italic);
@@ -61,7 +61,7 @@ $font_assasin: "assassinregular", serif;
 
 $color_purple: #535362;
 $color_lightpurple: #747484;
-$color_greenishgray: #CECEBF;
+$color_greenishgray: #bcbcb1;
 
 $triangle_button_size: 114px;
 $sidebar_width: 500px;
@@ -132,6 +132,12 @@ sup{
   position: relative;
   top: -.5em;
   font-size: .5em;
+}
+
+hr{
+  border: none;
+  height: 1px;
+  background-color: #fff;
 }
 
 .button{

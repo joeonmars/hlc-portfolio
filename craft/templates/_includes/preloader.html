@@ -3,20 +3,76 @@
 {% block html %}
 
 <div id="preloader">
-	<div class="portrait"></div>
-	<div class="content">
-		<div class="content-inner">
-			<div class="counter">
-				<div class="slash"></div>
-				<div class="number progress">00</div>
-				<div class="number hundred">100</div>
-			</div>
-			<div class="hint">
-				<div class="speaker"></div>
-				<p>{{ COPY['loading-hint'] }}</p>
+	<div class="inner">
+		<div class="portrait"></div>
+		<div class="content">
+			<div class="content-inner">
+				<div class="counter">
+					<div class="slash"></div>
+					<div class="number numerator">
+						<div class="digits">
+							<div class="hundreds">
+								<span>0</span>
+								<span>1</span>
+								<span>2</span>
+								<span>3</span>
+								<span>4</span>
+								<span>5</span>
+								<span>6</span>
+								<span>7</span>
+								<span>8</span>
+								<span>9</span>
+							</div>
+							<div class="tens">
+								<span>0</span>
+								<span>1</span>
+								<span>2</span>
+								<span>3</span>
+								<span>4</span>
+								<span>5</span>
+								<span>6</span>
+								<span>7</span>
+								<span>8</span>
+								<span>9</span>
+							</div>
+							<div class="ones">
+								<span>0</span>
+								<span>1</span>
+								<span>2</span>
+								<span>3</span>
+								<span>4</span>
+								<span>5</span>
+								<span>6</span>
+								<span>7</span>
+								<span>8</span>
+								<span>9</span>
+							</div>
+						</div>
+					</div>
+					<div class="number denominator">
+						<div class="digits">
+							<div class="hundreds">
+								<span>1</span>
+							</div>
+							<div class="tens">
+								<span>0</span>
+							</div>
+							<div class="ones">
+								<span>0</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="hint">
+					<div class="speaker">
+						<div class="wave"></div>
+					</div>
+					<p>{{ COPY['loading-hint'] }}</p>
+				</div>
 			</div>
 		</div>
 	</div>
+	<div class="curtain"></div>
 </div>
 
 {% endblock %}

@@ -126,7 +126,7 @@ hlc.views.AlbumSection.prototype.crossfade = function() {
 	this._loaderImage.src = '';
 
 	//
-	hlc.main.views.footer.updatePhotography(this._currentArtwork);
+	//hlc.main.views.footer.updatePhotography(this._currentArtwork);
 };
 
 

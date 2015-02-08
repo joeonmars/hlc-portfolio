@@ -29,19 +29,22 @@
 						font-family: $font_barkentina;
 						font-style: normal;
 						font-size: 20px;
+						line-height: 1.6;
 					}
+				}
+
+				h5{
+					color: $color_greenishgray;
+					font-family: $font_barkentina;
+					font-size: 14px;
+					text-transform: uppercase;
+					letter-spacing: .1em;
+					line-height: 1.6;
 				}
 
 				>.section{
 					border-top: 1px solid $color_greenishgray;
 					padding: 26px 0 26px 0;
-
-					h3{
-						color: $color_purple;
-						font-family: $font_barkentina;
-						font-size: 20px;
-						text-transform: uppercase;
-					}
 				}
 
 				>.info{
@@ -54,13 +57,6 @@
 							vertical-align: top;
 							width: 50%;
 							margin: 6px 0 6px 0;
-
-							h5{
-								color: $color_greenishgray;
-								font-family: $font_barkentina;
-								font-size: 14px;
-								text-transform: uppercase;
-							}
 
 							p{
 								color: $color_purple;
@@ -91,7 +87,7 @@
 					>a{
 						@include fade-button(1, .8);
 
-						>h3{
+						>h5{
 							display: inline-block;
 						}
 
@@ -105,7 +101,7 @@
 				}
 
 				>.share{
-					>h3{
+					>h5{
 						display: inline-block;
 						vertical-align: middle;
 						margin-right: 20px;
@@ -118,23 +114,22 @@
 						color: $color_purple;
 						font-size: 2em;
 						@include fade-button(1, .8);
-						@extend .fa;
 
 						&.facebook{
-							@extend .fa-facebook-official;
+							@extend .icon-facebook;
 						}
 
 						&.twitter{
-							@extend .fa-twitter;
+							@extend .icon-twitter;
 						}
 
 						&.googleplus{
-							@extend .fa-google-plus;
+							@extend .icon-googleplus;
 							font-size: 1.8em;
 						}
 
 						&.weibo{
-							@extend .fa-weibo;
+							@extend .icon-weibo;
 						}
 					}
 				}
