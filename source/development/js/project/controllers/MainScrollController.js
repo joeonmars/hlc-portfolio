@@ -45,15 +45,24 @@ hlc.controllers.MainScrollController.prototype.scrollTo = function(scrollPositio
 		ease: Power2.easeOut,
 		onStart: function() {
 			var ev = {
-				type: hlc.controllers.MainScrollController.EventType.SCROLL_START,
+				type: hlc.events.EventType.SCROLL_START,
 				scrollPosition: this.scrollPosition
 			};
 			this.dispatchEvent(ev);
 		},
 		onStartScope: this,
+		onUpdate: function() {
+			var ev = {
+				type: hlc.events.EventType.SCROLL_UPDATE,
+				scrollPosition: this.scrollPosition,
+				progress: this._tweener.progress()
+			};
+			this.dispatchEvent(ev);
+		},
+		onUpdateScope: this,
 		onComplete: function() {
 			var ev = {
-				type: hlc.controllers.MainScrollController.EventType.SCROLL_FINISH,
+				type: hlc.events.EventType.SCROLL_COMPLETE,
 				scrollPosition: this.scrollPosition
 			};
 			this.dispatchEvent(ev);
@@ -74,12 +83,6 @@ hlc.controllers.MainScrollController.prototype.onNavigate = function(e){
 
 hlc.controllers.MainScrollController.prototype.onResize = function(e){
 	this.scrollTo(this.scrollPosition);
-};
-
-
-hlc.controllers.MainScrollController.EventType = {
-	SCROLL_START: 'scroll_start',
-	SCROLL_FINISH: 'scroll_finish'
 };
 
 

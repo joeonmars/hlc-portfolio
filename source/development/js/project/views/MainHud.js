@@ -57,10 +57,10 @@ hlc.views.MainHud.prototype.init = function(){
 	hlc.main.controllers.windowController.addDispatcher(this);
 
 	goog.events.listen(hlc.main.controllers.mainScrollController,
-		hlc.controllers.MainScrollController.EventType.SCROLL_START, this.onScrollStart, false, this);
+		hlc.events.EventType.SCROLL_START, this.onScrollStart, false, this);
 
 	goog.events.listen(hlc.main.controllers.mainScrollController,
-		hlc.controllers.MainScrollController.EventType.SCROLL_FINISH, this.onScrollFinish, false, this);
+		hlc.events.EventType.SCROLL_COMPLETE, this.onScrollFinish, false, this);
 
 	goog.events.listen(this.sidebarButtonDom, 'click', this.onClick, false, this);
 	goog.events.listen(this.playlistButtonDom, 'click', this.onClick, false, this);

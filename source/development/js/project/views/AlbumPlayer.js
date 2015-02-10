@@ -4,7 +4,7 @@ goog.require('goog.events.EventTarget');
 goog.require('goog.events');
 goog.require('goog.dom');
 goog.require('goog.dom.query');
-goog.require('goog.dom.classes');
+goog.require('goog.dom.classlist');
 goog.require('hlc.views.common.CircularProgressBar');
 
 /**
@@ -42,6 +42,7 @@ goog.inherits(hlc.views.AlbumPlayer, goog.events.EventTarget);
 
 
 hlc.views.AlbumPlayer.prototype.init = function(songs){
+
 	this._songs = songs;
 	this.gotoSong(0);
 };
@@ -111,12 +112,10 @@ hlc.views.AlbumPlayer.prototype.gotoSong = function(index){
 
   // set button state
   var isPrevButtonInactive = (index === 0);
-  if(isPrevButtonInactive) goog.dom.classes.add(this.prevButton, 'inactive');
-  else goog.dom.classes.remove(this.prevButton, 'inactive');
+  goog.dom.classlist.enable(this.prevButton, 'inactive', isPrevButtonInactive);
 
   var isNextButtonInactive = (index === this._songs.length-1);
-  if(isNextButtonInactive) goog.dom.classes.add(this.nextButton, 'inactive');
-  else goog.dom.classes.remove(this.nextButton, 'inactive');
+  goog.dom.classlist.enable(this.nextButton, 'inactive', isNextButtonInactive);
 };
 
 

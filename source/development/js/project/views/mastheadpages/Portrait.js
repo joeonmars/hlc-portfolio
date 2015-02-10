@@ -52,6 +52,9 @@ hlc.views.mastheadpages.Portrait.prototype.activate = function(){
 	this._eventHandler.listen(this._imgLoader, goog.events.EventType.LOAD, this.onHighResImageLoad, false, this);
 
 	this.resize();
+
+	this._progress = 1;
+	this.updateProgress();
 };
 
 

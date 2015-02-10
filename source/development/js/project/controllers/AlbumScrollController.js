@@ -50,7 +50,7 @@ hlc.controllers.AlbumScrollController.prototype.init = function(){
 	}, this);
 
 	goog.events.listen(hlc.main.controllers.mainScrollController,
-		hlc.controllers.MainScrollController.EventType.SCROLL_FINISH, this.onMainScrollFinish, false, this);
+		hlc.events.EventType.SCROLL_COMPLETE, this.onMainScrollFinish, false, this);
 
 	hlc.main.controllers.navigationController.addDispatcher(this);
 	goog.events.listen(this, goog.history.EventType.NAVIGATE, this.onNavigate, false, this);
@@ -124,9 +124,18 @@ hlc.controllers.AlbumScrollController.prototype.locateAlbum = function(album){
 	var token = 'album/' + albumId + '/' + songId;
 
 	if(hlc.main.controllers.navigationController.getToken() === token) {
+
 		this.scrollToAlbum( albumSection );
+
 	}else {
-		hlc.main.controllers.navigationController.setToken( token );
+
+		var shouldReplaceToken = (hlc.main.controllers.navigationController.getToken() === 'album');
+
+		if(shouldReplaceToken) {
+			hlc.main.controllers.navigationController.replaceToken( token );
+		}else {
+			hlc.main.controllers.navigationController.setToken( token );
+		}
 	}
 };
 
@@ -144,7 +153,7 @@ hlc.controllers.AlbumScrollController.prototype.scrollToAlbum = function(albumSe
 		ease: Strong.easeOut,
 		onStart: function() {
 			var ev = {
-				type: hlc.controllers.AlbumScrollController.EventType.SCROLL_START,
+				type: hlc.events.EventType.SCROLL_START,
 				scrollPosition: this.scrollPosition,
 				albumSection: this.currentAlbumSection,
 				songId: songId
@@ -158,7 +167,7 @@ hlc.controllers.AlbumScrollController.prototype.scrollToAlbum = function(albumSe
 			else this.currentAlbumSection = albumSection;
 
 			var ev = {
-				type: hlc.controllers.AlbumScrollController.EventType.SCROLL_FINISH,
+				type: hlc.events.EventType.SCROLL_COMPLETE,
 				scrollPosition: this.scrollPosition,
 				albumSection: this.currentAlbumSection,
 				songId: songId
@@ -172,6 +181,10 @@ hlc.controllers.AlbumScrollController.prototype.scrollToAlbum = function(albumSe
 
 
 hlc.controllers.AlbumScrollController.prototype.onDown = function(e){
+
+	if(e.button && e.button !== goog.events.BrowserEvent.MouseButton.LEFT) {
+		return false;
+	}
 
 	this._locateDelay.stop();
 
@@ -292,6 +305,7 @@ hlc.controllers.AlbumScrollController.prototype.onNavigate = function(e){
 	if(tokens[tokens.length - 1] == '') tokens.pop();
 
 	if(tokens[0] === 'album' && tokens.length > 2) {
+
 		var albumId = tokens[1];
 		var songId = (tokens.length === 3) ? tokens[2] : null;
 
@@ -300,11 +314,9 @@ hlc.controllers.AlbumScrollController.prototype.onNavigate = function(e){
 		});
 
 		if(albumSection) this.scrollToAlbum(albumSection, songId);
+
+	}else if(tokens[0] !== 'album') {
+
+		this._locateDelay.stop();
 	}
-};
-
-
-hlc.controllers.AlbumScrollController.EventType = {
-	SCROLL_START: 'scroll_start',
-	SCROLL_FINISH: 'scroll_finish'
 };

@@ -13,6 +13,7 @@ goog.require('hlc.utils');
  * @constructor
  */
 hlc.views.AlbumSection = function(domElement, albumIndex){
+
   goog.base(this, domElement);
 
   this.albumModel = null;
@@ -48,6 +49,7 @@ goog.inherits(hlc.views.AlbumSection, hlc.views.Section);
 
 
 hlc.views.AlbumSection.prototype.init = function(){
+
 	goog.base(this, 'init');
 
 	// set model
@@ -67,9 +69,13 @@ hlc.views.AlbumSection.prototype.init = function(){
 	goog.events.listen(this.albumPlayer, 'pause', this.onPause, false, this);
 	goog.events.listen(this.albumPlayer, hlc.views.AlbumPlayer.EventType.SONG_CHANGED, this.onSongChanged, false, this);
 
+	// listen for credits event
+	goog.events.listen( hlc.main.views.credits, hlc.events.EventType.ANIMATE_IN_START, this.hideUI, false, this );
+  	goog.events.listen( hlc.main.views.credits, hlc.events.EventType.ANIMATE_OUT_START, this.showUI, false, this );
+
 	// listen for album scroll event
 	goog.events.listen(hlc.main.controllers.albumScrollController,
-		hlc.controllers.AlbumScrollController.EventType.SCROLL_FINISH, this.onScrollFinish, false, this);
+		hlc.events.EventType.SCROLL_COMPLETE, this.onScrollFinish, false, this);
 
 	// set album player
 	this.albumPlayer.init(this.albumModel.songs);
@@ -127,6 +133,18 @@ hlc.views.AlbumSection.prototype.crossfade = function() {
 
 	//
 	//hlc.main.views.footer.updatePhotography(this._currentArtwork);
+};
+
+
+hlc.views.AlbumSection.prototype.showUI = function(){
+
+  goog.dom.classes.enable( this.domElement, 'ui-hidden', false );
+};
+
+
+hlc.views.AlbumSection.prototype.hideUI = function(){
+  
+  goog.dom.classes.enable( this.domElement, 'ui-hidden', true );
 };
 
 
@@ -198,10 +216,4 @@ hlc.views.AlbumSection.prototype.onNavigate = function(e){
 			this.albumPlayer.gotoSongById( songId );
 		}
 	}
-};
-
-
-hlc.views.AlbumSection.prototype.onResize = function(e){
-	goog.base(this, 'onResize', e);
-
 };

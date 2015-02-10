@@ -24,13 +24,13 @@ goog.inherits(hlc.views.Footer, goog.events.EventTarget);
 hlc.views.Footer.prototype.init = function(){
 
 	goog.events.listen(hlc.main.controllers.mainScrollController,
-		hlc.controllers.MainScrollController.EventType.SCROLL_START, this.onMainScrollStart, false, this);
+		hlc.events.EventType.SCROLL_START, this.onMainScrollStart, false, this);
 
 	goog.events.listen(hlc.main.controllers.mainScrollController,
-		hlc.controllers.MainScrollController.EventType.SCROLL_FINISH, this.onMainScrollFinish, false, this);
+		hlc.events.EventType.SCROLL_COMPLETE, this.onMainScrollFinish, false, this);
 
 	goog.events.listen(hlc.main.controllers.albumScrollController,
-		hlc.controllers.AlbumScrollController.EventType.SCROLL_START, this.onAlbumScrollStart, false, this);
+		hlc.events.EventType.SCROLL_START, this.onAlbumScrollStart, false, this);
 };
 
 
@@ -103,6 +103,5 @@ hlc.views.Footer.prototype.onMainScrollFinish = function(e){
 
 hlc.views.Footer.prototype.onClick = function(e){
 
-	console.log("CLICK CREDITS");
-	//hlc.main.views.credits.show();
+	hlc.main.views.credits.open();
 };

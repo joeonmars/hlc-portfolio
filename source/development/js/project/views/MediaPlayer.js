@@ -50,7 +50,7 @@ hlc.views.MediaPlayer.prototype.init = function(){
 	hlc.main.controllers.windowController.addDispatcher(this);
 
 	goog.events.listen(hlc.main.controllers.mainScrollController,
-		hlc.controllers.MainScrollController.EventType.SCROLL_FINISH, this.onScrollFinish, false, this);
+		hlc.events.EventType.SCROLL_COMPLETE, this.onScrollFinish, false, this);
 
 	goog.events.listen(this._playButton, 'click', this.onClick, false, this);
 	goog.events.listen(this._prevButton, 'click', this.onClick, false, this);
@@ -58,16 +58,20 @@ hlc.views.MediaPlayer.prototype.init = function(){
 
 	goog.events.listen(this, hlc.models.SongModel.EventType.HTML_AUDIO_EVENTS, this.onAudioEvent, false, this);
 	goog.events.listen(this, hlc.models.SongModel.EventType.AUDIO_DATA_LOAD, this.onAudioDataLoad, false, this);
+
+	// listen for credits event
+	goog.events.listen( hlc.main.views.credits, hlc.events.EventType.ANIMATE_IN_START, this.hide, false, this );
+  	goog.events.listen( hlc.main.views.credits, hlc.events.EventType.ANIMATE_OUT_START, this.show, false, this );
 };
 
 
 hlc.views.MediaPlayer.prototype.show = function(){
-	goog.dom.classes.remove(this.parentDomElement, 'hidePlayer');
+	goog.dom.classes.enable(this.parentDomElement, 'hidePlayer', false);
 };
 
 
 hlc.views.MediaPlayer.prototype.hide = function(){
-	goog.dom.classes.add(this.parentDomElement, 'hidePlayer');
+	goog.dom.classes.enable(this.parentDomElement, 'hidePlayer', true);
 };
 
 

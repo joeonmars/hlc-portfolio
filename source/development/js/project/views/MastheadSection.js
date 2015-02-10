@@ -6,7 +6,6 @@ goog.require('goog.events');
 goog.require('goog.dom');
 goog.require('goog.dom.query');
 goog.require('goog.async.Delay');
-goog.require('hlc.views.MastheadNav');
 goog.require('hlc.views.mastheadpages.HomePage');
 goog.require('hlc.views.mastheadpages.BiographyPage');
 
@@ -24,7 +23,6 @@ hlc.views.MastheadSection = function(domElement){
   this.marqueeContentDom = goog.dom.query('.content', this.marqueeDom)[0];
   this.headingDom = goog.dom.query('.heading', this.marqueeDom)[0];
   this.colorOverlayDom = goog.dom.query('.colorOverlay', this.domElement)[0];
-  this.nav = null;
   this.pages = null;
   this.pageToLoad = null;
 
@@ -36,9 +34,6 @@ goog.inherits(hlc.views.MastheadSection, hlc.views.Section);
 hlc.views.MastheadSection.prototype.init = function(){
 
 	goog.base(this, 'init');
-
-	// create navigation
-	this.nav = new hlc.views.MastheadNav;
 
 	// create pages
 	this.pages = {
@@ -53,18 +48,15 @@ hlc.views.MastheadSection.prototype.init = function(){
 
 	// listen for events
 	goog.events.listen(hlc.main.controllers.mainScrollController,
-		hlc.controllers.MainScrollController.EventType.SCROLL_START, this.onScrollStart, false, this);
+		hlc.events.EventType.SCROLL_START, this.onScrollStart, false, this);
 
 	goog.events.listen(hlc.main.controllers.mainScrollController,
-		hlc.controllers.MainScrollController.EventType.SCROLL_FINISH, this.onScrollFinish, false, this);
+		hlc.events.EventType.SCROLL_COMPLETE, this.onScrollFinish, false, this);
 
 	goog.events.listen(this, hlc.views.MastheadSection.EventType.PAGE_LOADED, this.onPageLoaded, false, this);
 
 	hlc.main.controllers.navigationController.addDispatcher(this);
 	goog.events.listen(this, goog.history.EventType.NAVIGATE, this.onNavigate, false, this);
-
-	// show default page
-	this.toPage( this.pages['home'] );
 };
 
 
@@ -102,28 +94,14 @@ hlc.views.MastheadSection.prototype.toPage = function(page){
 	}else {
 		goog.dom.classes.remove(this.marqueeDom, 'hide');
 	}
-
-	// change ui color
-	if(page !== this.pages['home']) {
-		//hlc.main.views.footer.setBlack(true);
-		this.nav.setBlack(true);
-	}else {
-		//hlc.main.views.footer.setBlack(false);
-		this.nav.setBlack(false);
-	}
-
-	// set nav active button
-	this.nav.setActiveButton( this.nav.buttons[pageIndex] );
 };
 
 
 hlc.views.MastheadSection.prototype.onScrollStart = function(e){
 	if(e.scrollPosition === hlc.controllers.MainScrollController.ScrollPosition.MASTHEAD) {
-		if(!this.pageToLoad || this.pageToLoad === this.pages['home']) {
-			//hlc.main.views.footer.setBlack(false);
-		}else {
-			//hlc.main.views.footer.setBlack(true);
-		}
+
+	}else {
+
 	}
 };
 

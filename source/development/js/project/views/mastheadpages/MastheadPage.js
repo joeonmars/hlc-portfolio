@@ -66,7 +66,8 @@ hlc.views.mastheadpages.MastheadPage.prototype.load = function(){
 
 	if(this._request && !this._request.isActive()) {
 
-		this._eventHandler.listenOnce(this._request, "complete", this.onAjaxCallback, false, this);
+		this._eventHandler.listen(this._request, goog.events.EventType.READYSTATECHANGE, this.onRequestReadyStateChange, false, this);
+		this._eventHandler.listenOnce(this._request, "complete", this.onRequestComplete, false, this);
 		this._request.send(this._url);
 
 	}else if(!this._request) {
@@ -81,7 +82,7 @@ hlc.views.mastheadpages.MastheadPage.prototype.cancel = function(){
 
 	if(this._request && this._request.isActive()) {
 		
-		this._eventHandler.unlisten(this._request, "complete", this.onAjaxCallback, false, this);
+		this._eventHandler.unlisten(this._request, "complete", this.onRequestComplete, false, this);
 		this._request.abort();
 	}
 };
@@ -114,7 +115,16 @@ hlc.views.mastheadpages.MastheadPage.prototype.onLoaded = function(){
 };
 
 
-hlc.views.mastheadpages.MastheadPage.prototype.onAjaxCallback = function(e){
+hlc.views.mastheadpages.MastheadPage.prototype.onRequestReadyStateChange = function(e){
+
+	var progress = this._request.getReadyState() / goog.net.XmlHttp.ReadyState.COMPLETE;
+
+	console.log('ajax progress: ' + progress);
+};
+
+
+hlc.views.mastheadpages.MastheadPage.prototype.onRequestComplete = function(e){
+
 	if(this._request.isSuccess()) {
 
 		var responseText = this._request.getResponseText();

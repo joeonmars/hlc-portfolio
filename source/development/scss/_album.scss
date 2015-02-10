@@ -4,6 +4,15 @@
 	.album{
 		display: table;
 
+		&.ui-hidden{
+			>.centerColumn{
+				>.content{
+					opacity: 0;
+					visibility: hidden;
+				}
+			}
+		}
+
 		>.background{
 			position: absolute;
 			width: 100%;
@@ -46,6 +55,9 @@
 
 			>.content{
 				position: relative;
+				opacity: 1;
+				visibility: visible;
+				@include transition(opacity .25s ease-out, visibility .25s);
 			}
 		}
 

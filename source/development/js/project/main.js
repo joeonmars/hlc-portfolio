@@ -7,6 +7,7 @@ goog.require('hlc.events');
 goog.require('hlc.data.Data');
 goog.require('hlc.templates');
 goog.require('hlc.views.AlbumSection');
+goog.require('hlc.views.Credits');
 goog.require('hlc.views.Footer');
 goog.require('hlc.views.Preloader');
 goog.require('hlc.views.Sidebar');
@@ -60,12 +61,14 @@ hlc.main.create = function(e) {
 	hlc.main.views.sidebar = new hlc.views.Sidebar();
 	hlc.main.views.mainHud = new hlc.views.MainHud();
 	hlc.main.views.footer = new hlc.views.Footer();
+	hlc.main.views.credits = new hlc.views.Credits();
 	hlc.main.views.mastheadSection = new hlc.views.MastheadSection(goog.dom.getElementByClass('masthead'));
 	hlc.main.views.albumSections = hlc.main.controllers.albumScrollController.albumSections;
 };
 
 
 hlc.main.onPreload = function(e) {
+
 	hlc.main.assets = e.target.assets;
 	console.log(hlc.main.assets);
 
@@ -78,16 +81,15 @@ hlc.main.onPreload = function(e) {
 	hlc.main.views.footer.init();
 
 	hlc.main.controllers.navigationController.init();
-
-	// set default token
-	if(hlc.main.controllers.navigationController.getToken() === '') {
-		hlc.main.controllers.navigationController.setToken('home');
-	}
 };
 
 
 hlc.main.onPreloadAnimateOutComplete = function(e) {
-	console.log('on preload animate out complete');
+	
+	// set default token
+	if(hlc.main.controllers.navigationController.getToken() === '') {
+		hlc.main.controllers.navigationController.setToken('home');
+	}
 };
 
 

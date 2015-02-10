@@ -2,6 +2,24 @@
 	width: 100%;
 	height: 100%;
 	color: #fff;
+	background-image: url("#{$static_images_path}backgrounds/portrait-background.png");
+	background-color: #000;
+	background-size: 100% 100%;
+	@include user-select(none);
+
+	&.active{
+		.curtain{
+			opacity: 0;
+			visibility: hidden;
+		}
+	}
+
+	&:not(.active) {
+		.curtain{
+			opacity: 1;
+			visibility: visible;
+		}
+	}
 
 	.portrait{
 		display: block;
@@ -122,5 +140,10 @@
 				}
 			}
 		}
+	}
+
+	.curtain{
+		z-index: 10;
+		@include transition(opacity 1s ease-out, visibility 1s);
 	}
 }

@@ -57,11 +57,11 @@ hlc.views.Sidebar.prototype.init = function(){
 
 	// listen for main scroll event
 	goog.events.listen(hlc.main.controllers.mainScrollController,
-		hlc.controllers.MainScrollController.EventType.SCROLL_START, this.onMainScrollStart, false, this);
+		hlc.events.EventType.SCROLL_START, this.onMainScrollStart, false, this);
 
 	// listen for album scroll event
 	goog.events.listen(hlc.main.controllers.albumScrollController,
-		hlc.controllers.AlbumScrollController.EventType.SCROLL_FINISH,
+		hlc.events.EventType.SCROLL_COMPLETE,
 		this.onAlbumScrollFinish, false, this);
 
 	// listen for song change event from every album player
