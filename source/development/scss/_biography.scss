@@ -2,8 +2,9 @@
 	overflow: hidden;
 	background-image: url("#{$static_images_path}backgrounds/biography-background.jpg");
 	background-color: #000;
-	background-position: center center;
-	background-size: cover;
+	background-position-x: center;
+	background-position-y: 0;
+	background-size: 200% 200%;
 
 	.inner{
 		position: absolute;
@@ -20,8 +21,26 @@
 
 	.group{
 		width: 100%;
-		margin: 30em 0;
+		margin: 20em 0;
 		text-align: center;
+
+		@media screen and (max-width: 1300px) {
+			margin: 0 !important;
+
+			>section{
+				display: block !important;
+				width: 80% !important;
+				min-width: 480px !important;
+				max-width: 960px !important;
+				padding: 0 !important;
+				margin: 20em auto !important;
+
+				li{
+					display: block !important;
+					width: 100% !important;
+				}
+			}
+		}
 
 		>section{
 			display: inline-block;
@@ -59,7 +78,7 @@
 				width: 49%;
 			}
 
-			&[data-id="premiers"] {
+			&[data-id="commissions"] {
 				width: 98%;
 
 				>ul{
@@ -68,17 +87,54 @@
 						vertical-align: top;
 						width: 49%;
 						margin: 0;
-						padding-left: 140px;
 						@include box-sizing(border-box);
 					}
 				}
 			}
 
-			&[data-id="contact"] {
+			&[data-id="premiers"] {
 				width: 98%;
+
+				>ul{
+					>li{
+						display: inline-block;
+						vertical-align: top;
+						width: 49%;
+						margin-left: 0;
+						padding-left: 140px;
+						@include box-sizing(border-box);
+
+						>p{
+							margin: 0;
+						}
+					}
+				}
+			}
+
+			&[data-id="contact"] {
+				width: auto;
 
 				li{
 					min-height: 4em;
+				}
+
+				a{
+					color: #fff;
+					font-size: 1.4em;
+					font-family: $font_poly;
+				}
+
+				.social{
+					>a{
+						display: inline-block;
+						vertical-align: middle;
+						margin: 0 .35em;
+						font-size: 3.5em;
+
+						&:first-child{
+							margin-left: 0;
+						}
+					}
 				}
 			}
 
@@ -124,6 +180,7 @@
 
 			li{
 				position: relative;
+				margin-bottom: 5em;
 			}
 
 			h4{
@@ -140,7 +197,12 @@
 			p{
 				font-size: 1.4em;
 				line-height: 1.6;
-				margin: 1.6em 0;
+				margin-bottom: 1.6em;
+			}
+
+			hr{
+				margin: 4em 0;
+				opacity: .2;
 			}
 
 			.song-button{

@@ -41,6 +41,9 @@ hlc.views.mastheadpages.BiographyPage.prototype.createPageElements = function(){
   	new hlc.views.common.Scroller(this.domElement, this._scrollbarEl) :
   	new hlc.views.common.DummyScroller(this.domElement, this._dummyEl, this._scrollbarEl);
 
+  //TODO: addcallback not working for common.Scroller
+  this._scroller.addCallback( hlc.events.EventType.SCROLL_UPDATE, goog.bind(this.onScrollUpdate, this) );
+
   this._songButtons = goog.dom.query('.song-button', this.domElement);
 };
 
@@ -142,6 +145,12 @@ hlc.views.mastheadpages.BiographyPage.prototype.handleAudioEvents = function(e){
     });
     break;
   }
+};
+
+
+hlc.views.mastheadpages.BiographyPage.prototype.onScrollUpdate = function(y, progress){
+
+  goog.style.setStyle(this.domElement, 'background-position-y', progress * 100 + '%');
 };
 
 

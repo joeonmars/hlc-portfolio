@@ -2404,8 +2404,9 @@ hr {
   overflow: hidden;
   background-image: url("/assets/static/images/backgrounds/biography-background.jpg");
   background-color: #000;
-  background-position: center center;
-  background-size: cover;
+  background-position-x: center;
+  background-position-y: 0;
+  background-size: 200% 200%;
 }
 #biography .inner {
   position: absolute;
@@ -2418,8 +2419,25 @@ hr {
 }
 #biography .group {
   width: 100%;
-  margin: 30em 0;
+  margin: 20em 0;
   text-align: center;
+}
+@media screen and (max-width: 1300px) {
+  #biography .group {
+    margin: 0 !important;
+  }
+  #biography .group > section {
+    display: block !important;
+    width: 80% !important;
+    min-width: 480px !important;
+    max-width: 960px !important;
+    padding: 0 !important;
+    margin: 20em auto !important;
+  }
+  #biography .group > section li {
+    display: block !important;
+    width: 100% !important;
+  }
 }
 #biography .group > section {
   display: inline-block;
@@ -2452,6 +2470,18 @@ hr {
 #biography .group > section[data-id="awards"] {
   width: 49%;
 }
+#biography .group > section[data-id="commissions"] {
+  width: 98%;
+}
+#biography .group > section[data-id="commissions"] > ul > li {
+  display: inline-block;
+  vertical-align: top;
+  width: 49%;
+  margin: 0;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
 #biography .group > section[data-id="premiers"] {
   width: 98%;
 }
@@ -2459,17 +2489,34 @@ hr {
   display: inline-block;
   vertical-align: top;
   width: 49%;
-  margin: 0;
+  margin-left: 0;
   padding-left: 140px;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
 }
+#biography .group > section[data-id="premiers"] > ul > li > p {
+  margin: 0;
+}
 #biography .group > section[data-id="contact"] {
-  width: 98%;
+  width: auto;
 }
 #biography .group > section[data-id="contact"] li {
   min-height: 4em;
+}
+#biography .group > section[data-id="contact"] a {
+  color: #fff;
+  font-size: 1.4em;
+  font-family: "Poly", serif;
+}
+#biography .group > section[data-id="contact"] .social > a {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 .35em;
+  font-size: 3.5em;
+}
+#biography .group > section[data-id="contact"] .social > a:first-child {
+  margin-left: 0;
 }
 #biography .group > section .left {
   position: absolute;
@@ -2508,6 +2555,7 @@ hr {
 }
 #biography .group > section li {
   position: relative;
+  margin-bottom: 5em;
 }
 #biography .group > section h4 {
   font-size: 3em;
@@ -2521,7 +2569,11 @@ hr {
 #biography .group > section p {
   font-size: 1.4em;
   line-height: 1.6;
-  margin: 1.6em 0;
+  margin-bottom: 1.6em;
+}
+#biography .group > section hr {
+  margin: 4em 0;
+  opacity: .2;
 }
 #biography .group > section .song-button {
   position: relative;
@@ -2686,8 +2738,7 @@ hr {
   background-color: #000;
 }
 .masthead > .pages > .pageContainer > .page {
-  display: inline-block;
-  vertical-align: top;
+  position: relative;
   width: 100%;
   height: 100%;
   white-space: normal;

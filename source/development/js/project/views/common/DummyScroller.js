@@ -7,6 +7,7 @@ goog.require('goog.dom');
 goog.require('goog.fx.Dragger');
 goog.require('goog.math.Size');
 goog.require('goog.math.Box');
+goog.require('hlc.events');
 
 /**
  * @constructor
@@ -35,6 +36,10 @@ hlc.views.common.DummyScroller = function(viewOuter, dummyOuter, scrollbar){
   this._dragger = new goog.fx.Dragger(this._handle);
   this._dragger.defaultAction = goog.nullFunction;
   this._draggerLimits = new goog.math.Rect(0, 0, 0, 0);
+
+  this._callbacks = {};
+  this._callbacks[ hlc.events.EventType.SCROLL_UPDATE ] = [];
+  this._callbacks[ hlc.events.EventType.SCROLL_COMPLETE ] = [];
 
   this._eventHandler = new goog.events.EventHandler(this);
 
@@ -72,6 +77,12 @@ hlc.views.common.DummyScroller.prototype.reset = function(){
 };
 
 
+hlc.views.common.DummyScroller.prototype.getProgress = function(){
+
+  return Math.abs( this._viewInnerY / (this._viewInnerHeight - this._viewOuterHeight) );
+};
+
+
 hlc.views.common.DummyScroller.prototype.enableDummyScroll = function(){
 
   goog.dom.classes.enable( this._dummyOuter, 'enabled', true );
@@ -84,6 +95,18 @@ hlc.views.common.DummyScroller.prototype.disableDummyScroll = function(){
 };
 
 
+hlc.views.common.DummyScroller.prototype.addCallback = function( type, callback ){
+
+  goog.array.insert( this._callbacks[ type ], callback );
+};
+
+
+hlc.views.common.DummyScroller.prototype.removeCallback = function( type, callback ){
+
+  goog.array.remove( this._callbacks[ type ], callback );
+};
+
+
 hlc.views.common.DummyScroller.prototype.scrollTo = function(y){
 
   this._viewInnerY = y;
@@ -93,6 +116,13 @@ hlc.views.common.DummyScroller.prototype.scrollTo = function(y){
   var handleRatio = Math.abs(this._viewInnerY / this._viewInnerHeight);
   var handleY = this._viewOuterHeight * handleRatio;
   goog.style.setPosition( this._handle, 0, handleY );
+
+  // call update callbacks
+  var updateCallbacks = this._callbacks[hlc.events.EventType.SCROLL_UPDATE];
+  var i, l = updateCallbacks.length;
+  for(i = 0; i < l; i++) {
+    updateCallbacks[i]( this._viewInnerY, this.getProgress() );
+  }
 };
 
 
@@ -145,6 +175,13 @@ hlc.views.common.DummyScroller.prototype.onAnimationFrame = function (now) {
 
   if(goog.math.nearlyEquals(this._viewInnerY, targetY, .1)) {
     goog.fx.anim.unregisterAnimation( this );
+
+    // call complete callbacks
+    var completeCallbacks = this._callbacks[hlc.events.EventType.SCROLL_COMPLETE];
+    var i, l = completeCallbacks.length;
+    for(i = 0; i < l; i++) {
+      completeCallbacks[i]( this._viewInnerY );
+    }
   }
 };
 
