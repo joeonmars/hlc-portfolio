@@ -34,7 +34,12 @@ hlc.Url.UPLOAD_SONGS = hlc.Url.UPLOAD_ASSETS + 'song/';
 
 
 hlc.main = function() {
+
 	goog.fx.anim.setAnimationWindow(window);
+
+	if(hlc.utils.getQuery('office') === 'true') {
+		goog.style.setStyle(document.body, 'opacity', .1);
+	}
 
 	hlc.main.create();
 

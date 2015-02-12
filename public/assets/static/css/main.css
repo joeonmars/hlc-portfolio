@@ -2396,17 +2396,19 @@ hr {
 
 #biography {
   overflow: hidden;
-  background-image: url("/assets/static/images/backgrounds/biography-background.jpg");
-  background-color: #000;
-  background-position-x: center;
-  background-position-y: 0;
-  background-size: 200% 200%;
+}
+#biography .background {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
 }
 #biography .inner {
   position: absolute;
   width: 100%;
   display: inline-block;
-  z-index: 0;
+  z-index: 1;
 }
 #biography .scrollbar .track {
   background-color: #fff;

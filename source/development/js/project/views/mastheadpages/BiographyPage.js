@@ -17,6 +17,14 @@ hlc.views.mastheadpages.BiographyPage = function(){
 
   goog.base(this, domElement, url, 'biography');
 
+  this._scrollProgress = 0;
+
+  this._backgroundRenderer = null;
+  this._backgroundStage = null;
+  this._backgroundSprite = null;
+
+  this._backgroundCanvas = null;
+
   this._scrollbarEl = null;
   this._dummyEl = null;
 
@@ -34,6 +42,10 @@ hlc.views.mastheadpages.BiographyPage.prototype.createPageElements = function(){
 
 	goog.base(this, 'createPageElements');
 
+  this._backgroundCanvas = goog.dom.getElementByClass('background', this.domElement);
+
+  this._songButtons = goog.dom.query('.song-button', this.domElement);
+
   this._scrollbarEl = goog.dom.getElementByClass('scrollbar', this.domElement);
   this._dummyEl = goog.dom.getElementByClass('dummy-scroller', this.domElement);
 
@@ -44,7 +56,19 @@ hlc.views.mastheadpages.BiographyPage.prototype.createPageElements = function(){
   //TODO: addcallback not working for common.Scroller
   this._scroller.addCallback( hlc.events.EventType.SCROLL_UPDATE, goog.bind(this.onScrollUpdate, this) );
 
-  this._songButtons = goog.dom.query('.song-button', this.domElement);
+  //
+  this._backgroundRenderer = PIXI.autoDetectRenderer(0, 0, {
+    view: this._backgroundCanvas
+  });
+
+  this._backgroundStage = new PIXI.Stage(0x000000);
+
+  var backgroundTexture = PIXI.Texture.fromImage( hlc.Url.STATIC_IMAGES + 'backgrounds/biography-background.jpg' );
+  this._backgroundSprite = new PIXI.Sprite( backgroundTexture );
+  this._backgroundStage.addChild( this._backgroundSprite );
+
+  //
+  this.resize();
 };
 
 
@@ -67,6 +91,57 @@ hlc.views.mastheadpages.BiographyPage.prototype.deactivate = function(){
 	goog.base(this, 'deactivate');
 
 	this._scroller.deactivate();
+};
+
+
+hlc.views.mastheadpages.BiographyPage.prototype.resize = function(){
+
+  goog.base(this, 'resize');
+
+  var viewSize = goog.dom.getViewportSize();
+
+  // resize renderer
+  this._backgroundRenderer.resize( viewSize.width, viewSize.height );
+
+  // resize background sprite
+
+  // 'cover'
+  /*
+  var textureWidth = this._backgroundSprite.texture.width;
+  var textureHeight = this._backgroundSprite.texture.height;
+
+  var textureRatio = textureWidth / textureHeight;
+
+  var scaledWidth, scaledHeight;
+
+  if (viewSize.aspectRatio() > textureRatio) {
+
+    scaledWidth = viewSize.width;
+    scaledHeight = scaledWidth / videoRatio;
+
+  } else {
+
+    scaledHeight = viewSize.height;
+    scaledWidth = scaledHeight * videoRatio;
+  }
+
+  this._backgroundSprite.width = scaledWidth;
+  this._backgroundSprite.height = scaledHeight;
+
+  var backgroundSpriteX = (viewSize.width - scaledWidth) / 2;
+  var backgroundSpriteY = (viewSize.height - scaledHeight) / 2;
+  */
+
+  // make height always be 2x of the window
+  var textureWidth = this._backgroundSprite.texture.width;
+  var textureHeight = this._backgroundSprite.texture.height;
+
+  var textureRatio = textureWidth / textureHeight;
+
+  this._backgroundSprite.height = viewSize.height * 2;
+  this._backgroundSprite.width = this._backgroundSprite.height * textureRatio;
+
+  this._backgroundSprite.x = (viewSize.width - this._backgroundSprite.width) / 2;
 };
 
 
@@ -150,10 +225,9 @@ hlc.views.mastheadpages.BiographyPage.prototype.handleAudioEvents = function(e){
 
 hlc.views.mastheadpages.BiographyPage.prototype.onScrollUpdate = function(y, progress){
 
-  goog.style.setStyle(this.domElement, 'background-position-y', progress * 100 + '%');
-};
+  this._scrollProgress = progress;
 
+  this._backgroundSprite.y = (this._backgroundRenderer.height - this._backgroundSprite.height) * progress;
 
-hlc.views.mastheadpages.BiographyPage.prototype.onResize = function(e){
-
+  this._backgroundRenderer.render( this._backgroundStage );
 };

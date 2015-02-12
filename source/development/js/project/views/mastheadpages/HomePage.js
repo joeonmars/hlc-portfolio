@@ -35,6 +35,12 @@ hlc.views.mastheadpages.HomePage.prototype.createPageElements = function(){
 };
 
 
+hlc.views.mastheadpages.HomePage.prototype.load = function(){
+
+	this.onLoaded();
+};
+
+
 hlc.views.mastheadpages.HomePage.prototype.activate = function(){
 	
 	goog.base(this, 'activate');

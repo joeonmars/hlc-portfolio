@@ -34,6 +34,7 @@ goog.inherits(hlc.views.mastheadpages.MastheadPage, goog.events.EventTarget);
 
 
 hlc.views.mastheadpages.MastheadPage.prototype.show = function(){
+
 	goog.style.showElement(this.domElement, true);
 
 	if(this._isPageElementsCreated) {
@@ -43,6 +44,7 @@ hlc.views.mastheadpages.MastheadPage.prototype.show = function(){
 };
 
 hlc.views.mastheadpages.MastheadPage.prototype.hide = function(){
+
 	goog.style.showElement(this.domElement, false);
 
 	if(this._isPageElementsCreated) {
@@ -53,6 +55,7 @@ hlc.views.mastheadpages.MastheadPage.prototype.hide = function(){
 
 hlc.views.mastheadpages.MastheadPage.prototype.activate = function(){
 
+	this._eventHandler.listen(window, goog.events.EventType.RESIZE, this.resize, false, this);
 };
 
 
@@ -73,7 +76,6 @@ hlc.views.mastheadpages.MastheadPage.prototype.load = function(){
 	}else if(!this._request) {
 
 		this.onLoaded();
-
 	}
 };
 
@@ -90,6 +92,11 @@ hlc.views.mastheadpages.MastheadPage.prototype.cancel = function(){
 
 hlc.views.mastheadpages.MastheadPage.prototype.createPageElements = function(){
 	this._isPageElementsCreated = true;
+};
+
+
+hlc.views.mastheadpages.MastheadPage.prototype.resize = function(){
+
 };
 
 
@@ -137,9 +144,4 @@ hlc.views.mastheadpages.MastheadPage.prototype.onRequestComplete = function(e){
 		console.log(this._request.getLastError(), this);
 
 	}
-};
-
-
-hlc.views.mastheadpages.MastheadPage.prototype.onResize = function(e){
-
 };

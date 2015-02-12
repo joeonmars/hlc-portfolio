@@ -3,6 +3,9 @@ goog.provide( 'hlc.utils' );
 goog.require( 'goog.window' );
 goog.require( 'goog.events.EventHandler' );
 goog.require( 'goog.userAgent' );
+goog.require( 'goog.string' );
+goog.require( 'goog.Uri' );
+
 
 hlc.utils.popUpWindow = function(url, width, height, options) {
 	var viewportSize = goog.dom.getViewportSize();
@@ -114,4 +117,13 @@ hlc.utils.isTablet = function() {
 
 hlc.utils.isRetina = function() {
 	return !(window.devicePixelRatio === 1);
+};
+
+
+hlc.utils.getQuery = function(key) {
+
+  var uri = new goog.Uri( window.location.href );
+  var queryData = uri.getQueryData();
+
+  return queryData.get(key);
 };
