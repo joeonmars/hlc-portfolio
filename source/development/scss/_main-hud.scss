@@ -14,10 +14,13 @@
 
 		>.playlistButton {
 			display: block;
+			@include backface-visibility(hidden);
 		}
 
 		>.playlistCloseButton{
-			display: none;
+			display: block;
+			@include backface-visibility(hidden);
+			@include rotateY(180deg);
 
 			i{
 				display: block;
@@ -26,26 +29,11 @@
 			}
 		}
 
-		&.use3d{
-			>.playlistButton {
-				display: block;
-				@include backface-visibility(hidden);
-			}
-
-			>.playlistCloseButton {
-				display: block;
-				@include backface-visibility(hidden);
-				@include rotateY(180deg);
-			}
-		}
-
 		&.flip{
-			&.use3d{
-				@include rotateY(180deg);
+			@include rotateY(180deg);
 
-				>.playlistButton, >.playlistCloseButton{
-					display: block;
-				}
+			>.playlistButton, >.playlistCloseButton{
+				display: block;
 			}
 			
 			>.playlistButton {

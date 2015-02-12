@@ -2180,9 +2180,18 @@ hr {
 }
 #main-hud .playlistButtonContainer > .playlistButton {
   display: block;
+  -moz-backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 #main-hud .playlistButtonContainer > .playlistCloseButton {
-  display: none;
+  display: block;
+  -moz-backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -moz-transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
+  transform: rotateY(180deg);
 }
 #main-hud .playlistButtonContainer > .playlistCloseButton i {
   display: block;
@@ -2191,27 +2200,12 @@ hr {
   height: 10px;
   width: 10px;
 }
-#main-hud .playlistButtonContainer.use3d > .playlistButton {
-  display: block;
-  -moz-backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-}
-#main-hud .playlistButtonContainer.use3d > .playlistCloseButton {
-  display: block;
-  -moz-backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
+#main-hud .playlistButtonContainer.flip {
   -moz-transform: rotateY(180deg);
   -webkit-transform: rotateY(180deg);
   transform: rotateY(180deg);
 }
-#main-hud .playlistButtonContainer.flip.use3d {
-  -moz-transform: rotateY(180deg);
-  -webkit-transform: rotateY(180deg);
-  transform: rotateY(180deg);
-}
-#main-hud .playlistButtonContainer.flip.use3d > .playlistButton, #main-hud .playlistButtonContainer.flip.use3d > .playlistCloseButton {
+#main-hud .playlistButtonContainer.flip > .playlistButton, #main-hud .playlistButtonContainer.flip > .playlistCloseButton {
   display: block;
 }
 #main-hud .playlistButtonContainer.flip > .playlistButton {
