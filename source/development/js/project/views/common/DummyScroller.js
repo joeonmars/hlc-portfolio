@@ -121,7 +121,7 @@ hlc.views.common.DummyScroller.prototype.scrollTo = function(y){
   var updateCallbacks = this._callbacks[hlc.events.EventType.SCROLL_UPDATE];
   var i, l = updateCallbacks.length;
   for(i = 0; i < l; i++) {
-    updateCallbacks[i]( this._viewInnerY, this.getProgress() );
+    updateCallbacks[i]( this.getProgress(), this._viewInnerY );
   }
 };
 
@@ -180,7 +180,7 @@ hlc.views.common.DummyScroller.prototype.onAnimationFrame = function (now) {
     var completeCallbacks = this._callbacks[hlc.events.EventType.SCROLL_COMPLETE];
     var i, l = completeCallbacks.length;
     for(i = 0; i < l; i++) {
-      completeCallbacks[i]( this._viewInnerY );
+      completeCallbacks[i]( this.getProgress(), this._viewInnerY );
     }
   }
 };

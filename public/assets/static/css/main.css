@@ -2100,7 +2100,7 @@ hr {
   padding-top: 10px;
 }
 #playlist .viewport .album > .songs li > a:hover > h4 {
-  color: #666;
+  color: rgba(83, 83, 98, 0.65);
 }
 #playlist .viewport .album > .songs li > a:hover > .iconWrapper > i {
   -moz-transform: translateX(0px);
@@ -2109,7 +2109,7 @@ hr {
   transform: translateX(0px);
 }
 #playlist .viewport .album > .songs li > a.active > h4 {
-  color: #000;
+  color: #535362;
 }
 #playlist .viewport .album > .songs li > a.active > .iconWrapper > i {
   display: none;
@@ -2122,7 +2122,7 @@ hr {
   display: inline-block;
   vertical-align: middle;
   width: 80%;
-  color: #999;
+  color: #bdbdbd;
   font-size: 20px;
   font-style: italic;
   font-family: "Poly", serif;

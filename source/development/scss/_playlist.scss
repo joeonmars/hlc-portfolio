@@ -142,7 +142,7 @@
 					>a{
 						&:hover {
 							>h4{
-								color: #666;
+								color: rgba($color_purple, .65);
 							}
 
 							>.iconWrapper{
@@ -154,7 +154,7 @@
 
 						&.active {
 							>h4{
-								color: #000;
+								color: $color_purple;
 							}
 
 							>.iconWrapper{
@@ -173,7 +173,7 @@
 							display: inline-block;
 							vertical-align: middle;
 							width: 80%;
-							color: #999;
+							color: #bdbdbd;
 							font-size: 20px;
 							font-style: italic;
 							font-family: $font_poly;

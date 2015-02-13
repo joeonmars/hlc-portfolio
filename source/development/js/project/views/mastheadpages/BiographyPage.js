@@ -63,12 +63,13 @@ hlc.views.mastheadpages.BiographyPage.prototype.createPageElements = function(){
 
   this._backgroundStage = new PIXI.Stage(0x000000);
 
-  var backgroundTexture = PIXI.Texture.fromImage( hlc.Url.STATIC_IMAGES + 'backgrounds/biography-background.jpg' );
+  var backgroundTexture = new PIXI.Texture( new PIXI.BaseTexture( hlc.main.assets['biography-background'] ) );
   this._backgroundSprite = new PIXI.Sprite( backgroundTexture );
   this._backgroundStage.addChild( this._backgroundSprite );
 
-  //
   this.resize();
+
+  this.onScrollUpdate( this._scrollProgress );
 };
 
 
@@ -98,7 +99,7 @@ hlc.views.mastheadpages.BiographyPage.prototype.resize = function(){
 
   goog.base(this, 'resize');
 
-  var viewSize = goog.dom.getViewportSize();
+  var viewSize = goog.style.getSize( this.domElement );
 
   // resize renderer
   this._backgroundRenderer.resize( viewSize.width, viewSize.height );
@@ -140,7 +141,7 @@ hlc.views.mastheadpages.BiographyPage.prototype.resize = function(){
 
   this._backgroundSprite.height = viewSize.height * 2;
   this._backgroundSprite.width = this._backgroundSprite.height * textureRatio;
-
+  
   this._backgroundSprite.x = (viewSize.width - this._backgroundSprite.width) / 2;
 };
 
@@ -223,11 +224,13 @@ hlc.views.mastheadpages.BiographyPage.prototype.handleAudioEvents = function(e){
 };
 
 
-hlc.views.mastheadpages.BiographyPage.prototype.onScrollUpdate = function(y, progress){
+hlc.views.mastheadpages.BiographyPage.prototype.onScrollUpdate = function(progress){
 
   this._scrollProgress = progress;
 
   this._backgroundSprite.y = (this._backgroundRenderer.height - this._backgroundSprite.height) * progress;
+
+  this._backgroundSprite.alpha = goog.math.lerp(1, .7, progress);
 
   this._backgroundRenderer.render( this._backgroundStage );
 };
