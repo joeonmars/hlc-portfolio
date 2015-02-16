@@ -13,7 +13,9 @@ hlc.views.Footer = function(){
   goog.base(this);
 
   this.domElement = goog.dom.getElement('footer');
-  //this.creditsDom = goog.dom.getElement('credits');
+  this._creditsButton = goog.dom.getElementByClass('credits', this.domElement);
+  this._shareButton = goog.dom.getElementByClass('share', this.domElement);
+  this._shareButtonsEl = goog.dom.getElementByClass('share-buttons', this.domElement);
 
   //this.photographyDom = goog.dom.query('[data-id = "photography"]', this.creditsDom)[0];
   //this.defaultPhotographyAuthorHTML = goog.dom.query('a', this.photographyDom)[0].outerHTML;
@@ -31,6 +33,9 @@ hlc.views.Footer.prototype.init = function(){
 
 	goog.events.listen(hlc.main.controllers.albumScrollController,
 		hlc.events.EventType.SCROLL_START, this.onAlbumScrollStart, false, this);
+
+	goog.events.listen(this._creditsButton, goog.events.EventType.CLICK, this.onClickButton, false, this);
+	goog.events.listen(this._shareButton, goog.events.EventType.CLICK, this.onClickButton, false, this);
 };
 
 
@@ -73,6 +78,21 @@ hlc.views.Footer.prototype.open = function(){
 };
 
 
+hlc.views.Footer.prototype.toggleShareButtons = function(){
+
+	var shouldShow = !this._shareButton.disabled;
+	this._shareButton.disabled = shouldShow;
+
+	goog.dom.classlist.enable(this._shareButtonsEl, 'hidden', !shouldShow);
+
+	if(shouldShow) {
+		goog.events.listenOnce(document, hlc.events.EventType.DOWN, this.toggleShareButtons, false, this);
+	}else {
+		goog.events.unlisten(document, hlc.events.EventType.DOWN, this.toggleShareButtons, false, this);
+	}
+};
+
+
 hlc.views.Footer.prototype.onMainScrollStart = function(e){
 
 	if(e.scrollPosition === hlc.controllers.MainScrollController.ScrollPosition.MASTHEAD) {
@@ -92,16 +112,22 @@ hlc.views.Footer.prototype.onMainScrollFinish = function(e){
 	if(e.scrollPosition !== hlc.controllers.MainScrollController.ScrollPosition.MASTHEAD) {
 
 		this.up(true);
-		goog.events.listen(this.domElement, 'click', this.onClick, false, this);
 
 	}else {
 
-		goog.events.unlisten(this.domElement, 'click', this.onClick, false, this);
 	}
 };
 
 
-hlc.views.Footer.prototype.onClick = function(e){
+hlc.views.Footer.prototype.onClickButton = function(e){
 
-	hlc.main.views.credits.open();
+	switch(e.currentTarget) {
+		case this._creditsButton:
+		hlc.main.views.credits.open();
+		break;
+
+		case this._shareButton:
+		this.toggleShareButtons();
+		break;
+	}
 };

@@ -70,11 +70,7 @@
 	<link rel="stylesheet" type="text/css" href="{{PATH_TO_STATIC_ASSETS}}/css/main.css">
 </head>
 
-<body>
-	<script>
-		document.body.style.visibility = 'hidden';
-	</script>
-
+<body class="hidden">
 	<div id="main-container">
 
 		<div class="viewport">
@@ -148,7 +144,14 @@
 			</div>
 			
 			<div id="footer">
-				<div class="copyright">{{ credits.copyrightShort }}</div>
+				<button class="credits">{{ COPY["credits"] }}</button>
+				<button class="share">{{ COPY["share"] }}</button>
+				<ul class="share-buttons hidden">
+					<li><a class="icon-facebook" href="" target="_blank" data-id="facebook" title="Share on Facebook"></a></li>
+					<li><a class="icon-twitter" href="" target="_blank" data-id="twitter" title="Share on Twitter"></a></li>
+					<li><a class="icon-googleplus" href="" target="_blank" data-id="googleplus" title="Share on Google+"></a></li>
+					<li><a class="icon-weibo" href="" target="_blank" data-id="weibo" title="Share on Sina Weibo"></a></li>
+				</ul>
 			</div>
 
 		</div>
@@ -175,7 +178,6 @@
 
 	<!-- execute the main js-->
 	<script>
-		document.body.style.visibility = 'visible';
 		hlc.main();
 	</script>
 </body>

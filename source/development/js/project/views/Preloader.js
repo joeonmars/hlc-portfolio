@@ -139,6 +139,14 @@ hlc.views.Preloader.prototype.init = function(){
 };
 
 
+hlc.views.Preloader.prototype.animateIn = function(){
+
+	goog.base(this, 'animateIn');
+
+	goog.dom.classlist.enable(document.body, 'hidden', false);
+};
+
+
 hlc.views.Preloader.prototype.animateInCounter = function(){
 
 	TweenMax.fromTo(this._slashEl, .45, {

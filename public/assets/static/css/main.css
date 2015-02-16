@@ -421,6 +421,9 @@ body {
   -webkit-font-smoothing: antialiased;
   font-size: 62.5%;
 }
+body.hidden {
+  display: none;
+}
 
 h1, h2, h3, h4, h5, h6 {
   font-family: "barkentina_1regular", serif;
@@ -438,7 +441,7 @@ a {
   user-select: none;
 }
 a:visited {
-  color: #747484;
+  color: inherit;
 }
 
 i {
@@ -512,7 +515,7 @@ hr {
   background-color: #000;
 }
 
-#biography .group > section .song-button, #credits > .content > .content-inner > header > .close {
+#biography .group > section .song-button, #footer > button, #credits > .content > .content-inner > header > .close {
   -moz-user-select: -moz-none;
   -ms-user-select: none;
   -webkit-user-select: none;
@@ -2753,6 +2756,106 @@ hr {
 }
 #footer.up {
   bottom: 100px;
+}
+#footer > button {
+  margin: 0 .5em;
+  display: inline-block;
+  vertical-align: middle;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  font-size: 10px;
+  font-family: "barkentina_1regular", serif;
+  -moz-transition: opacity 0.4s;
+  -o-transition: opacity 0.4s;
+  -webkit-transition: opacity 0.4s;
+  transition: opacity 0.4s;
+}
+#footer > button:first-child {
+  margin-left: 0;
+}
+#footer > button:hover {
+  opacity: .8;
+}
+#footer > button:disabled {
+  opacity: .5;
+}
+#footer > .share-buttons {
+  display: inline-block;
+  vertical-align: middle;
+}
+#footer > .share-buttons.hidden > li {
+  visibility: hidden;
+  opacity: 0;
+}
+#footer > .share-buttons.hidden > li:nth-child(1) {
+  -moz-transition-delay: 0.15s;
+  -o-transition-delay: 0.15s;
+  -webkit-transition-delay: 0.15s;
+  transition-delay: 0.15s;
+}
+#footer > .share-buttons.hidden > li:nth-child(2) {
+  -moz-transition-delay: 0.1s;
+  -o-transition-delay: 0.1s;
+  -webkit-transition-delay: 0.1s;
+  transition-delay: 0.1s;
+}
+#footer > .share-buttons.hidden > li:nth-child(3) {
+  -moz-transition-delay: 0.05s;
+  -o-transition-delay: 0.05s;
+  -webkit-transition-delay: 0.05s;
+  transition-delay: 0.05s;
+}
+#footer > .share-buttons.hidden > li:nth-child(4) {
+  -moz-transition-delay: 0s;
+  -o-transition-delay: 0s;
+  -webkit-transition-delay: 0s;
+  transition-delay: 0s;
+}
+#footer > .share-buttons:not(.hidden) > li:hover {
+  opacity: .8;
+}
+#footer > .share-buttons > li {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 .5em;
+  visibility: visible;
+  opacity: 1;
+  -moz-transition: opacity 0.4s ease-in-out, visibility 0.4s;
+  -o-transition: opacity 0.4s ease-in-out, visibility 0.4s;
+  -webkit-transition: opacity 0.4s ease-in-out, visibility 0.4s;
+  transition: opacity 0.4s ease-in-out, visibility 0.4s;
+}
+#footer > .share-buttons > li:first-child {
+  margin-left: 0;
+}
+#footer > .share-buttons > li:nth-child(1) {
+  -moz-transition-delay: 0s;
+  -o-transition-delay: 0s;
+  -webkit-transition-delay: 0s;
+  transition-delay: 0s;
+}
+#footer > .share-buttons > li:nth-child(2) {
+  -moz-transition-delay: 0.05s;
+  -o-transition-delay: 0.05s;
+  -webkit-transition-delay: 0.05s;
+  transition-delay: 0.05s;
+}
+#footer > .share-buttons > li:nth-child(3) {
+  -moz-transition-delay: 0.1s;
+  -o-transition-delay: 0.1s;
+  -webkit-transition-delay: 0.1s;
+  transition-delay: 0.1s;
+}
+#footer > .share-buttons > li:nth-child(4) {
+  -moz-transition-delay: 0.15s;
+  -o-transition-delay: 0.15s;
+  -webkit-transition-delay: 0.15s;
+  transition-delay: 0.15s;
+}
+#footer > .share-buttons > li > a {
+  display: block;
+  font-size: 16px;
 }
 
 #credits {

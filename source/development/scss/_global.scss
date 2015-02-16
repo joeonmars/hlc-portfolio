@@ -100,6 +100,10 @@ body{
   min-height: $min-height;
   -webkit-font-smoothing: antialiased;
   font-size: 62.5%;
+
+  &.hidden{
+    display: none;
+  }
 }
 
 h1, h2, h3, h4, h5, h6{
@@ -114,8 +118,8 @@ a{
   text-decoration: none;
   @include user-select(none);
 
-  &:visited {
-    color: $color_lightpurple;
+  &:visited{
+    color: inherit;
   }
 }
 

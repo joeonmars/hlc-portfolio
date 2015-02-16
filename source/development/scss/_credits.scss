@@ -12,7 +12,97 @@ $footer_bottom: 20px;
 		bottom: $footer_bottom + $media_player_height;
 	}
 
-	.copyright{
+	>button{
+		@extend %resetButton;
+		margin: 0 .5em;
+		display: inline-block;
+		vertical-align: middle;
+		color: #fff;
+		text-transform: uppercase;
+		letter-spacing: 4px;
+		font-size: 10px;
+		font-family: $font_barkentina;
+		@include single-transition(opacity, .4s);
+
+		&:first-child{
+			margin-left: 0;
+		}
+
+		&:hover{
+			opacity: .8;
+		}
+
+		&:disabled{
+			opacity: .5;
+		}
+	}
+
+	>.share-buttons{
+		display: inline-block;
+		vertical-align: middle;
+
+		&.hidden{
+			>li{
+				visibility: hidden;
+				opacity: 0;
+
+				&:nth-child(1) {
+				    @include transition-delay(.15s);
+				}
+
+				&:nth-child(2) {
+				    @include transition-delay(.1s);
+				}
+
+				&:nth-child(3) {
+				    @include transition-delay(.05s);
+				}
+
+				&:nth-child(4) {
+				    @include transition-delay(0s);
+				}
+			}
+		}
+
+		&:not(.hidden){
+			>li:hover{
+				opacity: .8;
+			}
+		}
+
+		>li{
+			display: inline-block;
+			vertical-align: middle;
+			margin: 0 .5em;
+			visibility: visible;
+			opacity: 1;
+			@include transition(opacity .4s ease-in-out, visibility .4s);
+
+			&:first-child{
+				margin-left: 0;
+			}
+
+			&:nth-child(1) {
+			    @include transition-delay(0s);
+			}
+
+			&:nth-child(2) {
+			    @include transition-delay(.05s);
+			}
+
+			&:nth-child(3) {
+			    @include transition-delay(.1s);
+			}
+
+			&:nth-child(4) {
+			    @include transition-delay(.15s);
+			}
+
+			>a{
+				display: block;
+				font-size: 16px;
+			}
+		}
 	}
 }
 
