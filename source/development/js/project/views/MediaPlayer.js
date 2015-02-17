@@ -46,7 +46,8 @@ goog.inherits(hlc.views.MediaPlayer, goog.events.EventTarget);
 
 
 hlc.views.MediaPlayer.prototype.init = function(){
-	goog.events.listen(this, 'resize', this.onResize, false, this);
+
+	goog.events.listen(this, 'resize', this.resize, false, this);
 	hlc.main.controllers.windowController.addDispatcher(this);
 
 	goog.events.listen(hlc.main.controllers.mainScrollController,
@@ -72,6 +73,20 @@ hlc.views.MediaPlayer.prototype.show = function(){
 
 hlc.views.MediaPlayer.prototype.hide = function(){
 	goog.dom.classes.enable(this.parentDomElement, 'hidePlayer', true);
+};
+
+
+hlc.views.MediaPlayer.prototype.resize = function(){
+	var fullColumnWidth = goog.style.getSize(this._fullColumn).width;
+	var playbackControlsWidth = goog.style.getSize(this._playbackControlDom).width;
+	var soundControlsWidth = goog.userAgent.MOBILE ? 0 : goog.style.getSize(this._soundControlDom).width;
+
+	var progressControlDomWidth = fullColumnWidth - playbackControlsWidth - soundControlsWidth;
+	goog.style.setStyle(this._progressControlDom, 'width', progressControlDomWidth + 'px');
+
+	this.progressControl.onResize();
+
+	this.soundVisualizer.onResize();
 };
 
 
@@ -132,18 +147,4 @@ hlc.views.MediaPlayer.prototype.onAudioEvent = function(e){
 
 hlc.views.MediaPlayer.prototype.onAudioDataLoad = function(e){
 	this.soundVisualizer.draw(e.audioData);
-};
-
-
-hlc.views.MediaPlayer.prototype.onResize = function(e){
-	var fullColumnWidth = goog.style.getSize(this._fullColumn).width;
-	var playbackControlsWidth = goog.style.getSize(this._playbackControlDom).width;
-	var soundControlsWidth = goog.userAgent.MOBILE ? 0 : goog.style.getSize(this._soundControlDom).width;
-
-	var progressControlDomWidth = fullColumnWidth - playbackControlsWidth - soundControlsWidth;
-	goog.style.setStyle(this._progressControlDom, 'width', progressControlDomWidth + 'px');
-
-	this.progressControl.onResize(e);
-
-	this.soundVisualizer.onResize(e);
 };

@@ -1,12 +1,13 @@
 goog.provide('hlc.controllers.AlbumScrollController');
 
-goog.require('hlc.views.AlbumSection');
 goog.require('goog.events.EventTarget');
 goog.require('goog.events');
 goog.require('goog.dom.query');
 goog.require('goog.async.Delay');
 goog.require('goog.userAgent');
 goog.require('goog.ui.KeyboardShortcutHandler');
+goog.require('hlc.views.AlbumSection');
+goog.require('hlc.views.AlbumScrollView');
 goog.require('hlc.utils');
 
 /**
@@ -38,6 +39,9 @@ hlc.controllers.AlbumScrollController = function(){
   this._isActivated = false;
   this._shortcutHandler = new goog.ui.KeyboardShortcutHandler( document );
   this._eventHandler = new goog.events.EventHandler(this);
+
+  // WIP
+  this._view = new hlc.views.AlbumScrollView(this);
 };
 goog.inherits(hlc.controllers.AlbumScrollController, goog.events.EventTarget);
 goog.addSingletonGetter(hlc.controllers.AlbumScrollController);
@@ -54,6 +58,9 @@ hlc.controllers.AlbumScrollController.prototype.init = function(){
 
 	hlc.main.controllers.navigationController.addDispatcher(this);
 	goog.events.listen(this, goog.history.EventType.NAVIGATE, this.onNavigate, false, this);
+
+	// WIP
+	this._view.init();
 };
 
 
@@ -65,11 +72,17 @@ hlc.controllers.AlbumScrollController.prototype.activate = function(){
 		this._isActivated = true;
 	}
 
-	this._eventHandler.listen(this._albumScrollDomElement, hlc.events.EventType.DOWN, this.onDown, false, this);
+	this._eventHandler.listen( window, goog.events.EventType.RESIZE, this.resize, false, this );
+	this._eventHandler.listen( this._albumScrollDomElement, hlc.events.EventType.DOWN, this.onDown, false, this );
 	this._eventHandler.listen( this._shortcutHandler, goog.ui.KeyboardShortcutHandler.EventType.SHORTCUT_TRIGGERED, this.onShortcutTriggered, false, this );
 
 	this._shortcutHandler.registerShortcut('up', 'up');
 	this._shortcutHandler.registerShortcut('down', 'down');
+
+	// WIP
+	this._view.activate();
+
+	this.resize();
 };
 
 
@@ -84,6 +97,9 @@ hlc.controllers.AlbumScrollController.prototype.deactivate = function(){
 	this._shortcutHandler.unregisterAll();
 
 	this._eventHandler.removeAll();
+
+	// WIP
+	this._view.deactivate();
 };
 
 
@@ -176,6 +192,17 @@ hlc.controllers.AlbumScrollController.prototype.scrollToAlbum = function(albumSe
 			this.dispatchEvent(ev);
 		},
 		onCompleteScope: this
+	});
+};
+
+
+hlc.controllers.AlbumScrollController.prototype.resize = function(){
+
+	var size = goog.style.getSize(this._albumScrollDomElement);
+
+	this.dispatchEvent({
+		type: goog.events.EventType.RESIZE,
+		size: size
 	});
 };
 

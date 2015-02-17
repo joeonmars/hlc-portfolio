@@ -37,6 +37,8 @@
 	</div>
 
 	<div id="album-scroller">
+		<canvas id="albums-view"></canvas>
+		
 		<div id="albums">
 		{% for album in craft.entries.section('album').find()|sortByField('postDate', 'asce') %}
 			<div class="album section" data-id="{{ album.slug }}">

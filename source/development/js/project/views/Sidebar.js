@@ -22,7 +22,7 @@ hlc.views.Sidebar = function(){
 
   this.isSlidedIn = false;
 
-  this._size = goog.style.getSize(this.domElement);
+  this._size = null;
   this._mainScrollerDomElement = goog.dom.getElement('main-scroller');
 
   this._contentDomElements = {
@@ -49,6 +49,9 @@ goog.inherits(hlc.views.Sidebar, goog.events.EventTarget);
 
 
 hlc.views.Sidebar.prototype.init = function(){
+
+	this._size = goog.style.getSize(this.domElement);
+
 	hlc.main.controllers.windowController.addDispatcher(this);
 	goog.events.listen(this, 'resize', this.onResize, false, this);
 
@@ -92,7 +95,8 @@ hlc.views.Sidebar.prototype.slideIn = function(){
 		},
 		'onStartScope': this,
 		'onUpdate': function() {
-			hlc.main.views.mainHud.mediaPlayer.onResize();
+			hlc.main.views.mainHud.mediaPlayer.resize();
+			hlc.main.controllers.albumScrollController.resize();
 		},
 		'onComplete': function() {
 			this.dispatchEvent({type: hlc.views.Sidebar.EventType.SLIDED_IN})
@@ -117,7 +121,8 @@ hlc.views.Sidebar.prototype.slideOut = function(){
 		},
 		'onStartScope': this,
 		'onUpdate': function() {
-			hlc.main.views.mainHud.mediaPlayer.onResize();
+			hlc.main.views.mainHud.mediaPlayer.resize();
+			hlc.main.controllers.albumScrollController.resize();
 		},
 		'onComplete': function() {
 			this.dispatchEvent({type: hlc.views.Sidebar.EventType.SLIDED_OUT})
