@@ -11,6 +11,7 @@
 		"{{ album.slug }}": {
 			"title": "{{ album.title }}",
 			"cover": {
+				"title": "{{cover.title}}",
 				"authorName": "{{cover.authorName}}",
 				"authorUrl": "{{cover.authorUrl}}",
 				"url": {
@@ -26,6 +27,7 @@
 					"artwork": [
 						{% for artwork in song.artwork %}
 							{
+								"title": "{{artwork.title}}",
 								"authorName": "{{artwork.authorName}}",
 								"authorUrl": "{{artwork.authorUrl}}",
 								"url": {

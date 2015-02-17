@@ -6,7 +6,6 @@ goog.require('soy');
 goog.require('hlc.events');
 goog.require('hlc.data.Data');
 goog.require('hlc.templates');
-goog.require('hlc.views.AlbumSection');
 goog.require('hlc.views.Credits');
 goog.require('hlc.views.Footer');
 goog.require('hlc.views.Preloader');

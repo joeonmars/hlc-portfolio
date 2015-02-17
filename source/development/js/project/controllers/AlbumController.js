@@ -1,18 +1,19 @@
-goog.provide('hlc.views.AlbumSection');
+goog.provide('hlc.controllers.AlbumController');
 
+goog.require('goog.dom');
+goog.require('goog.dom.query');
+goog.require('goog.events.EventTarget');
+goog.require('goog.events');
 goog.require('hlc.models.AlbumModel');
 goog.require('hlc.views.Section');
 goog.require('hlc.views.AlbumPlayer');
-goog.require('goog.events.EventTarget');
-goog.require('goog.events');
-goog.require('goog.dom');
-goog.require('goog.dom.query');
 goog.require('hlc.utils');
+goog.require('hlc.events');
 
 /**
  * @constructor
  */
-hlc.views.AlbumSection = function(domElement, albumIndex){
+hlc.controllers.AlbumController = function(domElement, albumIndex){
 
   goog.base(this, domElement);
 
@@ -45,10 +46,10 @@ hlc.views.AlbumSection = function(domElement, albumIndex){
   var albumPlayerDomElement = goog.dom.query('.albumPlayer', domElement)[0];
   this.albumPlayer = new hlc.views.AlbumPlayer(albumPlayerDomElement);
 };
-goog.inherits(hlc.views.AlbumSection, hlc.views.Section);
+goog.inherits(hlc.controllers.AlbumController, hlc.views.Section);
 
 
-hlc.views.AlbumSection.prototype.init = function(){
+hlc.controllers.AlbumController.prototype.init = function(){
 
 	goog.base(this, 'init');
 
@@ -87,7 +88,7 @@ hlc.views.AlbumSection.prototype.init = function(){
 };
 
 
-hlc.views.AlbumSection.prototype.onCrossfadeTick = function(e){
+hlc.controllers.AlbumController.prototype.onCrossfadeTick = function(e){
 	var currentSong = this.albumPlayer.getCurrentSong();
 
 	var nextArtwork = currentSong.getNextArtwork(this._currentArtwork);
@@ -106,11 +107,13 @@ hlc.views.AlbumSection.prototype.onCrossfadeTick = function(e){
 
 	var urlObj = this._nextArtwork['url'];
 	var url = (hlc.utils.isTablet() && !hlc.utils.isRetina()) ? urlObj['lowRes'] : urlObj['highRes'];
+	this._loaderImage.src = '';
 	this._loaderImage.src = url;
+	this._loaderImage.setAttribute('data-id', this._nextArtwork['title']);
 };
 
 
-hlc.views.AlbumSection.prototype.crossfade = function() {
+hlc.controllers.AlbumController.prototype.crossfade = function() {
 	this._hasCrossfadeOnce = true;
 
 	// set current artwork
@@ -128,37 +131,38 @@ hlc.views.AlbumSection.prototype.crossfade = function() {
 	this._currentBgDomElement = this._nextBgDomElement;
 	this._nextBgDomElement = null;
 
-	// reset loader image src for loading next image
-	this._loaderImage.src = '';
-
-	//
 	//hlc.main.views.footer.updatePhotography(this._currentArtwork);
+
+	this.dispatchEvent({
+		type: hlc.events.EventType.CROSSFADE,
+		img: this._loaderImage
+	});
 };
 
 
-hlc.views.AlbumSection.prototype.showUI = function(){
+hlc.controllers.AlbumController.prototype.showUI = function(){
 
   goog.dom.classes.enable( this.domElement, 'ui-hidden', false );
 };
 
 
-hlc.views.AlbumSection.prototype.hideUI = function(){
+hlc.controllers.AlbumController.prototype.hideUI = function(){
   
   goog.dom.classes.enable( this.domElement, 'ui-hidden', true );
 };
 
 
-hlc.views.AlbumSection.prototype.onPlay = function(e){
+hlc.controllers.AlbumController.prototype.onPlay = function(e){
 	this._crossfadeTimer.start();
 };
 
 
-hlc.views.AlbumSection.prototype.onPause = function(e){
+hlc.controllers.AlbumController.prototype.onPause = function(e){
 	this._crossfadeTimer.stop();
 };
 
 
-hlc.views.AlbumSection.prototype.onSongChanged = function(e){
+hlc.controllers.AlbumController.prototype.onSongChanged = function(e){
 	this._currentArtwork = null;
 	this._crossfadeDelay.start( this._hasCrossfadeOnce ? undefined : 0 );
 
@@ -169,7 +173,7 @@ hlc.views.AlbumSection.prototype.onSongChanged = function(e){
 };
 
 
-hlc.views.AlbumSection.prototype.onScrollFinish = function(e){
+hlc.controllers.AlbumController.prototype.onScrollFinish = function(e){
 	if(e.albumSection === this) {
 
 		this._isAtSection = true;
@@ -200,7 +204,7 @@ hlc.views.AlbumSection.prototype.onScrollFinish = function(e){
 };
 
 
-hlc.views.AlbumSection.prototype.onNavigate = function(e){
+hlc.controllers.AlbumController.prototype.onNavigate = function(e){
 	// if not at this album section, don't handle deeplink navigation
 	if(!this._isAtSection) return;
 

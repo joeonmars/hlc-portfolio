@@ -13,5 +13,6 @@ hlc.events.EventType = {
 	PROGRESS: 'progress',
 	DOWN: goog.userAgent.MOBILE ? 'touchstart' : 'mousedown',
 	MOVE: goog.userAgent.MOBILE ? 'touchmove' : 'mousemove',
-	UP: goog.userAgent.MOBILE ? ['touchend', 'touchcancel'] : 'mouseup'
+	UP: goog.userAgent.MOBILE ? ['touchend', 'touchcancel'] : 'mouseup',
+	CROSSFADE: 'crossfade'
 };
