@@ -1,6 +1,7 @@
 goog.provide('hlc.views.AlbumView');
 
 goog.require('goog.events.EventHandler');
+goog.require('goog.color');
 
 /**
  * @constructor
@@ -15,6 +16,31 @@ hlc.views.AlbumView = function( albumController ){
 	this._renderSprite = new PIXI.Sprite( this._renderTexture );
 
 	this._artworkContainer = new PIXI.DisplayObjectContainer();
+
+	this._renderContainer = new PIXI.DisplayObjectContainer();
+	this._renderContainer.addChild( this._artworkContainer );
+
+	if(!hlc.views.AlbumView.GRADIENT_TEXTURE) {
+
+		var resX = 1024;
+		var resY = 1024;
+
+		var canvas = goog.dom.createDom('canvas');
+		canvas.width = resX;
+		canvas.height = resY;
+		var ctx = canvas.getContext("2d");
+
+		var grd = ctx.createRadialGradient(resX/2, resY/2, 0, resX/2, resY/2, resX*.65);
+		grd.addColorStop(0, 'rgba(120, 135, 160, 0.6)');
+		grd.addColorStop(1, 'rgba(0, 0, 0, 0.9)');
+		ctx.fillStyle = grd;
+		ctx.fillRect(0, 0, resX, resY);
+
+		hlc.views.AlbumView.GRADIENT_TEXTURE = PIXI.Texture.fromCanvas( canvas );
+	}
+
+	this._gradientSprite = new PIXI.Sprite( hlc.views.AlbumView.GRADIENT_TEXTURE );
+	this._renderContainer.addChild( this._gradientSprite );
 
 	this._eventHandler = new goog.events.EventHandler(this);
 	this._eventHandler.listen( this._controller, hlc.events.EventType.CROSSFADE, this.onCrossfade, false, this );
@@ -56,9 +82,19 @@ hlc.views.AlbumView.prototype.removeArtworkSprite = function( sprite ){
 };
 
 
-hlc.views.AlbumView.prototype.render = function(){
+hlc.views.AlbumView.prototype.render = function( scrollRatio, numAlbums ){
 
-	this._renderTexture.render( this._artworkContainer );
+	var topRatio = this._controller.albumIndex / numAlbums;
+	var bottomRatio = (this._controller.albumIndex + 1) / numAlbums;
+
+	var a = goog.math.lerp( 0, 1, (scrollRatio - topRatio) / (bottomRatio - topRatio) );
+	a = goog.math.clamp( a, -1, 1 );
+
+	var c = Math.round( 255 * (1 - Math.abs(a) * .8) ); //each RGB channel
+	this._renderSprite.tint = 256 * 256 * c + 256 * c + c;
+
+	this._renderTexture.clear();
+	this._renderTexture.render( this._renderContainer );
 };
 
 
@@ -66,6 +102,13 @@ hlc.views.AlbumView.prototype.resize = function( size ){
 
 	this._renderTexture.resize( size.width, size.height );
 	this._renderSprite.y = this._controller.albumIndex * size.height;
+
+	this._gradientSprite.width = size.width;
+	this._gradientSprite.height = size.height;
+
+	goog.array.forEach(this._artworkContainer.children, function(sprite) {
+		this.coverFit( sprite, true );
+	}, this);
 };
 
 
@@ -146,6 +189,8 @@ hlc.views.AlbumView.prototype.onCrossfade = function(e){
 	//console.log(PIXI.TextureCache);
 };
 
+
+hlc.views.AlbumView.GRADIENT_TEXTURE = null;
 
 hlc.views.AlbumView.MAX_TEXTURE = 0;
 

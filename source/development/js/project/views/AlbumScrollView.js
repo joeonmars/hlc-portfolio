@@ -61,8 +61,11 @@ hlc.views.AlbumScrollView.prototype.deactivate = function(){
 hlc.views.AlbumScrollView.prototype.render = function(){
 
 	var i, l = this._albumViews.length;
+	var scrollRatio = this._controller.getScrollRatio();
+	var numAlbums = this._controller.numAlbums;
+
 	for(i = 0; i < l; i++) {
-		this._albumViews[i].render();
+		this._albumViews[i].render( scrollRatio, numAlbums );
 	}
 
 	var totalHeight = this.resolution.height * this._albumViews.length;

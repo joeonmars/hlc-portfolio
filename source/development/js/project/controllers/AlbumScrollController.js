@@ -16,9 +16,10 @@ goog.require('hlc.utils');
 hlc.controllers.AlbumScrollController = function(){
   goog.base(this);
 
-  this.size = null;
+  this.size = new goog.math.Size();
   this.scrollPosition = 0;
   this.albumSections = [];
+  this.numAlbums = 0;
 
   this._tweener = null;
   this._locateDelay = new goog.async.Delay(this.locateAlbum, 1000, this);
@@ -31,6 +32,8 @@ hlc.controllers.AlbumScrollController = function(){
   goog.array.forEach(this._albumDomElements, function(albumDomElement, albumIndex) {
   	this.albumSections.push( new hlc.controllers.AlbumController( albumDomElement, albumIndex ) );
   }, this);
+
+  this.numAlbums = this.albumSections.length;
 
   this.currentAlbumSection = null;
 
@@ -106,7 +109,7 @@ hlc.controllers.AlbumScrollController.prototype.deactivate = function(){
 
 hlc.controllers.AlbumScrollController.prototype.getScrollRatio = function(){
 
-	return this.scrollPosition / (this.albumSections.length * this.size.height);
+	return this.scrollPosition / (this.numAlbums * this.size.height);
 };
 
 
@@ -133,11 +136,14 @@ hlc.controllers.AlbumScrollController.prototype.locateAlbum = function(album){
 	var albumSection = null;
 
 	if(album) {
+
 		albumSection = album;
+
 	}else {
-		var albumDomHeight = hlc.main.controllers.windowController.getMainViewportSize().height;
-		var albumsDomY = goog.style.getRelativePosition(this._albumsDom, this._albumScrollDomElement).y;
-		var albumIndex = Math.round( Math.abs(albumsDomY) / albumDomHeight );
+
+		var albumIndex = Math.round( this.scrollPosition / this.size.height );
+		albumIndex = goog.math.clamp( albumIndex, 0, this.numAlbums-1 );
+
 		albumSection = this.albumSections[albumIndex];
 	}
 
@@ -165,7 +171,7 @@ hlc.controllers.AlbumScrollController.prototype.locateAlbum = function(album){
 
 hlc.controllers.AlbumScrollController.prototype.scrollToAlbum = function(albumSection, songId){
 
-	var albumDomHeight = hlc.main.controllers.windowController.getMainViewportSize().height;
+	var albumDomHeight = this.size.height;
 	var albumDomY = albumSection.albumIndex * albumDomHeight;
 
 	// animate the scroll position
@@ -219,7 +225,7 @@ hlc.controllers.AlbumScrollController.prototype.resize = function(){
 hlc.controllers.AlbumScrollController.prototype.setScrollPosition = function( scrollPosition ){
 
 	this.scrollPosition = scrollPosition;
-	goog.style.setPosition( this._albumsDom, 0, -this.scrollPosition );
+	goog.style.setStyle( this._albumsDom, 'transform', 'translateY(' + -this.scrollPosition + 'px)' );
 };
 
 
@@ -264,7 +270,7 @@ hlc.controllers.AlbumScrollController.prototype.onMove = function(e){
 
 	var offsetY = this._scrollProps.startY - touchY;
 
-	var albumDomHeight = hlc.main.controllers.windowController.getMainViewportSize().height;
+	var albumDomHeight = this.size.height;
  	var isOverTop = (this._scrollProps.originalY - offsetY > 0);
  	var isOverBottom = (this._albumDomElements.length * albumDomHeight + this._scrollProps.originalY - offsetY < albumDomHeight);
  	
@@ -284,9 +290,9 @@ hlc.controllers.AlbumScrollController.prototype.onUp = function(e){
 	if(!this._isDragging) return false;
 	else this._isDragging = false;
 
-  var elapsedTime = (goog.now() - this._scrollProps.t2) / 1000;
+	var elapsedTime = (goog.now() - this._scrollProps.t2) / 1000;
  	var threshold = 100;
- 	var viewportMid = hlc.main.controllers.windowController.getMainViewportSize().height / 2;
+ 	var viewportMid = this.size.height / 2;
 	var velocity = (this._scrollProps.endY - this._scrollProps.y2) / elapsedTime;
 	var scrolledDistance = this._scrollProps.endY - this._scrollProps.startY;
 
