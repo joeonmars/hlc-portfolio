@@ -1384,6 +1384,9 @@ hr {
 .albumPlayer {
   width: 50%;
   min-width: 600px;
+  -moz-backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 .albumPlayer > .top, .albumPlayer > .middle, .albumPlayer > .bottom {
   font-size: 0;
@@ -1559,16 +1562,6 @@ hr {
 }
 #albums .album .content > h4 {
   font-size: 30px;
-}
-#albums .album:first-child {
-  -moz-box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.4);
-  -webkit-box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.4);
-  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.4);
-}
-#albums .album:last-child {
-  -moz-box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.4);
-  -webkit-box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.4);
-  box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.4);
 }
 
 #sidebar {

@@ -1,6 +1,7 @@
 .albumPlayer{
 	width: 50%;
 	min-width: 600px;
+	@include backface-visibility(hidden);
 
 	>.top, >.middle, >.bottom{
 		font-size: 0;

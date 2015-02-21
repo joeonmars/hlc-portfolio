@@ -15,8 +15,6 @@ hlc.views.mediaplayercontrols.SoundControl = function(domElement){
 
   this.domElement = domElement;
 
-  this.volume = 1;
-
   this._bar = goog.dom.query('.bar', this.domElement)[0];
   this._handle = goog.dom.query('.handle', this.domElement)[0];
 
@@ -25,7 +23,8 @@ hlc.views.mediaplayercontrols.SoundControl = function(domElement){
 
   goog.events.listen(this._dragger, goog.fx.Dragger.EventType.DRAG, this.onDrag, false, this);
 
-  this.simDrag(1);
+  this.volume = hlc.main.controllers.soundController.volume;
+  this.simDrag( this.volume );
 };
 goog.inherits(hlc.views.mediaplayercontrols.SoundControl, goog.events.EventTarget);
 

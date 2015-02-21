@@ -12,6 +12,8 @@ hlc.views.AlbumView = function( albumController ){
 
 	this._controller = albumController;
 
+	this._size = null;
+
 	this._renderTexture = new PIXI.RenderTexture(0, 0);
 	this._renderSprite = new PIXI.Sprite( this._renderTexture );
 
@@ -84,6 +86,7 @@ hlc.views.AlbumView.prototype.removeArtworkSprite = function( sprite ){
 
 hlc.views.AlbumView.prototype.render = function( scrollRatio, numAlbums ){
 
+	// dim based on scroll ratio
 	var topRatio = this._controller.albumIndex / numAlbums;
 	var bottomRatio = (this._controller.albumIndex + 1) / numAlbums;
 
@@ -93,12 +96,20 @@ hlc.views.AlbumView.prototype.render = function( scrollRatio, numAlbums ){
 	var c = Math.round( 255 * (1 - Math.abs(a) * .8) ); //each RGB channel
 	this._renderSprite.tint = 256 * 256 * c + 256 * c + c;
 
+	// parallax
+	var croppedRatio = scrollRatio - topRatio;
+	var croppedHeight = croppedRatio * this._size.height;
+	this._artworkContainer.y = croppedHeight;
+	
+	// render to texture
 	this._renderTexture.clear();
 	this._renderTexture.render( this._renderContainer );
 };
 
 
 hlc.views.AlbumView.prototype.resize = function( size ){
+
+	this._size = size;
 
 	this._renderTexture.resize( size.width, size.height );
 	this._renderSprite.y = this._controller.albumIndex * size.height;
