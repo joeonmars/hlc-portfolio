@@ -17,7 +17,8 @@
 				"url": {
 					"highRes": "{{ siteUrl }}{{ cover.url }}",
 					"lowRes": "{{ siteUrl }}{{ cover.getUrl(tabletArtworkTransform) }}"
-				}
+				},
+				"transition": "from-{{cover.transitionFrom}}-to-{{cover.transitionTo}}-scale-{{cover.transitionScale}}"
 			},
 			"songs": {
 				{% for song in album.songs %}
@@ -33,7 +34,8 @@
 								"url": {
 									"highRes": "{{ siteUrl }}{{ artwork.url }}",
 									"lowRes": "{{ siteUrl }}{{ artwork.getUrl(tabletArtworkTransform) }}"
-								}
+								},
+								"transition": "from-{{artwork.transitionFrom}}-to-{{artwork.transitionTo}}-scale-{{artwork.transitionScale}}"
 							}{{ loop.last ? "" : "," }}
 						{% endfor %}
 					],

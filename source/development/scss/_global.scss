@@ -68,6 +68,8 @@ $sidebar_width: 500px;
 
 $default_scrollbar_width: 50px;
 
+$easeOutCubic: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+
 // --- mixins ---
 @mixin staticBackgroundImage($filename) {
   background-image: url(#{$static_images_path}#{$filename});

@@ -16,17 +16,16 @@ hlc.views.AlbumPlayer = function(domElement){
 
   this.domElement = domElement;
 
+  this._topEl = goog.dom.query('.top', this.domElement)[0];
+  this._middleEl = goog.dom.query('.middle', this.domElement)[0];
+  this._bottomEl = goog.dom.query('.bottom', this.domElement)[0];
+
   this.prevButton = goog.dom.query('.top .arrowButton', this.domElement)[0];
   this.nextButton = goog.dom.query('.bottom .arrowButton', this.domElement)[0];
 
   this.topScroller = goog.dom.query('.top ul', this.domElement)[0];
   this.middleScroller = goog.dom.query('.middle ul', this.domElement)[0];
   this.bottomScroller = goog.dom.query('.bottom ul', this.domElement)[0];
-
-  this.scrollerTweener = new TimelineMax({
-    onComplete: this.onScrollerComplete,
-    onCompleteScope: this
-  });
 
   this._songs = null;
   this._currentSong = null;
@@ -86,29 +85,20 @@ hlc.views.AlbumPlayer.prototype.gotoSong = function(index){
   this.dispatchEvent(ev);
 
   // scroll to song
-  var sideScrollerHeight = goog.style.getSize(this.topScroller).height;
-  var middleScrollerHeight = goog.style.getSize(this.middleScroller).height;
+  var smallScrollerHeight = goog.style.getSize(this._topEl).height;
+  var largeScrollerHeight = goog.style.getSize(this._middleEl).height;
 
   var middleSongIndex = index + 1;
   var topSongIndex = middleSongIndex - 1;
   var bottomSongIndex = middleSongIndex + 1;
 
-  var topY = sideScrollerHeight * topSongIndex;
-  var middleY = middleScrollerHeight * middleSongIndex;
-  var bottomY = sideScrollerHeight * bottomSongIndex;
+  var topY = smallScrollerHeight * topSongIndex;
+  var middleY = largeScrollerHeight * middleSongIndex;
+  var bottomY = smallScrollerHeight * bottomSongIndex;
 
-  var topTweener = TweenMax.to(this.topScroller, .4, {scrollTo: {y: topY}, ease:Power2.easeOut});
-  var middleTweener = TweenMax.to(this.middleScroller, .4, {scrollTo: {y: middleY}, ease:Power2.easeOut});
-  var bottomTweener = TweenMax.to(this.bottomScroller, .4, {scrollTo: {y: bottomY}, ease:Power2.easeOut});
-
-  this.scrollerTweener.kill();
-  this.scrollerTweener.clear();
-
-  if(delta === -1) {
-    this.scrollerTweener.add([topTweener, middleTweener, bottomTweener], '+=0', 'start', .15);
-  }else {
-    this.scrollerTweener.add([bottomTweener, middleTweener, topTweener], '+=0', 'start', .15);
-  }
+  goog.style.setStyle( this.topScroller, 'transform', 'translateY(' + -topY + 'px)' );
+  goog.style.setStyle( this.middleScroller, 'transform', 'translateY(' + -middleY + 'px)' );
+  goog.style.setStyle( this.bottomScroller, 'transform', 'translateY(' + -bottomY + 'px)' );
 
   // set button state
   var isPrevButtonInactive = (index === 0);
@@ -189,11 +179,6 @@ hlc.views.AlbumPlayer.prototype.pause = function(){
 
 hlc.views.AlbumPlayer.prototype.stop = function(){
   this._currentSong.stop();
-};
-
-
-hlc.views.AlbumPlayer.prototype.onScrollerComplete = function(e){
-
 };
 
 

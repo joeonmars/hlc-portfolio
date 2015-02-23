@@ -9,7 +9,7 @@ hlc.data.Data = function() {
 	// hardcoded assets to preload
 	this.preloadAssets = {
 		'masthead': hlc.Url.STATIC_IMAGES + 'backgrounds/masthead.jpg',
-		'heading': hlc.Url.STATIC_IMAGES + 'backgrounds/heading.jpg',
+		'album-cover': hlc.Url.STATIC_IMAGES + 'backgrounds/album-cover.jpg',
 		'biography-background': hlc.Url.STATIC_IMAGES + 'backgrounds/biography-background.jpg',
 		'visualizer-gradient': hlc.Url.STATIC_IMAGES + 'visualizer-gradient.png',
 		'visualizer-back': hlc.Url.STATIC_IMAGES + 'visualizer-back.jpg',

@@ -1,39 +1,45 @@
 <div class="albumPlayer">
 	
 		<div class="top">
-			<ul>
-				<li><h4>no song</h4></li>
-				{% for song in songs %}
-				<li><h4>{{ song.title }}</h4></li>
-				{% endfor %}
-				<li><h4>no song</h4></li>
-			</ul>
+			<div class="list">
+				<ul>
+					<li><h4>no song</h4></li>
+					{% for song in songs %}
+					<li><h4>{{ song.title }}</h4></li>
+					{% endfor %}
+					<li><h4>no song</h4></li>
+				</ul>
+			</div>
 			<div class="iconContainer">
-				<div class="arrowButton upwards"></div>
+				<button class="arrowButton upwards"></button>
 			</div>
 		</div>
 
 		<div class="middle">
-			<ul>
-				<li><h4>no song</h4></li>
-				{% for song in songs %}
-				<li><h4>{{ song.title }}</h4></li>
-				{% endfor %}
-				<li><h4>no song</h4></li>
-			</ul>
+			<div class="list">
+				<ul>
+					<li><h4>no song</h4></li>
+					{% for song in songs %}
+					<li><h4>{{ song.title }}</h4></li>
+					{% endfor %}
+					<li><h4>no song</h4></li>
+				</ul>
+			</div>
 			<div class="iconContainer"></div>
 		</div>
 
 		<div class="bottom">
-			<ul>
-				<li><h4>no song</h4></li>
-				{% for song in songs %}
-				<li><h4>{{ song.title }}</h4></li>
-				{% endfor %}
-				<li><h4>no song</h4></li>
-			</ul>
+			<div class="list">
+				<ul>
+					<li><h4>no song</h4></li>
+					{% for song in songs %}
+					<li><h4>{{ song.title }}</h4></li>
+					{% endfor %}
+					<li><h4>no song</h4></li>
+				</ul>
+			</div>
 			<div class="iconContainer">
-				<div class="arrowButton downwards"></div>
+				<button class="arrowButton downwards"></button>
 			</div>
 		</div>
 	

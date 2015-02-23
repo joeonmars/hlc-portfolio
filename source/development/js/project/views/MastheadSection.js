@@ -25,8 +25,6 @@ hlc.views.MastheadSection = function(domElement){
   this.colorOverlayDom = goog.dom.query('.colorOverlay', this.domElement)[0];
   this.pages = null;
   this.pageToLoad = null;
-
-  this._headingTweener = null;
 };
 goog.inherits(hlc.views.MastheadSection, hlc.views.Section);
 
@@ -77,13 +75,6 @@ hlc.views.MastheadSection.prototype.toPage = function(page){
 	var headingWidth = goog.style.getSize(this.headingDom).width;
 	var pageIndex = goog.array.indexOf(this.indexedPages, this.pageToLoad);
 	var headingOffsetLeft = pageIndex * headingWidth;
-
-	if(this._headingTweener) this._headingTweener.kill();
-
-	this._headingTweener = TweenMax.to(this.headingDom, .5, {
-		scrollTo: {x: headingOffsetLeft},
-		ease: Power2.easeInOut
-	});
 
 	// animate color overlay
 	goog.style.setOpacity(this.colorOverlayDom, (pageIndex > 0) ? 1 : 0);

@@ -127,3 +127,32 @@ hlc.utils.getQuery = function(key) {
 
   return queryData.get(key);
 };
+
+
+hlc.utils.coverFit = function( sprite, viewWidth, viewHeight ) {
+
+	var textureWidth = sprite.texture.width;
+	var textureHeight = sprite.texture.height;
+
+	var viewRatio = viewWidth / viewHeight;
+	var textureRatio = textureWidth / textureHeight;
+
+	var scaledWidth, scaledHeight;
+
+	if (viewRatio > textureRatio) {
+
+		scaledWidth = viewWidth;
+		scaledHeight = scaledWidth / textureRatio;
+
+	} else {
+
+		scaledHeight = viewHeight;
+		scaledWidth = scaledHeight * textureRatio;
+	}
+
+	sprite.width = scaledWidth;
+	sprite.height = scaledHeight;
+
+	sprite.x = (viewWidth - scaledWidth) / 2;
+	sprite.y = (viewHeight - scaledHeight) / 2;
+};

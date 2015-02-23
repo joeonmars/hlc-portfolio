@@ -88,7 +88,7 @@ hlc.models.SongModel.prototype.getDefaultArtwork = function(){
 
 hlc.models.SongModel.prototype.getNextArtwork = function(artwork){
 
-  if(!artwork || artwork === this.defaultArtwork) {
+  if(!artwork || artwork === this.defaultArtwork || this.artwork.length < 1) {
     return this.getDefaultArtwork();
   }
 

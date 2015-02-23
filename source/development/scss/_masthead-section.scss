@@ -27,10 +27,10 @@
 			white-space: nowrap;
 			background-color: black;
 			overflow: hidden;
-			@include background(
+			/*@include background(
 				linear-gradient(left, rgba(15,15,30,.4), rgba(0,0,0,.2), rgba(15,15,30,.4)),
 				url("#{$static_images_path}backgrounds/heading.jpg")
-				);
+				);*/
 			background-size: cover;
 			background-position: center;
 			@include single-transition(all, 0.8s);

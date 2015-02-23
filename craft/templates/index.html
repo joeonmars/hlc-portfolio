@@ -43,13 +43,6 @@
 		{% for album in craft.entries.section('album').find()|sortByField('postDate', 'asce') %}
 			<div class="album section" data-id="{{ album.slug }}">
 
-				<div class="background">
-					<div></div>
-					<div></div>
-					<div class="colorOverlay gradientOverlay"></div>
-					<div class="colorOverlay loaderOverlay"></div>
-				</div>
-
 				<div class="centerColumn">
 					<div class="content">
 						<h3>album</h3>
