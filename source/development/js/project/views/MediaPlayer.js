@@ -47,18 +47,20 @@ goog.inherits(hlc.views.MediaPlayer, goog.events.EventTarget);
 
 hlc.views.MediaPlayer.prototype.init = function(){
 
-	goog.events.listen(this, 'resize', this.resize, false, this);
+	goog.events.listen( this, 'resize', this.resize, false, this );
 	hlc.main.controllers.windowController.addDispatcher(this);
 
-	goog.events.listen(hlc.main.controllers.mainScrollController,
-		hlc.events.EventType.SCROLL_COMPLETE, this.onScrollFinish, false, this);
+	goog.events.listen( hlc.main.controllers.mainScrollController,
+		hlc.events.EventType.SCROLL_COMPLETE, this.onScrollFinish, false, this );
 
-	goog.events.listen(this._playButton, 'click', this.onClick, false, this);
-	goog.events.listen(this._prevButton, 'click', this.onClick, false, this);
-	goog.events.listen(this._nextButton, 'click', this.onClick, false, this);
+	goog.events.listen( this._playButton, 'click', this.onClick, false, this );
+	goog.events.listen( this._prevButton, 'click', this.onClick, false, this );
+	goog.events.listen( this._nextButton, 'click', this.onClick, false, this );
 
-	goog.events.listen(this, hlc.models.SongModel.EventType.HTML_AUDIO_EVENTS, this.onAudioEvent, false, this);
-	goog.events.listen(this, hlc.models.SongModel.EventType.AUDIO_DATA_LOAD, this.onAudioDataLoad, false, this);
+	goog.events.listen( this, hlc.models.SongModel.EventType.HTML_AUDIO_EVENTS, this.onAudioEvent, false, this );
+	goog.events.listen( this, hlc.models.SongModel.EventType.AUDIO_DATA_LOAD, this.onAudioDataLoad, false, this );
+
+	goog.events.listen( hlc.main.views.sidebar, hlc.views.Sidebar.EventType.SLIDING, this.resize, false, this );
 
 	// listen for credits event
 	goog.events.listen( hlc.main.views.credits, hlc.events.EventType.ANIMATE_IN_START, this.hide, false, this );

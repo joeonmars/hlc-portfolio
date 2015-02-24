@@ -91,15 +91,15 @@ hlc.views.Sidebar.prototype.slideIn = function(){
 		'width': targetMainScrollerWidth,
 		'ease': Cubic.easeInOut,
 		'onStart': function() {
-			this.dispatchEvent({type: hlc.views.Sidebar.EventType.SLIDE_IN})
+			this.dispatchEvent( hlc.views.Sidebar.EventType.SLIDE_IN );
 		},
 		'onStartScope': this,
 		'onUpdate': function() {
-			hlc.main.views.mainHud.mediaPlayer.resize();
-			hlc.main.controllers.albumScrollController.resize();
+			this.dispatchEvent( hlc.views.Sidebar.EventType.SLIDING );
 		},
+		'onUpdateScope': this,
 		'onComplete': function() {
-			this.dispatchEvent({type: hlc.views.Sidebar.EventType.SLIDED_IN})
+			this.dispatchEvent( hlc.views.Sidebar.EventType.SLIDED_IN );
 		},
 		'onCompleteScope': this
 	});
@@ -117,15 +117,15 @@ hlc.views.Sidebar.prototype.slideOut = function(){
 		'width': '100%',
 		'ease': Cubic.easeInOut,
 		'onStart': function() {
-			this.dispatchEvent({type: hlc.views.Sidebar.EventType.SLIDE_OUT})
+			this.dispatchEvent( hlc.views.Sidebar.EventType.SLIDE_OUT );
 		},
 		'onStartScope': this,
 		'onUpdate': function() {
-			hlc.main.views.mainHud.mediaPlayer.resize();
-			hlc.main.controllers.albumScrollController.resize();
+			this.dispatchEvent( hlc.views.Sidebar.EventType.SLIDING );
 		},
+		'onUpdateScope': this,
 		'onComplete': function() {
-			this.dispatchEvent({type: hlc.views.Sidebar.EventType.SLIDED_OUT})
+			this.dispatchEvent( hlc.views.Sidebar.EventType.SLIDED_OUT );
 		},
 		'onCompleteScope': this
 	});
@@ -313,5 +313,6 @@ hlc.views.Sidebar.EventType = {
 	SLIDE_IN: 'slide_in',
 	SLIDE_OUT: 'slide_out',
 	SLIDED_IN: 'slided_in',
-	SLIDED_OUT: 'slided_out'
+	SLIDED_OUT: 'slided_out',
+	SLIDING: 'sliding'
 };

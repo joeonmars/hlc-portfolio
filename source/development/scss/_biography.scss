@@ -27,13 +27,21 @@
 		}
 	}
 
+	.spacer{
+		width: 100%;
+	}
+
 	.group{
 		width: 100%;
-		margin: 20em 0;
+		margin-top: 20em;
 		text-align: center;
 
+		&.first{
+			margin-top: 0;
+		}
+
 		@media screen and (max-width: 1300px) {
-			margin: 0 !important;
+			margin-top: 0 !important;
 
 			>section{
 				display: block !important;

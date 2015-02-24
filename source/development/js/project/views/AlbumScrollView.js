@@ -1,6 +1,5 @@
 goog.provide('hlc.views.AlbumScrollView');
 
-goog.require('goog.events.EventHandler');
 goog.require('goog.math.Size');
 goog.require('hlc.views.AlbumView');
 
@@ -13,7 +12,6 @@ hlc.views.AlbumScrollView = function( controller ){
 	this.resolution = new goog.math.Size();
 
 	this._controller = controller;
-	this._eventHandler = new goog.events.EventHandler(this);
 
 	this._renderer = null;
 	this._stage = null;
@@ -25,7 +23,8 @@ hlc.views.AlbumScrollView = function( controller ){
 hlc.views.AlbumScrollView.prototype.init = function(){
 
 	this._renderer = new PIXI.autoDetectRenderer(0, 0, {
-		view: goog.dom.getElement('albums-view')
+		'view': goog.dom.getElement('albums-view'),
+		'transparent': true
 	});
 
 	this._stage = new PIXI.Stage(0x000000);
@@ -46,14 +45,12 @@ hlc.views.AlbumScrollView.prototype.init = function(){
 
 hlc.views.AlbumScrollView.prototype.activate = function(){
 
-	this._eventHandler.listen( this._controller, goog.events.EventType.RESIZE, this.onResize, false, this );
 	TweenMax.ticker.addEventListener('tick', this.render, this);
 };
 
 
 hlc.views.AlbumScrollView.prototype.deactivate = function(){
 
-	this._eventHandler.removeAll();
 	TweenMax.ticker.removeEventListener('tick', this.render, this);
 };
 
@@ -75,9 +72,7 @@ hlc.views.AlbumScrollView.prototype.render = function(){
 };
 
 
-hlc.views.AlbumScrollView.prototype.onResize = function(e){
-
-	var viewSize = e.size;
+hlc.views.AlbumScrollView.prototype.resize = function(viewSize){
 
 	if(goog.math.Size.equals(this.resolution, viewSize)) {
 		return;

@@ -19,11 +19,18 @@ hlc.views.mastheadpages.BiographyPage = function(){
 
   this._scrollProgress = 0;
 
+  this._size = null;
+
   this._backgroundRenderer = null;
   this._backgroundStage = null;
   this._backgroundSprite = null;
 
   this._backgroundCanvas = null;
+
+  this._innerEl = null;
+  this._liEls = null;
+  this._liYs = null;
+  this._spacers = null;
 
   this._scrollbarEl = null;
   this._dummyEl = null;
@@ -45,6 +52,11 @@ hlc.views.mastheadpages.BiographyPage.prototype.createPageElements = function(){
   this._backgroundCanvas = goog.dom.getElementByClass('background', this.domElement);
 
   this._songButtons = goog.dom.query('.song-button', this.domElement);
+
+  this._spacers = goog.dom.query('.spacer', this.domElement);
+
+  this._innerEl = goog.dom.getElementByClass('inner', this.domElement);
+  this._liEls = goog.dom.query('li', this.domElement);
 
   this._scrollbarEl = goog.dom.getElementByClass('scrollbar', this.domElement);
   this._dummyEl = goog.dom.getElementByClass('dummy-scroller', this.domElement);
@@ -99,39 +111,10 @@ hlc.views.mastheadpages.BiographyPage.prototype.resize = function(){
 
   goog.base(this, 'resize');
 
-  var viewSize = goog.style.getSize( this.domElement );
+  this._size = goog.style.getSize( this.domElement );
 
   // resize renderer
-  this._backgroundRenderer.resize( viewSize.width, viewSize.height );
-
-  // resize background sprite
-
-  // 'cover'
-  /*
-  var textureWidth = this._backgroundSprite.texture.width;
-  var textureHeight = this._backgroundSprite.texture.height;
-
-  var textureRatio = textureWidth / textureHeight;
-
-  var scaledWidth, scaledHeight;
-
-  if (viewSize.aspectRatio() > textureRatio) {
-
-    scaledWidth = viewSize.width;
-    scaledHeight = scaledWidth / videoRatio;
-
-  } else {
-
-    scaledHeight = viewSize.height;
-    scaledWidth = scaledHeight * videoRatio;
-  }
-
-  this._backgroundSprite.width = scaledWidth;
-  this._backgroundSprite.height = scaledHeight;
-
-  var backgroundSpriteX = (viewSize.width - scaledWidth) / 2;
-  var backgroundSpriteY = (viewSize.height - scaledHeight) / 2;
-  */
+  this._backgroundRenderer.resize( this._size.width, this._size.height );
 
   // make height always be 2x of the window
   var textureWidth = this._backgroundSprite.texture.width;
@@ -139,10 +122,20 @@ hlc.views.mastheadpages.BiographyPage.prototype.resize = function(){
 
   var textureRatio = textureWidth / textureHeight;
 
-  this._backgroundSprite.height = viewSize.height * 2;
+  this._backgroundSprite.height = this._size.height * 2;
   this._backgroundSprite.width = this._backgroundSprite.height * textureRatio;
   
-  this._backgroundSprite.x = (viewSize.width - this._backgroundSprite.width) / 2;
+  this._backgroundSprite.x = (this._size.width - this._backgroundSprite.width) / 2;
+
+  // resize spacers
+  goog.array.forEach(this._spacers, function(spacer) {
+    goog.style.setHeight(spacer, this._size.height/2);
+  }, this);
+
+  // refresh all relative Y of <li>
+  this._liYs = goog.array.map(this._liEls, function(li) {
+    return goog.style.getRelativePosition(li, this._innerEl).y;
+  }, this);
 };
 
 
@@ -224,7 +217,7 @@ hlc.views.mastheadpages.BiographyPage.prototype.handleAudioEvents = function(e){
 };
 
 
-hlc.views.mastheadpages.BiographyPage.prototype.onScrollUpdate = function(progress){
+hlc.views.mastheadpages.BiographyPage.prototype.onScrollUpdate = function(progress, scrollY){
 
   this._scrollProgress = progress;
 
@@ -233,4 +226,12 @@ hlc.views.mastheadpages.BiographyPage.prototype.onScrollUpdate = function(progre
   this._backgroundSprite.alpha = goog.math.lerp(1, .7, progress);
 
   this._backgroundRenderer.render( this._backgroundStage );
+
+  // update opacity for each <li>, based on scroll position
+  var i, l = this._liEls.length;
+  for(i = 0; i < l; i++) {
+    var y = this._liYs[i];
+    var opacity = Math.min(1, (1 - (y + scrollY) / this._size.height)*2);
+    goog.style.setStyle(this._liEls[i], 'opacity', opacity);
+  }
 };

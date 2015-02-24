@@ -79,6 +79,7 @@ hlc.controllers.AlbumScrollController.prototype.activate = function(){
 	this._eventHandler.listen( window, goog.events.EventType.RESIZE, this.resize, false, this );
 	this._eventHandler.listen( this._albumScrollDomElement, hlc.events.EventType.DOWN, this.onDown, false, this );
 	this._eventHandler.listen( this._shortcutHandler, goog.ui.KeyboardShortcutHandler.EventType.SHORTCUT_TRIGGERED, this.onShortcutTriggered, false, this );
+	this._eventHandler.listen( hlc.main.views.sidebar, hlc.views.Sidebar.EventType.SLIDING, this.resize, false, this);
 
 	this._shortcutHandler.registerShortcut('up', 'up');
 	this._shortcutHandler.registerShortcut('down', 'down');
@@ -214,11 +215,7 @@ hlc.controllers.AlbumScrollController.prototype.scrollToAlbum = function(albumSe
 hlc.controllers.AlbumScrollController.prototype.resize = function(){
 
 	this.size = goog.style.getSize(this._albumScrollDomElement);
-
-	this.dispatchEvent({
-		type: goog.events.EventType.RESIZE,
-		size: this.size
-	});
+	this._view.resize( this.size );
 };
 
 
