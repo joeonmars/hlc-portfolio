@@ -83,6 +83,8 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 .icon-close:before,
 .icon-facebook:before,
 #sidebar > .outer .content .songDetailContainer > .share > a.facebook:before,
+.icon-feather-left:before,
+.icon-feather-right:before,
 .icon-googleplus:before,
 #sidebar > .outer .content .songDetailContainer > .share > a.googleplus:before,
 .icon-linkedin:before,
@@ -116,6 +118,14 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 
 .icon-facebook:before, #sidebar > .outer .content .songDetailContainer > .share > a.facebook:before {
   content: "\f101";
+}
+
+.icon-feather-left:before {
+  content: "\f10a";
+}
+
+.icon-feather-right:before {
+  content: "\f10b";
 }
 
 .icon-googleplus:before, #sidebar > .outer .content .songDetailContainer > .share > a.googleplus:before {
@@ -601,6 +611,70 @@ hr {
   }
   100% {
     opacity: 0.5;
+  }
+}
+@-moz-keyframes letter {
+  0% {
+    opacity: 0;
+    -moz-transform: translateY(8px);
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    -moz-transform: translateY(0px);
+    transform: translateY(0px);
+  }
+}
+@-webkit-keyframes letter {
+  0% {
+    opacity: 0;
+    -webkit-transform: translateY(8px);
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    -webkit-transform: translateY(0px);
+    transform: translateY(0px);
+  }
+}
+@keyframes letter {
+  0% {
+    opacity: 0;
+    -moz-transform: translateY(8px);
+    -ms-transform: translateY(8px);
+    -webkit-transform: translateY(8px);
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    -moz-transform: translateY(0px);
+    -ms-transform: translateY(0px);
+    -webkit-transform: translateY(0px);
+    transform: translateY(0px);
+  }
+}
+@-moz-keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@-webkit-keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
   }
 }
 .scrollbar {
@@ -1216,6 +1290,253 @@ hr {
 }
 .frame-button:hover h3 {
   opacity: 1;
+}
+
+.heading {
+  display: block;
+  letter-spacing: .2em;
+  line-height: 2;
+  color: #fff;
+  text-align: center;
+  text-transform: uppercase;
+  -moz-backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+.heading.loading > div {
+  font-size: 1.5em;
+}
+.heading.animate-in {
+  -moz-animation: fade-in 2s cubic-bezier(0.785, 0.135, 0.15, 0.86) both;
+  -webkit-animation: fade-in 2s cubic-bezier(0.785, 0.135, 0.15, 0.86) both;
+  animation: fade-in 2s cubic-bezier(0.785, 0.135, 0.15, 0.86) both;
+}
+.heading.animate-in > div > span {
+  -moz-animation: letter 0.5s cubic-bezier(0.785, 0.135, 0.15, 0.86) both;
+  -webkit-animation: letter 0.5s cubic-bezier(0.785, 0.135, 0.15, 0.86) both;
+  animation: letter 0.5s cubic-bezier(0.785, 0.135, 0.15, 0.86) both;
+}
+.heading.animate-in > div > span:nth-child(1) {
+  -moz-animation-delay: 540ms;
+  -webkit-animation-delay: 540ms;
+  animation-delay: 540ms;
+}
+.heading.animate-in > div > span:nth-child(2) {
+  -moz-animation-delay: 580ms;
+  -webkit-animation-delay: 580ms;
+  animation-delay: 580ms;
+}
+.heading.animate-in > div > span:nth-child(3) {
+  -moz-animation-delay: 620ms;
+  -webkit-animation-delay: 620ms;
+  animation-delay: 620ms;
+}
+.heading.animate-in > div > span:nth-child(4) {
+  -moz-animation-delay: 660ms;
+  -webkit-animation-delay: 660ms;
+  animation-delay: 660ms;
+}
+.heading.animate-in > div > span:nth-child(5) {
+  -moz-animation-delay: 700ms;
+  -webkit-animation-delay: 700ms;
+  animation-delay: 700ms;
+}
+.heading.animate-in > div > span:nth-child(6) {
+  -moz-animation-delay: 740ms;
+  -webkit-animation-delay: 740ms;
+  animation-delay: 740ms;
+}
+.heading.animate-in > div > span:nth-child(7) {
+  -moz-animation-delay: 780ms;
+  -webkit-animation-delay: 780ms;
+  animation-delay: 780ms;
+}
+.heading.animate-in > div > span:nth-child(8) {
+  -moz-animation-delay: 820ms;
+  -webkit-animation-delay: 820ms;
+  animation-delay: 820ms;
+}
+.heading.animate-in > div > span:nth-child(9) {
+  -moz-animation-delay: 860ms;
+  -webkit-animation-delay: 860ms;
+  animation-delay: 860ms;
+}
+.heading.animate-in > div > span:nth-child(10) {
+  -moz-animation-delay: 900ms;
+  -webkit-animation-delay: 900ms;
+  animation-delay: 900ms;
+}
+.heading.animate-in > div > span:nth-child(11) {
+  -moz-animation-delay: 940ms;
+  -webkit-animation-delay: 940ms;
+  animation-delay: 940ms;
+}
+.heading.animate-in > div > span:nth-child(12) {
+  -moz-animation-delay: 980ms;
+  -webkit-animation-delay: 980ms;
+  animation-delay: 980ms;
+}
+.heading.animate-in > div > span:nth-child(13) {
+  -moz-animation-delay: 1020ms;
+  -webkit-animation-delay: 1020ms;
+  animation-delay: 1020ms;
+}
+.heading.animate-in > div > span:nth-child(14) {
+  -moz-animation-delay: 1060ms;
+  -webkit-animation-delay: 1060ms;
+  animation-delay: 1060ms;
+}
+.heading.animate-in > div > span:nth-child(15) {
+  -moz-animation-delay: 1100ms;
+  -webkit-animation-delay: 1100ms;
+  animation-delay: 1100ms;
+}
+.heading.animate-in > div > span:nth-child(16) {
+  -moz-animation-delay: 1140ms;
+  -webkit-animation-delay: 1140ms;
+  animation-delay: 1140ms;
+}
+.heading.animate-in > div > span:nth-child(17) {
+  -moz-animation-delay: 1180ms;
+  -webkit-animation-delay: 1180ms;
+  animation-delay: 1180ms;
+}
+.heading.animate-in > div > span:nth-child(18) {
+  -moz-animation-delay: 1220ms;
+  -webkit-animation-delay: 1220ms;
+  animation-delay: 1220ms;
+}
+.heading.animate-in > div > span:nth-child(19) {
+  -moz-animation-delay: 1260ms;
+  -webkit-animation-delay: 1260ms;
+  animation-delay: 1260ms;
+}
+.heading.animate-in > div > span:nth-child(20) {
+  -moz-animation-delay: 1300ms;
+  -webkit-animation-delay: 1300ms;
+  animation-delay: 1300ms;
+}
+.heading.animate-in > div > span:nth-child(21) {
+  -moz-animation-delay: 1340ms;
+  -webkit-animation-delay: 1340ms;
+  animation-delay: 1340ms;
+}
+.heading.animate-in > div > span:nth-child(22) {
+  -moz-animation-delay: 1380ms;
+  -webkit-animation-delay: 1380ms;
+  animation-delay: 1380ms;
+}
+.heading.animate-in > div > span:nth-child(23) {
+  -moz-animation-delay: 1420ms;
+  -webkit-animation-delay: 1420ms;
+  animation-delay: 1420ms;
+}
+.heading.animate-in > div > span:nth-child(24) {
+  -moz-animation-delay: 1460ms;
+  -webkit-animation-delay: 1460ms;
+  animation-delay: 1460ms;
+}
+.heading.animate-in > div > span:nth-child(25) {
+  -moz-animation-delay: 1500ms;
+  -webkit-animation-delay: 1500ms;
+  animation-delay: 1500ms;
+}
+.heading.animate-in > div > span:nth-child(26) {
+  -moz-animation-delay: 1540ms;
+  -webkit-animation-delay: 1540ms;
+  animation-delay: 1540ms;
+}
+.heading.animate-in > div > span:nth-child(27) {
+  -moz-animation-delay: 1580ms;
+  -webkit-animation-delay: 1580ms;
+  animation-delay: 1580ms;
+}
+.heading.animate-in > div > span:nth-child(28) {
+  -moz-animation-delay: 1620ms;
+  -webkit-animation-delay: 1620ms;
+  animation-delay: 1620ms;
+}
+.heading.animate-in > div > span:nth-child(29) {
+  -moz-animation-delay: 1660ms;
+  -webkit-animation-delay: 1660ms;
+  animation-delay: 1660ms;
+}
+.heading.animate-in > div > span:nth-child(30) {
+  -moz-animation-delay: 1700ms;
+  -webkit-animation-delay: 1700ms;
+  animation-delay: 1700ms;
+}
+.heading.animate-in > div > span:nth-child(31) {
+  -moz-animation-delay: 1740ms;
+  -webkit-animation-delay: 1740ms;
+  animation-delay: 1740ms;
+}
+.heading.animate-in > div > span:nth-child(32) {
+  -moz-animation-delay: 1780ms;
+  -webkit-animation-delay: 1780ms;
+  animation-delay: 1780ms;
+}
+.heading.animate-in > div > span:nth-child(33) {
+  -moz-animation-delay: 1820ms;
+  -webkit-animation-delay: 1820ms;
+  animation-delay: 1820ms;
+}
+.heading.animate-in > div > span:nth-child(34) {
+  -moz-animation-delay: 1860ms;
+  -webkit-animation-delay: 1860ms;
+  animation-delay: 1860ms;
+}
+.heading.animate-in > div > span:nth-child(35) {
+  -moz-animation-delay: 1900ms;
+  -webkit-animation-delay: 1900ms;
+  animation-delay: 1900ms;
+}
+.heading.animate-in > div > span:nth-child(36) {
+  -moz-animation-delay: 1940ms;
+  -webkit-animation-delay: 1940ms;
+  animation-delay: 1940ms;
+}
+.heading.animate-in > div > span:nth-child(37) {
+  -moz-animation-delay: 1980ms;
+  -webkit-animation-delay: 1980ms;
+  animation-delay: 1980ms;
+}
+.heading.animate-in > div > span:nth-child(38) {
+  -moz-animation-delay: 2020ms;
+  -webkit-animation-delay: 2020ms;
+  animation-delay: 2020ms;
+}
+.heading.animate-in > div > span:nth-child(39) {
+  -moz-animation-delay: 2060ms;
+  -webkit-animation-delay: 2060ms;
+  animation-delay: 2060ms;
+}
+.heading.animate-in > div > span:nth-child(40) {
+  -moz-animation-delay: 2100ms;
+  -webkit-animation-delay: 2100ms;
+  animation-delay: 2100ms;
+}
+.heading .line {
+  width: 100%;
+  height: 1px;
+  background-color: rgba(83, 83, 98, 0.2);
+}
+.heading .line > .fill {
+  margin: 0 auto;
+  width: 100%;
+  height: 1px;
+  background-color: #fff;
+}
+.heading > div {
+  font-size: 1em;
+  -moz-transition: font-size 0.65s cubic-bezier(0.645, 0.045, 0.355, 1);
+  -o-transition: font-size 0.65s cubic-bezier(0.645, 0.045, 0.355, 1);
+  -webkit-transition: font-size 0.65s cubic-bezier(0.645, 0.045, 0.355, 1);
+  transition: font-size 0.65s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+.heading > div > span {
+  display: inline-block;
+  vertical-align: baseline;
 }
 
 #preloader {
@@ -2309,6 +2630,17 @@ hr {
   opacity: 1;
   visibility: visible;
 }
+#home.ambient .curtain {
+  opacity: .5;
+  visibility: visible;
+}
+#home.ambient .portrait {
+  opacity: .2;
+}
+#home.ambient .branding {
+  opacity: 0;
+  visibility: hidden;
+}
 #home .portrait {
   display: block;
   position: absolute;
@@ -2317,6 +2649,100 @@ hr {
   min-width: 480px;
   width: auto;
   height: 90%;
+  opacity: 1;
+  -moz-transition: opacity 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  -o-transition: opacity 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  -webkit-transition: opacity 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: opacity 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+#home .branding {
+  position: relative;
+  display: inline-block;
+  left: 60%;
+  width: 39em;
+  opacity: 1;
+  visibility: visible;
+  -moz-transition: opacity 0.5s cubic-bezier(0.215, 0.61, 0.355, 1), visibility 0.5s;
+  -o-transition: opacity 0.5s cubic-bezier(0.215, 0.61, 0.355, 1), visibility 0.5s;
+  -webkit-transition: opacity 0.5s cubic-bezier(0.215, 0.61, 0.355, 1), visibility 0.5s;
+  transition: opacity 0.5s cubic-bezier(0.215, 0.61, 0.355, 1), visibility 0.5s;
+}
+#home .branding > h2 {
+  font-family: "barkentina_1regular", serif;
+  padding-bottom: 2em;
+}
+#home .branding > h2 .line {
+  display: block;
+  height: 1px;
+  background-color: #fff;
+}
+#home .branding > h2 .line.full {
+  width: 100%;
+}
+#home .branding > h2 .line.left {
+  position: absolute;
+  width: 30%;
+  top: 50%;
+  left: 0;
+}
+#home .branding > h2 .line.right {
+  position: absolute;
+  width: 30%;
+  top: 50%;
+  right: 0;
+}
+#home .branding > h2 > .middle {
+  text-align: justify;
+}
+#home .branding > h2 > .middle > .text {
+  width: 100%;
+  font-size: 2.2em;
+  letter-spacing: .2em;
+  line-height: 4.90909em;
+  text-transform: uppercase;
+}
+#home .branding > h2 > .middle:after {
+  content: "";
+  display: inline-block;
+  width: 100%;
+}
+#home .branding > h2 > .bottom {
+  position: relative;
+  top: -2em;
+}
+#home .branding > h2 > .bottom > .text {
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  font-size: 1.6em;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+}
+#home .branding > h1 {
+  display: block;
+  font-family: "assassinregular", serif;
+  font-size: 9em;
+  text-transform: uppercase;
+  letter-spacing: -.03em;
+  width: 100%;
+  white-space: nowrap;
+}
+#home .branding > h1 > span {
+  display: block;
+}
+#home .branding > p {
+  padding: 2.5em 0;
+  font-size: 1.8em;
+  letter-spacing: .06em;
+  line-height: 1.6;
+}
+#home .branding > .buttons {
+  text-align: center;
+}
+#home .branding > .buttons > li {
+  display: inline-block;
+  vertical-align: top;
+  margin: 0 1.6em;
 }
 #home .branding-table {
   position: absolute;
@@ -2328,106 +2754,24 @@ hr {
   display: table-cell;
   vertical-align: middle;
 }
-#home .branding-table > .branding-table-cell > .branding {
-  position: relative;
-  display: inline-block;
-  left: 60%;
-  width: 39em;
-}
-#home .branding-table > .branding-table-cell > .branding > h2 {
-  font-family: "barkentina_1regular", serif;
-  padding-bottom: 2em;
-}
-#home .branding-table > .branding-table-cell > .branding > h2 .line {
-  display: block;
-  height: 1px;
-  background-color: #fff;
-}
-#home .branding-table > .branding-table-cell > .branding > h2 .line.full {
-  width: 100%;
-}
-#home .branding-table > .branding-table-cell > .branding > h2 .line.left {
-  position: absolute;
-  width: 30%;
-  top: 50%;
-  left: 0;
-}
-#home .branding-table > .branding-table-cell > .branding > h2 .line.right {
-  position: absolute;
-  width: 30%;
-  top: 50%;
-  right: 0;
-}
-#home .branding-table > .branding-table-cell > .branding > h2 > .middle {
-  text-align: justify;
-}
-#home .branding-table > .branding-table-cell > .branding > h2 > .middle > .text {
-  width: 100%;
-  font-size: 2.2em;
-  letter-spacing: .2em;
-  line-height: 4.90909em;
-  text-transform: uppercase;
-}
-#home .branding-table > .branding-table-cell > .branding > h2 > .middle:after {
-  content: "";
-  display: inline-block;
-  width: 100%;
-}
-#home .branding-table > .branding-table-cell > .branding > h2 > .bottom {
-  position: relative;
-  top: -2em;
-}
-#home .branding-table > .branding-table-cell > .branding > h2 > .bottom > .text {
-  display: inline-block;
-  width: 100%;
-  text-align: center;
-  font-size: 1.6em;
-  letter-spacing: .2em;
-  text-transform: uppercase;
-}
-#home .branding-table > .branding-table-cell > .branding > h1 {
-  display: block;
-  font-family: "assassinregular", serif;
-  font-size: 9em;
-  text-transform: uppercase;
-  letter-spacing: -.03em;
-  width: 100%;
-  white-space: nowrap;
-}
-#home .branding-table > .branding-table-cell > .branding > h1 > span {
-  display: block;
-}
-#home .branding-table > .branding-table-cell > .branding > p {
-  padding: 2.5em 0;
-  font-size: 1.8em;
-  letter-spacing: .06em;
-  line-height: 1.6;
-}
-#home .branding-table > .branding-table-cell > .branding > .buttons {
-  text-align: center;
-}
-#home .branding-table > .branding-table-cell > .branding > .buttons > li {
-  display: inline-block;
-  vertical-align: top;
-  margin: 0 1.6em;
-}
 #home .curtain {
-  z-index: 10;
-  -moz-transition: opacity 1s ease-out, visibility 1s;
-  -o-transition: opacity 1s ease-out, visibility 1s;
-  -webkit-transition: opacity 1s ease-out, visibility 1s;
-  transition: opacity 1s ease-out, visibility 1s;
+  z-index: 1;
+  -moz-transition: opacity 0.8s cubic-bezier(0.215, 0.61, 0.355, 1), visibility 0.8s;
+  -o-transition: opacity 0.8s cubic-bezier(0.215, 0.61, 0.355, 1), visibility 0.8s;
+  -webkit-transition: opacity 0.8s cubic-bezier(0.215, 0.61, 0.355, 1), visibility 0.8s;
+  transition: opacity 0.8s cubic-bezier(0.215, 0.61, 0.355, 1), visibility 0.8s;
 }
 
 #biography {
   overflow: hidden;
+  z-index: 1;
 }
-#biography .background {
-  display: block;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 0;
+#biography.scrolled .scroller-viewport, #biography.scrolled .heading-container {
+  top: 160px;
+  -moz-transition: top 0.65s cubic-bezier(0.215, 0.61, 0.355, 1);
+  -o-transition: top 0.65s cubic-bezier(0.215, 0.61, 0.355, 1);
+  -webkit-transition: top 0.65s cubic-bezier(0.215, 0.61, 0.355, 1);
+  transition: top 0.65s cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 #biography .inner {
   position: absolute;
@@ -2497,6 +2841,12 @@ hr {
 #biography .group > section[data-id="awards"] {
   width: 49%;
 }
+#biography .group > section[data-id="awards"] .icon-feather-left {
+  margin-right: .5em;
+}
+#biography .group > section[data-id="awards"] .icon-feather-right {
+  margin-left: .5em;
+}
 #biography .group > section[data-id="commissions"] {
   width: 98%;
 }
@@ -2505,6 +2855,23 @@ hr {
   vertical-align: top;
   width: 49%;
   margin: 0;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+#biography .group > section[data-id="commissions"] > ul > li.two-column {
+  width: 100%;
+}
+#biography .group > section[data-id="commissions"] > ul > li.two-column > ul {
+  margin-left: 0;
+  margin-bottom: 5em;
+}
+#biography .group > section[data-id="commissions"] > ul > li.two-column > ul > li {
+  width: 49%;
+  display: inline-block;
+  vertical-align: top;
+  margin-bottom: 0;
+  padding-left: 140px;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
@@ -2593,14 +2960,27 @@ hr {
 #biography .group > section h4 > span {
   display: block;
 }
+#biography .group > section h6 {
+  font-size: 1.4em;
+  line-height: 2;
+  text-transform: uppercase;
+  letter-spacing: .15em;
+}
 #biography .group > section p {
   font-size: 1.4em;
   line-height: 1.6;
   margin-bottom: 1.6em;
 }
+#biography .group > section cite {
+  display: inline-block;
+  vertical-align: baseline;
+  font-size: 1.25em;
+  padding: 0 .25em;
+}
 #biography .group > section hr {
-  margin: 4em 0;
-  opacity: .2;
+  visibility: hidden;
+  margin: 2em 0;
+  opacity: .1;
 }
 #biography .group > section .song-button {
   position: relative;
@@ -2671,15 +3051,48 @@ hr {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
-.masthead > .colorOverlay {
+#biography .scroller-viewport {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
   opacity: 0;
-  background-color: rgba(255, 255, 255, 0.88);
-  -moz-transition: opacity 1s;
-  -o-transition: opacity 1s;
-  -webkit-transition: opacity 1s;
-  transition: opacity 1s;
 }
+#biography .scroller-viewport.animate-in {
+  -moz-animation: fade-in 1s ease-out both;
+  -webkit-animation: fade-in 1s ease-out both;
+  animation: fade-in 1s ease-out both;
+  -moz-animation-delay: 2s;
+  -webkit-animation-delay: 2s;
+  animation-delay: 2s;
+}
+#biography .heading-container {
+  margin: 0 auto;
+  top: 50%;
+  width: 100%;
+  max-width: 1300px;
+  height: 0;
+  position: relative;
+  z-index: 1;
+}
+#biography .heading-container > .heading {
+  font-size: 4em;
+  -moz-transform: translateY(-100%);
+  -ms-transform: translateY(-100%);
+  -webkit-transform: translateY(-100%);
+  transform: translateY(-100%);
+}
+#biography nav {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 200;
+}
+#biography nav > button {
+  display: block;
+}
+
 .masthead > .marqueeContainer {
   display: none;
   position: relative;
@@ -2764,14 +3177,14 @@ hr {
   background-color: #000;
 }
 .masthead > .pages > .pageContainer > .page {
-  position: relative;
+  position: absolute;
   width: 100%;
   height: 100%;
-  white-space: normal;
 }
 
 #footer {
   position: absolute;
+  z-index: 50;
   left: 25px;
   bottom: 20px;
   font-size: 1.2em;
@@ -2887,7 +3300,7 @@ hr {
 
 #credits {
   position: absolute;
-  z-index: 5;
+  z-index: 100;
   top: 0;
   left: 0;
   width: 100%;
@@ -3025,7 +3438,7 @@ hr {
 #main-container {
   width: 100%;
   height: 100%;
-  padding: 6px;
+  padding: 8px;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;

@@ -21,17 +21,17 @@ hlc.views.mastheadpages.Portrait = function(){
 
 	this._progress = 0;
 
-	this._tweener = new TweenMax(this, 4, {
+	this._tweener = new TweenMax(this, 2, {
 		_progress: this._progress,
 		'paused': true,
-		'ease': Sine.easeOut,
+		'ease': Quad.easeOut,
 		'onUpdate': this.updateProgress,
 		'onUpdateScope': this,
 		'onComplete': this.onProgressComplete,
 		'onCompleteScope': this
 	});
 
-	this._img = goog.dom.query('#home .portrait')[0];
+	this.img = goog.dom.query('#home .portrait')[0];
 
 	this._imgLoader = new goog.net.ImageLoader();
 
@@ -47,7 +47,7 @@ goog.inherits(hlc.views.mastheadpages.Portrait, goog.events.EventTarget);
 
 hlc.views.mastheadpages.Portrait.prototype.activate = function(){
 
-	this._eventHandler.listen( document, goog.events.EventType.MOUSEMOVE, this.onMouseMove, false, this );
+	//this._eventHandler.listen( document, goog.events.EventType.MOUSEMOVE, this.onMouseMove, false, this );
 	this._eventHandler.listen( window, goog.events.EventType.RESIZE, this.resize, false, this );
 	this._eventHandler.listen(this._imgLoader, goog.events.EventType.LOAD, this.onHighResImageLoad, false, this);
 
@@ -68,7 +68,7 @@ hlc.views.mastheadpages.Portrait.prototype.gotoFrame = function( frame ){
 
 	this._currentFrame = frame;
 
-	this._img.src = this._highResSrcs[frame] || this._lowResSrcs[frame];
+	this.img.src = this._highResSrcs[frame] || this._lowResSrcs[frame];
 };
 
 
@@ -82,8 +82,18 @@ hlc.views.mastheadpages.Portrait.prototype.updateProgress = function(){
 hlc.views.mastheadpages.Portrait.prototype.resize = function(){
 
 	this._windowWidth = goog.dom.getViewportSize().width;
-	this._boundLeft = Math.max(0, goog.style.getPageOffsetLeft(this._img));
+	this._boundLeft = Math.max(0, goog.style.getPageOffsetLeft(this.img));
 	this._boundRight = this._windowWidth - this._boundLeft;
+};
+
+
+hlc.views.mastheadpages.Portrait.prototype.animateTo = function( progress ){
+
+	this._tweener.play();
+
+	this._tweener.updateTo({
+		_progress: progress
+	}, true);
 };
 
 
@@ -92,11 +102,7 @@ hlc.views.mastheadpages.Portrait.prototype.onMouseMove = function( e ){
 	var mouseXFraction = (e.clientX - this._boundLeft) / (this._boundRight - this._boundLeft);
 	mouseXFraction = goog.math.clamp(mouseXFraction, 0, 1);
 
-	this._tweener.play();
-
-	this._tweener.updateTo({
-		_progress: mouseXFraction
-	}, true);
+	this.animateTo( mouseXFraction );
 };
 
 

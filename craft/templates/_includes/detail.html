@@ -19,7 +19,7 @@
 		<ul>
 		{% if songEntry.instruments|length %}
 			<li>
-				<h5>instruments</h5>
+				<h5>{{ COPY['instruments'] }}</h5>
 				<p>
 				{% for instrument in songEntry.instruments %}
 					{{ instrument.name }}{{ loop.last ? "" : ", " }}
@@ -30,7 +30,7 @@
 
 		{% if songEntry.performers|length %}
 			<li>
-				<h5>performers</h5>
+				<h5>{{ COPY['performers'] }}</h5>
 				<ul>
 				{% for performer in songEntry.performers %}
 					<li><p>{{ performer.role }} - {{ performer.name }}</p></li>
@@ -41,19 +41,18 @@
 
 		{% if songEntry.duration|length %}
 			<li>
-				<h5>duration</h5>
+				<h5>{{ COPY['duration'] }}</h5>
 				<p>{{ songEntry.duration }}</p>
 			</li>
 		{% endif %}
 		</ul>
-
+		
+		{% if songEntry.description|length %}
 		<div class="description section">
-			{% if songEntry.description|length %}
-				{{ songEntry.description }}
-			{% else %}
-				<p>{{ COPY['no-description'] }}</p>
-			{% endif %}
+			<h5>{{ COPY['description'] }}</h5>
+			<div>{{ songEntry.description }}</div>
 		</div>
+		{% endif %}
 	</div>
 
 	{% if songEntry.allowDownload == 'y' %}
@@ -71,7 +70,7 @@
 		{% set shareDescription = meta.metaSongDescription|replace({'%song%': songEntry.title|capitalize, '%album%': albumEntry.title|capitalize}) %}
 		{% set shareCopy = shareTitle~". "~shareDescription %}
 
-		<h5>share this song</h5>
+		<h5>{{ COPY['share-song'] }}</h5>
 		<a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u={{ shareUrl }}" target="_blank" data-width=626 data-height=436></a>
 		<a class="twitter" href="https://twitter.com/share?url={{ shareUrl }}&text={{ shareCopy }}" target="_blank" data-width=550 data-height=420></a>
 		<a class="googleplus" href="https://plus.google.com/share?url={{ shareUrl }}" target="_blank" data-width=600 data-height=600></a>
@@ -80,7 +79,7 @@
 
 	{% if songEntry.suggestedSongs|length %}
 	<div class="suggestedSongs section">
-		<h5>you may also like</h5>
+		<h5>{{ COPY['you-may-interested'] }}</h5>
 		<ul>
 		{% for suggestedSong in songEntry.suggestedSongs %}
 			<li>

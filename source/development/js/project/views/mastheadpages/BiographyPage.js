@@ -1,6 +1,8 @@
 goog.provide('hlc.views.mastheadpages.BiographyPage');
 
+goog.require('hlc.fx.Heading');
 goog.require('hlc.views.mastheadpages.MastheadPage');
+goog.require('hlc.views.mastheadpages.BiographyNavigation');
 goog.require('hlc.models.AnimationModel');
 goog.require('hlc.views.common.Scroller');
 goog.require('hlc.views.common.DummyScroller');
@@ -19,18 +21,17 @@ hlc.views.mastheadpages.BiographyPage = function(){
 
   this._scrollProgress = 0;
 
+  this._heading = new hlc.fx.Heading( goog.dom.query('h2', this.domElement)[0] );
+  this._heading.setProgress(0);
+
   this._size = null;
-
-  this._backgroundRenderer = null;
-  this._backgroundStage = null;
-  this._backgroundSprite = null;
-
-  this._backgroundCanvas = null;
+  this._nav = null;
 
   this._innerEl = null;
-  this._liEls = null;
-  this._liYs = null;
+  this._fadeEls = null;
+  this._fadeElYs = null;
   this._spacers = null;
+  this._scrollerViewport = null;
 
   this._scrollbarEl = null;
   this._dummyEl = null;
@@ -41,6 +42,8 @@ hlc.views.mastheadpages.BiographyPage = function(){
   this._songId = null;
 
   this._songs = {};
+
+  this.hide();
 };
 goog.inherits(hlc.views.mastheadpages.BiographyPage, hlc.views.mastheadpages.MastheadPage);
 
@@ -49,39 +52,53 @@ hlc.views.mastheadpages.BiographyPage.prototype.createPageElements = function(){
 
 	goog.base(this, 'createPageElements');
 
-  this._backgroundCanvas = goog.dom.getElementByClass('background', this.domElement);
-
   this._songButtons = goog.dom.query('.song-button', this.domElement);
 
   this._spacers = goog.dom.query('.spacer', this.domElement);
 
   this._innerEl = goog.dom.getElementByClass('inner', this.domElement);
-  this._liEls = goog.dom.query('li', this.domElement);
+  this._fadeEls = goog.dom.query('.fade', this.domElement);
+
+  this._scrollerViewport = goog.dom.getElementByClass('scroller-viewport', this.domElement);
 
   this._scrollbarEl = goog.dom.getElementByClass('scrollbar', this.domElement);
   this._dummyEl = goog.dom.getElementByClass('dummy-scroller', this.domElement);
 
   this._scroller = goog.userAgent.MOBILE ?
   	new hlc.views.common.Scroller(this.domElement, this._scrollbarEl) :
-  	new hlc.views.common.DummyScroller(this.domElement, this._dummyEl, this._scrollbarEl);
+  	new hlc.views.common.DummyScroller(this._scrollerViewport, this._dummyEl, this._scrollbarEl);
 
   //TODO: addcallback not working for common.Scroller
   this._scroller.addCallback( hlc.events.EventType.SCROLL_UPDATE, goog.bind(this.onScrollUpdate, this) );
 
-  //
-  this._backgroundRenderer = PIXI.autoDetectRenderer(0, 0, {
-    view: this._backgroundCanvas
-  });
+  // create navigation
+  var navEl = goog.dom.query('nav', this.domElement)[0];
+  this._nav = new hlc.views.mastheadpages.BiographyNavigation( navEl );
+};
 
-  this._backgroundStage = new PIXI.Stage(0x000000);
 
-  var backgroundTexture = new PIXI.Texture( new PIXI.BaseTexture( hlc.main.assets['biography-background'] ) );
-  this._backgroundSprite = new PIXI.Sprite( backgroundTexture );
-  this._backgroundStage.addChild( this._backgroundSprite );
+hlc.views.mastheadpages.BiographyPage.prototype.animateIn = function(){
 
-  this.resize();
+  goog.base(this, 'animateIn');
 
-  this.onScrollUpdate( this._scrollProgress );
+  this._heading.animateIn( this._loadSuccess );
+
+  if(this._scrollerViewport) {
+    goog.dom.classlist.enable(this._scrollerViewport, 'animate-in', true);
+  }
+};
+
+
+hlc.views.mastheadpages.BiographyPage.prototype.hide = function(){
+
+  goog.base(this, 'hide');
+
+  this._heading.reset();
+  goog.dom.classlist.enable(this.domElement, 'scrolled', false);
+
+  if(this._scrollerViewport) {
+    goog.dom.classlist.enable(this._scrollerViewport, 'animate-in', false);
+  }
 };
 
 
@@ -91,11 +108,19 @@ hlc.views.mastheadpages.BiographyPage.prototype.activate = function(){
 
 	this._scroller.activate();
 
+  this._nav.activate();
+
+  this._eventHandler.listen( this._nav, goog.events.EventType.CLICK, this.onClickNavButton, false, this );
+
   goog.array.forEach(this._songButtons, function(songButton) {
     this._eventHandler.listen( songButton, goog.events.EventType.CLICK, this.onClickSongButton, false, this );
   }, this);
 
   this._eventHandler.listen( this, hlc.models.SongModel.EventType.HTML_AUDIO_EVENTS, this.handleAudioEvents, false, this );
+
+  // reset
+  this.resize();
+  this._scroller.reset();
 };
 
 
@@ -104,6 +129,8 @@ hlc.views.mastheadpages.BiographyPage.prototype.deactivate = function(){
 	goog.base(this, 'deactivate');
 
 	this._scroller.deactivate();
+
+  this._nav.deactivate();
 };
 
 
@@ -111,29 +138,22 @@ hlc.views.mastheadpages.BiographyPage.prototype.resize = function(){
 
   goog.base(this, 'resize');
 
+  var offset = 160;
+
   this._size = goog.style.getSize( this.domElement );
 
-  // resize renderer
-  this._backgroundRenderer.resize( this._size.width, this._size.height );
-
-  // make height always be 2x of the window
-  var textureWidth = this._backgroundSprite.texture.width;
-  var textureHeight = this._backgroundSprite.texture.height;
-
-  var textureRatio = textureWidth / textureHeight;
-
-  this._backgroundSprite.height = this._size.height * 2;
-  this._backgroundSprite.width = this._backgroundSprite.height * textureRatio;
-  
-  this._backgroundSprite.x = (this._size.width - this._backgroundSprite.width) / 2;
+  // resize scroller viewport
+  goog.style.setHeight(this._scrollerViewport, this._size.height - offset);
 
   // resize spacers
-  goog.array.forEach(this._spacers, function(spacer) {
-    goog.style.setHeight(spacer, this._size.height/2);
-  }, this);
+  goog.style.setHeight(this._spacers[0], 150);
+
+  var lastSection = goog.array.peek( goog.dom.query('section', this.domElement) );
+  var lastSectionHeight = goog.style.getSize(lastSection).height;
+  goog.style.setHeight( this._spacers[1], (this._size.height - offset - lastSectionHeight)/2 );
 
   // refresh all relative Y of <li>
-  this._liYs = goog.array.map(this._liEls, function(li) {
+  this._fadeElYs = goog.array.map(this._fadeEls, function(li) {
     return goog.style.getRelativePosition(li, this._innerEl).y;
   }, this);
 };
@@ -168,6 +188,13 @@ hlc.views.mastheadpages.BiographyPage.prototype.handleAudioEvents = function(e){
   var songButtons = goog.dom.query('.song-button[data-id="' + e.target.songId + '"]');
 
   switch(e.type) {
+    case 'loadedmetadata':
+    goog.array.forEach(songButtons, function(songButton) {
+      var bar = goog.dom.getElementByClass('bar', songButton);
+      goog.style.setStyle(bar, 'width', 0);
+    });
+    break;
+
     case 'play':
     var keysToRemove = goog.object.getKeys(this._songs);
     goog.array.remove(keysToRemove, e.target.songId);
@@ -185,9 +212,6 @@ hlc.views.mastheadpages.BiographyPage.prototype.handleAudioEvents = function(e){
     }, this);
 
     goog.array.forEach(songButtons, function(songButton) {
-      var bar = goog.dom.getElementByClass('bar', songButton);
-      goog.style.setStyle(bar, 'width', 0);
-
       goog.dom.classes.enable( songButton, 'active', true );
       goog.dom.classes.enable( songButton, 'paused', false );
     });
@@ -221,17 +245,63 @@ hlc.views.mastheadpages.BiographyPage.prototype.onScrollUpdate = function(progre
 
   this._scrollProgress = progress;
 
-  this._backgroundSprite.y = (this._backgroundRenderer.height - this._backgroundSprite.height) * progress;
-
-  this._backgroundSprite.alpha = goog.math.lerp(1, .7, progress);
-
-  this._backgroundRenderer.render( this._backgroundStage );
-
   // update opacity for each <li>, based on scroll position
-  var i, l = this._liEls.length;
+  var i, l = this._fadeEls.length;
+  var offset = goog.style.getPageOffsetTop(this._scrollerViewport);
   for(i = 0; i < l; i++) {
-    var y = this._liYs[i];
-    var opacity = Math.min(1, (1 - (y + scrollY) / this._size.height)*2);
-    goog.style.setStyle(this._liEls[i], 'opacity', opacity);
+    var y = this._fadeElYs[i];
+    var opacity = Math.min(1, (1 - (y + scrollY + offset) / (this._size.height * .8))*2);
+    goog.style.setStyle(this._fadeEls[i], 'opacity', opacity);
   }
+
+  if(progress > 0) {
+    goog.dom.classlist.enable(this.domElement, 'scrolled', true);
+  }
+};
+
+
+hlc.views.mastheadpages.BiographyPage.prototype.onClickNavButton = function(e){
+
+  var dataId;
+
+  switch(e.id) {
+    case 'education':
+    dataId = 'education';
+    break;
+
+    case 'work-experience-awards':
+    dataId = 'work-experience';
+    break;
+
+    case 'commissions':
+    dataId = 'commissions';
+    break;
+
+    case 'premiers':
+    dataId = 'premiers';
+    break;
+
+    case 'contact':
+    dataId = 'contact';
+    break;
+
+    case 'home':
+    hlc.main.controllers.navigationController.setToken('home');
+    return;
+    break;
+  }
+
+  var sectionEl = goog.dom.query('section[data-id="' + dataId + '"]', this.domElement)[0];
+  var offsetHeight = goog.style.getSize(this._dummyEl).height * (1/3);
+  var scrollY = Math.max(0, goog.style.getRelativePosition(sectionEl, this._innerEl).y - offsetHeight);
+
+  this._dummyEl.scrollTop = scrollY;
+};
+
+
+hlc.views.mastheadpages.BiographyPage.prototype.onLoadProgressTick = function(e){
+
+  goog.base(this, 'onLoadProgressTick', e);
+
+  this._heading.setProgress( this._loadAnimationProgress );
 };

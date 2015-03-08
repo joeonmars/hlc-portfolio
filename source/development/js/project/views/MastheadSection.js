@@ -22,7 +22,6 @@ hlc.views.MastheadSection = function(domElement){
   this.marqueeDom = goog.dom.query('.marquee', this.domElement)[0];
   this.marqueeContentDom = goog.dom.query('.content', this.marqueeDom)[0];
   this.headingDom = goog.dom.query('.heading', this.marqueeDom)[0];
-  this.colorOverlayDom = goog.dom.query('.colorOverlay', this.domElement)[0];
   this.pages = null;
   this.pageToLoad = null;
 };
@@ -38,11 +37,6 @@ hlc.views.MastheadSection.prototype.init = function(){
 		'home': new hlc.views.mastheadpages.HomePage,
 		'biography': new hlc.views.mastheadpages.BiographyPage
 	};
-
-	this.indexedPages = [
-		this.pages['home'],
-		this.pages['biography']
-	];
 
 	// listen for events
 	goog.events.listen(hlc.main.controllers.mainScrollController,
@@ -60,31 +54,17 @@ hlc.views.MastheadSection.prototype.init = function(){
 
 hlc.views.MastheadSection.prototype.toPage = function(page){
 
+	// animate out old page
 	if(this.pageToLoad) {
-		this.pageToLoad.hide();
+		this.pageToLoad.animateOut();
 	}
 
 	// load page
 	this.pageToLoad = page || this.pageToLoad;
 	this.pageToLoad.load();
 
-	// show new page
-	this.pageToLoad.show();
-
-	// animate heading
-	var headingWidth = goog.style.getSize(this.headingDom).width;
-	var pageIndex = goog.array.indexOf(this.indexedPages, this.pageToLoad);
-	var headingOffsetLeft = pageIndex * headingWidth;
-
-	// animate color overlay
-	goog.style.setOpacity(this.colorOverlayDom, (pageIndex > 0) ? 1 : 0);
-
-	// animate marquee
-	if(pageIndex === 0) {
-		goog.dom.classes.add(this.marqueeDom, 'hide');
-	}else {
-		goog.dom.classes.remove(this.marqueeDom, 'hide');
-	}
+	// animate in new page
+	this.pageToLoad.animateIn();
 };
 
 

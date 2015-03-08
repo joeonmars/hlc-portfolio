@@ -53,6 +53,7 @@ hlc.views.common.DummyScroller.prototype.activate = function(){
   this._eventHandler.listen(this._viewOuter, 'mousewheel', this.onMouseWheel, false, this);
 
   this._eventHandler.listen(this._dummyOuter, 'scroll', this.onDummyScroll, false, this);
+  this._eventHandler.listen(window, 'resize', this.onDummyScroll, false, this);
 
   this._eventHandler.listen(this._dragger, goog.fx.Dragger.EventType.START, this.onDragHandleStart, false, this);
   this._eventHandler.listen(this._dragger, goog.fx.Dragger.EventType.END, this.onDragHandleEnd, false, this);
@@ -73,6 +74,8 @@ hlc.views.common.DummyScroller.prototype.deactivate = function(){
 hlc.views.common.DummyScroller.prototype.reset = function(){
 
   this.onResize();
+  
+  this._dummyOuter.scrollTop = 0;
   this.scrollTo(0);
 };
 
@@ -85,13 +88,13 @@ hlc.views.common.DummyScroller.prototype.getProgress = function(){
 
 hlc.views.common.DummyScroller.prototype.enableDummyScroll = function(){
 
-  goog.dom.classes.enable( this._dummyOuter, 'enabled', true );
+  goog.dom.classlist.enable( this._dummyOuter, 'enabled', true );
 };
 
 
 hlc.views.common.DummyScroller.prototype.disableDummyScroll = function(){
 
-  goog.dom.classes.enable( this._dummyOuter, 'enabled', false );
+  goog.dom.classlist.enable( this._dummyOuter, 'enabled', false );
 };
 
 
@@ -144,13 +147,13 @@ hlc.views.common.DummyScroller.prototype.onMouseWheel = function(e){
 
 hlc.views.common.DummyScroller.prototype.onDragHandleStart = function(e){
 
-  goog.dom.classes.add(this._scrollbar, 'down');
+  goog.dom.classlist.enable(this._scrollbar, 'down', true);
 };
 
 
 hlc.views.common.DummyScroller.prototype.onDragHandleEnd = function(e){
 
-  goog.dom.classes.remove(this._scrollbar, 'down');
+  goog.dom.classlist.enable(this._scrollbar, 'down', false);
 };
 
 
@@ -171,9 +174,14 @@ hlc.views.common.DummyScroller.prototype.onAnimationFrame = function (now) {
 
   this._viewInnerY += (targetY - this._viewInnerY) * .1;
 
+  if(goog.math.nearlyEquals(this._viewInnerY, targetY, .1)) {
+    this._viewInnerY = targetY;
+  }
+
   this.scrollTo( this._viewInnerY );
 
-  if(goog.math.nearlyEquals(this._viewInnerY, targetY, .1)) {
+  if(this._viewInnerY === targetY) {
+
     goog.fx.anim.unregisterAnimation( this );
 
     // call complete callbacks

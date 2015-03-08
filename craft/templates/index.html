@@ -12,8 +12,6 @@
 {% block content %}
 
 	<div class="masthead section">
-		<div class="colorOverlay"></div>
-
 		<div class="marqueeContainer">
 			<div class="marquee hide">
 				<div class="content">
@@ -31,7 +29,11 @@
 		<div class="pages">
 			<div class="pageContainer">
 				<div id="home" class="page" data-token="{{ home.token }}">{% include "_includes/home" %}</div>
-				<div id="biography" class="page" data-token="{{ biography.token }}"></div>
+				<div id="biography" class="page" data-token="{{ biography.token }}">
+					<div class="heading-container">
+						<h2 class="heading">{{ COPY['biography'] }}</h2>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

@@ -559,3 +559,58 @@
     }
   }
 }
+
+// --- heading --
+.heading{
+  display: block;
+  letter-spacing: .2em;
+  line-height: 2;
+  color: #fff;
+  text-align: center;
+  text-transform: uppercase;
+  @include backface-visibility(hidden);
+
+  &.loading{
+    >div{
+      font-size: 1.5em;
+    }
+  }
+
+  &.animate-in{
+    @include animation( fade-in 2s $easeInOutCirc both );
+
+    >div{
+      >span{
+        @include animation( letter .5s $easeInOutCirc both );
+      }
+      @for $i from 1 through 40{
+        >span:nth-child(#{$i}){
+          @include animation-delay( #{$i*40+500}ms );
+        }
+      }
+    }
+  }
+
+  .line{
+    width: 100%;
+    height: 1px;
+    background-color: rgba($color_purple, .2);
+
+    >.fill{
+      margin: 0 auto;
+      width: 100%;
+      height: 1px;
+      background-color: #fff;
+    }
+  }
+
+  >div{
+    font-size: 1em;
+    @include single-transition(font-size, .65s, $easeInOutCubic);
+
+    >span{
+      display: inline-block;
+      vertical-align: baseline;
+    }
+  }
+}

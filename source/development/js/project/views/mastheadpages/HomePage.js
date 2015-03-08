@@ -41,6 +41,20 @@ hlc.views.mastheadpages.HomePage.prototype.load = function(){
 };
 
 
+hlc.views.mastheadpages.HomePage.prototype.animateIn = function(){
+
+	this.activate();
+	this.goAmbient(false);
+};
+
+
+hlc.views.mastheadpages.HomePage.prototype.animateOut = function(){
+
+	this.deactivate();
+	this.goAmbient(true);
+};
+
+
 hlc.views.mastheadpages.HomePage.prototype.activate = function(){
 	
 	goog.base(this, 'activate');
@@ -59,6 +73,10 @@ hlc.views.mastheadpages.HomePage.prototype.activate = function(){
 
 	this._eventHandler.listen(hlc.main.controllers.mainScrollController,
 		hlc.events.EventType.SCROLL_COMPLETE, this.onScrollComplete, false, this);
+
+	// listen for credits event
+	this._eventHandler.listen( hlc.main.views.credits, hlc.events.EventType.ANIMATE_IN_START, this.onCreditsAnimateIn, false, this );
+	this._eventHandler.listen( hlc.main.views.credits, hlc.events.EventType.ANIMATE_OUT_START, this.onCreditsAnimateOut, false, this );
 };
 
 
@@ -73,6 +91,12 @@ hlc.views.mastheadpages.HomePage.prototype.deactivate = function(){
 	goog.array.forEach(this._buttons, function(button){
 		button.deactivate();
 	}, this);
+};
+
+
+hlc.views.mastheadpages.HomePage.prototype.goAmbient = function( shouldGo ){
+
+	goog.dom.classlist.enable( this.domElement, 'ambient', shouldGo );
 };
 
 
@@ -101,5 +125,17 @@ hlc.views.mastheadpages.HomePage.prototype.onScrollStart = function(e){
 
 hlc.views.mastheadpages.HomePage.prototype.onScrollComplete = function(e){
 
-	//console.log(e);
+	this._portrait.animateTo(.5);
+};
+
+
+hlc.views.mastheadpages.HomePage.prototype.onCreditsAnimateIn = function(e){
+
+	this.goAmbient( true );
+};
+
+
+hlc.views.mastheadpages.HomePage.prototype.onCreditsAnimateOut = function(e){
+
+	this.goAmbient( false );
 };

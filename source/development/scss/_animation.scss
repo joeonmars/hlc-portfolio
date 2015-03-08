@@ -8,7 +8,7 @@
   }
   100%{
   	@include transform(translateX(2px) scale(1.2));
-	opacity: 0;
+    opacity: 0;
   }
 }
 
@@ -17,6 +17,26 @@
   	opacity: 1;
   }
   100%{
-	opacity: 0.5;
+    opacity: 0.5;
+  }
+}
+
+@include keyframes(letter) {
+  0%{
+    opacity: 0;
+    @include translateY(8px);
+  }
+  100%{
+    opacity: 1;
+    @include translateY(0px);
+  }
+}
+
+@include keyframes(fade-in) {
+  0%{
+    opacity: 0;
+  }
+  100%{
+    opacity: 1;
   }
 }

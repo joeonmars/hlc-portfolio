@@ -25,6 +25,8 @@
 [data-icon]:before,
 .icon-close:before,
 .icon-facebook:before,
+.icon-feather-left:before,
+.icon-feather-right:before,
 .icon-googleplus:before,
 .icon-linkedin:before,
 .icon-pause:before,
@@ -49,6 +51,8 @@
 
 .icon-close:before { content: "\f106"; }
 .icon-facebook:before { content: "\f101"; }
+.icon-feather-left:before { content: "\f10a"; }
+.icon-feather-right:before { content: "\f10b"; }
 .icon-googleplus:before { content: "\f102"; }
 .icon-linkedin:before { content: "\f107"; }
 .icon-pause:before { content: "\f108"; }

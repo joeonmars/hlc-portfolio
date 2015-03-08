@@ -2,6 +2,7 @@ $footer_bottom: 20px;
 
 #footer{
 	position: absolute;
+	z-index: 50;
 	left: 25px;
 	bottom: $footer_bottom;
 	font-size: 1.2em;
@@ -108,7 +109,7 @@ $footer_bottom: 20px;
 
 #credits{
 	position: absolute;
-	z-index: 5;
+	z-index: 100;
 	top: 0;
 	left: 0;
 	width: 100%;

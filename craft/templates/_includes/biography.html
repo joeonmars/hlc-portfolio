@@ -2,275 +2,277 @@
 
 {% block html %}
 
-<canvas class="background"></canvas>
+<div class="scroller-viewport">
+	<div class="inner">
 
-<div class="inner">
+		<div class="centerColumn">
 
-	<div class="centerColumn">
+			<div class="spacer"></div>
 
-		<div class="spacer"></div>
+			{# education and additional education #}
+			<div class="group first">
+			{% set educationByTypes = {'education': education, 'additional-education': additionalEducation} %}
 
-		{# education and additional education #}
-		<div class="group first">
-		{% set educationByTypes = {'education': education, 'additional-education': additionalEducation} %}
+			{% for id, global in educationByTypes %}
 
-		{% for id, global in educationByTypes %}
+			<section data-id="{{ id }}">
 
-		<section data-id="{{ id }}">
+				<h3 class="right fade">
+					<span class="line top"></span>
+					<span class="text">{{ COPY[id] }}</span>
+					<span class="line bottom"></span>
+				</h3>
 
-			<h3 class="right">
-				<span class="line top"></span>
-				<span class="text">{{ COPY[id] }}</span>
-				<span class="line bottom"></span>
-			</h3>
+				{% set programsByYear = global.programs|group('year') %}
 
-			{% set programsByYear = global.programs|group('year') %}
+				<ul>
+					{% for programsOfYear in programsByYear %}
+					<li class="fade">
+						<h4 class="left">{{ programsOfYear[0].year }}</h4>
+						<ul class="right">
+							{% for program in programsOfYear %}
+							<li class="fade">
 
-			<ul>
-				{% for programsOfYear in programsByYear %}
-				<li>
-					<h4 class="left">{{ programsOfYear[0].year }}</h4>
-					<ul class="right">
-						{% for program in programsOfYear %}
-						<li>
+								<p>
+									{{- program.program -}}
+									<br>
+									{{- program.location -}}
+								</p>
 
-							<p>
-								{{- program.program -}}
-								<br>
-								{{- program.location -}}
-							</p>
+								{% if program.teachers|length %}
+								<p>
+									{{- COPY['teachers'] -}}:&nbsp;
+							        {%- for teacher in program.teachers -%}
+							            <cite>{{ teacher.name }}</cite>
+							            {%- if teacher.subject|length -%}
+							            	({{ teacher.subject }})
+							            {%- endif -%}
+							            {{ loop.last ? "" : ",&nbsp;" }}
+							        {%- endfor -%}
+								</p>
+								{% endif %}
 
-							{% if program.teachers|length %}
-							<p>
-								{{- COPY['teachers'] -}}:&nbsp;
-						        {%- for teacher in program.teachers -%}
-						            <cite>{{ teacher.name }}</cite>
-						            {%- if teacher.subject|length -%}
-						            	({{ teacher.subject }})
-						            {%- endif -%}
-						            {{ loop.last ? "" : ",&nbsp;" }}
-						        {%- endfor -%}
-							</p>
-							{% endif %}
+								{% if program.principalTeachers|length %}
+								<p>
+									{{- COPY['principal-teachers'] -}}:&nbsp;
+							        {%- for teacher in program.principalTeachers -%}
+							            <cite>{{ teacher.name }}</cite>
+							            {%- if teacher.subject|length -%}
+							            	({{ teacher.subject }})
+							            {%- endif -%}
+							            {{ loop.last ? "" : ",&nbsp;" }}
+							        {%- endfor -%}
+								</p>
+								{% endif %}
 
-							{% if program.principalTeachers|length %}
-							<p>
-								{{- COPY['principal-teachers'] -}}:&nbsp;
-						        {%- for teacher in program.principalTeachers -%}
-						            <cite>{{ teacher.name }}</cite>
-						            {%- if teacher.subject|length -%}
-						            	({{ teacher.subject }})
-						            {%- endif -%}
-						            {{ loop.last ? "" : ",&nbsp;" }}
-						        {%- endfor -%}
-							</p>
-							{% endif %}
+								{% if program.feature|length %}
+								<p>{{ COPY['feature'] }}: {{ program.feature }}</p>
+								{% endif %}
 
-							{% if program.feature|length %}
-							<p>{{ COPY['feature'] }}: {{ program.feature }}</p>
-							{% endif %}
+								{% if program.thesisEntry|length %}
+								<button class="song-button" data-id="{{ program.thesisEntry[0].slug }}">
+									<div class="fill">
+										<div class="bar"></div>
+									</div>
+									<span>{{ program.thesisEntry[0].title }}</span>
+									<div class="icon"></div>
+								</button>
+								{% elseif program.thesisTitle|length %}
+								<p>{{ COPY['thesis'] }}: {{ program.thesisTitle }}</p>
+								{% endif %}
 
-							{% if program.thesisEntry|length %}
-							<button class="song-button" data-id="{{ program.thesisEntry[0].slug }}">
-								<div class="fill">
-									<div class="bar"></div>
-								</div>
-								<span>{{ program.thesisEntry[0].title }}</span>
-								<div class="icon"></div>
-							</button>
-							{% elseif program.thesisTitle|length %}
-							<p>{{ COPY['thesis'] }}: {{ program.thesisTitle }}</p>
-							{% endif %}
+							</li>
+							{% endfor %}
+						</ul>
+					</li>
+					{% endfor %}
+				</ul>
 
-						</li>
-						{%- if not loop.last -%}<hr>{%- endif -%}
-						{% endfor %}
-					</ul>
-				</li>
-				{% endfor %}
-			</ul>
+			</section>
 
-		</section>
-
-		{% endfor %}
-
-		</div>
-
-		{# work experience and awards #}
-		<div class="group">
-
-		<section data-id="work-experience">
-			<h3 class="right">
-				<span class="line top"></span>
-				<span class="text">{{ COPY['work-experience'] }}</span>
-				<span class="line bottom"></span>
-			</h3>
-
-			<ul>
-			{% for experience in workExperience.workExperiences %}
-				<li>
-					{% set fr = (now.year == experience.from) ? COPY['present'] : experience.from %}
-					{% set to = (now.year == experience.to) ? COPY['present'] : experience.to %}
-
-					{%- if experience.from != experience.to -%}
-						<h4 class="left">
-							<span>{{ fr }}</span>
-							<span class="dash">-</span>
-							<span>{{ to }}</span>
-						</h4>
-					{%- else -%}
-						<h4 class="left"><span>{{ fr }}</span></h4>
-					{%- endif -%}
-
-					<div class="right">
-						<p>{{ experience.jobTitle }}</p>
-						<p>{{ experience.location }}</p>
-					</div>
-				</li>
 			{% endfor %}
-			</ul>
-		</section>
 
+			</div>
 
-		<section data-id="awards">
-			<h3 class="right">
-				<span class="line top"></span>
-				<span class="text">{{ COPY['awards'] }}</span>
-				<span class="line bottom"></span>
-			</h3>
+			{# work experience and awards #}
+			<div class="group">
 
-			<ul>
-			{% for award in awards.awards %}
-				<li>
-					<h4 class="left">{{ award.year }}</h4>
-					<div class="right">
-						<p><span class="feather left"></span>{{ award.awardTitle }}<span class="feather right"></span></p>
-						<p>{{ award.host }}</p>
-					</div>
-				</li>
-			{% endfor %}
-			</ul>
-		</section>
+			<section data-id="work-experience">
+				<h3 class="right fade">
+					<span class="line top"></span>
+					<span class="text">{{ COPY['work-experience'] }}</span>
+					<span class="line bottom"></span>
+				</h3>
 
-		</div>
+				<ul>
+				{% for experience in workExperience.workExperiences %}
+					<li class="fade">
+						{% set fr = (now.year == experience.from) ? COPY['present'] : experience.from %}
+						{% set to = (now.year == experience.to) ? COPY['present'] : experience.to %}
 
-		{# commisions #}
-		<div class="group">
+						{%- if experience.from != experience.to -%}
+							<h4 class="left">
+								<span>{{ fr }}</span>
+								<span class="dash">-</span>
+								<span>{{ to }}</span>
+							</h4>
+						{%- else -%}
+							<h4 class="left"><span>{{ fr }}</span></h4>
+						{%- endif -%}
 
-		<section data-id="commissions">
-
-			<h3 class="right">
-				<span class="line top"></span>
-				<span class="text">{{ COPY['commissions'] }}</span>
-				<span class="line bottom"></span>
-			</h3>
-
-			{% set commissionsByYear = commissions.commissions|group('year') %}
-
-			<ul>
-				{% for commissionsOfYear in commissionsByYear %}
-				<li>
-					<h4 class="left">{{ commissionsOfYear[0].year }}</h4>
-					<ul class="right">
-						{% for commission in commissionsOfYear %}
-						<li>
-							<p>
-								{{- commission.subject -}}
-								{%- if commission.location|length -%}
-								<br>
-								{{- commission.location -}}
-								{%- endif -%}
-							</p>
-						</li>
-						{%- if not loop.last -%}<hr>{%- endif -%}
-						{% endfor %}
-					</ul>
-				</li>
-				{% endfor %}
-			</ul>
-
-		</section>
-
-		</div>
-
-		{# premiers #}
-		<div class="group">
-
-		<section data-id="premiers">
-			<h3 class="right">
-				<span class="line top"></span>
-				<span class="text">{{ COPY['premiers'] }}</span>
-				<span class="line bottom"></span>
-			</h3>
-
-			<ul>
-			{% for premier in premiers.premiers %}
-				<li class="right">
-					{{ premier.description }}
-
-					{% for entry in premier.entries %}
-					<button class="song-button" data-id="{{ entry.slug }}">
-						<div class="fill">
-							<div class="bar"></div>
+						<div class="right">
+							<p>{{ experience.jobTitle }}</p>
+							<p>{{ experience.location }}</p>
 						</div>
-						<span>{{ entry.title }}</span>
-						<div class="icon"></div>
-					</button>
+					</li>
+				{% endfor %}
+				</ul>
+			</section>
+
+
+			<section data-id="awards">
+				<h3 class="right fade">
+					<span class="line top"></span>
+					<span class="text">{{ COPY['awards'] }}</span>
+					<span class="line bottom"></span>
+				</h3>
+
+				<ul>
+				{% for award in awards.awards %}
+					<li class="fade">
+						<h4 class="left">{{ award.year }}</h4>
+						<div class="right">
+							<h6><span class="icon-feather-left"></span>{{ award.awardTitle }}<span class="icon-feather-right"></span></h6>
+							<p>{{ award.host }}</p>
+						</div>
+					</li>
+				{% endfor %}
+				</ul>
+			</section>
+
+			</div>
+
+			{# commisions #}
+			<div class="group">
+
+			<section data-id="commissions">
+
+				<h3 class="right fade">
+					<span class="line top"></span>
+					<span class="text">{{ COPY['commissions'] }}</span>
+					<span class="line bottom"></span>
+				</h3>
+
+				{% set commissionsByYear = commissions.commissions|group('year') %}
+
+				<ul>
+					{% for commissionsOfYear in commissionsByYear %}
+					<li class="fade {% if commissionsOfYear|length / 4 >= 2 %}two-column{% endif %}">
+						<h4 class="left">{{ commissionsOfYear[0].year }}</h4>
+						<ul class="right">
+							{% for commission in commissionsOfYear %}
+							<li class="fade">
+								<p>
+									{{- commission.subject -}}
+									{%- if commission.location|length -%}
+									<br>
+									{{- commission.location -}}
+									{%- endif -%}
+								</p>
+								{%- if not loop.last -%}<hr>{%- endif -%}
+							</li>
+							{% endfor %}
+						</ul>
+					</li>
 					{% endfor %}
-				</li>
-			{% endfor %}
-			</ul>
-		</section>
+				</ul>
+
+			</section>
+
+			</div>
+
+			{# premiers #}
+			<div class="group">
+
+			<section data-id="premiers">
+				<h3 class="right fade">
+					<span class="line top"></span>
+					<span class="text">{{ COPY['premiers'] }}</span>
+					<span class="line bottom"></span>
+				</h3>
+
+				<ul>
+				{% for premier in premiers.premiers %}
+					<li class="right fade">
+						{{ premier.description }}
+
+						{% for entry in premier.entries %}
+						<button class="song-button" data-id="{{ entry.slug }}">
+							<div class="fill">
+								<div class="bar"></div>
+							</div>
+							<span>{{ entry.title }}</span>
+							<div class="icon"></div>
+						</button>
+						{% endfor %}
+					</li>
+				{% endfor %}
+				</ul>
+			</section>
+
+			</div>
+
+			{# contact #}
+			<div class="group">
+
+			<section data-id="contact">
+				<h3 class="right fade">
+					<span class="line top"></span>
+					<span class="text">{{ COPY['contact'] }}</span>
+					<span class="line bottom"></span>
+				</h3>
+
+				<ul>
+					<li class="fade">
+						<h4 class="left">{{ COPY['e-mail'] }}</h4>
+						<a class="right" href="mailto:{{ contact.email }}">{{ contact.email }}</a>
+					</li>
+					<li class="fade">
+						<h4 class="left">{{ COPY['address'] }}</h4>
+						<p class="right">{{ contact.address }}</p>
+					</li>
+					<li class="fade">
+						<h4 class="left">{{ COPY['social-network'] }}</h4>
+						<div class="social right">
+						{% for social in contact.socialNetwork %}
+							<a href="{{ social.url }}" target="_blank" class="icon-{{ social.platform }}" data-id="{{ social.platform }}"></a>
+						{% endfor %}
+						</div>
+					</li>
+				</ul>
+			</section>
+
+			</div>
+
+			<div class="spacer"></div>
 
 		</div>
-
-		{# contact #}
-		<div class="group">
-
-		<section data-id="contact">
-			<h3 class="right">
-				<span class="line top"></span>
-				<span class="text">{{ COPY['contact'] }}</span>
-				<span class="line bottom"></span>
-			</h3>
-
-			<ul>
-				<li>
-					<h4 class="left">{{ COPY['e-mail'] }}</h4>
-					<a class="right" href="mailto:{{ contact.email }}">{{ contact.email }}</a>
-				</li>
-				<li>
-					<h4 class="left">{{ COPY['address'] }}</h4>
-					<p class="right">{{ contact.address }}</p>
-				</li>
-				<li>
-					<h4 class="left">{{ COPY['social-network'] }}</h4>
-					<div class="social right">
-					{% for social in contact.socialNetwork %}
-						<a href="{{ social.url }}" target="_blank" class="icon-{{ social.platform }}" data-id="{{ social.platform }}"></a>
-					{% endfor %}
-					</div>
-				</li>
-			</ul>
-		</section>
-
-		</div>
-
-		<div class="spacer"></div>
 
 	</div>
-
 </div>
 
 <div class="dummy-scroller">
 	<div class="inner"></div>
 </div>
 
-<!--
 <nav>
-	<button>{{ COPY['education'] }}</button>
+	<button data-id="education">{{ COPY['education'] }}</button>
+	<button data-id="work-experience-awards">{{ COPY['work-experience-awards'] }}</button>
+	<button data-id="commissions">{{ COPY['commissions'] }}</button>
+	<button data-id="premiers">{{ COPY['premiers'] }}</button>
+	<button data-id="contact">{{ COPY['contact'] }}</button>
+	<button data-id="home">{{ COPY['home'] }}</button>
 </nav>
--->
 
 {% include "_common/scrollbar" %}
 

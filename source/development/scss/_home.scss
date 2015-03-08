@@ -21,6 +21,20 @@
 		}
 	}
 
+	&.ambient{
+		.curtain{
+			opacity: .5;
+			visibility: visible;
+		}
+		.portrait{
+			opacity: .2;
+		}
+		.branding{
+			opacity: 0;
+			visibility: hidden;
+		}
+	}
+
 	.portrait{
 		display: block;
 		position: absolute;
@@ -29,6 +43,110 @@
 		min-width: 480px;
 		width: auto;
 		height: 90%;
+		opacity: 1;
+		@include transition(opacity 1.5s $easeOutQuad);
+	}
+
+	.branding{
+		position: relative;
+		display: inline-block;
+		left: 60%;
+		width: 39em;
+		opacity: 1;
+		visibility: visible;
+		@include transition(opacity .5s $easeOutCubic, visibility .5s);
+
+		>h2{
+			font-family: $font_barkentina;
+			padding-bottom: 2em;
+
+			.line{
+				display: block;
+				height: 1px;
+				background-color: #fff;
+
+				&.full{
+					width: 100%;
+				}
+
+				&.left{
+					position: absolute;
+					width: 30%;
+					top: 50%;
+					left: 0;
+				}
+
+				&.right{
+					position: absolute;
+					width: 30%;
+					top: 50%;
+					right: 0;
+				}
+			}
+
+			>.middle{
+				text-align: justify;
+
+				>.text{
+					width: 100%;
+					font-size: 2.2em;
+					letter-spacing: .2em;
+					line-height: (10.8em/2.2);
+					text-transform: uppercase;
+				}
+
+				&:after{
+					content: "";
+					display: inline-block;
+					width: 100%;
+				}
+			}
+
+			>.bottom{
+				position: relative;
+				top: -2em;
+
+				>.text{
+					display: inline-block;
+					width: 100%;
+					text-align: center;
+					font-size: 1.6em;
+					letter-spacing: .2em;
+					text-transform: uppercase;
+				}
+			}
+		}
+
+		>h1{
+			display: block;
+			font-family: $font_assasin;
+			font-size: 9em;
+			text-transform: uppercase;
+			letter-spacing: -.03em;
+			width: 100%;
+			white-space: nowrap;
+
+			>span{
+				display: block;
+			}
+		}
+
+		>p{
+			padding: 2.5em 0;
+			font-size: 1.8em;
+			letter-spacing: .06em;
+			line-height: 1.6;
+		}
+
+		>.buttons{
+			text-align: center;
+
+			>li{
+				display: inline-block;
+				vertical-align: top;
+				margin: 0 1.6em;
+			}
+		}
 	}
 
 	.branding-table{
@@ -40,110 +158,11 @@
 		>.branding-table-cell{
 			display: table-cell;
 			vertical-align: middle;
-
-			>.branding{
-				position: relative;
-				display: inline-block;
-				left: 60%;
-				width: 39em;
-
-				>h2{
-					font-family: $font_barkentina;
-					padding-bottom: 2em;
-
-					.line{
-						display: block;
-						height: 1px;
-						background-color: #fff;
-
-						&.full{
-							width: 100%;
-						}
-
-						&.left{
-							position: absolute;
-							width: 30%;
-							top: 50%;
-							left: 0;
-						}
-
-						&.right{
-							position: absolute;
-							width: 30%;
-							top: 50%;
-							right: 0;
-						}
-					}
-
-					>.middle{
-						text-align: justify;
-
-						>.text{
-							width: 100%;
-							font-size: 2.2em;
-							letter-spacing: .2em;
-							line-height: (10.8em/2.2);
-							text-transform: uppercase;
-						}
-
-						&:after{
-							content: "";
-							display: inline-block;
-							width: 100%;
-						}
-					}
-
-					>.bottom{
-						position: relative;
-						top: -2em;
-
-						>.text{
-							display: inline-block;
-							width: 100%;
-							text-align: center;
-							font-size: 1.6em;
-							letter-spacing: .2em;
-							text-transform: uppercase;
-						}
-					}
-				}
-
-				>h1{
-					display: block;
-					font-family: $font_assasin;
-					font-size: 9em;
-					text-transform: uppercase;
-					letter-spacing: -.03em;
-					width: 100%;
-					white-space: nowrap;
-
-					>span{
-						display: block;
-					}
-				}
-
-				>p{
-					padding: 2.5em 0;
-					font-size: 1.8em;
-					letter-spacing: .06em;
-					line-height: 1.6;
-				}
-
-				>.buttons{
-					text-align: center;
-
-					>li{
-						display: inline-block;
-						vertical-align: top;
-						margin: 0 1.6em;
-					}
-				}
-			}
 		}
 	}
 
 	.curtain{
-		z-index: 10;
-		@include transition(opacity 1s ease-out, visibility 1s);
+		z-index: 1;
+		@include transition(opacity .8s $easeOutCubic, visibility .8s);
 	}
 }
