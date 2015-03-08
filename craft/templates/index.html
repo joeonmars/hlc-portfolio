@@ -31,7 +31,10 @@
 				<div id="home" class="page" data-token="{{ home.token }}">{% include "_includes/home" %}</div>
 				<div id="biography" class="page" data-token="{{ biography.token }}">
 					<div class="heading-container">
-						<h2 class="heading">{{ COPY['biography'] }}</h2>
+						<h2 class="heading">
+							{{ COPY['biography'] }}
+							<button class="close icon-close"></button>
+						</h2>
 					</div>
 				</div>
 			</div>

@@ -12,7 +12,6 @@
 	.inner{
 		position: absolute;
 		width: 100%;
-		display: inline-block;
 		z-index: 1;
 	}
 
@@ -362,8 +361,29 @@
 		z-index: 1;
 
 		>.heading{
+			position: relative;
 			font-size: 4em;
 			@include translateY(-100%);
+
+			button{
+				position: absolute;
+				color: #fff;
+				top: 50%;
+				right: 20px;
+				margin-top: -1em;
+				height: 2em;
+				font-size: .8em;
+				line-height: 2;
+				opacity: 1;
+				visibility: visible;
+				@extend %resetButton;
+				@include transition(opacity .5s, visibility .5s);
+
+				&:disabled{
+					opacity: 0;
+					visibility: hidden;
+				}
+			}
 		}
 	}
 

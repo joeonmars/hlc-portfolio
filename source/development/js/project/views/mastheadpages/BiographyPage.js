@@ -24,6 +24,8 @@ hlc.views.mastheadpages.BiographyPage = function(){
   this._heading = new hlc.fx.Heading( goog.dom.query('h2', this.domElement)[0] );
   this._heading.setProgress(0);
 
+  this._closeButton = goog.dom.getElementByClass('close', this._heading.domElement);
+  
   this._size = null;
   this._nav = null;
 
@@ -85,6 +87,7 @@ hlc.views.mastheadpages.BiographyPage.prototype.animateIn = function(){
 
   if(this._scrollerViewport) {
     goog.dom.classlist.enable(this._scrollerViewport, 'animate-in', true);
+    this._closeButton.disabled = false;
   }
 };
 
@@ -95,6 +98,8 @@ hlc.views.mastheadpages.BiographyPage.prototype.hide = function(){
 
   this._heading.reset();
   goog.dom.classlist.enable(this.domElement, 'scrolled', false);
+
+  this._closeButton.disabled = true;
 
   if(this._scrollerViewport) {
     goog.dom.classlist.enable(this._scrollerViewport, 'animate-in', false);

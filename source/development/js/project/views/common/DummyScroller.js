@@ -24,6 +24,7 @@ hlc.views.common.DummyScroller = function(viewOuter, dummyOuter, scrollbar){
 
   this._scrollbar = scrollbar;
   this._handle = goog.dom.getElementByClass('handle', this._scrollbar);
+  this._track = goog.dom.getElementByClass('track', this._scrollbar);
 
   this._dummyScrollTop = 0;
   this._viewInnerY = 0;
@@ -32,6 +33,7 @@ hlc.views.common.DummyScroller = function(viewOuter, dummyOuter, scrollbar){
   this._dummyInnerHeight = 0;
   this._dummyOuterHeight = 0;
   this._handleHeight = 0;
+  this._trackHeight = 0;
 
   this._dragger = new goog.fx.Dragger(this._handle);
   this._dragger.defaultAction = goog.nullFunction;
@@ -117,7 +119,7 @@ hlc.views.common.DummyScroller.prototype.scrollTo = function(y){
   goog.style.setStyle( this._viewInner, 'transform', 'translateY(' + this._viewInnerY + 'px)' );
 
   var handleRatio = Math.abs(this._viewInnerY / this._viewInnerHeight);
-  var handleY = this._viewOuterHeight * handleRatio;
+  var handleY = this._trackHeight * handleRatio;
   goog.style.setPosition( this._handle, 0, handleY );
 
   // call update callbacks
@@ -161,7 +163,7 @@ hlc.views.common.DummyScroller.prototype.onDragHandle = function(e){
 
   var ratio = goog.math.clamp(e.dragger.deltaY / this._draggerLimits.height, 0, 1);
 
-  this._dummyOuter.scrollTop = (this._viewInnerHeight - this._viewOuterHeight) * ratio;
+  this._dummyOuter.scrollTop = (this._dummyInnerHeight - this._dummyOuterHeight) * ratio;
 };
 
 
@@ -202,7 +204,7 @@ hlc.views.common.DummyScroller.prototype.onResize = function (e) {
   // resize dummy view
   var viewInnerHeightFraction = this._viewInnerHeight / this._viewOuterHeight;
 
-  this._dummyOuterHeight = goog.style.getSize(this._viewOuter).height;
+  this._dummyOuterHeight = goog.style.getSize(this._dummyOuter).height;
   this._dummyInnerHeight = this._dummyOuterHeight * viewInnerHeightFraction;
   goog.style.setHeight( this._dummyInner, this._dummyInnerHeight );
 
@@ -210,6 +212,8 @@ hlc.views.common.DummyScroller.prototype.onResize = function (e) {
   this._handleHeight = this._dummyOuterHeight / viewInnerHeightFraction;
   goog.style.setHeight(this._handle, this._handleHeight);
 
-  this._draggerLimits.height = this._dummyOuterHeight - this._handleHeight;
+  this._trackHeight = goog.style.getSize(this._track).height;
+
+  this._draggerLimits.height = this._trackHeight - this._handleHeight;
   this._dragger.setLimits( this._draggerLimits );
 };

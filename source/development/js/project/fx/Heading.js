@@ -67,7 +67,9 @@ hlc.fx.Heading.prototype.setProgress = function(progress) {
 
 hlc.fx.Heading.constructDom = function(domElement){
 
-  var text = goog.dom.getTextContent(domElement);
+  var children = goog.array.toArray( goog.dom.getChildren(domElement) );
+
+  var text = goog.string.trim( goog.dom.getTextContent(domElement) );
   goog.dom.setTextContent(domElement, '');
 
   var charas = text.split('');
@@ -82,7 +84,8 @@ hlc.fx.Heading.constructDom = function(domElement){
 
   var frag = goog.dom.htmlToDocumentFragment(charaHtmlStr);
 
-  goog.dom.appendChild(domElement, frag);
+  goog.dom.append(domElement, frag);
+  goog.dom.append(domElement, children);
 
   return domElement;
 };

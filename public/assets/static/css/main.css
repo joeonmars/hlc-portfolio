@@ -525,7 +525,7 @@ hr {
   background-color: #000;
 }
 
-.albumPlayer > .top .arrowButton, .albumPlayer > .bottom .arrowButton, #biography .group > section .song-button, #footer > button, #credits > .content > .content-inner > header > .close {
+.albumPlayer > .top .arrowButton, .albumPlayer > .bottom .arrowButton, #biography .group > section .song-button, #biography .heading-container > .heading button, #footer > button, #credits > .content > .content-inner > header > .close {
   -moz-user-select: -moz-none;
   -ms-user-select: none;
   -webkit-user-select: none;
@@ -2776,7 +2776,6 @@ hr {
 #biography .inner {
   position: absolute;
   width: 100%;
-  display: inline-block;
   z-index: 1;
 }
 #biography .scrollbar .track {
@@ -3077,11 +3076,32 @@ hr {
   z-index: 1;
 }
 #biography .heading-container > .heading {
+  position: relative;
   font-size: 4em;
   -moz-transform: translateY(-100%);
   -ms-transform: translateY(-100%);
   -webkit-transform: translateY(-100%);
   transform: translateY(-100%);
+}
+#biography .heading-container > .heading button {
+  position: absolute;
+  color: #fff;
+  top: 50%;
+  right: 20px;
+  margin-top: -1em;
+  height: 2em;
+  font-size: .8em;
+  line-height: 2;
+  opacity: 1;
+  visibility: visible;
+  -moz-transition: opacity 0.5s, visibility 0.5s;
+  -o-transition: opacity 0.5s, visibility 0.5s;
+  -webkit-transition: opacity 0.5s, visibility 0.5s;
+  transition: opacity 0.5s, visibility 0.5s;
+}
+#biography .heading-container > .heading button:disabled {
+  opacity: 0;
+  visibility: hidden;
 }
 #biography nav {
   position: absolute;
