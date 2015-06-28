@@ -1,6 +1,6 @@
-goog.provide('hlc.events');
+goog.provide( 'hlc.events' );
 
-goog.require('goog.userAgent');
+goog.require( 'goog.userAgent' );
 
 hlc.events.EventType = {
 	ANIMATE_IN_START: 'animate_in_start',
@@ -13,6 +13,7 @@ hlc.events.EventType = {
 	PROGRESS: 'progress',
 	DOWN: goog.userAgent.MOBILE ? 'touchstart' : 'mousedown',
 	MOVE: goog.userAgent.MOBILE ? 'touchmove' : 'mousemove',
-	UP: goog.userAgent.MOBILE ? ['touchend', 'touchcancel'] : 'mouseup',
-	CROSSFADE: 'crossfade'
+	UP: goog.userAgent.MOBILE ? [ 'touchend', 'touchcancel' ] : 'mouseup',
+	CROSSFADE: 'crossfade',
+	VOLUME: 'volume'
 };

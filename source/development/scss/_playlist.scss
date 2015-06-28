@@ -90,7 +90,6 @@
 		.album{
 			padding: 0 1px 0 1px;
 			@include box-sizing(border-box);
-
 			font-size: 18px;
 			color: white;
 			text-transform: uppercase;
@@ -117,8 +116,9 @@
 				font-family: $font_barkentina;
 				-webkit-font-smoothing: antialiased;
 				line-height: 60px;
-				padding-left: 20px;
 				height: 60px;
+				text-indent: 18px;
+				text-align: left;
 				background-color: $color_purple;
 				background-size: cover;
 				background-position: center;

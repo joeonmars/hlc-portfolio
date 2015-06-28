@@ -109,25 +109,41 @@ hlc.views.AlbumPlayer.prototype.gotoSong = function(index){
 };
 
 
-hlc.views.AlbumPlayer.prototype.nextSong = function(){
+hlc.views.AlbumPlayer.prototype.nextSong = function( loop ){
+
 	var currentIndex = goog.array.indexOf(this._songs, this._currentSong);
   currentIndex ++;
 
-	if(currentIndex > this._songs.length-1) currentIndex = 0;
+	if(currentIndex > this._songs.length-1 && loop) {
+    currentIndex = 0;
+  }
 
   var song = this._songs[currentIndex];
-  this.setSongToken(song);
+  
+  if(song) {
+    this.setSongToken(song);
+  }
+
+  return song;
 };
 
 
-hlc.views.AlbumPlayer.prototype.prevSong = function(){
+hlc.views.AlbumPlayer.prototype.prevSong = function( loop ){
+
 	var currentIndex = goog.array.indexOf(this._songs, this._currentSong);
   currentIndex --;
 
-	if(currentIndex < 0) currentIndex = this._songs.length-1;
+	if(currentIndex < 0 && loop) {
+    currentIndex = this._songs.length-1;
+  }
 
   var song = this._songs[currentIndex];
-  this.setSongToken(song);
+  
+  if(song) {
+    this.setSongToken(song);
+  }
+
+  return song;
 };
 
 
@@ -146,7 +162,6 @@ hlc.views.AlbumPlayer.prototype.activate = function(){
   // listen for audio events from SoundController
   goog.events.listen(this, 'loadedmetadata', this.onLoadedMetaData, false, this);
   goog.events.listen(this, 'timeupdate', this.onTimeUpdate, false, this);
-  goog.events.listen(this, 'canplaythrough', this.onCanPlayThrough, false, this);
   goog.events.listen(this, 'ended', this.onEnded, false, this);
 
   hlc.main.controllers.soundController.addDispatcher(this);
@@ -160,7 +175,6 @@ hlc.views.AlbumPlayer.prototype.deactivate = function(){
   // unlisten for audio events from SoundController
   goog.events.unlisten(this, 'loadedmetadata', this.onLoadedMetaData, false, this);
   goog.events.unlisten(this, 'timeupdate', this.onTimeUpdate, false, this);
-  goog.events.unlisten(this, 'canplaythrough', this.onCanPlayThrough, false, this);
   goog.events.unlisten(this, 'ended', this.onEnded, false, this);
 
   hlc.main.controllers.soundController.removeDispatcher(this);
@@ -187,11 +201,6 @@ hlc.views.AlbumPlayer.prototype.onLoadedMetaData = function(e){
 };
 
 
-hlc.views.AlbumPlayer.prototype.onCanPlayThrough = function(e){
-  console.log(goog.getUid(this), 'canplaythrough');
-};
-
-
 hlc.views.AlbumPlayer.prototype.onTimeUpdate = function(e){
   this._currentTime = e.target.audio.currentTime;
 
@@ -201,18 +210,18 @@ hlc.views.AlbumPlayer.prototype.onTimeUpdate = function(e){
 
 
 hlc.views.AlbumPlayer.prototype.onEnded = function(e){
-  this.nextSong();
+  this.nextSong(true);
 };
 
 
 hlc.views.AlbumPlayer.prototype.onClick = function(e){
   switch(e.currentTarget) {
     case this.prevButton:
-    this.prevSong();
+    this.prevSong(true);
     break;
 
     case this.nextButton:
-    this.nextSong();
+    this.nextSong(true);
     break;
 
     default:

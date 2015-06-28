@@ -91,10 +91,10 @@ $media_player_height: 80px;
 					vertical-align: middle;
 					margin-right: 8px;
 
-					@include icon-sprite("mediaplayer-soundbutton");
+					@include icon-sprite("mediaplayer-soundbutton-on");
 
 					&.mute{
-						//@include icon-sprite("mediaplayer-mutebutton");
+						@include icon-sprite("mediaplayer-soundbutton-off");
 					}
 				}
 

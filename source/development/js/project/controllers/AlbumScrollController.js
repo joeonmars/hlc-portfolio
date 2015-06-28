@@ -1,9 +1,10 @@
 goog.provide('hlc.controllers.AlbumScrollController');
 
-goog.require('goog.events.EventTarget');
-goog.require('goog.events');
-goog.require('goog.dom.query');
 goog.require('goog.async.Delay');
+goog.require('goog.dom.query');
+goog.require('goog.events');
+goog.require('goog.events.EventTarget');
+goog.require('goog.events.MouseWheelHandler');
 goog.require('goog.userAgent');
 goog.require('goog.ui.KeyboardShortcutHandler');
 goog.require('hlc.controllers.AlbumController');
@@ -27,7 +28,9 @@ hlc.controllers.AlbumScrollController = function(){
   this._albumsDom = goog.dom.getElement('albums');
   this._albumDomElements = goog.dom.getChildren(this._albumsDom);
 
-  if(!goog.userAgent.MOBILE) hlc.utils.grabCursor(this._albumScrollDomElement);
+  if(!goog.userAgent.MOBILE) {
+  	hlc.utils.grabCursor(this._albumScrollDomElement);
+  }
 
   goog.array.forEach(this._albumDomElements, function(albumDomElement, albumIndex) {
   	this.albumSections.push( new hlc.controllers.AlbumController( albumDomElement, albumIndex ) );
@@ -41,7 +44,14 @@ hlc.controllers.AlbumScrollController = function(){
   this._isDragging = false;
 
   this._isActivated = false;
-  this._shortcutHandler = new goog.ui.KeyboardShortcutHandler( document );
+  
+  this._shortcutHandler = new goog.ui.KeyboardShortcutHandler(document);
+  
+  this._mouseWheelHandler = goog.userAgent.MOBILE ? null : new goog.events.MouseWheelHandler(this._albumsDom);
+  this._mouseWheelDetectorDelay = new goog.async.Delay(this.onMouseWheelEnd, 100, this);
+  this._startMouseWheelDelta = 0;
+  this._endMouseWheelDelta = 0;
+
   this._eventHandler = new goog.events.EventHandler(this);
 
   // WIP
@@ -80,6 +90,10 @@ hlc.controllers.AlbumScrollController.prototype.activate = function(){
 	this._eventHandler.listen( this._albumScrollDomElement, hlc.events.EventType.DOWN, this.onDown, false, this );
 	this._eventHandler.listen( this._shortcutHandler, goog.ui.KeyboardShortcutHandler.EventType.SHORTCUT_TRIGGERED, this.onShortcutTriggered, false, this );
 	this._eventHandler.listen( hlc.main.views.sidebar, hlc.views.Sidebar.EventType.SLIDING, this.resize, false, this);
+
+	if(this._mouseWheelHandler) {
+		this._eventHandler.listen( this._mouseWheelHandler, goog.events.MouseWheelHandler.EventType.MOUSEWHEEL, this.onMouseWheel, false, this );
+	}
 
 	this._shortcutHandler.registerShortcut('up', 'up');
 	this._shortcutHandler.registerShortcut('down', 'down');
@@ -129,6 +143,24 @@ hlc.controllers.AlbumScrollController.prototype.getNextAlbum = function(){
  	var nextAlbumSection = this.albumSections[nextAlbumSectionIndex];
 
  	return nextAlbumSection;
+};
+
+
+hlc.controllers.AlbumScrollController.prototype.prevAlbum = function(){
+
+	var prevAlbum = this.getPrevAlbum();
+	if(prevAlbum !== this.currentAlbumSection) {
+		this.locateAlbum( prevAlbum );
+	}
+};
+
+
+hlc.controllers.AlbumScrollController.prototype.nextAlbum = function(){
+
+	var nextAlbum = this.getNextAlbum();
+	if(nextAlbum !== this.currentAlbumSection) {
+		this.locateAlbum( nextAlbum );
+	}
 };
 
 
@@ -337,18 +369,48 @@ hlc.controllers.AlbumScrollController.prototype.onShortcutTriggered = function(e
 
 	switch(e.identifier) {
 		case 'up':
-		var prevAlbum = this.getPrevAlbum();
-		if(prevAlbum !== this.currentAlbumSection) {
-			this.locateAlbum( prevAlbum );
-		}
+		this.prevAlbum();
 		break;
 
 		case 'down':
-		var nextAlbum = this.getNextAlbum();
-		if(nextAlbum !== this.currentAlbumSection) {
-			this.locateAlbum( nextAlbum );
-		}
+		this.nextAlbum();
 		break;
+	}
+};
+
+
+hlc.controllers.AlbumScrollController.prototype.onMouseWheel = function(e){
+
+	if(!this._mouseWheelDetectorDelay.isActive()) {
+		this._startMouseWheelDelta = e.deltaY;
+	}else {
+		this._endMouseWheelDelta = e.deltaY;
+	}
+
+	this._mouseWheelDetectorDelay.start();
+};
+
+
+hlc.controllers.AlbumScrollController.prototype.onMouseWheelEnd = function(){
+
+	var diff = this._endMouseWheelDelta - this._startMouseWheelDelta;
+	var threshold = 15;
+
+	if(diff > threshold) {
+
+		//console.log('mousewheel down');
+		var nextSong = this.currentAlbumSection.albumPlayer.nextSong();
+		if(!nextSong) {
+			this.nextAlbum();
+		}
+
+	}else if(diff < -threshold) {
+
+		//console.log('mousewheel up');
+		var prevSong = this.currentAlbumSection.albumPlayer.prevSong();
+		if(!prevSong) {
+			this.prevAlbum();
+		}
 	}
 };
 

@@ -1,164 +1,172 @@
-goog.provide('hlc.views.Playlist');
+goog.provide( 'hlc.views.Playlist' );
 
-goog.require('goog.events.EventTarget');
-goog.require('goog.events');
-goog.require('goog.dom');
-goog.require('goog.dom.query');
-goog.require('goog.dom.classes');
-goog.require('hlc.views.common.CircularProgressBar');
-goog.require('hlc.views.common.Scroller');
-goog.require('hlc.views.common.DummyScroller');
+goog.require( 'goog.events.EventTarget' );
+goog.require( 'goog.events' );
+goog.require( 'goog.dom' );
+goog.require( 'goog.dom.query' );
+goog.require( 'goog.dom.classes' );
+goog.require( 'hlc.views.common.CircularProgressBar' );
+goog.require( 'hlc.views.common.Scroller' );
+goog.require( 'hlc.views.common.DummyScroller' );
 
 
 /**
  * @constructor
  */
-hlc.views.Playlist = function(){
+hlc.views.Playlist = function() {
 
-  goog.base(this);
+	goog.base( this );
 
-  this.domElement = goog.dom.getElement('playlist');
-  this.parentDomElement = goog.dom.getParentElement(this.domElement);
+	this.domElement = goog.dom.getElement( 'playlist' );
+	this.parentDomElement = goog.dom.getParentElement( this.domElement );
 
-  this.middleDomElement = goog.dom.query('.middle', this.domElement)[0];
-  this.viewportDomElement = goog.dom.query('.viewport', this.domElement)[0];
-  this.colorOverlayDomElement = goog.dom.query('.colorOverlay', this.parentDomElement)[0];
-  this.scrollbarDomElement = goog.dom.getElementByClass('scrollbar', this.domElement);
-  this.dummyDomElement = goog.dom.getElementByClass('dummy-scroller', this.domElement);
+	this.middleDomElement = goog.dom.query( '.middle', this.domElement )[ 0 ];
+	this.viewportDomElement = goog.dom.query( '.viewport', this.domElement )[ 0 ];
+	this.colorOverlayDomElement = goog.dom.query( '.colorOverlay', this.parentDomElement )[ 0 ];
+	this.scrollbarDomElement = goog.dom.getElementByClass( 'scrollbar', this.domElement );
+	this.dummyDomElement = goog.dom.getElementByClass( 'dummy-scroller', this.domElement );
 
-  this.albumDoms = goog.dom.query('.middle .album', this.domElement);
-  this.songButtons = goog.dom.query('.middle a', this.domElement);
+	this.albumDoms = goog.dom.query( '.middle .album', this.domElement );
+	this.songButtons = goog.dom.query( '.middle a', this.domElement );
 
-  this.scroller = goog.userAgent.MOBILE ?
-  	new hlc.views.common.Scroller(this.viewportDomElement, this.scrollbarDomElement) :
-  	new hlc.views.common.DummyScroller(this.viewportDomElement, this.dummyDomElement, this.scrollbarDomElement);
+	this.scroller = goog.userAgent.MOBILE ?
+		new hlc.views.common.Scroller( this.viewportDomElement, this.scrollbarDomElement ) :
+		new hlc.views.common.DummyScroller( this.viewportDomElement, this.dummyDomElement, this.scrollbarDomElement );
 
-  this.tweener = null;
+	this.tweener = null;
 
-  var circleBackColor = new paper.Color(.52, .52, .52, .2);
-  var circleProgressColor = new paper.Color(.45, .45, .45, 1);
-  this.circularProgressBar = new hlc.views.common.CircularProgressBar(22, circleBackColor, circleProgressColor);
+	var circleBackColor = new paper.Color( .52, .52, .52, .2 );
+	var circleProgressColor = new paper.Color( .45, .45, .45, 1 );
+	this.circularProgressBar = new hlc.views.common.CircularProgressBar( 22, circleBackColor, circleProgressColor );
 
-  this._eventHandler = new goog.events.EventHandler(this);
+	this._eventHandler = new goog.events.EventHandler( this );
 
-  this.isClosed = true;
-  goog.style.showElement(this.parentDomElement, false);
+	this.isClosed = true;
+	goog.style.showElement( this.parentDomElement, false );
 };
-goog.inherits(hlc.views.Playlist, goog.events.EventTarget);
+goog.inherits( hlc.views.Playlist, goog.events.EventTarget );
 
 
-hlc.views.Playlist.prototype.init = function(){
-	goog.events.listen(this, 'resize', this.onResize, false, this);
-	hlc.main.controllers.windowController.addDispatcher(this);
+hlc.views.Playlist.prototype.init = function() {
+	goog.events.listen( this, 'resize', this.onResize, false, this );
+	hlc.main.controllers.windowController.addDispatcher( this );
 
-	hlc.main.controllers.navigationController.addDispatcher(this);
-	goog.events.listen(this, goog.history.EventType.NAVIGATE, this.onNavigate, false, this);
+	hlc.main.controllers.navigationController.addDispatcher( this );
+	goog.events.listen( this, goog.history.EventType.NAVIGATE, this.onNavigate, false, this );
 
 	this.hide();
 
 	// immediately hide
-	this.tweener.progress(1);
+	this.tweener.progress( 1 );
 };
 
 
-hlc.views.Playlist.prototype.isTweening = function(){
+hlc.views.Playlist.prototype.isTweening = function() {
 	return TweenMax.isTweening( this.domElement );
 };
 
 
-hlc.views.Playlist.prototype.show = function(){
+hlc.views.Playlist.prototype.show = function() {
 	this.isClosed = false;
 
-	goog.style.showElement(this.parentDomElement, true);
+	goog.style.showElement( this.parentDomElement, true );
 
 	this.onResize();
 
-	if(this.tweener) this.tweener.kill();
+	if ( this.tweener ) this.tweener.kill();
 
-	this.tweener = new TimelineMax({
+	this.tweener = new TimelineMax( {
 		onStart: function() {
-			this.dispatchEvent({type: hlc.views.Playlist.EventType.SHOW_START});
+			this.dispatchEvent( {
+				type: hlc.views.Playlist.EventType.SHOW_START
+			} );
 		},
 		onStartScope: this,
 		onComplete: function() {
-			this.dispatchEvent({type: hlc.views.Playlist.EventType.SHOW_FINISH});
+			this.dispatchEvent( {
+				type: hlc.views.Playlist.EventType.SHOW_FINISH
+			} );
 		},
 		onCompleteScope: this
-	});
+	} );
 
-	var middleTweener = TweenMax.to(this.middleDomElement, 1.5, {
+	var middleTweener = TweenMax.to( this.middleDomElement, 1.5, {
 		width: 360,
 		ease: Strong.easeInOut
-	});
+	} );
 
-	this.tweener.add(middleTweener, 0);
+	this.tweener.add( middleTweener, 0 );
 
-	var domTweener = TweenMax.to(this.domElement, 1.5, {
+	var domTweener = TweenMax.to( this.domElement, 1.5, {
 		opacity: 1,
 		ease: Quad.easeInOut
-	});
+	} );
 
-	this.tweener.add(domTweener, 0);
+	this.tweener.add( domTweener, 0 );
 
-	var colorOverlayTweener = TweenMax.to(this.colorOverlayDomElement, 1, {
+	var colorOverlayTweener = TweenMax.to( this.colorOverlayDomElement, 1, {
 		opacity: 1,
 		ease: Quad.easeInOut
-	});
+	} );
 
-	this.tweener.add(colorOverlayTweener, .1);
+	this.tweener.add( colorOverlayTweener, .1 );
 
 	//
 	this.scroller.activate();
-	
+
 	//
-	goog.array.forEach(this.songButtons, function(songButton) {
-		this._eventHandler.listen(songButton, 'click', this.onClickSongButton, false, this);
-	}, this);
+	goog.array.forEach( this.songButtons, function( songButton ) {
+		this._eventHandler.listen( songButton, 'click', this.onClickSongButton, false, this );
+	}, this );
 
-	this._eventHandler.listen(this, 'timeupdate', this.onTimeUpdate, false, this);
-  	hlc.main.controllers.soundController.addDispatcher(this);
+	this._eventHandler.listen( this, 'timeupdate', this.onTimeUpdate, false, this );
+	hlc.main.controllers.soundController.addDispatcher( this );
 
-  	this._eventHandler.listenOnce(this.colorOverlayDomElement, goog.events.EventType.CLICK, this.hide, false, this);
+	this._eventHandler.listenOnce( this.colorOverlayDomElement, goog.events.EventType.CLICK, this.hide, false, this );
 };
 
 
-hlc.views.Playlist.prototype.hide = function(){
-	if(this.tweener) this.tweener.kill();
+hlc.views.Playlist.prototype.hide = function() {
+	if ( this.tweener ) this.tweener.kill();
 
-	this.tweener = new TimelineMax({
+	this.tweener = new TimelineMax( {
 		onStart: function() {
-			this.dispatchEvent({type: hlc.views.Playlist.EventType.HIDE_START});
+			this.dispatchEvent( {
+				type: hlc.views.Playlist.EventType.HIDE_START
+			} );
 		},
 		onStartScope: this,
 		onComplete: function() {
-			goog.style.showElement(this.parentDomElement, false);
+			goog.style.showElement( this.parentDomElement, false );
 			this.isClosed = true;
 
-			this.dispatchEvent({type: hlc.views.Playlist.EventType.HIDE_FINISH});
+			this.dispatchEvent( {
+				type: hlc.views.Playlist.EventType.HIDE_FINISH
+			} );
 		},
 		onCompleteScope: this
-	});
+	} );
 
-	var middleTweener = TweenMax.to(this.middleDomElement, 1.5, {
+	var middleTweener = TweenMax.to( this.middleDomElement, 1.5, {
 		width: 0,
 		ease: Strong.easeInOut
-	});
+	} );
 
-	this.tweener.add(middleTweener, 0);
+	this.tweener.add( middleTweener, 0 );
 
-	var domTweener = TweenMax.to(this.domElement, 1.5, {
+	var domTweener = TweenMax.to( this.domElement, 1.5, {
 		opacity: 0,
 		ease: Quad.easeInOut
-	});
+	} );
 
-	this.tweener.add(domTweener, 0);
+	this.tweener.add( domTweener, 0 );
 
-	var colorOverlayTweener = TweenMax.to(this.colorOverlayDomElement, 1, {
+	var colorOverlayTweener = TweenMax.to( this.colorOverlayDomElement, 1, {
 		opacity: 0,
 		ease: Quad.easeInOut
-	});
+	} );
 
-	this.tweener.add(colorOverlayTweener, 1.4);
+	this.tweener.add( colorOverlayTweener, 1.4 );
 
 	//
 	this.scroller.deactivate();
@@ -166,68 +174,75 @@ hlc.views.Playlist.prototype.hide = function(){
 	//
 	this._eventHandler.removeAll();
 
-  	hlc.main.controllers.soundController.removeDispatcher(this);
+	hlc.main.controllers.soundController.removeDispatcher( this );
 };
 
 
-hlc.views.Playlist.prototype.toggle = function(){
-	if(this.isClosed) {
+hlc.views.Playlist.prototype.toggle = function() {
+	if ( this.isClosed ) {
 		this.show();
-	}else {
+	} else {
 		this.hide();
 	}
 };
 
 
-hlc.views.Playlist.prototype.onClickSongButton = function(e){
+hlc.views.Playlist.prototype.onClickSongButton = function( e ) {
 	e.preventDefault();
 
-	var token = e.currentTarget.getAttribute('href');
+	var token = e.currentTarget.getAttribute( 'href' );
 	hlc.main.controllers.navigationController.setToken( token );
 };
 
 
-hlc.views.Playlist.prototype.onTimeUpdate = function(e){
-  var currentTime = e.target.audio.currentTime;
-  var duration = e.target.audio.duration;
+hlc.views.Playlist.prototype.onTimeUpdate = function( e ) {
+	var currentTime = e.target.audio.currentTime;
+	var duration = e.target.audio.duration;
 
-  var progress = currentTime / duration;
-  this.circularProgressBar.setProgress(progress);
+	var progress;
+
+	if ( !currentTime || !duration ) {
+		progress = 0;
+	} else {
+		progress = currentTime / duration;
+	}
+
+	this.circularProgressBar.setProgress( progress );
 };
 
 
-hlc.views.Playlist.prototype.onNavigate = function(e){
+hlc.views.Playlist.prototype.onNavigate = function( e ) {
 	// check if the token contains album id and song id
-	var tokens = e.token.split('/');
-	if(tokens[tokens.length - 1] == '') tokens.pop();
+	var tokens = e.token.split( '/' );
+	if ( tokens[ tokens.length - 1 ] == '' ) tokens.pop();
 
-	if(tokens[0] === 'album' && tokens.length === 3) {
-		var albumId = tokens[1];
-		var songId = tokens[2];
+	if ( tokens[ 0 ] === 'album' && tokens.length === 3 ) {
+		var albumId = tokens[ 1 ];
+		var songId = tokens[ 2 ];
 
-		var albumDom = goog.dom.query('.middle [data-id="' + albumId + '"]', this.domElement)[0];
-		var songButton = goog.dom.query('[data-id="' + songId + '"]', albumDom)[0];
+		var albumDom = goog.dom.query( '.middle [data-id="' + albumId + '"]', this.domElement )[ 0 ];
+		var songButton = goog.dom.query( '[data-id="' + songId + '"]', albumDom )[ 0 ];
 
-		if(this._currentSongButton) {
-			goog.dom.classes.remove(this._currentSongButton, 'active');
-			goog.dom.removeNode(this.circularProgressBar.domElement);
+		if ( this._currentSongButton ) {
+			goog.dom.classes.remove( this._currentSongButton, 'active' );
+			goog.dom.removeNode( this.circularProgressBar.domElement );
 		}
 
 		this._currentSongButton = songButton;
-		
-		goog.dom.classes.add(this._currentSongButton, 'active');
+
+		goog.dom.classes.add( this._currentSongButton, 'active' );
 
 		// add circle progress bar to button
-		var iconWrapper = goog.dom.getElementByClass('iconWrapper', this._currentSongButton);
-		goog.dom.appendChild(iconWrapper, this.circularProgressBar.domElement);
+		var iconWrapper = goog.dom.getElementByClass( 'iconWrapper', this._currentSongButton );
+		goog.dom.appendChild( iconWrapper, this.circularProgressBar.domElement );
 	}
 };
 
 
-hlc.views.Playlist.prototype.onResize = function(e){
+hlc.views.Playlist.prototype.onResize = function( e ) {
 	var mainViewportSize = e ? e.mainViewportSize : hlc.main.controllers.windowController.getMainViewportSize();
 
-	goog.style.setStyle(this.parentDomElement, 'height', mainViewportSize.height + 'px');
+	goog.style.setStyle( this.parentDomElement, 'height', mainViewportSize.height + 'px' );
 };
 
 
