@@ -31,18 +31,6 @@
 
 		&.flip{
 			@include rotateY(180deg);
-
-			>.playlistButton, >.playlistCloseButton{
-				display: block;
-			}
-			
-			>.playlistButton {
-				display: none;
-			}
-
-			>.playlistCloseButton{
-				display: block;
-			}
 		}
 
 		>.playlistButton{

@@ -10,16 +10,18 @@ hlc.controllers.SoundController = function() {
 
 	goog.base( this );
 
+	this.currentSound = null;
+
 	this._dispatchers = [];
 
 	this._storage = new goog.storage.mechanism.HTML5LocalStorage();
-	this._isMuted = false;
-
-	this.currentSound = null;
 
 	// listen for all audio events
 	goog.events.listen( this, hlc.models.SongModel.EventType.HTML_AUDIO_EVENTS, this.onAudioEvent, false, this );
 	goog.events.listen( this, hlc.models.SongModel.EventType.AUDIO_DATA_LOAD, this.onAudioDataLoad, false, this );
+
+	// set sound toggle from storage
+	this._isMuted = ( this._storage.get( 'muted' ) === 'true' ) ? true : false;
 
 	// set volume from storage
 	this.volume = goog.isString( this._storage.get( 'volume' ) ) ? parseFloat( this._storage.get( 'volume' ) ) : 1;
@@ -82,6 +84,7 @@ hlc.controllers.SoundController.prototype.setVolume = function( volume ) {
 	}
 
 	this._storage.set( 'volume', this.volume );
+	this._storage.set( 'muted', this.isMuted() );
 
 	goog.array.forEach( this._dispatchers, function( dispatcher ) {
 		dispatcher.dispatchEvent( {

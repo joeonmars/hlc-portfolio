@@ -76,12 +76,16 @@ hlc.views.MainHud.prototype.init = function() {
 hlc.views.MainHud.prototype.showPlayerUI = function() {
 	goog.dom.classlist.enable( this.bottomContainerEl, 'hide', false );
 	goog.dom.classlist.enable( this.playlistButtonEl, 'hide', false );
+
+	this.mediaPlayer.show();
 };
 
 
 hlc.views.MainHud.prototype.hidePlayerUI = function() {
 	goog.dom.classlist.enable( this.bottomContainerEl, 'hide', true );
 	goog.dom.classlist.enable( this.playlistButtonEl, 'hide', true );
+
+	this.mediaPlayer.hide();
 };
 
 
@@ -99,7 +103,9 @@ hlc.views.MainHud.prototype.onScrollFinish = function( e ) {
 		this.sidebarButton.stopAnimation();
 		this.sidebarButton.hide();
 	} else {
-		this.showPlayerUI();
+		if ( this.playlist.isClosed ) {
+			this.showPlayerUI();
+		}
 
 		if ( !hlc.main.views.sidebar.isSlidedIn ) {
 			this.sidebarButton.startAnimation();

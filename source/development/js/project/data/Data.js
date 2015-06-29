@@ -16,33 +16,33 @@ hlc.data.Data = function() {
 		'visualizer-head': hlc.Url.STATIC_IMAGES + 'visualizer-head.png',
 		'triangle-button-black': hlc.Url.STATIC_IMAGES + 'triangle-button-black.png',
 		'triangle-button-white': hlc.Url.STATIC_IMAGES + 'triangle-button-white.png',
-		'album-tile': hlc.Url.STATIC_IMAGES + 'album-tile.png'
+		'album-tile': hlc.Url.STATIC_IMAGES + 'album-tile.jpg'
 	};
 
 	// preload low res portrait image sequence
-	for(var i = 0; i < 60; i++) {
+	for ( var i = 0; i < 60; i++ ) {
 
-		var id = 'portrait-lowres-'+i;
-		var url = hlc.Url.STATIC_IMAGES + 'portrait/lowres/' + goog.string.padNumber(i, 2) + '.png';
+		var id = 'portrait-lowres-' + i;
+		var url = hlc.Url.STATIC_IMAGES + 'portrait/lowres/' + goog.string.padNumber( i, 2 ) + '.png';
 		this.addAsset( id, url );
 	}
 
 	// add playlist background images to preload assets
-	var playlistHeadings = goog.dom.query('#playlist .heading');
+	var playlistHeadings = goog.dom.query( '#playlist .heading' );
 
-	goog.array.forEach(playlistHeadings, function(dom, index) {
+	goog.array.forEach( playlistHeadings, function( dom, index ) {
 
-		var url = hlc.utils.getBackgroundImageUrl(dom);
-		this.addAsset( 'playlist-heading-'+index, url );
+		var url = hlc.utils.getBackgroundImageUrl( dom );
+		this.addAsset( 'playlist-heading-' + index, url );
 
-	}, this);
+	}, this );
 };
-goog.addSingletonGetter(hlc.data.Data);
+goog.addSingletonGetter( hlc.data.Data );
 
 
-hlc.data.Data.prototype.addAsset = function(id, url) {
+hlc.data.Data.prototype.addAsset = function( id, url ) {
 
-	this.preloadAssets[id] = url;
+	this.preloadAssets[ id ] = url;
 
 	return this.preloadAssets;
 };

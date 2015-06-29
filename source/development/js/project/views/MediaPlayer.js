@@ -52,9 +52,6 @@ hlc.views.MediaPlayer.prototype.init = function() {
 	goog.events.listen( this, 'resize', this.resize, false, this );
 	hlc.main.controllers.windowController.addDispatcher( this );
 
-	goog.events.listen( hlc.main.controllers.mainScrollController,
-		hlc.events.EventType.SCROLL_COMPLETE, this.onScrollFinish, false, this );
-
 	goog.events.listen( this._playButton, 'click', this.onClick, false, this );
 	goog.events.listen( this._prevButton, 'click', this.onClick, false, this );
 	goog.events.listen( this._nextButton, 'click', this.onClick, false, this );
@@ -112,15 +109,6 @@ hlc.views.MediaPlayer.prototype.resize = function() {
 	this.progressControl.onResize();
 
 	this.soundVisualizer.onResize();
-};
-
-
-hlc.views.MediaPlayer.prototype.onScrollFinish = function( e ) {
-	if ( e.scrollPosition === hlc.controllers.MainScrollController.ScrollPosition.MASTHEAD ) {
-		this.hide();
-	} else {
-		this.show();
-	}
 };
 
 

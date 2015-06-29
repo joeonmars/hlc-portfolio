@@ -2557,15 +2557,6 @@ hr {
   -webkit-transform: rotateY(180deg);
   transform: rotateY(180deg);
 }
-#main-hud .playlistButtonContainer.flip > .playlistButton, #main-hud .playlistButtonContainer.flip > .playlistCloseButton {
-  display: block;
-}
-#main-hud .playlistButtonContainer.flip > .playlistButton {
-  display: none;
-}
-#main-hud .playlistButtonContainer.flip > .playlistCloseButton {
-  display: block;
-}
 #main-hud .playlistButtonContainer > .playlistButton {
   position: absolute;
   top: 0;
@@ -3479,6 +3470,7 @@ hr {
   width: 100%;
   height: 100%;
   white-space: normal;
+  float: left;
 }
 #main-scroller > .viewport {
   outline: 1px solid #ddd;
@@ -3512,7 +3504,7 @@ hr {
   height: 100%;
   overflow: hidden;
   background-color: #000;
-  background-image: url("/assets/static/images/album-tile.png");
+  background-image: url("/assets/static/images/album-tile.jpg");
   -moz-user-select: -moz-none;
   -ms-user-select: none;
   -webkit-user-select: none;
