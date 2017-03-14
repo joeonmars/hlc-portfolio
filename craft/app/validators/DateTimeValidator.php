@@ -2,23 +2,25 @@
 namespace Craft;
 
 /**
- * Craft by Pixel & Tonic
+ * Class DateTimeValidator
  *
- * @package   Craft
- * @author    Pixel & Tonic, Inc.
+ * @author    Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
- * @license   http://buildwithcraft.com/license Craft License Agreement
- * @link      http://buildwithcraft.com
- */
-
-/**
- *
+ * @license   http://craftcms.com/license Craft License Agreement
+ * @see       http://craftcms.com
+ * @package   craft.app.validators
+ * @since     1.0
  */
 class DateTimeValidator extends \CValidator
 {
+	// Protected Methods
+	// =========================================================================
+
 	/**
 	 * @param $object
 	 * @param $attribute
+	 *
+	 * @return null
 	 */
 	protected function validateAttribute($object, $attribute)
 	{

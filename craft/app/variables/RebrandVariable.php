@@ -1,25 +1,35 @@
 <?php
 namespace Craft;
 
+craft()->requireEdition(Craft::Client);
+
 /**
- * Craft by Pixel & Tonic
+ * Rebranding functions.
  *
- * @package   Craft
- * @author    Pixel & Tonic, Inc.
+ * @author    Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
- * @license   http://buildwithcraft.com/license Craft License Agreement
- * @link      http://buildwithcraft.com
- */
-
-craft()->requirePackage(CraftPackage::Rebrand);
-
-/**
- * Rebranding functions
+ * @license   http://craftcms.com/license Craft License Agreement
+ * @see       http://craftcms.com
+ * @package   craft.app.variables
+ * @since     1.0
  */
 class RebrandVariable
 {
-	private $_logoPath;
-	private $_logoVariable;
+	// Properties
+	// =========================================================================
+
+	/**
+	 * @var
+	 */
+	private $_paths = array();
+
+	/**
+	 * @var
+	 */
+	private $_imageVariables = array();
+
+	// Public Methods
+	// =========================================================================
 
 	/**
 	 * Returns whether a custom logo has been uploaded.
@@ -28,54 +38,122 @@ class RebrandVariable
 	 */
 	public function isLogoUploaded()
 	{
-		return ($this->_getLogoPath() !== false);
+		return $this->isImageUploaded('logo');
 	}
 
 	/**
-	 * Returns the logo variable, or false if a logo hasn't been uploaded.
+	 * Returns whether a custom site icon has been uploaded.
 	 *
-	 * @return LogoVariable
+	 * @return bool
+	 */
+	public function isIconUploaded()
+	{
+		return $this->isImageUploaded('icon');
+	}
+
+	/**
+	 * Return whether the specified type of image has been uploaded for the site.
+	 *
+	 * @param string $type 'logo' or 'icon'.
+	 *
+	 * @return bool
+	 */
+	public function isImageUploaded($type)
+	{
+		return in_array($type, array('logo', 'icon')) && ($this->_getImagePath($type) !== false);
+	}
+
+	/**
+	 * Returns the logo's Image variable, or null if a logo hasn't been uploaded.
+	 *
+	 * @return ImageVariable|null
 	 */
 	public function getLogo()
 	{
-		if (!isset($this->_logoVariable))
-		{
-			$logoPath = $this->_getLogoPath();
-
-			if ($logoPath !== false)
-			{
-				$this->_logoVariable = new LogoVariable($logoPath);
-			}
-			else
-			{
-				$this->_logoVariable = false;
-			}
-		}
-
-		return $this->_logoVariable;
+		return $this->getImageVariable('logo');
 	}
 
 	/**
-	 * Returns the path to the logo, or false if a logo hasn't been uploaded.
+	 * Returns the icons variable, or null if a site icon hasn't been uploaded.
 	 *
-	 * @access private
-	 * @return string
+	 * @return ImageVariable|null
 	 */
-	private function _getLogoPath()
+	public function getIcon()
 	{
-		if (!isset($this->_logoPath))
+		return $this->getImageVariable('icon');
+	}
+
+	/**
+	 * Get the ImageVariable for type.
+	 *
+	 * @param $type
+	 *
+	 * @return ImageVariable|null
+	 */
+	public function getImageVariable($type)
+	{
+		if (!in_array($type, array('logo', 'icon')))
 		{
-			$files = IOHelper::getFolderContents(craft()->path->getStoragePath().'logo/', false);
-			if (!empty($files))
+			return null;
+		}
+
+		if (!isset($this->_imageVariables[$type]))
+		{
+			$path = $this->_getImagePath($type);
+
+			if ($path !== false)
 			{
-				$this->_logoPath = $files[0];
+				$url = $this->_getImageUrl($path, $type);
+				$this->_imageVariables[$type] = new ImageVariable($path, $url);
 			}
 			else
 			{
-				$this->_logoPath = false;
+				$this->_imageVariables[$type] = false;
 			}
 		}
 
-		return $this->_logoPath;
+		return $this->_imageVariables[$type] ?: null;
+	}
+
+	// Private Methods
+	// =========================================================================
+
+	/**
+	 * Returns the path to a rebrand image by type or false if it hasn't ben uploaded.
+	 *
+	 * @param string $type logo or image.
+	 *
+	 * @return string
+	 */
+	private function _getImagePath($type)
+	{
+		if (!isset($this->_paths[$type]))
+		{
+			$files = IOHelper::getFolderContents(craft()->path->getRebrandPath().$type.'/', false);
+
+			if (!empty($files))
+			{
+				$this->_paths[$type] = $files[0];
+			}
+			else
+			{
+				$this->_paths[$type] = false;
+			}
+		}
+
+		return $this->_paths[$type];
+	}
+
+	/**
+	 * Returns the URL to a rebrand image.
+	 *
+	 * @param $path
+	 * @param $type
+	 *
+	 * @return string
+	 */
+	private function _getImageUrl($path, $type)
+	{
+		return UrlHelper::getResourceUrl('rebrand/'.$type.'/'.IOHelper::getFileName($path));
 	}
 }

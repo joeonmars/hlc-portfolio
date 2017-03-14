@@ -2,37 +2,26 @@
 namespace Craft;
 
 /**
- * Craft by Pixel & Tonic
+ * Class BaseEntryRevisionModel
  *
- * @package   Craft
- * @author    Pixel & Tonic, Inc.
+ * @author    Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
- * @license   http://buildwithcraft.com/license Craft License Agreement
- * @link      http://buildwithcraft.com
- */
-
-craft()->requirePackage(CraftPackage::PublishPro);
-
-/**
- *
+ * @license   http://craftcms.com/license Craft License Agreement
+ * @see       http://craftcms.com
+ * @package   craft.app.models
+ * @since     1.3
  */
 class BaseEntryRevisionModel extends EntryModel
 {
-	/**
-	 * @access protected
-	 * @return array
-	 */
-	protected function defineAttributes()
-	{
-		return array_merge(parent::defineAttributes(), array(
-			'creatorId' => AttributeType::Number,
-		));
-	}
+	// Public Methods
+	// =========================================================================
 
 	/**
 	 * Sets the revision content.
 	 *
 	 * @param array $content
+	 *
+	 * @return null
 	 */
 	public function setContentFromRevision($content)
 	{
@@ -50,14 +39,7 @@ class BaseEntryRevisionModel extends EntryModel
 		}
 
 		// Set the values and prep them
-		$this->getContent()->setAttributes($contentByFieldHandles);
-
-		$type = $this->getType();
-
-		if ($type)
-		{
-			craft()->content->prepElementContentForSave($this, $type->getFieldLayout(), false);
-		}
+		$this->setContentFromPost($contentByFieldHandles);
 	}
 
 	/**
@@ -68,5 +50,37 @@ class BaseEntryRevisionModel extends EntryModel
 	public function getCreator()
 	{
 		return craft()->users->getUserById($this->creatorId);
+	}
+
+	/**
+	 * Returns the element's full URL.
+	 *
+	 * @return string
+	 */
+	public function getUrl()
+	{
+		if ($this->uri === null)
+		{
+			ElementHelper::setUniqueUri($this);
+		}
+
+		return parent::getUrl();
+	}
+
+	// Protected Methods
+	// =========================================================================
+
+	/**
+	 * @inheritDoc BaseModel::defineAttributes()
+	 *
+	 * @return array
+	 */
+	protected function defineAttributes()
+	{
+		return array_merge(parent::defineAttributes(), array(
+			'creatorId'   => AttributeType::Number,
+			'dateUpdated' => AttributeType::DateTime,
+			'dateCreated' => AttributeType::DateTime,
+		));
 	}
 }

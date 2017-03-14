@@ -2,34 +2,39 @@
 namespace Craft;
 
 /**
- * Craft by Pixel & Tonic
+ * Widget base class.
  *
- * @package   Craft
- * @author    Pixel & Tonic, Inc.
+ * @author    Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
- * @license   http://buildwithcraft.com/license Craft License Agreement
- * @link      http://buildwithcraft.com
- */
-
-/**
- * Widget base class
+ * @license   http://craftcms.com/license Craft License Agreement
+ * @see       http://craftcms.com
+ * @package   craft.app.widgets
+ * @since     1.0
  */
 abstract class BaseWidget extends BaseSavableComponentType implements IWidget
 {
+	// Properties
+	// =========================================================================
+
 	/**
-	 * @access protected
-	 * @var string The type of component this is
+	 * The type of component, e.g. "Plugin", "Widget", "FieldType", etc. Defined by the component type's base class.
+	 *
+	 * @var string
 	 */
 	protected $componentType = 'Widget';
 
 	/**
-	 * @access protected
-	 * @var bool Whether users should be able to select more than one of this widget type.
+	 * Whether users should be able to select more than one of this widget type.
+	 *
+	 * @var bool
 	 */
 	protected $multi = true;
 
+	// Public Methods
+	// =========================================================================
+
 	/**
-	 * Returns whether this component should be selectable when choosing a component of this type.
+	 * @inheritDoc IComponentType::isSelectable()
 	 *
 	 * @return bool
 	 */
@@ -46,7 +51,7 @@ abstract class BaseWidget extends BaseSavableComponentType implements IWidget
 	}
 
 	/**
-	 * Gets the widget's title.
+	 * @inheritDoc IWidget::getTitle()
 	 *
 	 * @return string
 	 */
@@ -57,7 +62,16 @@ abstract class BaseWidget extends BaseSavableComponentType implements IWidget
 	}
 
 	/**
-	 * Returns the widget's body HTML.
+	 * @inheritDoc IWidget::getIconPath()
+	 *
+	 * @return string
+	 */
+	public function getIconPath()
+	{
+	}
+
+	/**
+	 * @inheritDoc IWidget::getBodyHtml()
 	 *
 	 * @return string|false
 	 */
@@ -66,5 +80,20 @@ abstract class BaseWidget extends BaseSavableComponentType implements IWidget
 		return '<div style="margin: 0 -30px -30px;">' .
 				'<img style="display: block; width: 100%;" src="'.UrlHelper::getResourceUrl('images/prg.jpg').'">' .
 			'</div>';
+	}
+
+	/**
+	 * @inheritDoc IWidget::getMaxColspan()
+	 *
+	 * @return int
+	 */
+	public function getMaxColspan()
+	{
+		if (method_exists($this, 'getColspan'))
+		{
+		    return $this->getColspan();
+		}
+
+		return null;
 	}
 }

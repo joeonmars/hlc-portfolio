@@ -2,34 +2,39 @@
 	<input type="hidden" name="{{ name }}" value="">
 {% endif -%}
 
-{% set elements = (elements is defined ? elements : []) -%}
+{% set elements = (elements is defined and elements ? elements : []) -%}
 {% set jsClass = (jsClass is defined and jsClass ? jsClass : 'Craft.BaseElementSelectInput') -%}
 {% set sources = (sources is defined and sources ? sources : null) -%}
 {% set criteria = (criteria is defined and criteria ? criteria : null) -%}
-{% set disabledElementIds = (disabledElementIds is defined and disabledElementIds ? disabledElementIds : null) -%}
+{% set sourceElementId = (sourceElementId is defined and sourceElementId ? sourceElementId : null) -%}
 {% set storageKey = (storageKey is defined and storageKey ? storageKey : null) -%}
+{% set viewMode = (viewMode is defined ? viewMode : 'list') %}
 
 <div id="{{ id }}" class="elementselect">
 	<div class="elements">
 		{% for element in elements %}
-			{% include "_elements/element" with { context: 'field' } %}
+			{% include "_elements/element" with {
+				context: 'field',
+				size: (viewMode == 'large' ? 'large' : 'small')
+			} %}
 		{% endfor %}
 	</div>
 
-	<div class="btn add icon dashed">{{ addButtonLabel }}</div>
+	<div class="btn add icon dashed">{{ selectionLabel is defined ? selectionLabel : (addButtonLabel is defined ? addButtonLabel : "Choose"|t) }}</div>
 </div>
 
-{% set js %}
-	new {{ jsClass }}(
-		"{{ id   | namespaceInputId   | e('js') }}",
-		"{{ name | namespaceInputName | e('js') }}",
-		"{{ elementType.getClassHandle()|e('js') }}",
-		{{ sources|json_encode|raw }},
-		{{ criteria|json_encode|raw }},
-		{{ disabledElementIds|json_encode|raw }},
-		{{ limit ? limit : 'null' }},
-		"{{ storageKey|e('js') }}"
-	);
-{% endset %}
+{% set jsSettings = {
+	id: id|namespaceInputId,
+	name: name|namespaceInputName,
+	elementType: elementType.getClassHandle(),
+	sources: sources,
+	criteria: criteria,
+	sourceElementId: sourceElementId,
+	viewMode: viewMode,
+	limit: limit,
+	modalStorageKey: storageKey
+} %}
 
-{% includeJs js %}
+{% includejs %}
+	new {{ jsClass }}({{ jsSettings|json_encode|raw }});
+{% endincludejs %}

@@ -1,25 +1,26 @@
 <?php
 namespace Craft;
 
+craft()->requireEdition(Craft::Client);
+
 /**
- * Craft by Pixel & Tonic
+ * Email message model class.
  *
- * @package   Craft
- * @author    Pixel & Tonic, Inc.
+ * @author    Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
- * @license   http://buildwithcraft.com/license Craft License Agreement
- * @link      http://buildwithcraft.com
- */
-
-craft()->requirePackage(CraftPackage::Rebrand);
-
-/**
- * Email message model class
+ * @license   http://craftcms.com/license Craft License Agreement
+ * @see       http://craftcms.com
+ * @package   craft.app.models
+ * @since     1.0
  */
 class RebrandEmailModel extends BaseModel
 {
+	// Protected Methods
+	// =========================================================================
+
 	/**
-	 * @access protected
+	 * @inheritDoc BaseModel::defineAttributes()
+	 *
 	 * @return array
 	 */
 	protected function defineAttributes()
@@ -30,6 +31,7 @@ class RebrandEmailModel extends BaseModel
 			'subject'  => AttributeType::String,
 			'body'     => AttributeType::String,
 			'htmlBody' => AttributeType::String,
+			'heading'  => AttributeType::String,
 		);
 	}
 }

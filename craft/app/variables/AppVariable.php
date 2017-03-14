@@ -2,20 +2,91 @@
 namespace Craft;
 
 /**
- * Craft by Pixel & Tonic
+ * Class AppVariable
  *
- * @package   Craft
- * @author    Pixel & Tonic, Inc.
+ * @author    Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
- * @license   http://buildwithcraft.com/license Craft License Agreement
- * @link      http://buildwithcraft.com
- */
-
-/**
- * App functions
+ * @license   http://craftcms.com/license Craft License Agreement
+ * @see       http://craftcms.com
+ * @package   craft.app.variables
+ * @since     1.0
  */
 class AppVariable
 {
+	// Public Methods
+	// =========================================================================
+
+	/**
+	 * Returns the Craft edition.
+	 *
+	 * @return string
+	 */
+	public function getEdition()
+	{
+		return craft()->getEdition();
+	}
+
+	/**
+	 * Returns the name of the Craft edition.
+	 *
+	 * @return string
+	 */
+	public function getEditionName()
+	{
+		return craft()->getEditionName();
+	}
+
+	/**
+	 * Returns the edition Craft is actually licensed to run in.
+	 *
+	 * @return int|null
+	 */
+	public function getLicensedEdition()
+	{
+		return craft()->getLicensedEdition();
+	}
+
+	/**
+	 * Returns the name of the edition Craft is actually licensed to run in.
+	 *
+	 * @return string|null
+	 */
+	public function getLicensedEditionName()
+	{
+		return craft()->getLicensedEditionName();
+	}
+
+	/**
+	 * Returns whether Craft is running with the wrong edition.
+	 *
+	 * @return bool
+	 */
+	public function hasWrongEdition()
+	{
+		return craft()->hasWrongEdition();
+	}
+
+	/**
+	 * Returns whether Craft is elligible to be upgraded to a different edition.
+	 *
+	 * @return bool
+	 */
+	public function canUpgradeEdition()
+	{
+		return craft()->canUpgradeEdition();
+	}
+
+	/**
+	 * Returns whether Craft is running on a domain that is eligible to test out
+	 * the editions.
+	 *
+	 * @return bool
+	 */
+	public function canTestEditions()
+	{
+		return craft()->canTestEditions();
+	}
+
 	/**
 	 * Returns the installed Craft version.
 	 *
@@ -30,6 +101,8 @@ class AppVariable
 	 * Returns the installed Craft build.
 	 *
 	 * @return string
+	 * @deprecated
+	 * @todo remove in 3.0
 	 */
 	public function getBuild()
 	{
@@ -40,6 +113,8 @@ class AppVariable
 	 * Returns the installed Craft release date.
 	 *
 	 * @return DateTime
+	 * @deprecated
+	 * @todo remove in Craft 3
 	 */
 	public function getReleaseDate()
 	{
@@ -133,12 +208,34 @@ class AppVariable
 	 */
 	public function getMaxUploadSize()
 	{
-		$maxUpload = (int)(ini_get('upload_max_filesize'));
-		$maxPost = (int)(ini_get('post_max_size'));
-		$memoryLimit = (int)(ini_get('memory_limit'));
-		$uploadMb = min($maxUpload, $maxPost, $memoryLimit);
+		$maxUpload = AppHelper::getPhpConfigValueInBytes('upload_max_filesize');
+		$maxPost = AppHelper::getPhpConfigValueInBytes('post_max_size');
+		$memoryLimit = AppHelper::getPhpConfigValueInBytes('memory_limit');
 
-		// Convert MB to B and return
-		return $uploadMb * 1048576; // 1024 x 1024 = 1048576
+		$uploadInBytes = min($maxUpload, $maxPost);
+
+		if ($memoryLimit > 0)
+		{
+			$uploadInBytes = min($uploadInBytes, $memoryLimit);
+		}
+
+		$configLimit = (int) craft()->config->get('maxUploadFileSize');
+
+		if ($configLimit)
+		{
+			$uploadInBytes = min($uploadInBytes, $configLimit);
+		}
+
+		return $uploadInBytes;
+	}
+
+	/**
+	 * Returns a list of file kinds.
+	 *
+	 * @return array
+	 */
+	public function getFileKinds()
+	{
+		return IOHelper::getFileKinds();
 	}
 }

@@ -2,23 +2,23 @@
 namespace Craft;
 
 /**
- * Craft by Pixel & Tonic
+ * Class UserPermission_UserRecord
  *
- * @package   Craft
- * @author    Pixel & Tonic, Inc.
+ * @author    Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
- * @license   http://buildwithcraft.com/license Craft License Agreement
- * @link      http://buildwithcraft.com
- */
-
-craft()->requirePackage(CraftPackage::Users);
-
-/**
- *
+ * @license   http://craftcms.com/license Craft License Agreement
+ * @see       http://craftcms.com
+ * @package   craft.app.records
+ * @since     1.0
  */
 class UserPermission_UserRecord extends BaseRecord
 {
+	// Public Methods
+	// =========================================================================
+
 	/**
+	 * @inheritDoc BaseRecord::getTableName()
+	 *
 	 * @return string
 	 */
 	public function getTableName()
@@ -27,6 +27,8 @@ class UserPermission_UserRecord extends BaseRecord
 	}
 
 	/**
+	 * @inheritDoc BaseRecord::defineRelations()
+	 *
 	 * @return array
 	 */
 	public function defineRelations()
@@ -38,6 +40,8 @@ class UserPermission_UserRecord extends BaseRecord
 	}
 
 	/**
+	 * @inheritDoc BaseRecord::defineIndexes()
+	 *
 	 * @return array
 	 */
 	public function defineIndexes()

@@ -1,32 +1,63 @@
 <?php
 namespace Craft;
 
+craft()->requireEdition(Craft::Pro);
+
 /**
- * Craft by Pixel & Tonic
+ * The UserSettingsController class is a controller that handles various user group and user settings related tasks such as
+ * creating, editing and deleting user groups and saving Craft user settings.
  *
- * @package   Craft
- * @author    Pixel & Tonic, Inc.
+ * Note that all actions in this controller require administrator access in order to execute.
+ *
+ * @author    Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
- * @license   http://buildwithcraft.com/license Craft License Agreement
- * @link      http://buildwithcraft.com
- */
-
-craft()->requirePackage(CraftPackage::Users);
-
-/**
- * Handles user group tasks
+ * @license   http://craftcms.com/license Craft License Agreement
+ * @see       http://craftcms.com
+ * @package   craft.app.controllers
+ * @since     1.0
  */
 class UserSettingsController extends BaseController
 {
+	// Public Methods
+	// =========================================================================
+
+	/**
+	 * @inheritDoc BaseController::init()
+	 *
+	 * @throws HttpException
+	 * @return null
+	 */
+	public function init()
+	{
+		// All user settings actions require an admin
+		craft()->userSession->requireAdmin();
+	}
+
 	/**
 	 * Saves a user group.
+	 *
+	 * @return null
 	 */
 	public function actionSaveGroup()
 	{
 		$this->requirePostRequest();
 
-		$group = new UserGroupModel();
-		$group->id = craft()->request->getPost('groupId');
+		$groupId = craft()->request->getPost('groupId');
+
+		if ($groupId)
+		{
+			$group = craft()->userGroups->getGroupById($groupId);
+
+			if (!$group)
+			{
+				throw new Exception(Craft::t('No group exists with the ID “{id}”.', array('id' => $groupId)));
+			}
+		}
+		else
+		{
+			$group = new UserGroupModel();
+		}
+
 		$group->name = craft()->request->getPost('name');
 		$group->handle = craft()->request->getPost('handle');
 
@@ -35,6 +66,21 @@ class UserSettingsController extends BaseController
 		{
 			// Save the new permissions
 			$permissions = craft()->request->getPost('permissions', array());
+
+			// See if there are any new permissions in here
+			if ($groupId && is_array($permissions))
+			{
+				foreach ($permissions as $permission)
+				{
+					if (!$group->can($permission))
+					{
+						// Yep. This will require an elevated session
+						$this->requireElevatedSession();
+						break;
+					}
+				}
+			}
+
 			craft()->userPermissions->saveGroupPermissions($group->id, $permissions);
 
 			craft()->userSession->setNotice(Craft::t('Group saved.'));
@@ -53,6 +99,8 @@ class UserSettingsController extends BaseController
 
 	/**
 	 * Deletes a user group.
+	 *
+	 * @return null
 	 */
 	public function actionDeleteGroup()
 	{
@@ -68,12 +116,14 @@ class UserSettingsController extends BaseController
 
 	/**
 	 * Saves the system user settings.
+	 *
+	 * @return null
 	 */
 	public function actionSaveUserSettings()
 	{
 		$this->requirePostRequest();
-		$this->requireAdmin();
 
+		$settings['requireEmailVerification'] = (bool) craft()->request->getPost('requireEmailVerification');
 		$settings['allowPublicRegistration'] = (bool) craft()->request->getPost('allowPublicRegistration');
 		$settings['defaultGroup'] = craft()->request->getPost('defaultGroup');
 

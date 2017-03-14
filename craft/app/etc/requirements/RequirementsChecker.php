@@ -2,26 +2,40 @@
 namespace Craft;
 
 /**
- * Craft by Pixel & Tonic
+ * Class RequirementsChecker
  *
- * @package   Craft
- * @author    Pixel & Tonic, Inc.
+ * @author    Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
- * @license   http://buildwithcraft.com/license Craft License Agreement
- * @link      http://buildwithcraft.com
- */
-
-/**
- *
+ * @license   http://craftcms.com/license Craft License Agreement
+ * @see       http://craftcms.com
+ * @package   craft.app.etc.requirements
+ * @since     1.0
  */
 class RequirementsChecker extends \CComponent
 {
-	private $_requirements;
-	private $_result;
-	private $_serverInfo;
+	// Properties
+	// =========================================================================
 
 	/**
-	 *
+	 * @var
+	 */
+	private $_requirements;
+
+	/**
+	 * @var
+	 */
+	private $_result;
+
+	/**
+	 * @var
+	 */
+	private $_serverInfo;
+
+	// Public Methods
+	// =========================================================================
+
+	/**
+	 * @return null
 	 */
 	public function run()
 	{
@@ -70,21 +84,18 @@ class RequirementsChecker extends \CComponent
 		return $this->_requirements;
 	}
 
+	// Private Methods
+	// =========================================================================
+
 	/**
-	 * @access private
 	 * @return string
 	 */
 	private function _calculateServerInfo()
 	{
-		$info[] = '<a href="http://buildwithcraft.com/">Craft</a> ' .
-			Craft::t('{version} build {build}', array(
-				'version' => CRAFT_VERSION,
-				'build'   => CRAFT_BUILD
-			));
-
+		$info[] = '<a href="http://craftcms.com/">Craft CMS</a> '.CRAFT_VERSION;
 		$info[] = isset($_SERVER['SERVER_SOFTWARE']) ? $_SERVER['SERVER_SOFTWARE'] : '';
 		$info[] = 'Yii v'.craft()->getYiiVersion();
-		$info[] =  \CTimestamp::formatDate(craft()->locale->getTimeFormat());;
+		$info[] =  \CTimestamp::formatDate(craft()->locale->getTimeFormat());
 
 		return implode(' | ', $info);
 	}

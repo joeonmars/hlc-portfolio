@@ -1,19 +1,26 @@
 {% import "_includes/forms" as forms %}
+{% set fieldNamespace = 'fields'~random() %}
 
 
-<form method="post" action="" accept-charset="UTF-8">
-	{{ forms.textField({
-		label: entryType.titleLabel|t,
-		id: 'title',
-		name: 'title',
-		required: true
-	}) }}
+<form method="post" accept-charset="UTF-8">
+	<input type="hidden" name="fieldsLocation" value="{{ fieldNamespace }}">
+	{{ getCsrfInput() }}
 
-	{% namespace 'fields' %}
+	{% if section.type != 'single' and entryType.hasTitleField %}
+		{{ forms.textField({
+			label: entryType.titleLabel|t,
+			id: 'title',
+			name: 'title',
+			required: true,
+			first: true
+		}) }}
+	{% endif %}
+
+	{% namespace fieldNamespace %}
 		{% for field in entryType.getFieldLayout().getFields() %}
 			{% if field.required or field.fieldId in settings.fields %}
 				{% include "_includes/field" with {
-					fieldId: field.fieldId,
+					field: field.getField(),
 					required: field.required,
 					entry: null
 				} only %}
@@ -22,7 +29,16 @@
 	{% endnamespace %}
 
 	<div class="buttons">
-		<input type="submit" class="btn submit" value="{{ 'Post'|t }}">
+		<div class="btngroup">
+			<input type="submit" class="btn submit" value="{{ 'Save'|t }}">
+
+			<div class="btn submit menubtn"></div>
+			<div class="menu">
+				<ul>
+					<li><a class="save-and-continue-editing">{{ "Save and continue editing"|t }}</a></li>
+				</ul>
+			</div>
+		</div>
 		<div class="spinner hidden"></div>
 	</div>
 </form>

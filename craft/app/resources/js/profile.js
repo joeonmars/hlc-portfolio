@@ -1,13 +1,3 @@
-/**
- * Craft by Pixel & Tonic
- *
- * @package   Craft
- * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
- * @license   http://buildwithcraft.com/license Craft License Agreement
- * @link      http://buildwithcraft.com
- */
-
 (function($) {
 
 	var ImageUpload = null;
@@ -25,17 +15,19 @@
 
 		areaToolOptions:
 		{
-			aspectRatio: "1:1",
+			aspectRatio: "1",
 			initialRectangle: {
 				mode: "auto"
 			}
 		},
 
-		onImageSave: function (response) {
+		onImageSave: function(response)
+		{
 			refreshImage(response);
 		},
 
-		onImageDelete: function (response) {
+		onImageDelete: function(response)
+		{
 		   refreshImage(response);
 		}
 	};
@@ -43,9 +35,10 @@
 	function refreshImage(response) {
 		if (typeof response.html != "undefined") {
 			$('.user-photo').replaceWith(response.html);
-			var newImage = $('.user-photo>.current-photo').css('background-image').replace(/^url\(/, '').replace(/\)$/, '');
-
-			$('#account-menu').find('img').attr('src', newImage);
+			if (typeof changeSidebarPicture != "undefined" && changeSidebarPicture)
+			{
+				$('#user-photo > img').replaceWith($('#current-photo > img').clone());
+			}
 			initImageUpload();
 		}
 
@@ -59,6 +52,10 @@
 		ImageUpload = new Craft.ImageUpload(settings);
 	}
 
-	initImageUpload();
+	// Only init for existing users.
+	if ($('input[name=userId]').val())
+	{
+		initImageUpload();
+	}
 
 })(jQuery);

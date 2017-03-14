@@ -2,29 +2,32 @@
 namespace Craft;
 
 /**
- * Craft by Pixel & Tonic
+ * PluginsService provides APIs for managing plugins.
  *
- * @package   Craft
- * @author    Pixel & Tonic, Inc.
+ * An instance of PluginsService is globally accessible in Craft via {@link WebApp::plugins `craft()->plugins`}.
+ *
+ * @author    Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
- * @license   http://buildwithcraft.com/license Craft License Agreement
- * @link      http://buildwithcraft.com
- */
-
-/**
- *
+ * @license   http://craftcms.com/license Craft License Agreement
+ * @see       http://craftcms.com
+ * @package   craft.app.services
+ * @since     1.0
  */
 class PluginsService extends BaseApplicationComponent
 {
+	// Properties
+	// =========================================================================
+
 	/**
-	 * @var array The type of components plugins can have. Defined in app/etc/config/common.php.
+	 * The type of components plugins can have. Defined in app/etc/config/common.php.
+	 *
+	 * @var array
 	 */
-	public $componentTypes;
+	public $autoloadClasses;
 
 	/**
 	 * Stores whether plugins have been loaded yet for this request.
 	 *
-	 * @access private
 	 * @var bool
 	 */
 	private $_pluginsLoaded = false;
@@ -32,7 +35,6 @@ class PluginsService extends BaseApplicationComponent
 	/**
 	 * Stores whether plugins are in the middle of being loaded.
 	 *
-	 * @access private
 	 * @var bool
 	 */
 	private $_loadingPlugins = false;
@@ -40,15 +42,13 @@ class PluginsService extends BaseApplicationComponent
 	/**
 	 * Stores all plugins, whether installed or not.
 	 *
-	 * @access private
 	 * @var array
 	 */
 	private $_plugins = array();
 
 	/**
-	 * Stores all enabled plugins.
+	 * Stores all plugins, whether installed or not.
 	 *
-	 * @access private
 	 * @var array
 	 */
 	private $_enabledPlugins = array();
@@ -56,32 +56,24 @@ class PluginsService extends BaseApplicationComponent
 	/**
 	 * Stores all plugins in the system, regardless of whether they're installed/enabled or not.
 	 *
-	 * @access private
 	 * @var array
 	 */
 	private $_allPlugins;
 
 	/**
-	 * List of the known component classes for each plugin,
-	 * indexed by the component type, then the plugin handle.
-	 *
-	 * @access private
-	 * @var array
-	 */
-	private $_pluginComponentClasses = array();
-
-	/**
 	 * Holds a list of all of the enabled plugin info indexed by the plugin class name.
 	 *
-	 * @access private
 	 * @var array
 	 */
 	private $_enabledPluginInfo = array();
 
+	// Public Methods
+	// =========================================================================
+
 	/**
 	 * Returns whether plugins have been loaded yet for this request.
 	 *
-	 * @return bool
+	 * @return bool Whether plugins have been loaded yet.
 	 */
 	public function arePluginsLoaded()
 	{
@@ -90,6 +82,8 @@ class PluginsService extends BaseApplicationComponent
 
 	/**
 	 * Loads the enabled plugins.
+	 *
+	 * @return null
 	 */
 	public function loadPlugins()
 	{
@@ -101,8 +95,10 @@ class PluginsService extends BaseApplicationComponent
 				$this->_loadingPlugins = true;
 
 				// Find all of the enabled plugins
+				// TODO: swap the SELECT statements after next breakpoint
 				$rows = craft()->db->createCommand()
-					->select('id, class, version, settings, installDate')
+					//->select('id, class, version, schemaVersion, settings, installDate')
+					->select('*')
 					->from('plugins')
 					->where('enabled=1')
 					->queryAll();
@@ -115,6 +111,8 @@ class PluginsService extends BaseApplicationComponent
 
 					if ($plugin)
 					{
+						$this->_autoloadPluginClasses($plugin);
+
 						// Clean it up a bit
 						$row['settings'] = JsonHelper::decode($row['settings']);
 						$row['installDate'] = DateTime::createFromString($row['installDate']);
@@ -131,16 +129,24 @@ class PluginsService extends BaseApplicationComponent
 						$plugin->isInstalled = true;
 						$plugin->isEnabled = true;
 
-						$this->_importPluginComponents($plugin);
-						$this->_registerPluginServices($plugin->getClassHandle());
+						// If we're not updating, check if the plugin's version number changed, but not its schema version.
+						if (!craft()->isInMaintenanceMode() && $this->hasPluginVersionNumberChanged($plugin) && !$this->doesPluginRequireDatabaseUpdate($plugin))
+						{
+							// Update our record of the plugin's version number
+							craft()->db->createCommand()->update(
+								'plugins',
+								array('version' => $plugin->getVersion()),
+								'id = :id',
+								array(':id' => $row['id'])
+							);
+						}
 					}
 				}
 
 				// Sort plugins by name
-				array_multisort($names, $this->_enabledPlugins);
+				$this->_sortPlugins($names, $this->_enabledPlugins);
 
-				// Now that all of the components have been imported,
-				// initialize all the plugins
+				// Now that all of the components have been imported, initialize all the plugins
 				foreach ($this->_enabledPlugins as $plugin)
 				{
 					$plugin->init();
@@ -157,11 +163,12 @@ class PluginsService extends BaseApplicationComponent
 	}
 
 	/**
-	 * Returns a plugin.
+	 * Returns a plugin by its handle.
 	 *
-	 * @param string $handle
-	 * @param bool   $enabledOnly
-	 * @return BasePlugin|null
+	 * @param string $handle      The plugin’s handle.
+	 * @param bool   $enabledOnly Whether the plugin must be installed and enabled. Defaults to `true`.
+	 *
+	 * @return BasePlugin|null The plugin.
 	 */
 	public function getPlugin($handle, $enabledOnly = true)
 	{
@@ -205,10 +212,11 @@ class PluginsService extends BaseApplicationComponent
 	}
 
 	/**
-	 * Returns all plugins, whether they're installed or not.
+	 * Returns all the plugins.
 	 *
-	 * @param bool $enabledOnly
-	 * @return array
+	 * @param bool $enabledOnly Whether to only return plugins that are installed and enabled. Defaults to `true`.
+	 *
+	 * @return BasePlugin[] The plugins.
 	 */
 	public function getPlugins($enabledOnly = true)
 	{
@@ -221,7 +229,6 @@ class PluginsService extends BaseApplicationComponent
 			if (!isset($this->_allPlugins))
 			{
 				$this->_allPlugins = array();
-				$paths = array();
 
 				// Find all of the plugins in the plugins folder
 				$pluginsPath = craft()->path->getPluginsPath();
@@ -234,26 +241,30 @@ class PluginsService extends BaseApplicationComponent
 						// Make sure it's actually a folder.
 						if (IOHelper::folderExists($pluginFolderContent))
 						{
-							$paths = array_merge($paths, IOHelper::getFolderContents($pluginFolderContent, false, ".*Plugin\.php"));
-						}
-					}
+							$pluginFolderContent = IOHelper::normalizePathSeparators($pluginFolderContent);
+							$pluginFolderName = mb_strtolower(IOHelper::getFolderName($pluginFolderContent, false));
+							$pluginFilePath = IOHelper::getFolderContents($pluginFolderContent, false, ".*Plugin\.php");
 
-					if (is_array($paths) && count($paths) > 0)
-					{
-						foreach ($paths as $path)
-						{
-							$path = IOHelper::normalizePathSeparators($path);
-							$fileName = IOHelper::getFileName($path, false);
-
-							// Chop off the "Plugin" suffix
-							$handle = mb_substr($fileName, 0, mb_strlen($fileName) - 6);
-
-							$plugin = $this->getPlugin($handle, false);
-
-							if ($plugin)
+							if (is_array($pluginFilePath) && count($pluginFilePath) > 0)
 							{
-								$this->_allPlugins[mb_strtolower($handle)] = $plugin;
-								$names[] = $plugin->getName();
+								$pluginFileName = IOHelper::getFileName($pluginFilePath[0], false);
+
+								// Chop off the "Plugin" suffix
+								$handle = mb_substr($pluginFileName, 0, mb_strlen($pluginFileName) - 6);
+								$lcHandle = mb_strtolower($handle);
+
+								// Validate that the lowercase plugin class handle is the same as the folder name
+								// and that we haven't already loaded a plugin with the same handle but different casing
+								if ($lcHandle === $pluginFolderName && !isset($this->_allPlugins[$lcHandle]))
+								{
+									$plugin = $this->getPlugin($handle, false);
+
+									if ($plugin)
+									{
+										$this->_allPlugins[$lcHandle] = $plugin;
+										$names[] = $plugin->getName();
+									}
+								}
 							}
 						}
 					}
@@ -261,7 +272,7 @@ class PluginsService extends BaseApplicationComponent
 					if (!empty($names))
 					{
 						// Sort plugins by name
-						array_multisort($names, $this->_allPlugins);
+						$this->_sortPlugins($names, $this->_allPlugins);
 					}
 				}
 			}
@@ -271,16 +282,16 @@ class PluginsService extends BaseApplicationComponent
 	}
 
 	/**
-	 * Enables a plugin.
+	 * Enables a plugin by its handle.
 	 *
-	 * @param $handle
+	 * @param string $handle The plugin’s handle.
+	 *
 	 * @throws Exception
-	 * @return bool
+	 * @return bool Whether the plugin was enabled successfully.
 	 */
 	public function enablePlugin($handle)
 	{
 		$plugin = $this->getPlugin($handle, false);
-		$lcPluginHandle = mb_strtolower($plugin->getClassHandle());
 
 		if (!$plugin)
 		{
@@ -291,6 +302,14 @@ class PluginsService extends BaseApplicationComponent
 		{
 			throw new Exception(Craft::t('“{plugin}” can’t be enabled because it isn’t installed yet.', array('plugin' => $plugin->getName())));
 		}
+
+		if ($plugin->isEnabled)
+		{
+			// Done!
+			return true;
+		}
+
+		$lcPluginHandle = mb_strtolower($plugin->getClassHandle());
 
 		craft()->db->createCommand()->update('plugins',
 			array('enabled' => 1),
@@ -304,16 +323,16 @@ class PluginsService extends BaseApplicationComponent
 	}
 
 	/**
-	 * Disables a plugin.
+	 * Disables a plugin by its handle.
 	 *
-	 * @param $handle
+	 * @param string $handle The plugin’s handle.
+	 *
 	 * @throws Exception
-	 * @return bool
+	 * @return bool Whether the plugin was disabled successfully.
 	 */
 	public function disablePlugin($handle)
 	{
-		$plugin = $this->getPlugin($handle);
-		$lcPluginHandle = mb_strtolower($plugin->getClassHandle());
+		$plugin = $this->getPlugin($handle, false);
 
 		if (!$plugin)
 		{
@@ -324,6 +343,14 @@ class PluginsService extends BaseApplicationComponent
 		{
 			throw new Exception(Craft::t('“{plugin}” can’t be disabled because it isn’t installed yet.', array('plugin' => $plugin->getName())));
 		}
+
+		if (!$plugin->isEnabled)
+		{
+			// Done!
+			return true;
+		}
+
+		$lcPluginHandle = mb_strtolower($plugin->getClassHandle());
 
 		craft()->db->createCommand()->update('plugins',
 			array('enabled' => 0),
@@ -337,17 +364,16 @@ class PluginsService extends BaseApplicationComponent
 	}
 
 	/**
-	 * Installs a plugin.
+	 * Installs a plugin by its handle.
 	 *
-	 * @param $handle
-	 * @throws Exception
-	 * @throws \Exception
-	 * @return bool
+	 * @param string $handle The plugin’s handle.
+	 *
+	 * @throws Exception|\Exception
+	 * @return bool Whether the plugin was installed successfully.
 	 */
 	public function installPlugin($handle)
 	{
 		$plugin = $this->getPlugin($handle, false);
-		$lcPluginHandle = mb_strtolower($plugin->getClassHandle());
 
 		if (!$plugin)
 		{
@@ -356,61 +382,66 @@ class PluginsService extends BaseApplicationComponent
 
 		if ($plugin->isInstalled)
 		{
-			throw new Exception(Craft::t('“{plugin}” is already installed.', array('plugin' => $plugin->getName())));
+			// Done!
+			return true;
 		}
 
-		$transaction = craft()->db->getCurrentTransaction() === null ? craft()->db->beginTransaction() : null;
-		try
+		$lcPluginHandle = mb_strtolower($plugin->getClassHandle());
+
+		if ($plugin->onBeforeInstall() !== false)
 		{
-			// Add the plugins as a record to the database.
-			craft()->db->createCommand()->insert('plugins', array(
-				'class'       => $plugin->getClassHandle(),
-				'version'     => $plugin->version,
-				'enabled'     => true,
-				'installDate' => DateTimeHelper::currentTimeForDb(),
-			));
-
-			$plugin->isInstalled = true;
-			$plugin->isEnabled = true;
-			$this->_enabledPlugins[$lcPluginHandle] = $plugin;
-
-			$this->_savePluginMigrations(craft()->db->getLastInsertID(), $plugin->getClassHandle());
-			$this->_importPluginComponents($plugin);
-			$this->_registerPluginServices($plugin->getClassHandle());
-			$plugin->createTables();
-
-			if ($transaction !== null)
+			$transaction = craft()->db->getCurrentTransaction() === null ? craft()->db->beginTransaction() : null;
+			try
 			{
-				$transaction->commit();
+				// Add the plugins as a record to the database.
+				craft()->db->createCommand()->insert('plugins', array(
+					'class'         => $plugin->getClassHandle(),
+					'version'       => $plugin->getVersion(),
+					'schemaVersion' => $plugin->getSchemaVersion(),
+					'enabled'       => true,
+					'installDate'   => DateTimeHelper::currentTimeForDb(),
+				));
+
+				$plugin->isInstalled = true;
+				$plugin->isEnabled = true;
+				$this->_enabledPlugins[$lcPluginHandle] = $plugin;
+
+				$this->_savePluginMigrations(craft()->db->getLastInsertID(), $plugin->getClassHandle());
+				$this->_autoloadPluginClasses($plugin);
+				$plugin->createTables();
+
+				if ($transaction !== null)
+				{
+					$transaction->commit();
+				}
 			}
-		}
-		catch (\Exception $e)
-		{
-			if ($transaction !== null)
+			catch (\Exception $e)
 			{
-				$transaction->rollback();
+				if ($transaction !== null)
+				{
+					$transaction->rollback();
+				}
+
+				throw $e;
 			}
 
-			throw $e;
+			$plugin->onAfterInstall();
+
+			return true;
 		}
-
-		$plugin->onAfterInstall();
-
-		return true;
 	}
 
 	/**
-	 * Uninstalls a plugin by removing it's record from the database, deleting it's tables and foreign keys and running the plugin's uninstall method if it exists.
+	 * Uninstalls a plugin by its handle.
 	 *
-	 * @param $handle
-	 * @throws Exception
-	 * @throws \Exception
-	 * @return bool
+	 * @param string $handle The plugin’s handle.
+	 *
+	 * @throws Exception|\Exception
+	 * @return bool Whether the plugin was uninstalled successfully.
 	 */
 	public function uninstallPlugin($handle)
 	{
 		$plugin = $this->getPlugin($handle, false);
-		$lcPluginHandle = mb_strtolower($plugin->getClassHandle());
 
 		if (!$plugin)
 		{
@@ -419,16 +450,18 @@ class PluginsService extends BaseApplicationComponent
 
 		if (!$plugin->isInstalled)
 		{
-			throw new Exception(Craft::t('“{plugin}” is already uninstalled.', array('plugin' => $plugin->getName())));
+			// Done!
+			return true;
 		}
+
+		$lcPluginHandle = mb_strtolower($plugin->getClassHandle());
 
 		if (!$plugin->isEnabled)
 		{
 			// Pretend that the plugin is enabled just for this request
 			$plugin->isEnabled = true;
 			$this->_enabledPlugins[$lcPluginHandle] = $plugin;
-			$this->_importPluginComponents($plugin);
-			$this->_registerPluginServices($plugin->getClassHandle());
+			$this->_autoloadPluginClasses($plugin);
 
 			$pluginRow = craft()->db->createCommand()
 				->select('id')
@@ -443,11 +476,26 @@ class PluginsService extends BaseApplicationComponent
 			$pluginId = $this->_enabledPluginInfo[$handle]['id'];
 		}
 
-		$plugin->onBeforeUninstall();
-
 		$transaction = craft()->db->getCurrentTransaction() === null ? craft()->db->beginTransaction() : null;
 		try
 		{
+			$plugin->onBeforeUninstall();
+
+			// If the plugin has any element types, delete their elements
+			$elementTypeInfo = craft()->components->types['element'];
+			$elementTypeClasses = $this->getPluginClasses($plugin, $elementTypeInfo['subfolder'], $elementTypeInfo['suffix']);
+
+			foreach ($elementTypeClasses as $class)
+			{
+				$elementType = craft()->components->initializeComponent($class, $elementTypeInfo['instanceof']);
+
+				if ($elementType)
+				{
+					craft()->elements->deleteElementsByType($elementType->getClassHandle());
+				}
+			}
+
+			// Drop any tables created by the plugin's records
 			$plugin->dropTables();
 
 			// Remove the row from the database.
@@ -484,145 +532,132 @@ class PluginsService extends BaseApplicationComponent
 	/**
 	 * Saves a plugin's settings.
 	 *
-	 * @param BasePlugin $plugin
-	 * @param mixed $settings
-	 * @return bool
+	 * @param BasePlugin $plugin   The plugin.
+	 * @param array      $settings The plugin’s new settings.
+	 *
+	 * @return bool Whether the plugin’s settings were saved successfully.
 	 */
 	public function savePluginSettings(BasePlugin $plugin, $settings)
 	{
-		// Give the plugin a chance to modify the settings
-		$settings = $plugin->prepSettings($settings);
-		$settings = JsonHelper::encode($settings);
+		// Give the plugin a chance to prep the settings from post
+		$preppedSettings = $plugin->prepSettings($settings);
 
-		$affectedRows = craft()->db->createCommand()->update('plugins', array(
-			'settings' => $settings
-		), array(
-			'class' => $plugin->getClassHandle()
-		));
+		// Set the prepped settings on the plugin
+		$plugin->setSettings($preppedSettings);
 
-		return (bool) $affectedRows;
+		// Validate them, now that it's a model
+		if ($plugin->getSettings()->validate())
+		{
+			// JSON-encode them and save the plugin row
+			$settings = JsonHelper::encode($plugin->getSettings()->getAttributes());
+
+			$affectedRows = craft()->db->createCommand()->update('plugins', array(
+				'settings' => $settings
+			), array(
+				'class' => $plugin->getClassHandle()
+			));
+
+			return (bool) $affectedRows;
+		}
 	}
 
 	/**
-	 * Calls a method on all plugins that have the method.
+	 * Calls a method on all plugins that have it, and returns an array of the results, indexed by plugin handles.
 	 *
-	 * @param string $method
-	 * @param array $args
-	 * @return array
+	 * @param string $method     The name of the method.
+	 * @param array  $args       Any arguments that should be passed when calling the method on the plugins.
+	 * @param bool   $ignoreNull Whether plugins that have the method but return a null response should be ignored. Defaults to false.
+	 *
+	 * @return array An array of the plugins’ responses.
 	 */
-	public function call($method, $args = array())
+	public function call($method, $args = array(), $ignoreNull = false)
 	{
-		$result = array();
+		$allResults = array();
 		$altMethod = 'hook'.ucfirst($method);
 
 		foreach ($this->getPlugins() as $plugin)
 		{
 			if (method_exists($plugin, $method))
 			{
-				$result[$plugin->getClassHandle()] = call_user_func_array(array($plugin, $method), $args);
+				$result = call_user_func_array(array($plugin, $method), $args);
 			}
-
-			// TODO: Remove for 2.0
 			else if (method_exists($plugin, $altMethod))
 			{
-				Craft::log('The “hook” prefix on the '.get_class($plugin).'::'.$altMethod.'() method name has been deprecated. It should be renamed to '.$method.'().', LogLevel::Warning);
-				$result[$plugin->getClassHandle()] = call_user_func_array(array($plugin, $altMethod), $args);
+				craft()->deprecator->log('PluginsService::method_hook_prefix', 'The “hook” prefix on the '.get_class($plugin).'::'.$altMethod.'() method name has been deprecated. It should be renamed to '.$method.'().');
+				$result = call_user_func_array(array($plugin, $altMethod), $args);
+			}
+
+			if (isset($result) && (!$ignoreNull || $result !== null))
+			{
+				$allResults[$plugin->getClassHandle()] = $result;
+				unset($result);
 			}
 		}
 
-		return $result;
+		return $allResults;
 	}
 
 	/**
-	 * Provides legacy support for craft()->plugins->callHook().
+	 * Calls a method on the first plugin that has it, and returns the result.
 	 *
-	 * @param string $method
-	 * @param array $args
-	 * @return array
-	 * @deprecated Deprecated since 1.0
+	 * @param string $method     The name of the method.
+	 * @param array  $args       Any arguments that should be passed when calling the method on the plugins.
+	 * @param bool   $ignoreNull Whether plugins that have the method but return a null response should be ignored. Defaults to false.
+	 *
+	 * @return mixed The plugin’s response, or null.
+	 */
+	public function callFirst($method, $args = array(), $ignoreNull = false)
+	{
+		$altMethod = 'hook'.ucfirst($method);
+
+		foreach ($this->getPlugins() as $plugin)
+		{
+			if (method_exists($plugin, $method))
+			{
+				$result = call_user_func_array(array($plugin, $method), $args);
+			}
+			else if (method_exists($plugin, $altMethod))
+			{
+				craft()->deprecator->log('PluginsService::method_hook_prefix', 'The “hook” prefix on the '.get_class($plugin).'::'.$altMethod.'() method name has been deprecated. It should be renamed to '.$method.'().');
+				$result = call_user_func_array(array($plugin, $altMethod), $args);
+			}
+
+			if (isset($result) && (!$ignoreNull || $result !== null))
+			{
+				return $result;
+			}
+		}
+	}
+
+	/**
+	 * Calls a method on all plugins that have the method.
+	 *
+	 * @param string $method The name of the method.
+	 * @param array  $args   Any arguments that should be passed when calling the method on the plugins.
+	 *
+	 * @deprecated Deprecated in 1.0.  Use {@link call()} instead.
+	 * @return array An array of the plugins’ responses.
 	 */
 	public function callHook($method, $args = array())
 	{
-		Craft::log('The craft()->plugins->callHook() method has been deprecated. Use craft()->plugins->call() instead.', LogLevel::Warning);
+		craft()->deprecator->log('PluginsService::callHook()', 'PluginsService::callHook() has been deprecated. Use call() instead.');
 		return $this->call($method, $args);
 	}
 
 	/**
-	 * Returns all components of a certain type, across all plugins.
+	 * Returns whether the given plugin’s version number has changed from what we have recorded in the database.
 	 *
-	 * @param $type
-	 * @return array
-	 */
-	public function getAllComponentsByType($type)
-	{
-		$components = array();
-
-		if (isset($this->componentTypes[$type]['instanceof']))
-		{
-			$instanceOf = $this->componentTypes[$type]['instanceof'];
-		}
-		else
-		{
-			$instanceOf = null;
-		}
-
-		foreach ($this->getPlugins() as $plugin)
-		{
-			$pluginHandle = $plugin->getClassHandle();
-			$classes = $this->getPluginComponentClassesByType($pluginHandle, $type);
-
-			foreach ($classes as $class)
-			{
-				$component = craft()->components->initializeComponent($class, $instanceOf);
-
-				if ($component)
-				{
-					$components[] = $component;
-				}
-			}
-		}
-
-		return $components;
-	}
-
-	/**
-	 * Returns all of a plugin's component class names of a certain type.
+	 * @param BasePlugin $plugin The plugin.
 	 *
-	 * @param string $pluginHandle
-	 * @param string $type
-	 * @return array
+	 * @return bool Whether the plugin’s version number has changed from what we have recorded in the database
 	 */
-	public function getPluginComponentClassesByType($pluginHandle, $type)
-	{
-		// Make sure plugins can actually have this type of component
-		if (!isset($this->componentTypes[$type]))
-		{
-			return array();
-		}
-
-		if (isset($this->_pluginComponentClasses[$type][$pluginHandle]))
-		{
-			return $this->_pluginComponentClasses[$type][$pluginHandle];
-		}
-		else
-		{
-			return array();
-		}
-	}
-
-	/**
-	 * Returns whether the given plugin's local version number is greater than the record we have in the database.
-	 *
-	 * @param BasePlugin $plugin
-	 * @return bool
-	 */
-	public function doesPluginRequireDatabaseUpdate(BasePlugin $plugin)
+	public function hasPluginVersionNumberChanged(BasePlugin $plugin)
 	{
 		$storedPluginInfo = $this->getPluginInfo($plugin);
 
 		if ($storedPluginInfo)
 		{
-			if (version_compare($plugin->getVersion(), $storedPluginInfo['version'], '>'))
+			if ($plugin->getVersion() != $storedPluginInfo['version'])
 			{
 				return true;
 			}
@@ -632,10 +667,51 @@ class PluginsService extends BaseApplicationComponent
 	}
 
 	/**
-	 * Returns an array of the stored info for a given plugin.
+	 * Returns whether the given plugin’s local schema version is greater than the record we have in the database.
 	 *
-	 * @param BasePlugin $plugin
-	 * @return array|null
+	 * @param BasePlugin $plugin The plugin.
+	 *
+	 * @return bool Whether the plugin’s local schema version is greater than the record we have in the database.
+	 */
+	public function doesPluginRequireDatabaseUpdate(BasePlugin $plugin)
+	{
+		$storedPluginInfo = $this->getPluginInfo($plugin);
+
+		if ($storedPluginInfo)
+		{
+			$localVersion = $plugin->getSchemaVersion();
+
+			// If the schema version is empty, use the main plugin version
+			if (empty($localVersion))
+			{
+				$localVersion = $plugin->getVersion();
+				$storedVersion = $storedPluginInfo['version'];
+			}
+			else
+			{
+				// TODO: Remove this isset() stuff after the next breakpoint
+				$storedVersion = isset($storedPluginInfo['schemaVersion']) ? $storedPluginInfo['schemaVersion'] : null;
+			}
+
+			// One/both could be null so start with seeing if they're not equal
+			if (
+				$localVersion != $storedVersion &&
+				(empty($storedVersion) || version_compare($localVersion, $storedVersion, '>'))
+			)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Returns the stored info for a given plugin.
+	 *
+	 * @param BasePlugin $plugin The plugin.
+	 *
+	 * @return array|null The stored info, if there is any.
 	 */
 	public function getPluginInfo(BasePlugin $plugin)
 	{
@@ -645,12 +721,265 @@ class PluginsService extends BaseApplicationComponent
 		}
 	}
 
+	/**
+	 * Returns an array of class names found in a given plugin folder.
+	 *
+	 * @param BasePlugin $plugin         The plugin.
+	 * @param string     $classSubfolder The subfolder to search.
+	 * @param string     $classSuffix    The class suffix we’re looking for.
+	 * @param bool       $autoload       Whether the found classes should be imported for the autoloader.
+	 *
+	 * @return array The class names.
+	 */
+	public function getPluginClasses(BasePlugin $plugin, $classSubfolder, $classSuffix, $autoload = true)
+	{
+		$classes = array();
+
+		$pluginHandle = $plugin->getClassHandle();
+		$pluginFolder = mb_strtolower($plugin->getClassHandle());
+		$pluginFolderPath = craft()->path->getPluginsPath().$pluginFolder.'/';
+		$classSubfolderPath = $pluginFolderPath.$classSubfolder.'/';
+
+		if (IOHelper::folderExists($classSubfolderPath))
+		{
+			// Enums don't have an "Enum" suffix.
+			if ($classSubfolder === 'enums')
+			{
+				$files = IOHelper::getFolderContents($classSubfolderPath, false);
+			}
+			else
+			{
+				// See if it has any files in ClassName*Suffix.php format.
+				$filter = $pluginHandle.'(_.+)?'.$classSuffix.'\.php$';
+				$files = IOHelper::getFolderContents($classSubfolderPath, false, $filter);
+			}
+
+			if ($files)
+			{
+				foreach ($files as $file)
+				{
+					$class = IOHelper::getFileName($file, false);
+					$classes[] = $class;
+
+					if ($autoload)
+					{
+						Craft::import("plugins.{$pluginFolder}.{$classSubfolder}.{$class}");
+					}
+				}
+			}
+		}
+
+		return $classes;
+	}
+
+	/**
+	 * Returns whether a plugin class exists.
+	 *
+	 * @param BasePlugin $plugin         The plugin.
+	 * @param string     $classSubfolder The subfolder to search.
+	 * @param string     $class          The class suffix we’re looking for.
+	 * @param bool       $autoload       Whether the found class should be imported for the autoloader.
+	 *
+	 * @return bool Whether the class exists.
+	 */
+	public function doesPluginClassExist(BasePlugin $plugin, $classSubfolder, $class, $autoload = true)
+	{
+		$pluginFolder = mb_strtolower($plugin->getClassHandle());
+		$classPath = craft()->path->getPluginsPath().$pluginFolder.'/'.$classSubfolder.'/'.$class.'.php';
+
+		if (IOHelper::fileExists($classPath))
+		{
+			if ($autoload)
+			{
+				Craft::import("plugins.{$pluginFolder}.{$classSubfolder}.{$class}");
+			}
+
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	/**
+	 * Returns a given plugin’s icon URL.
+	 *
+	 * @param string $pluginHandle The plugin’s class handle
+	 * @param int    $size         The size of the icon
+	 *
+	 * @return string
+	 */
+	public function getPluginIconUrl($pluginHandle, $size = 100)
+	{
+		$lcHandle = StringHelper::toLowerCase($pluginHandle);
+		$iconPath = craft()->path->getPluginsPath().$lcHandle.'/resources/icon.svg';
+
+		if (IOHelper::fileExists($iconPath))
+		{
+			return UrlHelper::getResourceUrl($lcHandle.'/icon.svg');
+		}
+		else
+		{
+			return UrlHelper::getResourceUrl('images/default_plugin.svg');
+		}
+	}
+
+	/**
+	 * Returns the license key stored for a given plugin, if it was purchased through the Store.
+	 *
+	 * @param string $pluginHandle The plugin’s class handle
+	 *
+	 * @return string|null The plugin’s license key, or null if it isn’t known
+	 */
+	public function getPluginLicenseKey($pluginHandle)
+	{
+		$plugin = $this->getPlugin($pluginHandle);
+
+		if (!$plugin)
+		{
+			$this->_noPluginExists($pluginHandle);
+		}
+
+		$info = $this->getPluginInfo($plugin);
+
+		if (isset($info['licenseKey']))
+		{
+			return $info['licenseKey'];
+		}
+
+		return null;
+	}
+
+	/**
+	 * Sets a plugin’s license key.
+	 *
+	 * Note this should *not* be used to store license keys generated by third party stores.
+	 *
+	 * @param string $pluginHandle The plugin’s class handle
+	 * @param string|null $licenseKey The plugin’s license key
+	 *
+	 * @return void
+	 *
+	 * @throws InvalidLicenseKeyException if $licenseKey is invalid
+	 */
+	public function setPluginLicenseKey($pluginHandle, $licenseKey)
+	{
+		$plugin = $this->getPlugin($pluginHandle, false);
+
+		if (!$plugin)
+		{
+			$this->_noPluginExists($pluginHandle);
+		}
+
+		// Validate the license key
+		if ($licenseKey)
+		{
+			// Normalize to just uppercase numbers/letters
+			$normalizedLicenseKey = mb_strtoupper($licenseKey);
+			$normalizedLicenseKey = preg_replace('/[^A-Z0-9]/', '', $normalizedLicenseKey);
+
+			if (strlen($normalizedLicenseKey) != 24)
+			{
+				// Invalid key
+				throw new InvalidLicenseKeyException($licenseKey);
+			}
+		}
+		else
+		{
+			$normalizedLicenseKey = null;
+		}
+
+		// Ignore the plugin handle they sent us in case its casing is wrong
+		$pluginHandle = $plugin->getClassHandle();
+
+		craft()->db->createCommand()->update('plugins',
+			array('licenseKey' => $normalizedLicenseKey),
+			array('class' => $pluginHandle)
+		);
+
+		// Update our cache of it if the plugin is enabled
+		if (isset($this->_enabledPluginInfo[$pluginHandle]))
+		{
+			$this->_enabledPluginInfo[$pluginHandle]['licenseKey'] = $normalizedLicenseKey;
+		}
+
+		// If we've cached the plugin's license key status, update the cache
+		if ($this->getPluginLicenseKeyStatus($pluginHandle) !== LicenseKeyStatus::Unknown)
+		{
+			$this->setPluginLicenseKeyStatus($pluginHandle, LicenseKeyStatus::Unknown);
+		}
+
+		return true;
+	}
+
+	/**
+	 * Returns the license key status of a given plugin.
+	 *
+	 * @param string $pluginHandle The plugin’s class handle
+	 *
+	 * @return string|false
+	 */
+	public function getPluginLicenseKeyStatus($pluginHandle)
+	{
+		$plugin = $this->getPlugin($pluginHandle);
+
+		if (!$plugin)
+		{
+			$this->_noPluginExists($pluginHandle);
+		}
+
+		$info = $this->getPluginInfo($plugin);
+
+		if (isset($info['licenseKeyStatus']))
+		{
+			return $info['licenseKeyStatus'];
+		}
+
+		return LicenseKeyStatus::Unknown;
+	}
+
+	/**
+	 * Sets the license key status for a given plugin.
+	 *
+	 * @param string $pluginHandle The plugin’s class handle
+	 * @param string|null $licenseKeyStatus The plugin’s license key status
+	 *
+	 * @return void
+	 */
+	public function setPluginLicenseKeyStatus($pluginHandle, $licenseKeyStatus)
+	{
+		$plugin = $this->getPlugin($pluginHandle, false);
+
+		if (!$plugin)
+		{
+			$this->_noPluginExists($pluginHandle);
+		}
+
+		// Ignore the plugin handle they sent us in case its casing is wrong
+		$pluginHandle = $plugin->getClassHandle();
+
+		craft()->db->createCommand()->update('plugins',
+			array('licenseKeyStatus' => $licenseKeyStatus),
+			array('class' => $pluginHandle)
+		);
+
+		// Update our cache of it if the plugin is enabled
+		if (isset($this->_enabledPluginInfo[$pluginHandle]))
+		{
+			$this->_enabledPluginInfo[$pluginHandle]['licenseKeyStatus'] = $licenseKeyStatus;
+		}
+	}
+
 	// Events
+	// =========================================================================
 
 	/**
 	 * Fires an 'onLoadPlugins' event.
 	 *
 	 * @param Event $event
+	 *
+	 * @return null
 	 */
 	public function onLoadPlugins(Event $event)
 	{
@@ -658,13 +987,15 @@ class PluginsService extends BaseApplicationComponent
 	}
 
 	// Private Methods
+	// =========================================================================
 
 	/**
 	 * Throws a "no plugin exists" exception.
 	 *
-	 * @access private
 	 * @param string $handle
+	 *
 	 * @throws Exception
+	 * @return null
 	 */
 	private function _noPluginExists($handle)
 	{
@@ -672,41 +1003,23 @@ class PluginsService extends BaseApplicationComponent
 	}
 
 	/**
-	 * Finds and imports all of the supported component classes for a given plugin.
+	 * Finds and imports all of the auto-loadable classes for a given plugin.
 	 *
-	 * @access private
 	 * @param BasePlugin $plugin
+	 *
+	 * @return null
 	 */
-	private function _importPluginComponents(BasePlugin $plugin)
+	private function _autoloadPluginClasses(BasePlugin $plugin)
 	{
-		$pluginHandle = $plugin->getClassHandle();
-		$lcPluginHandle = mb_strtolower($plugin->getClassHandle());
-		$pluginFolder = craft()->path->getPluginsPath().$lcPluginHandle.'/';
-
-		foreach ($this->componentTypes as $type => $typeInfo)
+		foreach ($this->autoloadClasses as $classSuffix)
 		{
-			$folder = $pluginFolder.$typeInfo['subfolder'];
+			// *Controller's live in controllers/, etc.
+			$classSubfolder = mb_strtolower($classSuffix).'s';
+			$classes = $this->getPluginClasses($plugin, $classSubfolder, $classSuffix, true);
 
-			if (IOHelper::folderExists($folder))
+			if ($classSuffix == 'Service')
 			{
-				// See if it has any files in ClassName*Suffix.php format.
-				$filter = $pluginHandle.'(_.+)?'.$typeInfo['suffix'].'\.php$';
-				$files = IOHelper::getFolderContents($folder, false, $filter);
-
-				if ($files)
-				{
-					foreach ($files as $file)
-					{
-						// Get the class name
-						$class = IOHelper::getFileName($file, false);
-
-						// Import the class.
-						Craft::import('plugins.'.$lcPluginHandle.'.'.$typeInfo['subfolder'].'.'.$class);
-
-						// Remember it
-						$this->_pluginComponentClasses[$type][$pluginHandle][] = $class;
-					}
-				}
+				$this->_registerPluginServices($classes);
 			}
 		}
 	}
@@ -714,18 +1027,19 @@ class PluginsService extends BaseApplicationComponent
 	/**
 	 * If the plugin already had a migrations folder with migrations in it, let's save them in the db.
 	 *
-	 * @param $pluginId
-	 * @param $pluginHandle
+	 * @param int    $pluginId
+	 * @param string $pluginHandle
+	 *
 	 * @throws Exception
 	 */
 	private function _savePluginMigrations($pluginId, $pluginHandle)
 	{
-		$migrationsFolder = craft()->path->getPluginsPath().strtolower($pluginHandle).'/migrations/';
+		$migrationsFolder = craft()->path->getPluginsPath().mb_strtolower($pluginHandle).'/migrations/';
 
 		if (IOHelper::folderExists($migrationsFolder))
 		{
 			$migrations = array();
-			$migrationFiles = IOHelper::getFolderContents($migrationsFolder, false, "(m(\d{6}_\d{6})_.*?)\.php");
+			$migrationFiles = IOHelper::getFolderContents($migrationsFolder, false, "(m(\d{6}_\d{6})_.*?)\.php$");
 
 			if ($migrationFiles)
 			{
@@ -756,15 +1070,13 @@ class PluginsService extends BaseApplicationComponent
 	/**
 	 * Registers any services provided by a plugin.
 	 *
-	 * @access private
-	 * @param string $handle
+	 * @param array $classes
+	 *
 	 * @throws Exception
-	 * @return void
+	 * @return null
 	 */
-	private function _registerPluginServices($handle)
+	private function _registerPluginServices($classes)
 	{
-		$classes = $this->getPluginComponentClassesByType($handle, 'service');
-
 		$services = array();
 
 		foreach ($classes as $class)
@@ -787,7 +1099,7 @@ class PluginsService extends BaseApplicationComponent
 			}
 			else
 			{
-				throw new Exception(Craft::t('The plugin “{handle}” tried to register a service “{service}” that conflicts with a core service name.', array('handle' => $handle, 'service' => $serviceName)));
+				throw new Exception(Craft::t('The plugin “{handle}” tried to register a service “{service}” that conflicts with a core service name.', array('handle' => $class, 'service' => $serviceName)));
 			}
 		}
 
@@ -797,7 +1109,8 @@ class PluginsService extends BaseApplicationComponent
 	/**
 	 * Returns a new plugin instance based on its class handle.
 	 *
-	 * @param $handle
+	 * @param string $handle
+	 *
 	 * @return BasePlugin|null
 	 */
 	private function _getPlugin($handle)
@@ -828,8 +1141,8 @@ class PluginsService extends BaseApplicationComponent
 
 		$plugin = new $nsClass;
 
-		// Make sure the plugin implements the BasePlugin abstract class
-		if (!$plugin instanceof BasePlugin)
+		// Make sure the plugin implements the IPlugin interface
+		if (!$plugin instanceof IPlugin)
 		{
 			return null;
 		}
@@ -840,7 +1153,8 @@ class PluginsService extends BaseApplicationComponent
 	/**
 	 * Returns the actual plugin class handle based on a case-insensitive handle.
 	 *
-	 * @param $iHandle
+	 * @param string $iHandle
+	 *
 	 * @return bool|string
 	 */
 	private function _getPluginHandleFromFileSystem($iHandle)
@@ -860,8 +1174,8 @@ class PluginsService extends BaseApplicationComponent
 	/**
 	 * Get a flattened list of model errors
 	 *
-	 * @access private
 	 * @param array $errors
+	 *
 	 * @return string
 	 */
 	private function _getFlattenedErrors($errors)
@@ -874,5 +1188,26 @@ class PluginsService extends BaseApplicationComponent
 		}
 
 		return $return;
+	}
+
+	/**
+	 * @param $names
+	 * @param $secondaryArray
+	 *
+	 * @return null
+	 */
+	private function _sortPlugins(&$names, &$secondaryArray)
+	{
+		// TODO: Remove this check for Craft 3.
+		if (PHP_VERSION_ID < 50400)
+		{
+			// Sort plugins by name
+			array_multisort($names, $secondaryArray);
+		}
+		else
+		{
+			// Sort plugins by name
+			array_multisort($names, SORT_NATURAL | SORT_FLAG_CASE, $secondaryArray);
+		}
 	}
 }

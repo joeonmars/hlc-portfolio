@@ -2,21 +2,23 @@
 namespace Craft;
 
 /**
- * Craft by Pixel & Tonic
+ * Class AssetIndexDataRecord
  *
- * @package   Craft
- * @author    Pixel & Tonic, Inc.
+ * @author    Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
- * @license   http://buildwithcraft.com/license Craft License Agreement
- * @link      http://buildwithcraft.com
- */
-
-/**
- *
+ * @license   http://craftcms.com/license Craft License Agreement
+ * @see       http://craftcms.com
+ * @package   craft.app.records
+ * @since     1.0
  */
 class AssetIndexDataRecord extends BaseRecord
 {
+	// Public Methods
+	// =========================================================================
+
 	/**
+	 * @inheritDoc BaseRecord::getTableName()
+	 *
 	 * @return string
 	 */
 	public function getTableName()
@@ -25,23 +27,8 @@ class AssetIndexDataRecord extends BaseRecord
 	}
 
 	/**
-	 * @access protected
-	 * @return array
-	 */
-	protected function defineAttributes()
-	{
-		return array(
-			'sessionId' 	=> array(ColumnType::Char, 'length' => 36, 'required' => true, 'default' => ''),
-			'sourceId' 		=> array(AttributeType::Number, 'required' => true),
-			'offset'  		=> array(AttributeType::Number, 'required' => true),
-			'uri'  			=> array(ColumnType::Varchar, 'maxLength' => 255),
-			'size' 			=> array(AttributeType::Number),
-			'recordId'		=> array(AttributeType::Number),
-
-		);
-	}
-
-	/**
+	 * @inheritDoc BaseRecord::defineRelations()
+	 *
 	 * @return array
 	 */
 	public function defineRelations()
@@ -52,12 +39,34 @@ class AssetIndexDataRecord extends BaseRecord
 	}
 
 	/**
+	 * @inheritDoc BaseRecord::defineIndexes()
+	 *
 	 * @return array
 	 */
 	public function defineIndexes()
 	{
 		return array(
 			array('columns' => array('sessionId', 'sourceId', 'offset'), 'unique' => true),
+		);
+	}
+
+	// Protected Methods
+	// =========================================================================
+
+	/**
+	 * @inheritDoc BaseRecord::defineAttributes()
+	 *
+	 * @return array
+	 */
+	protected function defineAttributes()
+	{
+		return array(
+			'sessionId' 	=> array(ColumnType::Char, 'length' => 36, 'required' => true, 'default' => ''),
+			'sourceId' 		=> array(AttributeType::Number, 'required' => true),
+			'offset'  		=> array(AttributeType::Number, 'required' => true),
+			'uri'  			=> array(ColumnType::Text),
+			'size' 			=> array(ColumnType::BigInt, 'unsigned' => true),
+			'recordId'		=> array(AttributeType::Number),
 		);
 	}
 }

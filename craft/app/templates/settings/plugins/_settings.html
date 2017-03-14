@@ -1,3 +1,5 @@
+{% requireAdmin %}
+
 {% if plugin is not defined %}
 	{% set plugin = craft.plugins.getPlugin(pluginClass) %}
 	{% if not plugin %}{% exit 404 %}{% endif %}
@@ -8,21 +10,20 @@
 	{ label: "Plugins"|t, url: url('settings/plugins') }
 ] %}
 
+{% set fullPageForm = true %}
+
 
 {% extends "_layouts/cp" %}
 {% set title = plugin.name %}
+{% set docTitle = title ~ ' - ' ~ "Plugins"|t %}
 
 
-{% set content %}
-	<form method="post" action="" accept-charset="UTF-8">
+{% block content %}
 		<input type="hidden" name="action" value="plugins/savePluginSettings">
 		<input type="hidden" name="pluginClass" value="{{ plugin.classHandle }}">
 		<input type="hidden" name="redirect" value="settings/plugins">
 
-		{{ plugin.settingsHtml|ns('settings', false)|raw }}
-
-		<div class="buttons">
-			<input class="btn submit" type="submit" value="{{ 'Save'|t }}">
-		</div>
-	</form>
-{% endset %}
+		{% namespace 'settings' %}
+			{{ plugin.getSettingsHtml()|raw }}
+		{% endnamespace %}
+{% endblock %}

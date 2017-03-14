@@ -2,22 +2,23 @@
 namespace Craft;
 
 /**
- * Craft by Pixel & Tonic
+ * The MatrixBlockElementType class is responsible for implementing and defining Matrix blocks as a native element type
+ * in Craft.
  *
- * @package   Craft
- * @author    Pixel & Tonic, Inc.
+ * @author    Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
- * @license   http://buildwithcraft.com/license Craft License Agreement
- * @link      http://buildwithcraft.com
- */
-
-/**
- * Matrix block element type
+ * @license   http://craftcms.com/license Craft License Agreement
+ * @see       http://craftcms.com
+ * @package   craft.app.elementtypes
+ * @since     1.3
  */
 class MatrixBlockElementType extends BaseElementType
 {
+	// Public Methods
+	// =========================================================================
+
 	/**
-	 * Returns the element type name.
+	 * @inheritDoc IComponentType::getName()
 	 *
 	 * @return string
 	 */
@@ -27,7 +28,7 @@ class MatrixBlockElementType extends BaseElementType
 	}
 
 	/**
-	 * Returns whether this element type has content.
+	 * @inheritDoc IElementType::hasContent()
 	 *
 	 * @return bool
 	 */
@@ -37,7 +38,7 @@ class MatrixBlockElementType extends BaseElementType
 	}
 
 	/**
-	 * Returns whether this element type stores data on a per-locale basis.
+	 * @inheritDoc IElementType::isLocalized()
 	 *
 	 * @return bool
 	 */
@@ -47,24 +48,26 @@ class MatrixBlockElementType extends BaseElementType
 	}
 
 	/**
-	 * Defines any custom element criteria attributes for this element type.
+	 * @inheritDoc IElementType::defineCriteriaAttributes()
 	 *
 	 * @return array
 	 */
 	public function defineCriteriaAttributes()
 	{
 		return array(
-			'fieldId' => AttributeType::Number,
-			'order'   => array(AttributeType::String, 'default' => 'sortOrder'),
-			'ownerId' => AttributeType::Number,
-			'type'    => AttributeType::Mixed,
+			'fieldId'     => AttributeType::Number,
+			'order'       => array(AttributeType::String, 'default' => 'matrixblocks.sortOrder'),
+			'ownerId'     => AttributeType::Number,
+			'ownerLocale' => AttributeType::Locale,
+			'type'        => AttributeType::Mixed,
 		);
 	}
 
 	/**
-	 * Returns the content table name that should be joined in for an elements query.
+	 * @inheritDoc IElementType::getContentTableForElementsQuery()
 	 *
-	 * @param ElementCriteriaModel
+	 * @param ElementCriteriaModel $criteria
+	 *
 	 * @return string
 	 */
 	public function getContentTableForElementsQuery(ElementCriteriaModel $criteria)
@@ -90,44 +93,55 @@ class MatrixBlockElementType extends BaseElementType
 	}
 
 	/**
-	 * Returns the field column names that should be selected from the content table.
+	 * @inheritDoc IElementType::getFieldsForElementsQuery()
 	 *
-	 * @param ElementCriteriaModel
-	 * @return array
+	 * @param ElementCriteriaModel $criteria
+	 *
+	 * @return FieldModel[]
 	 */
-	public function getContentFieldColumnsForElementsQuery(ElementCriteriaModel $criteria)
+	public function getFieldsForElementsQuery(ElementCriteriaModel $criteria)
 	{
-		$columns = array();
+		$blockTypes = craft()->matrix->getBlockTypesByFieldId($criteria->fieldId);
 
-		foreach (craft()->matrix->getBlockTypesByFieldId($criteria->fieldId) as $blockType)
+		// Preload all of the fields up front to save ourselves some DB queries, and discard
+		$contexts = array();
+
+		foreach ($blockTypes as $blockType)
+		{
+			$contexts[] = 'matrixBlockType:'.$blockType->id;
+		}
+
+		craft()->fields->getAllFields(null, $contexts);
+
+		// Now assemble the actual fields list
+		$fields = array();
+
+		foreach ($blockTypes as $blockType)
 		{
 			$fieldColumnPrefix = 'field_'.$blockType->handle.'_';
 
 			foreach ($blockType->getFields() as $field)
 			{
-				$fieldType = $field->getFieldType();
-
-				if ($fieldType && $fieldType->defineContentAttribute())
-				{
-					$columns[] = array('handle' => $field->handle, 'column' => $fieldColumnPrefix.$field->handle);
-				}
+				$field->columnPrefix = $fieldColumnPrefix;
+				$fields[] = $field;
 			}
 		}
 
-		return $columns;
+		return $fields;
 	}
 
 	/**
-	 * Modifies an element query targeting elements of this type.
+	 * @inheritDoc IElementType::modifyElementsQuery()
 	 *
-	 * @param DbCommand $query
+	 * @param DbCommand            $query
 	 * @param ElementCriteriaModel $criteria
+	 *
 	 * @return mixed
 	 */
 	public function modifyElementsQuery(DbCommand $query, ElementCriteriaModel $criteria)
 	{
 		$query
-			->addSelect('matrixblocks.fieldId, matrixblocks.ownerId, matrixblocks.typeId, matrixblocks.sortOrder')
+			->addSelect('matrixblocks.fieldId, matrixblocks.ownerId, matrixblocks.ownerLocale, matrixblocks.typeId, matrixblocks.sortOrder')
 			->join('matrixblocks matrixblocks', 'matrixblocks.id = elements.id');
 
 		if ($criteria->fieldId)
@@ -140,6 +154,11 @@ class MatrixBlockElementType extends BaseElementType
 			$query->andWhere(DbHelper::parseParam('matrixblocks.ownerId', $criteria->ownerId, $query->params));
 		}
 
+		if ($criteria->ownerLocale)
+		{
+			$query->andWhere(DbHelper::parseParam('matrixblocks.ownerLocale', $criteria->ownerLocale, $query->params));
+		}
+
 		if ($criteria->type)
 		{
 			$query->join('matrixblocktypes matrixblocktypes', 'matrixblocktypes.id = matrixblocks.typeId');
@@ -148,13 +167,58 @@ class MatrixBlockElementType extends BaseElementType
 	}
 
 	/**
-	 * Populates an element model based on a query result.
+	 * @inheritDoc IElementType::populateElementModel()
 	 *
 	 * @param array $row
+	 *
 	 * @return array
 	 */
 	public function populateElementModel($row)
 	{
 		return MatrixBlockModel::populateModel($row);
+	}
+
+	/**
+	 * @inheritDoc IElementType::getEagerLoadingMap()
+	 *
+	 * @param BaseElementModel[]  $sourceElements
+	 * @param string $handle
+	 *
+	 * @return array|false
+	 */
+	public function getEagerLoadingMap($sourceElements, $handle)
+	{
+		// $handle *must* be set as "blockTypeHandle:fieldHandle" so we know _which_ myRelationalField to resolve to
+		$handleParts = explode(':', $handle);
+
+		if (count($handleParts) != 2)
+		{
+			return false;
+		}
+
+		list($blockTypeHandle, $fieldHandle) = $handleParts;
+
+		// Get the block type
+		$matrixFieldId = $sourceElements[0]->fieldId;
+		$blockTypes = craft()->matrix->getBlockTypesByFieldId($matrixFieldId, 'handle');
+
+		if (!isset($blockTypes[$blockTypeHandle]))
+		{
+			// Not a valid block type handle (assuming all $sourceElements are blocks from the same Matrix field)
+			return false;
+		}
+
+		$blockType = $blockTypes[$blockTypeHandle];
+
+		// Set the field context
+		$contentService = craft()->content;
+		$originalFieldContext = $contentService->fieldContext;
+		$contentService->fieldContext = 'matrixBlockType:'.$blockType->id;
+
+		$map = parent::getEagerLoadingMap($sourceElements, $fieldHandle);
+
+		$contentService->fieldContext = $originalFieldContext;
+
+		return $map;
 	}
 }

@@ -2,28 +2,51 @@
 namespace Craft;
 
 /**
- * Craft by Pixel & Tonic
+ * The UpdateController class is a controller that handles various update related tasks such as checking for available
+ * updates and running manual and auto-updates.
  *
- * @package   Craft
- * @author    Pixel & Tonic, Inc.
+ * Note that all actions in the controller, except for {@link actionPrepare}, {@link actionBackupDatabase},
+ * {@link actionUpdateDatabase}, {@link actionCleanUp} and {@link actionRollback} require an authenticated Craft session
+ * via {@link BaseController::allowAnonymous}.
+ *
+ * @author    Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
- * @license   http://buildwithcraft.com/license Craft License Agreement
- * @link      http://buildwithcraft.com
- */
-
-/**
- *
+ * @license   http://craftcms.com/license Craft License Agreement
+ * @see       http://craftcms.com
+ * @package   craft.app.controllers
+ * @since     1.0
  */
 class UpdateController extends BaseController
 {
-	protected $allowAnonymous = array('actionManualUpdate', 'actionPrepare', 'actionBackupDatabase', 'actionUpdateDatabase', 'actionCleanUp', 'actionRollback');
-
-	// -------------------------------------------
-	//  Auto Updates
-	// -------------------------------------------
+	// Properties
+	// =========================================================================
 
 	/**
-	 * Returns the available updates
+	 * If set to false, you are required to be logged in to execute any of the given controller's actions.
+	 *
+	 * If set to true, anonymous access is allowed for all of the given controller's actions.
+	 *
+	 * If the value is an array of action names, then you must be logged in for any action method except for the ones in
+	 * the array list.
+	 *
+	 * If you have a controller that where the majority of action methods will be anonymous, but you only want require
+	 * login on a few, it's best to use {@link UserSessionService::requireLogin() craft()->userSession->requireLogin()}
+	 * in the individual methods.
+	 *
+	 * @var bool
+	 */
+	protected $allowAnonymous = array('actionPrepare', 'actionBackupDatabase', 'actionUpdateDatabase', 'actionCleanUp', 'actionRollback');
+
+	// Public Methods
+	// =========================================================================
+
+	// Auto Updates
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Returns the available updates.
+	 *
+	 * @return null
 	 */
 	public function actionGetAvailableUpdates()
 	{
@@ -43,7 +66,10 @@ class UpdateController extends BaseController
 
 		if ($updates)
 		{
-			$this->returnJson($updates);
+			$response = $updates->getAttributes();
+			$response['allowAutoUpdates'] = craft()->config->allowAutoUpdates();
+
+			$this->returnJson($response);
 		}
 		else
 		{
@@ -53,6 +79,8 @@ class UpdateController extends BaseController
 
 	/**
 	 * Returns the update info JSON.
+	 *
+	 * @return null
 	 */
 	public function actionGetUpdates()
 	{
@@ -77,16 +105,28 @@ class UpdateController extends BaseController
 				case 'all':
 				{
 					// Craft first.
-					$return[] = array('handle' => 'Craft', 'name' => 'Craft', 'version' => $updateInfo->app->latestVersion.'.'.$updateInfo->app->latestBuild, 'critical' => $updateInfo->app->criticalUpdateAvailable, 'releaseDate' => $updateInfo->app->latestDate->getTimestamp());
+					$return[] = array(
+						'handle' => 'Craft',
+						'name' => 'Craft',
+						'version' => $updateInfo->app->latestVersion,
+						'critical' => $updateInfo->app->criticalUpdateAvailable,
+						'releaseDate' => $updateInfo->app->latestDate->getTimestamp(),
+					);
 
 					// Plugins
 					if ($updateInfo->plugins !== null)
 					{
 						foreach ($updateInfo->plugins as $plugin)
 						{
-							if ($plugin->status == PluginVersionUpdateStatus::UpdateAvailable && count($plugin->releases) > 0)
+							if ($plugin->status == PluginUpdateStatus::UpdateAvailable && count($plugin->releases) > 0)
 							{
-								$return[] = array('handle' => $plugin->class, 'name' => $plugin->displayName, 'version' => $plugin->latestVersion, 'critical' => $plugin->criticalUpdateAvailable, 'releaseDate' => $plugin->latestDate->getTimestamp());
+								$return[] = array(
+									'handle' => $plugin->class,
+									'name' => $plugin->displayName,
+									'version' => $plugin->latestVersion,
+									'critical' => $plugin->criticalUpdateAvailable,
+									'releaseDate' => $plugin->latestDate->getTimestamp(),
+								);
 							}
 						}
 					}
@@ -96,7 +136,13 @@ class UpdateController extends BaseController
 
 				case 'craft':
 				{
-					$return[] = array('handle' => 'Craft', 'name' => 'Craft', 'version' => $updateInfo->app->latestVersion.'.'.$updateInfo->app->latestBuild, 'critical' => $updateInfo->app->criticalUpdateAvailable, 'releaseDate' => $updateInfo->app->latestDate->getTimestamp());
+					$return[] = array(
+						'handle' => 'Craft',
+						'name' => 'Craft',
+						'version' => $updateInfo->app->latestVersion,
+						'critical' => $updateInfo->app->criticalUpdateAvailable,
+						'releaseDate' => $updateInfo->app->latestDate->getTimestamp(),
+					);
 					break;
 				}
 
@@ -105,9 +151,15 @@ class UpdateController extends BaseController
 				{
 					if (!empty($updateInfo->plugins))
 					{
-						if (isset($updateInfo->plugins[$handle]) && $updateInfo->plugins[$handle]->status == PluginVersionUpdateStatus::UpdateAvailable && count($updateInfo->plugins[$handle]->releases) > 0)
+						if (isset($updateInfo->plugins[$handle]) && $updateInfo->plugins[$handle]->status == PluginUpdateStatus::UpdateAvailable && count($updateInfo->plugins[$handle]->releases) > 0)
 						{
-							$return[] = array('handle' => $updateInfo->plugins[$handle]->handle, 'name' => $updateInfo->plugins[$handle]->displayName, 'version' => $updateInfo->plugins[$handle]->latestVersion, 'critical' => $updateInfo->plugins[$handle]->criticalUpdateAvailable, 'releaseDate' => $updateInfo->plugins[$handle]->latestDate->getTimestamp());
+							$return[] = array(
+								'handle' => $updateInfo->plugins[$handle]->handle,
+								'name' => $updateInfo->plugins[$handle]->displayName,
+								'version' => $updateInfo->plugins[$handle]->latestVersion,
+								'critical' => $updateInfo->plugins[$handle]->criticalUpdateAvailable,
+								'releaseDate' => $updateInfo->plugins[$handle]->latestDate->getTimestamp(),
+							);
 						}
 						else
 						{
@@ -129,12 +181,10 @@ class UpdateController extends BaseController
 		}
 	}
 
-	// -------------------------------------------
-	//  Manual Updates
-	// -------------------------------------------
-
 	/**
+	 * Called during both a manual and auto-update.
 	 *
+	 * @return null
 	 */
 	public function actionPrepare()
 	{
@@ -142,19 +192,25 @@ class UpdateController extends BaseController
 		$this->requireAjaxRequest();
 
 		$data = craft()->request->getRequiredPost('data');
+		$handle = $this->_getFixedHandle($data);
 
 		$manual = false;
 		if (!$this->_isManualUpdate($data))
 		{
 			// If it's not a manual update, make sure they have auto-update permissions.
 			craft()->userSession->requirePermission('performUpdates');
+
+			if (!craft()->config->allowAutoUpdates())
+			{
+				$this->returnJson(array('alive' => true, 'errorDetails' => Craft::t('Auto-updating is disabled on this system.'), 'finished' => true));
+			}
 		}
 		else
 		{
 			$manual = true;
 		}
 
-		$return = craft()->updates->prepareUpdate($manual, $data['handle']);
+		$return = craft()->updates->prepareUpdate($manual, $handle);
 
 		if (!$return['success'])
 		{
@@ -163,18 +219,21 @@ class UpdateController extends BaseController
 
 		if ($manual)
 		{
-			$this->returnJson(array('alive' => true, 'nextStatus' => Craft::t('Backing Up Database…'), 'nextAction' => 'update/backupDatabase', 'data' => $data));
+			$this->returnJson(array('alive' => true, 'nextStatus' => Craft::t('Backing-up database…'), 'nextAction' => 'update/backupDatabase', 'data' => $data));
 		}
 		else
 		{
-			$data['md5'] = $return['md5'];
-			$this->returnJson(array('alive' => true, 'nextStatus' => Craft::t('Downloading Update…'), 'nextAction' => 'update/processDownload', 'data' => $data));
+			$data['md5'] = craft()->security->hashData($return['md5']);
+			$this->returnJson(array('alive' => true, 'nextStatus' => Craft::t('Downloading update…'), 'nextAction' => 'update/processDownload', 'data' => $data));
 		}
 
 	}
 
 	/**
+	 * Called during an auto-update.
 	 *
+	 * @return null
+	 * @throws Exception
 	 */
 	public function actionProcessDownload()
 	{
@@ -184,21 +243,41 @@ class UpdateController extends BaseController
 		$this->requirePostRequest();
 		$this->requireAjaxRequest();
 
-		$data = craft()->request->getRequiredPost('data');
+		if (!craft()->config->allowAutoUpdates())
+		{
+			$this->returnJson(array('alive' => true, 'errorDetails' => Craft::t('Auto-updating is disabled on this system.'), 'finished' => true));
+		}
 
-		$return = craft()->updates->processUpdateDownload($data['md5']);
+		$data = craft()->request->getRequiredPost('data');
+		$handle = $this->_getFixedHandle($data);
+
+		$md5 = craft()->security->validateData($data['md5']);
+
+		if (!$md5)
+		{
+			throw new Exception('Could not validate MD5.');
+		}
+
+		$return = craft()->updates->processUpdateDownload($md5, $handle);
+
 		if (!$return['success'])
 		{
 			$this->returnJson(array('alive' => true, 'errorDetails' => $return['message'], 'finished' => true));
 		}
 
-		unset($return['success']);
+		$data = array(
+			'handle' => craft()->security->hashData($handle),
+			'uid'    => craft()->security->hashData($return['uid']),
+		);
 
-		$this->returnJson(array('alive' => true, 'nextStatus' => Craft::t('Backing Up Files…'), 'nextAction' => 'update/backupFiles', 'data' => $return));
+		$this->returnJson(array('alive' => true, 'nextStatus' => Craft::t('Backing-up files…'), 'nextAction' => 'update/backupFiles', 'data' => $data));
 	}
 
 	/**
+	 * Called during an auto-update.
 	 *
+	 * @return null
+	 * @throws Exception
 	 */
 	public function actionBackupFiles()
 	{
@@ -208,19 +287,36 @@ class UpdateController extends BaseController
 		$this->requirePostRequest();
 		$this->requireAjaxRequest();
 
-		$data = craft()->request->getRequiredPost('data');
+		if (!craft()->config->allowAutoUpdates())
+		{
+			$this->returnJson(array('alive' => true, 'errorDetails' => Craft::t('Auto-updating is disabled on this system.'), 'finished' => true));
+		}
 
-		$return = craft()->updates->backupFiles($data['uid']);
+		$data = craft()->request->getRequiredPost('data');
+		$handle = $this->_getFixedHandle($data);
+
+		$uid = craft()->security->validateData($data['uid']);
+
+		if (!$uid)
+		{
+			throw new Exception('Could not validate UID');
+		}
+
+		$return = craft()->updates->backupFiles($uid, $handle);
+
 		if (!$return['success'])
 		{
 			$this->returnJson(array('alive' => true, 'errorDetails' => $return['message'], 'finished' => true));
 		}
 
-		$this->returnJson(array('alive' => true, 'nextStatus' => Craft::t('Updating Files…'), 'nextAction' => 'update/updateFiles', 'data' => $data));
+		$this->returnJson(array('alive' => true, 'nextStatus' => Craft::t('Updating files…'), 'nextAction' => 'update/updateFiles', 'data' => $data));
 	}
 
 	/**
+	 * Called during an auto-update.
 	 *
+	 * @return null
+	 * @throws Exception
 	 */
 	public function actionUpdateFiles()
 	{
@@ -230,19 +326,34 @@ class UpdateController extends BaseController
 		$this->requirePostRequest();
 		$this->requireAjaxRequest();
 
-		$data = craft()->request->getRequiredPost('data');
-
-		$return = craft()->updates->updateFiles($data['uid']);
-		if (!$return['success'])
+		if (!craft()->config->allowAutoUpdates())
 		{
-			$this->returnJson(array('alive' => true, 'errorDetails' => $return['message'], 'nextStatus' => Craft::t('Error: Rolling Back…'), 'nextAction' => 'update/rollback'));
+			$this->returnJson(array('alive' => true, 'errorDetails' => Craft::t('Auto-updating is disabled on this system.'), 'finished' => true));
 		}
 
-		$this->returnJson(array('alive' => true, 'nextStatus' => Craft::t('Backing Up Database…'), 'nextAction' => 'update/backupDatabase', 'data' => $data));
+		$data = craft()->request->getRequiredPost('data');
+		$handle = $this->_getFixedHandle($data);
+		$uid = craft()->security->validateData($data['uid']);
+
+		if (!$uid)
+		{
+			throw new Exception('Could not validate UID');
+		}
+
+		$return = craft()->updates->updateFiles($uid, $handle);
+
+		if (!$return['success'])
+		{
+			$this->returnJson(array('alive' => true, 'errorDetails' => $return['message'], 'nextStatus' => Craft::t('An error was encountered. Rolling back…'), 'nextAction' => 'update/rollback'));
+		}
+
+		$this->returnJson(array('alive' => true, 'nextStatus' => Craft::t('Backing-up database…'), 'nextAction' => 'update/backupDatabase', 'data' => $data));
 	}
 
 	/**
+	 * Called during both a manual and auto-update.
 	 *
+	 * @return null
 	 */
 	public function actionBackupDatabase()
 	{
@@ -251,31 +362,36 @@ class UpdateController extends BaseController
 
 		$data = craft()->request->getRequiredPost('data');
 
-		if (!$this->_isManualUpdate($data))
-		{
-			// If it's not a manual update, make sure they have auto-update permissions.
-			craft()->userSession->requirePermission('performUpdates');
-		}
+		$handle = $this->_getFixedHandle($data);
 
 		if (craft()->config->get('backupDbOnUpdate'))
 		{
-			$return = craft()->updates->backupDatabase();
-			if (!$return['success'])
-			{
-				$this->returnJson(array('alive' => true, 'errorDetails' => $return['message'], 'nextStatus' => Craft::t('Error: Rolling Back…'), 'nextAction' => 'update/rollback'));
-			}
+			$plugin = craft()->plugins->getPlugin($handle);
 
-			if (isset($return['dbBackupPath']))
+			// If this a plugin, make sure it actually has new migrations before backing up the database.
+			if ($handle == 'craft' || ($plugin && craft()->migrations->getNewMigrations($plugin)))
 			{
-				$data['dbBackupPath'] = $return['dbBackupPath'];
+				$return = craft()->updates->backupDatabase();
+
+				if (!$return['success'])
+				{
+					$this->returnJson(array('alive' => true, 'errorDetails' => $return['message'], 'nextStatus' => Craft::t('An error was encountered. Rolling back…'), 'nextAction' => 'update/rollback'));
+				}
+
+				if (isset($return['dbBackupPath']))
+				{
+					$data['dbBackupPath'] = craft()->security->hashData($return['dbBackupPath']);
+				}
 			}
 		}
 
-		$this->returnJson(array('alive' => true, 'nextStatus' => Craft::t('Updating Database…'), 'nextAction' => 'update/updateDatabase', 'data' => $data));
+		$this->returnJson(array('alive' => true, 'nextStatus' => Craft::t('Updating database…'), 'nextAction' => 'update/updateDatabase', 'data' => $data));
 	}
 
 	/**
+	 * Called during both a manual and auto-update.
 	 *
+	 * @return null
 	 */
 	public function actionUpdateDatabase()
 	{
@@ -284,33 +400,25 @@ class UpdateController extends BaseController
 
 		$data = craft()->request->getRequiredPost('data');
 
-		if (!$this->_isManualUpdate($data))
-		{
-			// If it's not a manual update, make sure they have auto-update permissions.
-			craft()->userSession->requirePermission('performUpdates');
-		}
-
 		$handle = $this->_getFixedHandle($data);
 
-		if (isset($data['dbBackupPath']))
-		{
-			$return = craft()->updates->updateDatabase($handle);
-		}
-		else
-		{
-			$return = craft()->updates->updateDatabase($handle);
-		}
+		$return = craft()->updates->updateDatabase($handle);
 
 		if (!$return['success'])
 		{
-			$this->returnJson(array('alive' => true, 'errorDetails' => $return['message'], 'nextStatus' => Craft::t('Error: Rolling Back…'), 'nextAction' => 'update/rollback'));
+			$this->returnJson(array('alive' => true, 'errorDetails' => $return['message'], 'nextStatus' => Craft::t('An error was encountered. Rolling back…'), 'nextAction' => 'update/rollback'));
 		}
 
-		$this->returnJson(array('alive' => true, 'nextStatus' => Craft::t('Cleaning Up…'), 'nextAction' => 'update/cleanUp', 'data' => $data));
+		$this->returnJson(array('alive' => true, 'nextStatus' => Craft::t('Cleaning up…'), 'nextAction' => 'update/cleanUp', 'data' => $data));
 	}
 
 	/**
 	 * Performs maintenance and clean up tasks after an update.
+	 *
+	 * Called during both a manual and auto-update.
+	 *
+	 * @return null
+	 * @throws Exception
 	 */
 	public function actionCleanUp()
 	{
@@ -325,10 +433,12 @@ class UpdateController extends BaseController
 		}
 		else
 		{
-			// If it's not a manual update, make sure they have auto-update permissions.
-			craft()->userSession->requirePermission('performUpdates');
+			$uid = craft()->security->validateData($data['uid']);
 
-			$uid = $data['uid'];
+			if (!$uid)
+			{
+				throw new Exception(('Could not validate UID'));
+			}
 		}
 
 		$handle = $this->_getFixedHandle($data);
@@ -336,29 +446,33 @@ class UpdateController extends BaseController
 		$oldVersion = false;
 
 		// Grab the old version from the manifest data before we nuke it.
-		$manifestData = UpdateHelper::getManifestData(UpdateHelper::getUnzipFolderFromUID($uid));
+		$manifestData = UpdateHelper::getManifestData(UpdateHelper::getUnzipFolderFromUID($uid), $handle);
 
-		if ($manifestData)
+		if ($manifestData && $handle == 'craft')
 		{
 			$oldVersion = UpdateHelper::getLocalVersionFromManifest($manifestData);
 		}
 
 		craft()->updates->updateCleanUp($uid, $handle);
 
-		if ($oldVersion && version_compare($oldVersion, craft()->getVersion(), '<'))
+		// New major Craft CMS version?
+		if ($handle == 'craft' && $oldVersion && AppHelper::getMajorVersion($oldVersion) < AppHelper::getMajorVersion(craft()->getVersion()))
 		{
 			$returnUrl = UrlHelper::getUrl('whats-new');
 		}
 		else
 		{
-			$returnUrl = craft()->userSession->getReturnUrl();
+			$returnUrl = craft()->config->get('postCpLoginRedirect');
 		}
 
 		$this->returnJson(array('alive' => true, 'finished' => true, 'returnUrl' => $returnUrl));
 	}
 
 	/**
+	 * Can be called during both a manual and auto-update.
 	 *
+	 * @throws Exception
+	 * @return null
 	 */
 	public function actionRollback()
 	{
@@ -366,6 +480,7 @@ class UpdateController extends BaseController
 		$this->requireAjaxRequest();
 
 		$data = craft()->request->getRequiredPost('data');
+		$handle = $this->_getFixedHandle($data);
 
 		if ($this->_isManualUpdate($data))
 		{
@@ -373,19 +488,28 @@ class UpdateController extends BaseController
 		}
 		else
 		{
-			// If it's not a manual update, make sure they have auto-update permissions.
-			craft()->userSession->requirePermission('performUpdates');
+			$uid = craft()->security->validateData($data['uid']);
 
-			$uid = $data['uid'];
+			if (!$uid)
+			{
+				throw new Exception(('Could not validate UID'));
+			}
 		}
 
 		if (isset($data['dbBackupPath']))
 		{
-			$return = craft()->updates->rollbackUpdate($uid, $data['dbBackupPath']);
+			$dbBackupPath = craft()->security->validateData($data['dbBackupPath']);
+
+			if (!$dbBackupPath)
+			{
+				throw new Exception('Could not validate database backup path.');
+			}
+
+			$return = craft()->updates->rollbackUpdate($uid, $handle, $dbBackupPath);
 		}
 		else
 		{
-			$return = craft()->updates->rollbackUpdate($uid);
+			$return = craft()->updates->rollbackUpdate($uid, $handle);
 		}
 
 		if (!$return['success'])
@@ -397,9 +521,14 @@ class UpdateController extends BaseController
 		$this->returnJson(array('alive' => true, 'finished' => true, 'rollBack' => true));
 	}
 
+	// Private Methods
+	// =========================================================================
+
 	/**
 	 * @param $data
+	 *
 	 * @return bool
+	 * @throws Exception
 	 */
 	private function _isManualUpdate($data)
 	{
@@ -413,18 +542,24 @@ class UpdateController extends BaseController
 
 	/**
 	 * @param $data
+	 *
 	 * @return string
+	 * @throws Exception
 	 */
 	private function _getFixedHandle($data)
 	{
-
 		if (!isset($data['handle']))
 		{
 			return 'craft';
 		}
 		else
 		{
-			return $data['handle'];
+			if ($handle = craft()->security->validateData($data['handle']))
+			{
+				return $handle;
+			}
+
+			throw new Exception('Could not validate update handle.');
 		}
 	}
 }

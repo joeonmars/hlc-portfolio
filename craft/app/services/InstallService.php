@@ -2,29 +2,35 @@
 namespace Craft;
 
 /**
- * Craft by Pixel & Tonic
+ * Class InstallService
  *
- * @package   Craft
- * @author    Pixel & Tonic, Inc.
+ * @author    Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
- * @license   http://buildwithcraft.com/license Craft License Agreement
- * @link      http://buildwithcraft.com
- */
-
-/**
- *
+ * @license   http://craftcms.com/license Craft License Agreement
+ * @see       http://craftcms.com
+ * @package   craft.app.services
+ * @since     1.0
  */
 class InstallService extends BaseApplicationComponent
 {
+	// Properties
+	// =========================================================================
+
+	/**
+	 * @var
+	 */
 	private $_user;
+
+	// Public Methods
+	// =========================================================================
 
 	/**
 	 * Installs Craft!
 	 *
 	 * @param array $inputs
-	 * @throws Exception
-	 * @throws \Exception
-	 * @return void
+	 *
+	 * @throws Exception|\Exception
+	 * @return null
 	 */
 	public function run($inputs)
 	{
@@ -32,7 +38,7 @@ class InstallService extends BaseApplicationComponent
 
 		if (craft()->isInstalled())
 		{
-			throw new Exception(Craft::t('Craft is already installed.'));
+			throw new Exception(Craft::t('Craft CMS is already installed.'));
 		}
 
 		// Set the language to the desired locale
@@ -53,11 +59,12 @@ class InstallService extends BaseApplicationComponent
 			$this->_createContentTable();
 			$this->_createRelationsTable();
 			$this->_createShunnedMessagesTable();
-			$this->_createSearchIndexTable();
+			$this->_createTemplateCacheTables();
 			$this->_createAndPopulateInfoTable($inputs);
 
 			$this->_createAssetTransformIndexTable();
 			$this->_createRackspaceAccessTable();
+			$this->_createDeprecationErrorsTable();
 
 			$this->_populateMigrationTable();
 
@@ -66,6 +73,9 @@ class InstallService extends BaseApplicationComponent
 			{
 				$transaction->commit();
 			}
+
+			Craft::log('Creating search index table.');
+			$this->_createSearchIndexTable();
 		}
 		catch (\Exception $e)
 		{
@@ -106,55 +116,53 @@ class InstallService extends BaseApplicationComponent
 		$recordsFolder = craft()->path->getAppPath().'records/';
 		$recordFiles = IOHelper::getFolderContents($recordsFolder, false, ".*Record\.php$");
 
-		foreach ($recordFiles as $file)
+		if ($recordFiles)
 		{
-			if (IOHelper::fileExists($file))
+			foreach ($recordFiles as $file)
 			{
-				$fileName = IOHelper::getFileName($file, false);
-
-				// Ignore StructuredEntryRecord
-				if ($fileName == 'StructuredEntryRecord')
+				if (IOHelper::fileExists($file))
 				{
-					Craft::log("Skipping record {$file}.", LogLevel::Warning);
-					continue;
-				}
+					$fileName = IOHelper::getFileName($file, false);
+					$class = __NAMESPACE__.'\\'.$fileName;
 
-				$class = __NAMESPACE__.'\\'.$fileName;
+					// Ignore abstract classes and interfaces
+					$ref = new \ReflectionClass($class);
+					if ($ref->isAbstract() || $ref->isInterface())
+					{
+						Craft::log("Skipping record {$file} because it’s abstract or an interface.", LogLevel::Warning);
+						continue;
+					}
 
-				// Ignore abstract classes and interfaces
-				$ref = new \ReflectionClass($class);
-				if ($ref->isAbstract() || $ref->isInterface())
-				{
-					Craft::log("Skipping record {$file} because it’s abstract or an interface.", LogLevel::Warning);
-					continue;
-				}
+					$obj = new $class('install');
 
-				$obj = new $class('install');
-
-				if (method_exists($obj, 'createTable'))
-				{
-					$records[] = $obj;
+					if (method_exists($obj, 'createTable'))
+					{
+						$records[] = $obj;
+					}
+					else
+					{
+						Craft::log("Skipping record {$file} because it doesn’t have a createTable() method.", LogLevel::Warning);
+					}
 				}
 				else
 				{
-					Craft::log("Skipping record {$file} because it doesn’t have a createTable() method.", LogLevel::Warning);
+					Craft::log("Skipping record {$file} because it doesn’t exist.", LogLevel::Warning);
 				}
-			}
-			else
-			{
-				Craft::log("Skipping record {$file} because it doesn’t exist.", LogLevel::Warning);
 			}
 		}
 
 		return $records;
 	}
 
+	// Private Methods
+	// =========================================================================
+
 	/**
 	 * Creates the tables as defined in the records.
 	 *
-	 * @access private
 	 * @param $records
-	 * @return void
+	 *
+	 * @return null
 	 */
 	private function _createTablesFromRecords($records)
 	{
@@ -168,8 +176,9 @@ class InstallService extends BaseApplicationComponent
 	/**
 	 * Creates the foreign keys as defined in the records.
 	 *
-	 * @access private
 	 * @param $records
+	 *
+	 * @return null
 	 */
 	private function _createForeignKeysFromRecords($records)
 	{
@@ -183,7 +192,7 @@ class InstallService extends BaseApplicationComponent
 	/**
 	 * Creates the content table.
 	 *
-	 * @access private
+	 * @return null
 	 */
 	private function _createContentTable()
 	{
@@ -205,22 +214,24 @@ class InstallService extends BaseApplicationComponent
 	/**
 	 * Creates the relations table.
 	 *
-	 * @access private
+	 * @return null
 	 */
 	private function _createRelationsTable()
 	{
 		Craft::log('Creating the relations table.');
 
 		craft()->db->createCommand()->createTable('relations', array(
-			'fieldId'   => array('column' => ColumnType::Int, 'null' => false),
-			'sourceId'  => array('column' => ColumnType::Int, 'null' => false),
-			'targetId'  => array('column' => ColumnType::Int, 'null' => false),
-			'sortOrder' => array('column' => ColumnType::TinyInt),
+			'fieldId'      => array('column' => ColumnType::Int, 'null' => false),
+			'sourceId'     => array('column' => ColumnType::Int, 'null' => false),
+			'sourceLocale' => array('column' => ColumnType::Locale),
+			'targetId'     => array('column' => ColumnType::Int, 'null' => false),
+			'sortOrder'    => array('column' => ColumnType::SmallInt),
 		));
 
-		craft()->db->createCommand()->createIndex('relations', 'fieldId,sourceId,targetId', true);
+		craft()->db->createCommand()->createIndex('relations', 'fieldId,sourceId,sourceLocale,targetId', true);
 		craft()->db->createCommand()->addForeignKey('relations', 'fieldId', 'fields', 'id', 'CASCADE');
 		craft()->db->createCommand()->addForeignKey('relations', 'sourceId', 'elements', 'id', 'CASCADE');
+		craft()->db->createCommand()->addForeignKey('relations', 'sourceLocale', 'locales', 'locale', 'CASCADE', 'CASCADE');
 		craft()->db->createCommand()->addForeignKey('relations', 'targetId', 'elements', 'id', 'CASCADE');
 
 		Craft::log('Finished creating the relations table.');
@@ -229,7 +240,7 @@ class InstallService extends BaseApplicationComponent
 	/**
 	 * Creates the shunnedmessages table.
 	 *
-	 * @access private
+	 * @return null
 	 */
 	private function _createShunnedMessagesTable()
 	{
@@ -249,14 +260,15 @@ class InstallService extends BaseApplicationComponent
 	/**
 	 * Creates the searchindex table.
 	 *
-	 * @access private
+	 * @return null
+	 * @throws \CDbException
 	 */
 	private function _createSearchIndexTable()
 	{
 		Craft::log('Creating the searchindex table.');
 
 		// Taking the scenic route here so we can get to MysqlSchema's $engine argument
-		$table = DbHelper::addTablePrefix('searchindex');
+		$table = craft()->db->addTablePrefix('searchindex');
 
 		$columns = array(
 			'elementId' => DbHelper::generateColumnDefinition(array('column' => ColumnType::Int, 'null' => false)),
@@ -273,7 +285,7 @@ class InstallService extends BaseApplicationComponent
 
 		// Add the FULLTEXT index on `keywords`
 		craft()->db->createCommand()->setText('CREATE FULLTEXT INDEX ' .
-			craft()->db->quoteTableName(DbHelper::getIndexName('searchindex', 'keywords')).' ON ' .
+			craft()->db->quoteTableName(craft()->db->getIndexName('searchindex', 'keywords')).' ON ' .
 			craft()->db->quoteTableName($table).' ' .
 			'('.craft()->db->quoteColumnName('keywords').')'
 		)->execute();
@@ -282,28 +294,73 @@ class InstallService extends BaseApplicationComponent
 	}
 
 	/**
+	 * Creates the template cache tables.
+	 *
+	 * @return null
+	 */
+	private function _createTemplateCacheTables()
+	{
+		Craft::log('Creating the templatecaches table.');
+
+		craft()->db->createCommand()->createTable('templatecaches', array(
+			'cacheKey'   => array('column' => ColumnType::Varchar, 'null' => false),
+			'locale'     => array('column' => ColumnType::Locale, 'null' => false),
+			'path'       => array('column' => ColumnType::Varchar),
+			'expiryDate' => array('column' => ColumnType::DateTime, 'null' => false),
+			'body'       => array('column' => ColumnType::MediumText, 'null' => false),
+		), null, true, false);
+
+		craft()->db->createCommand()->createIndex('templatecaches', 'expiryDate,cacheKey,locale,path');
+		craft()->db->createCommand()->addForeignKey('templatecaches', 'locale', 'locales', 'locale', 'CASCADE', 'CASCADE');
+
+		Craft::log('Finished creating the templatecaches table.');
+		Craft::log('Creating the templatecacheelements table.');
+
+		craft()->db->createCommand()->createTable('templatecacheelements', array(
+			'cacheId'   => array('column' => ColumnType::Int, 'null' => false),
+			'elementId' => array('column' => ColumnType::Int, 'null' => false),
+		), null, false, false);
+
+		craft()->db->createCommand()->addForeignKey('templatecacheelements', 'cacheId', 'templatecaches', 'id', 'CASCADE', null);
+		craft()->db->createCommand()->addForeignKey('templatecacheelements', 'elementId', 'elements', 'id', 'CASCADE', null);
+
+		Craft::log('Finished creating the templatecacheelements table.');
+		Craft::log('Creating the templatecachecriteria table.');
+
+		craft()->db->createCommand()->createTable('templatecachecriteria', array(
+			'cacheId'  => array('column' => ColumnType::Int, 'null' => false),
+			'type'     => array('column' => ColumnType::Varchar, 'maxLength' => 150, 'null' => false),
+			'criteria' => array('column' => ColumnType::Text, 'null' => false),
+		), null, true, false);
+
+		craft()->db->createCommand()->addForeignKey('templatecachecriteria', 'cacheId', 'templatecaches', 'id', 'CASCADE', null);
+		craft()->db->createCommand()->createIndex('templatecachecriteria', 'type');
+
+		Craft::log('Finished creating the templatecachecriteria table.');
+	}
+
+	/**
 	 * Populates the info table with install and environment information.
 	 *
-	 * @access private
 	 * @param $inputs
+	 *
 	 * @throws Exception
+	 *
+	 * @return null
 	 */
 	private function _createAndPopulateInfoTable($inputs)
 	{
 		Craft::log('Creating the info table.');
 
 		craft()->db->createCommand()->createTable('info', array(
-			'version'       => array('column' => ColumnType::Varchar,  'length' => 15,    'null' => false),
-			'build'         => array('column' => ColumnType::Int,      'length' => 11,    'unsigned' => true, 'null' => false),
+			'version'       => array('column' => ColumnType::Varchar,  'length' => 50,    'null' => false),
 			'schemaVersion' => array('column' => ColumnType::Varchar,  'length' => 15,    'null' => false),
-			'packages'      => array('column' => ColumnType::Varchar,  'length' => 200),
-			'releaseDate'   => array('column' => ColumnType::DateTime, 'null' => false),
+			'edition'       => array('column' => ColumnType::TinyInt,  'length' => 1,     'unsigned' => true, 'default' => 0, 'null' => false),
 			'siteName'      => array('column' => ColumnType::Varchar,  'length' => 100,   'null' => false),
 			'siteUrl'       => array('column' => ColumnType::Varchar,  'length' => 255,   'null' => false),
 			'timezone'      => array('column' => ColumnType::Varchar,  'length' => 30),
-			'on'            => array('column' => ColumnType::TinyInt,  'length' => 1,     'unsigned' => true, 'default' => false, 'null' => false),
-			'maintenance'   => array('column' => ColumnType::TinyInt,  'length' => 1,     'unsigned' => true, 'default' => false, 'null' => false),
-			'track'         => array('column' => ColumnType::Varchar,  'maxLength' => 40, 'required' => true),
+			'on'            => array('column' => ColumnType::TinyInt,  'length' => 1,     'unsigned' => true, 'default' => 0, 'null' => false),
+			'maintenance'   => array('column' => ColumnType::TinyInt,  'length' => 1,     'unsigned' => true, 'default' => 0, 'null' => false),
 		));
 
 		Craft::log('Finished creating the info table.');
@@ -312,14 +369,12 @@ class InstallService extends BaseApplicationComponent
 
 		$info = new InfoModel(array(
 			'version'       => CRAFT_VERSION,
-			'build'         => CRAFT_BUILD,
 			'schemaVersion' => CRAFT_SCHEMA_VERSION,
-			'releaseDate'   => CRAFT_RELEASE_DATE,
+			'edition'       => 0,
 			'siteName'      => $inputs['siteName'],
 			'siteUrl'       => $inputs['siteUrl'],
 			'on'            => 1,
 			'maintenance'   => 0,
-			'track'         => 'stable',
 		));
 
 		if (craft()->saveInfo($info))
@@ -335,6 +390,8 @@ class InstallService extends BaseApplicationComponent
 
 	/**
 	 * Creates the Rackspace access table.
+	 *
+	 * @return null
 	 */
 	private function _createRackspaceAccessTable()
 	{
@@ -352,7 +409,36 @@ class InstallService extends BaseApplicationComponent
 	}
 
 	/**
+	 * Creates the deprecationerrors table for The Deprecator (tm).
+	 *
+	 * @return null
+	 */
+	private function _createDeprecationErrorsTable()
+	{
+		Craft::log('Creating the deprecationerrors table.');
+
+		craft()->db->createCommand()->createTable('deprecationerrors', array(
+			'key'               => array('column' => ColumnType::Varchar, 'null' => false),
+			'fingerprint'       => array('column' => ColumnType::Varchar, 'null' => false),
+			'lastOccurrence'    => array('column' => ColumnType::DateTime, 'null' => false),
+			'file'              => array('column' => ColumnType::Varchar, 'null' => false),
+			'line'              => array('column' => ColumnType::SmallInt, 'unsigned' => true, 'null' => false),
+			'class'             => array('column' => ColumnType::Varchar),
+			'method'            => array('column' => ColumnType::Varchar),
+			'template'          => array('column' => ColumnType::Varchar),
+			'templateLine'      => array('column' => ColumnType::SmallInt, 'unsigned' => true),
+			'message'           => array('column' => ColumnType::Varchar),
+			'traces'            => array('column' => ColumnType::Text),
+		));
+
+		craft()->db->createCommand()->createIndex('deprecationerrors', 'key,fingerprint', true);
+		Craft::log('Finished creating the deprecationerrors table.');
+	}
+
+	/**
 	 * Create the Asset Transform Index table.
+	 *
+	 * @return null
 	 */
 	private function _createAssetTransformIndexTable()
 	{
@@ -360,8 +446,10 @@ class InstallService extends BaseApplicationComponent
 
 		craft()->db->createCommand()->createTable('assettransformindex', array(
 			'fileId'       => array('maxLength' => 11, 'column' => ColumnType::Int, 'required' => true),
+			'filename'     => array('maxLength' => 255, 'column' => ColumnType::Varchar, 'required' => false),
+			'format'       => array('maxLength' => 255, 'column' => ColumnType::Varchar, 'required' => false),
 			'location'     => array('maxLength' => 255, 'column' => ColumnType::Varchar, 'required' => true),
-			'sourceId'     => array('maxLength' => 11, 'column' => ColumnType::Int, 'required' => true),
+			'sourceId'     => array('maxLength' => 11, 'column' => ColumnType::Int, 'required' => false),
 			'fileExists'   => array('column' => ColumnType::Bool),
 			'inProgress'   => array('column' => ColumnType::Bool),
 			'dateIndexed'  => array('column' => ColumnType::DateTime),
@@ -375,6 +463,7 @@ class InstallService extends BaseApplicationComponent
 	 * Populates the migrations table with the base migration plus any existing ones from app/migrations.
 	 *
 	 * @throws Exception
+	 * @return null
 	 */
 	private function _populateMigrationTable()
 	{
@@ -408,7 +497,7 @@ class InstallService extends BaseApplicationComponent
 				if (!$migration->save())
 				{
 					Craft::log('Could not populate the migration table.', LogLevel::Error);
-					throw new Exception(Craft::t('There was a problem saving to the migrations table:').$this->_getFlattenedErrors($migration->getErrors()));
+					throw new Exception(Craft::t('There was a problem saving to the migrations table: ').$this->_getFlattenedErrors($migration->getErrors()));
 				}
 			}
 		}
@@ -419,8 +508,9 @@ class InstallService extends BaseApplicationComponent
 	/**
 	 * Adds the initial locale to the database.
 	 *
-	 * @access private
 	 * @param string $locale
+	 *
+	 * @return null
 	 */
 	private function _addLocale($locale)
 	{
@@ -432,10 +522,10 @@ class InstallService extends BaseApplicationComponent
 	/**
 	 * Adds the initial user to the database.
 	 *
-	 * @access private
 	 * @param $inputs
-	 * @return UserModel
+	 *
 	 * @throws Exception
+	 * @return UserModel
 	 */
 	private function _addUser($inputs)
 	{
@@ -462,8 +552,9 @@ class InstallService extends BaseApplicationComponent
 	/**
 	 * Attempts to log in the given user.
 	 *
-	 * @access private
 	 * @param array $inputs
+	 *
+	 * @return null
 	 */
 	private function _logUserIn($inputs)
 	{
@@ -482,9 +573,10 @@ class InstallService extends BaseApplicationComponent
 	/**
 	 * Saves some default mail settings for the site.
 	 *
-	 * @access private
-	 * @param $email
-	 * @param $siteName
+	 * @param string $email
+	 * @param string $siteName
+	 *
+	 * @return null
 	 */
 	private function _saveDefaultMailSettings($email, $siteName)
 	{
@@ -509,28 +601,28 @@ class InstallService extends BaseApplicationComponent
 	/**
 	 * Creates initial database content for the install.
 	 *
-	 * @access private
 	 * @param $inputs
+	 *
 	 * @return null
 	 */
 	private function _createDefaultContent($inputs)
 	{
-		// Default tag set
+		// Default tag group
 
-		Craft::log('Creating the Default tag set.');
+		Craft::log('Creating the Default tag group.');
 
-		$tagSet = new TagSetModel();
-		$tagSet->name   = Craft::t('Default');
-		$tagSet->handle = 'default';
+		$tagGroup = new TagGroupModel();
+		$tagGroup->name   = 'Default';
+		$tagGroup->handle = 'default';
 
 		// Save it
-		if (craft()->tags->saveTagSet($tagSet))
+		if (craft()->tags->saveTagGroup($tagGroup))
 		{
-			Craft::log('Default tag set created successfully.');
+			Craft::log('Default tag group created successfully.');
 		}
 		else
 		{
-			Craft::log('Could not save the Default tag set.', LogLevel::Warning);
+			Craft::log('Could not save the Default tag group.', LogLevel::Warning);
 		}
 
 		// Default field group
@@ -538,7 +630,7 @@ class InstallService extends BaseApplicationComponent
 		Craft::log('Creating the Default field group.');
 
 		$group = new FieldGroupModel();
-		$group->name = Craft::t('Default');
+		$group->name = 'Default';
 
 		if (craft()->fields->saveGroup($group))
 		{
@@ -549,38 +641,19 @@ class InstallService extends BaseApplicationComponent
 			Craft::log('Could not save the Default field group.', LogLevel::Warning);
 		}
 
-		// Heading field
-
-		Craft::log('Creating the Heading field.');
-
-		$headingField = new FieldModel();
-		$headingField->groupId      = $group->id;
-		$headingField->name         = Craft::t('Heading');
-		$headingField->handle       = 'heading';
-		$headingField->translatable = true;
-		$headingField->type         = 'PlainText';
-
-		if (craft()->fields->saveField($headingField))
-		{
-			Craft::log('Heading field created successfully.');
-		}
-		else
-		{
-			Craft::log('Could not save the Heading field.', LogLevel::Warning);
-		}
-
 		// Body field
 
 		Craft::log('Creating the Body field.');
 
 		$bodyField = new FieldModel();
 		$bodyField->groupId      = $group->id;
-		$bodyField->name         = Craft::t('Body');
+		$bodyField->name         = 'Body';
 		$bodyField->handle       = 'body';
 		$bodyField->translatable = true;
 		$bodyField->type         = 'RichText';
 		$bodyField->settings = array(
-			'configFile' => 'Standard.json'
+			'configFile' => 'Standard.json',
+			'columnType' => ColumnType::Text,
 		);
 
 		if (craft()->fields->saveField($bodyField))
@@ -598,11 +671,11 @@ class InstallService extends BaseApplicationComponent
 
 		$tagsField = new FieldModel();
 		$tagsField->groupId      = $group->id;
-		$tagsField->name         = Craft::t('Tags');
+		$tagsField->name         = 'Tags';
 		$tagsField->handle       = 'tags';
 		$tagsField->type         = 'Tags';
 		$tagsField->settings = array(
-			'source' => 'tagset:'.$tagSet->id
+			'source' => 'taggroup:'.$tagGroup->id
 		);
 
 		if (craft()->fields->saveField($tagsField))
@@ -618,35 +691,20 @@ class InstallService extends BaseApplicationComponent
 
 		Craft::log('Creating the Homepage single section.');
 
-		$homepageLayoutFields = array(
+		$homepageLayout = craft()->fields->assembleLayout(
 			array(
-				'fieldId'   => $headingField->id,
-				'sortOrder' => 1
+				'Content' => array($bodyField->id)
 			),
-			array(
-				'fieldId'   => $bodyField->id,
-				'sortOrder' => 2
-			)
+			array($bodyField->id)
 		);
 
-		$homepageLayoutTabs = array(
-			array(
-				'name'      => Craft::t('Content'),
-				'sortOrder' => 1,
-				'fields'    => $homepageLayoutFields
-			)
-		);
-
-		$homepageLayout = new FieldLayoutModel();
 		$homepageLayout->type = ElementType::Entry;
-		$homepageLayout->setTabs($homepageLayoutTabs);
-		$homepageLayout->setFields($homepageLayoutFields);
 
 		$homepageSingleSection = new SectionModel();
-		$homepageSingleSection->name       = Craft::t('Homepage');
-		$homepageSingleSection->handle     = 'homepage';
-		$homepageSingleSection->type       = SectionType::Single;
-		$homepageSingleSection->hasUrls  = false;
+		$homepageSingleSection->name = 'Homepage';
+		$homepageSingleSection->handle = 'homepage';
+		$homepageSingleSection->type = SectionType::Single;
+		$homepageSingleSection->hasUrls = false;
 		$homepageSingleSection->template = 'index';
 
 		$primaryLocaleId = craft()->i18n->getPrimarySiteLocaleId();
@@ -669,6 +727,8 @@ class InstallService extends BaseApplicationComponent
 
 		$homepageEntryTypes = $homepageSingleSection->getEntryTypes();
 		$homepageEntryType = $homepageEntryTypes[0];
+		$homepageEntryType->hasTitleField = true;
+		$homepageEntryType->titleLabel = 'Title';
 		$homepageEntryType->setFieldLayout($homepageLayout);
 
 		if (craft()->sections->saveEntryType($homepageEntryType))
@@ -682,9 +742,7 @@ class InstallService extends BaseApplicationComponent
 
 		// Homepage content
 
-		$vars = array(
-			'siteName' => ucfirst(craft()->request->getServerName())
-		);
+		$siteName = ucfirst(craft()->request->getServerName());
 
 		Craft::log('Setting the Homepage content.');
 
@@ -693,10 +751,9 @@ class InstallService extends BaseApplicationComponent
 		$entryModel = $criteria->first();
 
 		$entryModel->locale = $inputs['locale'];
-		$entryModel->getContent()->heading = Craft::t('Welcome to {siteName}!', $vars);
-		$entryModel->getContent()->setAttributes(array(
-			'body' => '<p>'.Craft::t('It’s true, this site doesn’t have a whole lot of content yet, but don’t worry. Our web developers have just installed the CMS, and they’re setting things up for the content editors this very moment. Soon {siteName} will be an oasis of fresh perspectives, sharp analyses, and astute opinions that will keep you coming back again and again.', $vars).'</p>',
-			'heading' => Craft::t('Welcome to {siteName}!', $vars),
+		$entryModel->getContent()->title = 'Welcome to '.$siteName.'!';
+		$entryModel->setContentFromPost(array(
+			'body' => '<p>It’s true, this site doesn’t have a whole lot of content yet, but don’t worry. Our web developers have just installed the CMS, and they’re setting things up for the content editors this very moment. Soon '.$siteName.' will be an oasis of fresh perspectives, sharp analyses, and astute opinions that will keep you coming back again and again.</p>',
 		));
 
 		// Save the content
@@ -715,7 +772,7 @@ class InstallService extends BaseApplicationComponent
 
 		$newsSection = new SectionModel();
 		$newsSection->type     = SectionType::Channel;
-		$newsSection->name     = Craft::t('News');
+		$newsSection->name     = 'News';
 		$newsSection->handle   = 'news';
 		$newsSection->hasUrls  = true;
 		$newsSection->template = 'news/_entry';
@@ -738,30 +795,14 @@ class InstallService extends BaseApplicationComponent
 
 		Craft::log('Saving the News entry type.');
 
-		$newsLayoutFields = array(
+		$newsLayout = craft()->fields->assembleLayout(
 			array(
-				'fieldId'   => $bodyField->id,
-				'required'  => true,
-				'sortOrder' => 1
+				'Content' => array($bodyField->id, $tagsField->id),
 			),
-			array(
-				'fieldId'   => $tagsField->id,
-				'sortOrder' => 2
-			),
+			array($bodyField->id)
 		);
 
-		$newsLayoutTabs = array(
-			array(
-				'name'      => Craft::t('Content'),
-				'sortOrder' => 1,
-				'fields'    => $newsLayoutFields
-			)
-		);
-
-		$newsLayout = new FieldLayoutModel();
 		$newsLayout->type = ElementType::Entry;
-		$newsLayout->setTabs($newsLayoutTabs);
-		$newsLayout->setFields($newsLayoutFields);
 
 		$newsEntryTypes = $newsSection->getEntryTypes();
 		$newsEntryType = $newsEntryTypes[0];
@@ -786,14 +827,14 @@ class InstallService extends BaseApplicationComponent
 		$newsEntry->locale     = $inputs['locale'];
 		$newsEntry->authorId   = $this->_user->id;
 		$newsEntry->enabled    = true;
-		$newsEntry->getContent()->title = Craft::t('We just installed Craft!');
+		$newsEntry->getContent()->title = 'We just installed Craft!';
 		$newsEntry->getContent()->setAttributes(array(
 			'body' => '<p>'
-					. Craft::t('Craft is the CMS that’s powering {siteName}. It’s beautiful, powerful, flexible, and easy-to-use, and it’s made by Pixel &amp; Tonic. We can’t wait to dive in and see what it’s capable of!', $vars)
+					. 'Craft is the CMS that’s powering '.$siteName.'. It’s beautiful, powerful, flexible, and easy-to-use, and it’s made by Pixel &amp; Tonic. We can’t wait to dive in and see what it’s capable of!'
 					. '</p><!--pagebreak--><p>'
-					. Craft::t('This is even more captivating content, which you couldn’t see on the News index page because it was entered after a Page Break, and the News index template only likes to show the content on the first page.')
+					. 'This is even more captivating content, which you couldn’t see on the News index page because it was entered after a Page Break, and the News index template only likes to show the content on the first page.'
 					. '</p><p>'
-					. Craft::t('Craft: a nice alternative to Word, if you’re making a website.')
+					. 'Craft: a nice alternative to Word, if you’re making a website.'
 					. '</p>',
 		));
 
@@ -810,8 +851,8 @@ class InstallService extends BaseApplicationComponent
 	/**
 	 * Get a flattened list of model errors
 	 *
-	 * @access private
 	 * @param array $errors
+	 *
 	 * @return string
 	 */
 	private function _getFlattenedErrors($errors)

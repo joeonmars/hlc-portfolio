@@ -52,13 +52,13 @@ return array(
 		'server' => 'localhost',
 
 		// The database username to connect with.
-		'user' => 'hsinlei_chen',
+		'user' => 'hsinleic_hsinlei',
 
 		// The database password to connect with.
-		'password' => 'hsinlei_chen',
+		'password' => 'silin<3hsinlei',
 
 		// The name of the database to select.
-		'database' => 'hsinlei_portfolio',
+		'database' => 'hsinleic_portfolio',
 
 		// The prefix to use when naming tables. This can be no more than 5 characters.
 		'tablePrefix' => 'craft',

@@ -2,20 +2,20 @@
 namespace Craft;
 
 /**
- * Craft by Pixel & Tonic
+ * Class DashboardService
  *
- * @package   Craft
- * @author    Pixel & Tonic, Inc.
+ * @author    Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
- * @license   http://buildwithcraft.com/license Craft License Agreement
- * @link      http://buildwithcraft.com
- */
-
-/**
- *
+ * @license   http://craftcms.com/license Craft License Agreement
+ * @see       http://craftcms.com
+ * @package   craft.app.services
+ * @since     1.0
  */
 class DashboardService extends BaseApplicationComponent
 {
+	// Public Methods
+	// =========================================================================
+
 	/**
 	 * Returns all installed widget types.
 	 *
@@ -30,6 +30,7 @@ class DashboardService extends BaseApplicationComponent
 	 * Returns a widget type.
 	 *
 	 * @param string $class
+	 *
 	 * @return BaseWidget|null
 	 */
 	public function getWidgetType($class)
@@ -41,6 +42,7 @@ class DashboardService extends BaseApplicationComponent
 	 * Populates a widget type.
 	 *
 	 * @param WidgetModel $widget
+	 *
 	 * @return BaseWidget|null
 	 */
 	public function populateWidgetType(WidgetModel $widget)
@@ -52,6 +54,7 @@ class DashboardService extends BaseApplicationComponent
 	 * Returns the dashboard widgets for the current user.
 	 *
 	 * @param string|null $indexBy
+	 *
 	 * @return array
 	 */
 	public function getUserWidgets($indexBy = null)
@@ -67,7 +70,7 @@ class DashboardService extends BaseApplicationComponent
 		}
 		else
 		{
-			// Get only the enabled widgtes.
+			// Get only the enabled widgets.
 			foreach ($widgetRecords as $key => $widgetRecord)
 			{
 				if (!$widgetRecord->enabled)
@@ -89,6 +92,7 @@ class DashboardService extends BaseApplicationComponent
 	 * Returns whether the current user has a widget of the given type.
 	 *
 	 * @param $type
+	 *
 	 * @return bool
 	 */
 	public function doesUserHaveWidget($type)
@@ -106,6 +110,7 @@ class DashboardService extends BaseApplicationComponent
 	 * Returns a widget by its ID.
 	 *
 	 * @param int $id
+	 *
 	 * @return WidgetModel
 	 */
 	public function getUserWidgetById($id)
@@ -125,6 +130,7 @@ class DashboardService extends BaseApplicationComponent
 	 * Saves a widget for the current user.
 	 *
 	 * @param WidgetModel $widget
+	 *
 	 * @return bool
 	 */
 	public function saveUserWidget(WidgetModel $widget)
@@ -147,6 +153,7 @@ class DashboardService extends BaseApplicationComponent
 				$maxSortOrder = craft()->db->createCommand()
 					->select('max(sortOrder)')
 					->from('widgets')
+					->where(array('userId' => craft()->userSession->getUser()->id))
 					->queryScalar();
 
 				$widgetRecord->sortOrder = $maxSortOrder + 1;
@@ -175,6 +182,7 @@ class DashboardService extends BaseApplicationComponent
 	 * Soft deletes a widget.
 	 *
 	 * @param int $widgetId
+	 *
 	 * @return bool
 	 */
 	public function deleteUserWidgetById($widgetId)
@@ -190,6 +198,7 @@ class DashboardService extends BaseApplicationComponent
 	 * Reorders widgets.
 	 *
 	 * @param array $widgetIds
+	 *
 	 * @throws \Exception
 	 * @return bool
 	 */
@@ -224,34 +233,38 @@ class DashboardService extends BaseApplicationComponent
 		return true;
 	}
 
+
+	/**
+	 * Changes the colspan of a widget.
+	 *
+	 * @param int $widgetId
+	 * @param int $colspan
+	 *
+	 * @throws \Exception
+	 * @return bool
+	 */
+	public function changeWidgetColspan($widgetId, $colspan)
+	{
+		$widgetRecord = $this->_getUserWidgetRecordById($widgetId);
+		$widgetRecord->colspan = $colspan;
+		$widgetRecord->save();
+
+		return true;
+	}
+
+
+
+	// Private Methods
+	// =========================================================================
+
 	/**
 	 * Adds the default widgets to the logged-in user.
 	 *
-	 * @access private
+	 * @return null
 	 */
 	private function _addDefaultUserWidgets()
 	{
 		$user = craft()->userSession->getUser();
-		$sections = craft()->sections->getAllSections();
-
-		foreach ($sections as $section)
-		{
-			if ($section->type !== SectionType::Single)
-			{
-				// Only add widgets for sections they have create privileges to.
-				if ($user->can('createEntries:'.$section->id))
-				{
-					$widget = new WidgetModel();
-					$widget->type = 'QuickPost';
-
-					$widget->settings = array(
-						'section' => $section->id
-					);
-
-					$this->saveUserWidget($widget);
-				}
-			}
-		}
 
 		// Recent Entries widget
 		$widget = new WidgetModel();
@@ -278,17 +291,18 @@ class DashboardService extends BaseApplicationComponent
 		$widget = new WidgetModel();
 		$widget->type = 'Feed';
 		$widget->settings = array(
-			'url'   => 'http://feeds.feedburner.com/blogandtonic',
-			'title' => 'Blog & Tonic'
+			'url'   => 'https://craftcms.com/news.rss',
+			'title' => 'Craft News'
 		);
+
 		$this->saveUserWidget($widget);
 	}
 
 	/**
 	 * Gets a widget's record.
 	 *
-	 * @access private
 	 * @param int $widgetId
+	 *
 	 * @return WidgetRecord
 	 */
 	private function _getUserWidgetRecordById($widgetId = null)
@@ -319,19 +333,19 @@ class DashboardService extends BaseApplicationComponent
 	/**
 	 * Throws a "No widget exists" exception.
 	 *
-	 * @access private
 	 * @param int $widgetId
+	 *
 	 * @throws Exception
+	 * @return null
 	 */
 	private function _noWidgetExists($widgetId)
 	{
-		throw new Exception(Craft::t('No widget exists with the ID “{id}”', array('id' => $widgetId)));
+		throw new Exception(Craft::t('No widget exists with the ID “{id}”.', array('id' => $widgetId)));
 	}
 
 	/**
 	 * Returns the widget records for the current user.
 	 *
-	 * @access private
 	 * @return array
 	 */
 	private function _getUserWidgetRecords()

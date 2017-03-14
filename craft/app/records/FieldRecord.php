@@ -2,52 +2,71 @@
 namespace Craft;
 
 /**
- * Craft by Pixel & Tonic
+ * Field record class.
  *
- * @package   Craft
- * @author    Pixel & Tonic, Inc.
+ * @author    Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
- * @license   http://buildwithcraft.com/license Craft License Agreement
- * @link      http://buildwithcraft.com
- */
-
-/**
- * Field record class
+ * @license   http://craftcms.com/license Craft License Agreement
+ * @see       http://craftcms.com
+ * @package   craft.app.records
+ * @since     1.0
  */
 class FieldRecord extends BaseRecord
 {
+	// Properties
+	// =========================================================================
+
+	/**
+	 * @var array Reserved field handles.
+	 *
+	 * Some of these are element type-specific, but necessary to prevent 'order' criteria param conflicts
+	 */
 	protected $reservedHandleWords = array(
 		'archived',
-		'author',
-		'authorId',
+		'attributeLabel',
 		'children',
+		'contentTable',
 		'dateCreated',
 		'dateUpdated',
 		'enabled',
-		'expiryDate',
-		'handle',
 		'id',
+		'level',
+		'lft',
 		'link',
-		'img',
 		'locale',
-		'name',
+		'localeEnabled',
+		'name',             // global set-specific
+		'next',
 		'parents',
-		'postDate',
+		'postDate',         // entry-specific
+		'prev',
+		'ref',
+		'rgt',
+		'root',
+		'searchScore',
 		'siblings',
-		'type',
+		'slug',
+		'sortOrder',
+		'status',
+		'title',
 		'uid',
 		'uri',
 		'url',
-		'ref',
-		'size',
-		'status',
-		'title',
+		'username',         // user-specific
 	);
 
+	/**
+	 * @var
+	 */
 	private $_oldHandle;
 
+	// Public Methods
+	// =========================================================================
+
 	/**
-	 * Init
+	 * Initializes the application component.
+	 *
+	 * @return null
 	 */
 	public function init()
 	{
@@ -59,6 +78,8 @@ class FieldRecord extends BaseRecord
 
 	/**
 	 * Store the old handle.
+	 *
+	 * @return null
 	 */
 	public function storeOldHandle()
 	{
@@ -76,6 +97,8 @@ class FieldRecord extends BaseRecord
 	}
 
 	/**
+	 * @inheritDoc BaseRecord::getTableName()
+	 *
 	 * @return string
 	 */
 	public function getTableName()
@@ -84,23 +107,8 @@ class FieldRecord extends BaseRecord
 	}
 
 	/**
-	 * @access protected
-	 * @return array
-	 */
-	protected function defineAttributes()
-	{
-		return array(
-			'name'         => array(AttributeType::Name, 'required' => true),
-			'handle'       => array(AttributeType::Handle, 'required' => true, 'reservedWords' => $this->reservedHandleWords),
-			'context'      => array(AttributeType::String, 'default' => 'global', 'required' => true),
-			'instructions' => array(AttributeType::String, 'column' => ColumnType::Text),
-			'translatable' => AttributeType::Bool,
-			'type'         => array(AttributeType::ClassName, 'required' => true),
-			'settings'     => AttributeType::Mixed,
-		);
-	}
-
-	/**
+	 * @inheritDoc BaseRecord::defineRelations()
+	 *
 	 * @return array
 	 */
 	public function defineRelations()
@@ -111,16 +119,21 @@ class FieldRecord extends BaseRecord
 	}
 
 	/**
+	 * @inheritDoc BaseRecord::defineIndexes()
+	 *
 	 * @return array
 	 */
 	public function defineIndexes()
 	{
 		return array(
 			array('columns' => array('handle', 'context'), 'unique' => true),
+			array('columns' => array('context')),
 		);
 	}
 
 	/**
+	 * @inheritDoc BaseRecord::scopes()
+	 *
 	 * @return array
 	 */
 	public function scopes()
@@ -139,9 +152,31 @@ class FieldRecord extends BaseRecord
 	{
 		$attributeConfigs = parent::getAttributeConfigs();
 
-		// Field handles must be <= 58 chars so that with "field_" prepended, they're <= 64 chars (MySQL's column name limit).
+		// Field handles must be <= 58 chars so that with "field_" prepended, they're <= 64 chars (MySQL's column
+		// name limit).
 		$attributeConfigs['handle']['maxLength'] = 64 - strlen(craft()->content->fieldColumnPrefix);
 
 		return $attributeConfigs;
+	}
+
+	// Protected Methods
+	// =========================================================================
+
+	/**
+	 * @inheritDoc BaseRecord::defineAttributes()
+	 *
+	 * @return array
+	 */
+	protected function defineAttributes()
+	{
+		return array(
+			'name'         => array(AttributeType::Name, 'required' => true),
+			'handle'       => array(AttributeType::Handle, 'required' => true, 'reservedWords' => $this->reservedHandleWords),
+			'context'      => array(AttributeType::String, 'default' => 'global', 'required' => true),
+			'instructions' => array(AttributeType::String, 'column' => ColumnType::Text),
+			'translatable' => AttributeType::Bool,
+			'type'         => array(AttributeType::ClassName, 'required' => true),
+			'settings'     => AttributeType::Mixed,
+		);
 	}
 }

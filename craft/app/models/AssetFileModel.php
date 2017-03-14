@@ -2,30 +2,49 @@
 namespace Craft;
 
 /**
- * Craft by Pixel & Tonic
+ * Class AssetFileModel
  *
- * @package   Craft
- * @author    Pixel & Tonic, Inc.
+ * @author    Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
- * @license   http://buildwithcraft.com/license Craft License Agreement
- * @link      http://buildwithcraft.com
- */
-
-/**
- *
+ * @license   http://craftcms.com/license Craft License Agreement
+ * @see       http://craftcms.com
+ * @package   craft.app.models
+ * @since     1.0
  */
 class AssetFileModel extends BaseElementModel
 {
+	// Properties
+	// =========================================================================
+
+	/**
+	 * @var string
+	 */
 	protected $elementType = ElementType::Asset;
 
+	/**
+	 * @var
+	 */
 	private $_transform;
+
+	/**
+	 * @var string
+	 */
+	private $_transformSource = '';
+
+	/**
+	 * @var BaseAssetSourceType
+	 */
+	private $_sourceType = null;
+
+	// Public Methods
+	// =========================================================================
 
 	/**
 	 * Use the entry's title as its string representation.
 	 *
 	 * @return string
 	 */
-	function __toString()
+	public function __toString()
 	{
 		if (isset($this->_transform))
 		{
@@ -41,9 +60,10 @@ class AssetFileModel extends BaseElementModel
 	 * Checks if an attribute value is set.
 	 *
 	 * @param string $name
+	 *
 	 * @return bool
 	 */
-	function __isset($name)
+	public function __isset($name)
 	{
 		// Is it a transform handle?
 		$transform = craft()->assetTransforms->getTransformByHandle($name);
@@ -62,9 +82,11 @@ class AssetFileModel extends BaseElementModel
 	 * Magic getter
 	 *
 	 * @param string $name
+	 *
+	 * @throws \Exception
 	 * @return mixed
 	 */
-	function __get($name)
+	public function __get($name)
 	{
 		// Run through the BaseModel/CModel stuff first
 		try
@@ -97,35 +119,16 @@ class AssetFileModel extends BaseElementModel
 	}
 
 	/**
-	 * @access protected
-	 * @return array
-	 */
-	protected function defineAttributes()
-	{
-		return array_merge(parent::defineAttributes(), array(
-			'sourceId'		=> AttributeType::Number,
-			'folderId'		=> AttributeType::Number,
-			'filename'		=> AttributeType::String,
-			'originalName'	=> AttributeType::String,
-			'kind'			=> AttributeType::String,
-			'width'			=> AttributeType::Number,
-			'height'		=> AttributeType::Number,
-			'size'			=> AttributeType::Number,
-			'dateModified'  => AttributeType::DateTime
-		));
-	}
-
-	/**
-	 * Gets an attribute's value.
+	 * @inheritDoc BaseModel::getAttribute()
 	 *
 	 * @param string $name
-	 * @param bool $flattenValue
+	 * @param bool   $flattenValue
+	 *
 	 * @return mixed
 	 */
 	public function getAttribute($name, $flattenValue = false)
 	{
-		// Override 'width' and 'height' with getWidth() and getHeight()
-		// in case $this->_transform is set.
+		// Override 'width' and 'height' with getWidth() and getHeight() in case $this->_transform is set.
 		if ($name == 'width')
 		{
 			return $this->getWidth();
@@ -141,17 +144,70 @@ class AssetFileModel extends BaseElementModel
 	}
 
 	/**
+	 * @inheritDoc BaseElementModel::getFieldLayout()
+	 *
+	 * @return FieldLayoutModel|null
+	 */
+	public function getFieldLayout()
+	{
+		$source = $this->getSource();
+
+		if ($source->id)
+		{
+			return $source->getFieldLayout();
+		}
+		else
+		{
+			$folder = $this->getFolder();
+
+			if (preg_match('/field_([0-9]+)/', $folder->name, $matches))
+			{
+				$fieldId = $matches[1];
+				$field = craft()->fields->getFieldById($fieldId);
+				$settings = $field->settings;
+
+				if ($settings['useSingleFolder'])
+				{
+					$sourceId = $settings['singleUploadLocationSource'];
+				}
+				else
+				{
+					$sourceId = $settings['defaultUploadLocationSource'];
+				}
+
+				$source = craft()->assetSources->getSourceById($sourceId);
+
+				if ($source)
+				{
+					return $source->getFieldLayout();
+				}
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * @inheritDoc BaseElementModel::isEditable()
+	 *
+	 * @return bool
+	 */
+	public function isEditable()
+	{
+		return craft()->userSession->checkPermission('uploadToAssetSource:'.$this->sourceId);
+	}
+
+	/**
 	 * Returns an <img> tag based on this asset.
 	 *
 	 * @return \Twig_Markup|null
 	 */
 	public function getImg()
 	{
-		if ($this->kind == 'image')
+		if ($this->kind == 'image' && $this->getHasUrls())
 		{
-			$img = '<img src="'.$this->url.'" width="'.$this->getWidth().'" height="'.$this->getHeight().'" alt="'.$this->title.'" />';
-			$charset = craft()->templates->getTwig()->getCharset();
-			return new \Twig_Markup($img, $charset);
+			$img = '<img src="'.$this->getUrl().'" width="'.$this->getWidth().'" height="'.$this->getHeight().'" alt="'.HtmlHelper::encode($this->title).'" />';
+			return TemplateHelper::getRaw($img);
 		}
 	}
 
@@ -164,9 +220,18 @@ class AssetFileModel extends BaseElementModel
 	}
 
 	/**
+	 * @return AssetSourceModel|null
+	 */
+	public function getSource()
+	{
+		return craft()->assetSources->getSourceById($this->sourceId);
+	}
+
+	/**
 	 * Sets the transform.
 	 *
-	 * @param mixed $transform
+	 * @param string|array|null $transform The transform that should be applied, if any. Can either be the handle of a named transform, or an array that defines the transform settings.
+	 *
 	 * @return AssetFileModel
 	 */
 	public function setTransform($transform)
@@ -178,11 +243,29 @@ class AssetFileModel extends BaseElementModel
 	/**
 	 * Returns the URL to the file.
 	 *
-	 * @param string|null $transform
+	 * @param string|array|null $transform The transform that should be applied, if any. Can either be the handle of a named transform, or an array that defines the transform settings.
+	 *
 	 * @return mixed
 	 */
 	public function getUrl($transform = null)
 	{
+		if (!$this->getHasUrls())
+		{
+			return false;
+		}
+		
+		if (is_array($transform))
+		{
+			if (isset($transform['width']))
+			{
+				$transform['width'] = round($transform['width']);
+			}
+			if (isset($transform['height']))
+			{
+				$transform['height'] = round($transform['height']);
+			}
+		}
+
 		if ($transform === null && isset($this->_transform))
 		{
 			$transform = $this->_transform;
@@ -192,39 +275,23 @@ class AssetFileModel extends BaseElementModel
 	}
 
 	/**
-	 * Get the thumb's URL.
+	 * @inheritDoc BaseElementModel::getThumbUrl()
 	 *
 	 * @param int $size
-	 * @return string
+	 *
+	 * @return string|null
 	 */
 	public function getThumbUrl($size = 125)
 	{
 		if ($this->hasThumb())
 		{
-			return UrlHelper::getResourceUrl('assetthumbs/'.$this->id.'/'.$size);
+			return UrlHelper::getResourceUrl('assetthumbs/'.$this->id.'/'.$size, array(
+				craft()->resources->dateParam => $this->dateModified->getTimestamp()
+			));
 		}
 		else
 		{
-			return false;
-		}
-	}
-
-	/**
-	 * Get the icons URL.
-	 *
-	 * @param int $size
-	 * @return string
-	 */
-	public function getIconUrl($size = 125)
-	{
-
-		if ($this->hasThumb())
-		{
-			return false;
-		}
-		else
-		{
-			return UrlHelper::getResourceUrl('icons/'.$this->getExtension().'/'.$size);
+			return UrlHelper::getResourceUrl('icons/'.$this->getExtension());
 		}
 	}
 
@@ -235,15 +302,19 @@ class AssetFileModel extends BaseElementModel
 	 */
 	public function hasThumb()
 	{
-		if ($this->kind == 'image' && $this->_getHeight() && $this->_getWidth())
-		{
-			// Gd doesn't process bitmaps
-			if ($this->getExtension() == 'bmp' && craft()->images->isGd())
-			{
-				return false;
-			}
 
-			return true;
+		if ($this->kind == 'image')
+		{
+			if ($this->_getHeight() && $this->_getWidth())
+			{
+				// Gd doesn't process bitmaps
+				if (in_array($this->getExtension(), array('bmp')) && craft()->images->isGd())
+				{
+					return false;
+				}
+
+				return true;
+			}
 		}
 
 		return false;
@@ -260,26 +331,140 @@ class AssetFileModel extends BaseElementModel
 	}
 
 	/**
+	 * @return string
+	 */
+	public function getMimeType()
+	{
+		return IOHelper::getMimeType($this->filename);
+	}
+
+	/**
 	 * Get image height.
 	 *
-	 * @param string $transform optional transform handle for which to get thumbnail.
+	 * @param string|array|null $transform The transform that should be applied, if any. Can either be the handle of a named transform, or an array that defines the transform settings.
+	 *
 	 * @return bool|float|mixed
 	 */
 
 	public function getHeight($transform = null)
 	{
+		if ($transform && !ImageHelper::isImageManipulatable($this->getExtension()))
+		{
+			return $this->_getDimension('height', null);
+		}
+
 		return $this->_getDimension('height', $transform);
 	}
 
 	/**
 	 * Get image width.
 	 *
-	 * @param string $transform optional transform handle for which to get thumbnail.
+	 * @param string|null $transform The optional transform handle for which to get thumbnail.
+	 *
 	 * @return bool|float|mixed
 	 */
 	public function getWidth($transform = null)
 	{
+		if ($transform && !ImageHelper::isImageManipulatable($this->getExtension()))
+		{
+			return $this->_getDimension('width', null);
+		}
+
 		return $this->_getDimension('width', $transform);
+	}
+
+	/**
+	 * Returns the path to the asset, relative to the root of its asset source.
+	 *
+	 * @return string
+	 */
+	public function getPath()
+	{
+		return $this->folderPath.$this->filename;
+	}
+
+	/**
+	 * Return whether the Asset has a URL.
+	 *
+	 * @return bool
+	 */
+	public function getHasUrls()
+	{
+		if (!$this->_sourceType)
+		{
+			$this->_sourceType = craft()->assetSources->populateSourceType($this->getSource());
+		}
+
+		return $this->_sourceType->getHasUrls();
+	}
+
+	// Protected Methods
+	// =========================================================================
+
+	/**
+	 * @inheritDoc BaseModel::defineAttributes()
+	 *
+	 * @return array
+	 */
+	protected function defineAttributes()
+	{
+		return array_merge(parent::defineAttributes(), array(
+			'sourceId'		=> AttributeType::Number,
+			'folderId'		=> AttributeType::Number,
+			'filename'		=> AttributeType::String,
+			'folderPath'	=> AttributeType::String,
+			'kind'			=> AttributeType::String,
+			'width'			=> AttributeType::Number,
+			'height'		=> AttributeType::Number,
+			'size'			=> AttributeType::Number,
+			'dateModified'  => AttributeType::DateTime
+		));
+	}
+
+	/**
+	 * Set a source to use for transforms for this Assets File.
+	 *
+	 * @param $uri
+	 */
+	public function setTransformSource($uri)
+	{
+		$this->_transformSource = $uri;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getTransformSource()
+	{
+		if (!$this->_transformSource)
+		{
+			craft()->assetTransforms->getLocalImageSource($this);
+		}
+
+		return $this->_transformSource;
+	}
+
+	// Private Methods
+	// =========================================================================
+
+	/**
+	 * Returns the actual width attribute, since $this->width gets routed to getWidth() now.
+	 *
+	 * @return mixed
+	 */
+	private function _getWidth()
+	{
+		return parent::getAttribute('width');
+	}
+
+	/**
+	 * Returns the actual height attribute, since $this->height gets routed to getHeight() now.
+	 *
+	 * @return mixed
+	 */
+	private function _getHeight()
+	{
+		return parent::getAttribute('height');
 	}
 
 	/**
@@ -287,6 +472,7 @@ class AssetFileModel extends BaseElementModel
 	 *
 	 * @param $dimension 'height' or 'width'
 	 * @param $transform
+	 *
 	 * @return null|float|mixed
 	 */
 	private function _getDimension($dimension, $transform)
@@ -316,39 +502,19 @@ class AssetFileModel extends BaseElementModel
 		if (!$transform->width || !$transform->height)
 		{
 			// Fill in the blank
-			list($dimensions['width'], $dimensions['height']) = ImageHelper::calculateMissingDimension($dimensions['width'], $dimensions['height'], $this->_getWidth(), $this->_getHeight());
+			$dimensionArray = ImageHelper::calculateMissingDimension($dimensions['width'], $dimensions['height'], $this->_getWidth(), $this->_getHeight());
+			$dimensions['width'] = (int)$dimensionArray[0];
+			$dimensions['height'] = (int)$dimensionArray[1];
 		}
 
 		// Special case for 'fit' since that's the only one whose dimensions vary from the transform dimensions
 		if ($transform->mode == 'fit')
 		{
 			$factor = max($this->_getWidth() / $dimensions['width'], $this->_getHeight() / $dimensions['height']);
-			$dimensions['width']  = round($this->_getWidth() / $factor);
-			$dimensions['height'] = round($this->_getHeight() / $factor);
+			$dimensions['width']  = (int)round($this->_getWidth() / $factor);
+			$dimensions['height'] = (int)round($this->_getHeight() / $factor);
 		}
 
 		return $dimensions[$dimension];
-	}
-
-	/**
-	 * Returns the actual width attribute, since $this->width gets routed to getWidth() now.
-	 *
-	 * @access private
-	 * @return mixed
-	 */
-	private function _getWidth()
-	{
-		return parent::getAttribute('width');
-	}
-
-	/**
-	 * Returns the actual height attribute, since $this->height gets routed to getHeight() now.
-	 *
-	 * @access private
-	 * @return mixed
-	 */
-	private function _getHeight()
-	{
-		return parent::getAttribute('height');
 	}
 }

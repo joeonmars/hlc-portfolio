@@ -1,14 +1,14 @@
 {% extends "_layouts/basecp" %}
-{% set title = "Install Craft"|t %}
-{% includeCssResource "css/install.css" %}
-{% includeJsResource "js/install.js" %}
+{% set title = "Install Craft CMS"|t %}
+{% includecssresource "css/install.css" %}
+{% includejsresource "js/install.js" %}
 
 {% includeTranslations
 	"All done!",
 	"Go to {app}"
 %}
 
-{% set body %}
+{% block body %}
 	<div id="bg"></div>
 	<div class="beginbtncontainer">
 		<div id="beginbtn" class="btn big submit">{{ "Begin"|t }}</div>
@@ -17,4 +17,4 @@
 	{% include "_special/install/account" %}
 	{% include "_special/install/site" %}
 	{% include "_special/install/installing" %}
-{% endset %}
+{% endblock %}

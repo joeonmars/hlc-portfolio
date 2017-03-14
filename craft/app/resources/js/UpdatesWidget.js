@@ -1,17 +1,7 @@
-/**
- * Craft by Pixel & Tonic
- *
- * @package   Craft
- * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
- * @license   http://buildwithcraft.com/license Craft License Agreement
- * @link      http://buildwithcraft.com
- */
-
 (function($) {
 
-Craft.UpdatesWidget = Garnish.Base.extend({
-
+Craft.UpdatesWidget = Garnish.Base.extend(
+{
 	$widget: null,
 	$body: null,
 	$btn: null,
@@ -25,18 +15,16 @@ Craft.UpdatesWidget = Garnish.Base.extend({
 
 		if (!cached)
 		{
-			this.lookLikeWereChecking();
-
-			Craft.cp.on('checkForUpdates', $.proxy(function(ev) {
-				this.showUpdateInfo(ev.updateInfo);
-			}, this))
+			this.checkForUpdates(false);
 		}
 	},
 
 	initBtn: function()
 	{
 		this.$btn = this.$body.find('.btn:first');
-		this.addListener(this.$btn, 'click', $.proxy(this, 'checkForUpdates'));
+		this.addListener(this.$btn, 'click', function() {
+			this.checkForUpdates(true);
+		});
 	},
 
 	lookLikeWereChecking: function()
@@ -60,12 +48,7 @@ Craft.UpdatesWidget = Garnish.Base.extend({
 		}
 
 		this.lookLikeWereChecking();
-
-		var data = {
-			forceRefresh: true
-		};
-
-		Craft.postActionRequest('app/checkForUpdates', data, $.proxy(this, 'showUpdateInfo'));
+		Craft.cp.checkForUpdates(forceRefresh, $.proxy(this, 'showUpdateInfo'));
 	},
 
 	showUpdateInfo: function(info)
@@ -74,19 +57,21 @@ Craft.UpdatesWidget = Garnish.Base.extend({
 
 		if (info.total)
 		{
+			var updateText;
+
 			if (info.total == 1)
 			{
-				var updateText = Craft.t('One update available!');
+				updateText = Craft.t('One update available!');
 			}
 			else
 			{
-				var updateText = Craft.t('{total} updates available!', { total: info.total });
+				updateText = Craft.t('{total} updates available!', { total: info.total });
 			}
 
 			this.$body.html(
 				'<p class="centeralign">' +
 					updateText +
-					' <a class="go" href="'+Craft.getUrl('updates')+'">'+Craft.t('Go to Updates')+'</a>' +
+					' <a class="go nowrap" href="'+Craft.getUrl('updates')+'">'+Craft.t('Go to Updates')+'</a>' +
 				'</p>'
 			);
 		}
@@ -99,6 +84,9 @@ Craft.UpdatesWidget = Garnish.Base.extend({
 
 			this.initBtn();
 		}
+
+		// Update the CP header badge
+		Craft.cp.displayUpdateInfo(info);
 	}
 });
 

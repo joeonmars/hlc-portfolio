@@ -8,6 +8,7 @@ hlc.data.Data = function() {
 
 	// hardcoded assets to preload
 	this.preloadAssets = {
+		'portrait-home': hlc.Url.STATIC_IMAGES + 'portrait-home.png',
 		'masthead': hlc.Url.STATIC_IMAGES + 'backgrounds/masthead.jpg',
 		'album-cover': hlc.Url.STATIC_IMAGES + 'backgrounds/album-cover.jpg',
 		'biography-background': hlc.Url.STATIC_IMAGES + 'backgrounds/biography-background.jpg',
@@ -18,14 +19,6 @@ hlc.data.Data = function() {
 		'triangle-button-white': hlc.Url.STATIC_IMAGES + 'triangle-button-white.png',
 		'album-tile': hlc.Url.STATIC_IMAGES + 'album-tile.jpg'
 	};
-
-	// preload low res portrait image sequence
-	for ( var i = 0; i < 60; i++ ) {
-
-		var id = 'portrait-lowres-' + i;
-		var url = hlc.Url.STATIC_IMAGES + 'portrait/lowres/' + goog.string.padNumber( i, 2 ) + '.png';
-		this.addAsset( id, url );
-	}
 
 	// add playlist background images to preload assets
 	var playlistHeadings = goog.dom.query( '#playlist .heading' );

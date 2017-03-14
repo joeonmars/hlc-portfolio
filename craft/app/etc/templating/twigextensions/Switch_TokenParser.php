@@ -2,26 +2,26 @@
 namespace Craft;
 
 /**
- * Craft by Pixel & Tonic
- *
- * @package   Craft
- * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
- * @license   http://buildwithcraft.com/license Craft License Agreement
- * @link      http://buildwithcraft.com
- */
-
-/*
- * Parses {% switch %} tags.
+ * Class Switch_TokenParser that parses {% switch %} tags.
  *
  * Based on the rejected Twig pull request: https://github.com/fabpot/Twig/pull/185
+ *
+ * @author    Pixel & Tonic, Inc. <support@pixelandtonic.com>
+ * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
+ * @license   http://craftcms.com/license Craft License Agreement
+ * @see       http://craftcms.com
+ * @package   craft.app.etc.templating.twigextensions
+ * @since     1.3
  */
 class Switch_TokenParser extends \Twig_TokenParser
 {
+	// Public Methods
+	// =========================================================================
+
 	/**
 	 * Gets the tag name associated with this token parser.
 	 *
-	 * @param string The tag name
+	 * @return string
 	 */
 	public function getTag()
 	{
@@ -32,6 +32,8 @@ class Switch_TokenParser extends \Twig_TokenParser
 	 * Parses a token and returns a node.
 	 *
 	 * @param \Twig_Token $token
+	 *
+	 * @throws \Twig_Error_Syntax
 	 * @return Switch_Node
 	 */
 	public function parse(\Twig_Token $token)
@@ -43,18 +45,14 @@ class Switch_TokenParser extends \Twig_TokenParser
 		$stream->expect(\Twig_Token::BLOCK_END_TYPE);
 
 		// There can be some whitespace between the {% switch %} and first {% case %} tag.
-		$token = $stream->getCurrent();
-
-		if ($token->getType() == \Twig_Token::TEXT_TYPE)
+		while ($stream->getCurrent()->getType() == \Twig_Token::TEXT_TYPE && trim($stream->getCurrent()->getValue()) == '')
 		{
-			if (trim($token->getValue()) === '')
-			{
-				$stream->next();
-			}
+			$stream->next();
 		}
 
 		$stream->expect(\Twig_Token::BLOCK_START_TYPE);
 
+		$expressionParser = $this->parser->getExpressionParser();
 		$cases = array();
 		$default = null;
 		$end = false;
@@ -67,13 +65,29 @@ class Switch_TokenParser extends \Twig_TokenParser
 			{
 				case 'case':
 				{
-					$expr = $this->parser->getExpressionParser()->parseExpression();
+					$values = array();
+
+					while (true)
+					{
+						$values[] = $expressionParser->parsePrimaryExpression();
+
+						// Multiple allowed values?
+						if ($stream->test(\Twig_Token::OPERATOR_TYPE, 'or'))
+						{
+							$stream->next();
+						}
+						else
+						{
+							break;
+						}
+					}
+
 					$stream->expect(\Twig_Token::BLOCK_END_TYPE);
 					$body = $this->parser->subparse(array($this, 'decideIfFork'));
-					$cases[] = array(
-						'expr' => $expr,
+					$cases[] = new \Twig_Node(array(
+						'values' => new \Twig_Node($values),
 						'body' => $body
-					);
+					));
 					break;
 				}
 				case 'default':
@@ -99,11 +113,21 @@ class Switch_TokenParser extends \Twig_TokenParser
 		return new Switch_Node($name, new \Twig_Node($cases), $default, $lineno, $this->getTag());
 	}
 
+	/**
+	 * @param $token
+	 *
+	 * @return mixed
+	 */
 	public function decideIfFork($token)
 	{
 		return $token->test(array('case', 'default', 'endswitch'));
 	}
 
+	/**
+	 * @param $token
+	 *
+	 * @return mixed
+	 */
 	public function decideIfEnd($token)
 	{
 		return $token->test(array('endswitch'));

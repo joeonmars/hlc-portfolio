@@ -56,8 +56,8 @@ class CBooleanValidator extends CValidator
 		$value=$object->$attribute;
 		if($this->allowEmpty && $this->isEmpty($value))
 			return;
-		if(!$this->strict && $value!=$this->trueValue && $value!=$this->falseValue
-			|| $this->strict && $value!==$this->trueValue && $value!==$this->falseValue)
+
+		if(!$this->validateValue($value))
 		{
 			$message=$this->message!==null?$this->message:Yii::t('yii','{attribute} must be either {true} or {false}.');
 			$this->addError($object,$attribute,$message,array(
@@ -66,12 +66,32 @@ class CBooleanValidator extends CValidator
 			));
 		}
 	}
+	
+	/**
+	 * Validates a static value to see if it is a valid boolean.
+	 * This method is provided so that you can call it directly without going
+	 * through the model validation rule mechanism.
+	 *
+	 * Note that this method does not respect the {@link allowEmpty} property.
+	 *
+	 * @param mixed $value the value to be validated
+	 * @return boolean whether the value is a valid boolean
+	 * @since 1.1.17
+	 */
+	public function validateValue($value)
+	{
+		if ($this->strict)
+			return $value===$this->trueValue || $value===$this->falseValue;
+		else
+			return $value==$this->trueValue || $value==$this->falseValue;
+	}
 
 	/**
 	 * Returns the JavaScript needed for performing client-side validation.
 	 * @param CModel $object the data object being validated
 	 * @param string $attribute the name of the attribute to be validated.
 	 * @return string the client-side validation script.
+	 * @see CActiveForm::enableClientValidation
 	 * @since 1.1.7
 	 */
 	public function clientValidateAttribute($object,$attribute)

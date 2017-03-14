@@ -1,15 +1,5 @@
 <?php
 
-/**
- * Craft by Pixel & Tonic
- *
- * @package   Craft
- * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
- * @license   http://buildwithcraft.com/license Craft License Agreement
- * @link      http://buildwithcraft.com
- */
-
 $common = require(CRAFT_APP_PATH.'etc/config/common.php');
 
 return CMap::mergeArray($common, array(
@@ -19,7 +9,9 @@ return CMap::mergeArray($common, array(
 	// autoloading model and component classes
 	'import' => array(
 		'application.*',
+		'application.lib.*',
 		'application.migrations.*',
+		'application.framework.cli.commands.*'
 	),
 
 	'componentAliases' => array(
@@ -42,12 +34,7 @@ return CMap::mergeArray($common, array(
 
 	'components' => array(
 		'db' => array(
-			'connectionString'  => processConnectionString($dbConfig),
 			'emulatePrepare'    => true,
-			'username'          => $dbConfig['user'],
-			'password'          => $dbConfig['password'],
-			'charset'           => $dbConfig['charset'],
-			'tablePrefix'       => $tablePrefix,
 			'driverMap'         => array('mysql' => 'Craft\MysqlSchema'),
 			'class'             => 'Craft\DbConnection',
 		),

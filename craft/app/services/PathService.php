@@ -2,24 +2,26 @@
 namespace Craft;
 
 /**
- * Craft by Pixel & Tonic
+ * PathService provides APIs for getting server paths that are used by Craft.
  *
- * @package   Craft
- * @author    Pixel & Tonic, Inc.
+ * An instance of PathService is globally accessible in Craft via {@link WebApp::path `craft()->path`}.
+ *
+ * @author    Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
- * @license   http://buildwithcraft.com/license Craft License Agreement
- * @link      http://buildwithcraft.com
- */
-
-/**
- *
+ * @license   http://craftcms.com/license Craft License Agreement
+ * @see       http://craftcms.com
+ * @package   craft.app.services
+ * @since     1.0
  */
 class PathService extends BaseApplicationComponent
 {
-	private $_templatesPath;
+	// Public Methods
+	// =========================================================================
 
 	/**
-	 * @return string
+	 * Returns the path to the craft/app/ folder.
+	 *
+	 * @return string The path to the craft/app/ folder.
 	 */
 	public function getAppPath()
 	{
@@ -27,7 +29,9 @@ class PathService extends BaseApplicationComponent
 	}
 
 	/**
-	 * @return string
+	 * Retursn the path to the craft/config/ folder.
+	 *
+	 * @return string The path to the craft/config/ folder.
 	 */
 	public function getConfigPath()
 	{
@@ -35,7 +39,9 @@ class PathService extends BaseApplicationComponent
 	}
 
 	/**
-	 * @return string
+	 * Returns the path to the craft/plugins/ folder.
+	 *
+	 * @return string The path to the craft/plugins/ folder.
 	 */
 	public function getPluginsPath()
 	{
@@ -43,7 +49,9 @@ class PathService extends BaseApplicationComponent
 	}
 
 	/**
-	 * @return string
+	 * Returns the path to the craft/storage/ folder.
+	 *
+	 * @return string The path to the craft/storage/ folder.
 	 */
 	public function getStoragePath()
 	{
@@ -51,7 +59,21 @@ class PathService extends BaseApplicationComponent
 	}
 
 	/**
+	 * Returns the path to the craft/storage/rebrand/ folder.
+	 *
 	 * @return string
+	 */
+	public function getRebrandPath()
+	{
+		$path = $this->getStoragePath().'rebrand/';
+		IOHelper::ensureFolderExists($path);
+		return $path;
+	}
+
+	/**
+	 * Returns the path to the craft/storage/runtime/ folder.
+	 *
+	 * @return string The path to the craft/storage/runtime/ folder.
 	 */
 	public function getRuntimePath()
 	{
@@ -67,7 +89,9 @@ class PathService extends BaseApplicationComponent
 	}
 
 	/**
-	 * @return string
+	 * Returns the path to the craft/storage/backups/ folder.
+	 *
+	 * @return string The path to the craft/storage/backups/ folder.
 	 */
 	public function getDbBackupPath()
 	{
@@ -77,7 +101,9 @@ class PathService extends BaseApplicationComponent
 	}
 
 	/**
-	 * @return string
+	 * Returns the path to the craft/storage/runtime/temp/ folder.
+	 *
+	 * @return string The path to the craft/storage/runtime/temp/ folder.
 	 */
 	public function getTempPath()
 	{
@@ -87,7 +113,9 @@ class PathService extends BaseApplicationComponent
 	}
 
 	/**
-	 * @return string
+	 * Returns the path to the craft/storage/runtime/temp/uploads/ folder.
+	 *
+	 * @return string The path to the craft/storage/runtime/temp/uploads/ folder.
 	 */
 	public function getTempUploadsPath()
 	{
@@ -97,7 +125,9 @@ class PathService extends BaseApplicationComponent
 	}
 
 	/**
-	 * @return string
+	 * Returns the path to the craft/storage/userphotos/ folder.
+	 *
+	 * @return string The path to the craft/storage/userphotos/ folder.
 	 */
 	public function getUserPhotosPath()
 	{
@@ -107,7 +137,9 @@ class PathService extends BaseApplicationComponent
 	}
 
 	/**
-	 * @return string
+	 * Returns the path to the craft/storage/runtime/assets/ folder.
+	 *
+	 * @return string The path to the craft/storage/runtime/assets/ folder.
 	 */
 	public function getAssetsPath()
 	{
@@ -117,37 +149,69 @@ class PathService extends BaseApplicationComponent
 	}
 
 	/**
-	 * @return string
+	 * Returns the path to the craft/storage/runtime/assets/tempuploads/ folder.
+	 *
+	 * @return string The path to the craft/storage/runtime/assets/tempuploads/ folder.
+	 */
+	public function getAssetsTempSourcePath()
+	{
+		$path = $this->getAssetsPath().'tempuploads/';
+		IOHelper::ensureFolderExists($path);
+		return $path;
+	}
+
+	/**
+	 * Returns the path to the craft/storage/runtime/assets/sources/ folder.
+	 *
+	 * @return string The path to the craft/storage/runtime/assets/sources/ folder.
 	 */
 	public function getAssetsImageSourcePath()
 	{
-		$path = $this->getAssetsPath() . 'sources/';
+		$path = $this->getAssetsPath().'sources/';
 		IOHelper::ensureFolderExists($path);
 		return $path;
 	}
 
 	/**
-	 * @return string
+	 * Returns the path to the craft/storage/runtime/assets/thumbs/ folder.
+	 *
+	 * @return string The path to the craft/storage/runtime/assets/thumbs/ folder.
 	 */
 	public function getAssetsThumbsPath()
 	{
-		$path = $this->getAssetsPath() . 'thumbs/';
+		$path = $this->getAssetsPath().'thumbs/';
 		IOHelper::ensureFolderExists($path);
 		return $path;
 	}
 
 	/**
-	 * @return string
+	 * Returns the path to the craft/storage/runtime/assets/icons/ folder.
+	 *
+	 * @return string The path to the craft/storage/runtime/assets/icons/ folder.
 	 */
 	public function getAssetsIconsPath()
 	{
-		$path = $this->getAssetsPath() . 'icons/';
+		$path = $this->getAssetsPath().'icons/';
 		IOHelper::ensureFolderExists($path);
 		return $path;
 	}
 
 	/**
-	 * @return string
+	 * Returns the path to the craft/storage/runtime/pluginicons/ folder.
+	 *
+	 * @return string The path to the craft/storage/runtime/pluginicons/ folder.
+	 */
+	public function getPluginIconsPath()
+	{
+		$path = $this->getRuntimePath().'pluginicons/';
+		IOHelper::ensureFolderExists($path);
+		return $path;
+	}
+
+	/**
+	 * Returns the path to the craft/storage/runtime/logs/ folder.
+	 *
+	 * @return string The path to the craft/storage/runtime/logs/ folder.
 	 */
 	public function getLogPath()
 	{
@@ -157,7 +221,9 @@ class PathService extends BaseApplicationComponent
 	}
 
 	/**
-	 * @return string
+	 * Returns the path to the craft/storage/runtime/state/ folder.
+	 *
+	 * @return string The path to the craft/storage/runtime/state/ folder.
 	 */
 	public function getStatePath()
 	{
@@ -167,7 +233,9 @@ class PathService extends BaseApplicationComponent
 	}
 
 	/**
-	 * @return string
+	 * Returns the path to the craft/app/lib/ folder.
+	 *
+	 * @return string The path to the craft/app/lib/ folder.
 	 */
 	public function getLibPath()
 	{
@@ -175,7 +243,9 @@ class PathService extends BaseApplicationComponent
 	}
 
 	/**
-	 * @return string
+	 * Returns the path to the craft/app/resources/ folder.
+	 *
+	 * @return string The path to the craft/app/resources/ folder.
 	 */
 	public function getResourcesPath()
 	{
@@ -183,29 +253,46 @@ class PathService extends BaseApplicationComponent
 	}
 
 	/**
-	 * @return mixed
+	 * Returns the path to the framework/ folder.
+	 *
+	 * @return string The path to the framework/ folder.
 	 */
 	public function getFrameworkPath()
 	{
-		return $this->getAppPath().'framework/';
+		return CRAFT_FRAMEWORK_PATH;
 	}
 
 	/**
-	 * @param null $pluginHandle
-	 * @return string
+	 * Returns the path to the vendor/ folder.
+	 *
+	 * @return string The path to the vendor/ folder.
+	 */
+	public function getVendorPath()
+	{
+		return CRAFT_VENDOR_PATH;
+	}
+
+	/**
+	 * Returns the path to the craft/app/migrations/ folder, or the path to a plugin’s migrations/ folder.
+	 *
+	 * @param string $pluginHandle The plugin handle whose migrations/ folder should be returned. Defaults to `null`.
+	 *
+	 * @return string The path to the migrations/ folder.
 	 */
 	public function getMigrationsPath($pluginHandle = null)
 	{
 		if ($pluginHandle)
 		{
-			return $this->getPluginsPath().mb_strtolower($pluginHandle).'/migrations/';
+			return $this->getPluginsPath().StringHelper::toLowerCase($pluginHandle).'/migrations/';
 		}
 
 		return $this->getAppPath().'migrations/';
 	}
 
 	/**
-	 * @return string
+	 * Returns the path to the craft/app/translations/ folder.
+	 *
+	 * @return string The path to the craft/app/translations/ folder.
 	 */
 	public function getCpTranslationsPath()
 	{
@@ -213,7 +300,9 @@ class PathService extends BaseApplicationComponent
 	}
 
 	/**
-	 * @return string
+	 * Returns the path to the craft/translations/ folder.
+	 *
+	 * @return string The path to the craft/translations/ folder.
 	 */
 	public function getSiteTranslationsPath()
 	{
@@ -221,41 +310,34 @@ class PathService extends BaseApplicationComponent
 	}
 
 	/**
-	 * Returns the current templates path, taking into account whether this is a CP or Site request.
+	 * Returns the current templates path, taking into account whether this is a
+	 * CP or Site request.
 	 *
-	 * @return string
+	 * @return string The templates path.
+	 *
+	 * @deprecated Deprecated in 2.6.2778. Use TemplatesService::getTemplatesPath() or TemplatesService::getTemplateMode() instead.
 	 */
 	public function getTemplatesPath()
 	{
-		if (!isset($this->_templatesPath))
-		{
-			if (craft()->request->isCpRequest())
-			{
-				$this->_templatesPath = $this->getCpTemplatesPath();
-			}
-			else
-			{
-				$this->_templatesPath = $this->getSiteTemplatesPath();
-			}
-		}
-
-		return $this->_templatesPath;
+		return craft()->templates->getTemplatesPath();
 	}
 
 	/**
 	 * Sets the current templates path.
 	 *
-	 * @param string $path
+	 * @param string $path The new templates path.
+	 *
+	 * @deprecated Deprecated in 2.6.2778. Use TemplatesService::setTemplatesPath() or TemplatesService::setTemplateMode() instead.
 	 */
 	public function setTemplatesPath($path)
 	{
-		$this->_templatesPath = $path;
+		craft()->templates->setTemplatesPath($path);
 	}
 
 	/**
-	 * Returns the Craft CP templates path.
+	 * Returns the path to the craft/app/templates/ folder.
 	 *
-	 * @return string
+	 * @return string The path to the craft/app/templates/ folder.
 	 */
 	public function getCpTemplatesPath()
 	{
@@ -263,9 +345,9 @@ class PathService extends BaseApplicationComponent
 	}
 
 	/**
-	 * Returns the site templates path.
+	 * Returns the path to the craft/templates/ folder.
 	 *
-	 * @return string
+	 * @return string The path to the craft/templates/ folder.
 	 */
 	public function getSiteTemplatesPath()
 	{
@@ -273,26 +355,9 @@ class PathService extends BaseApplicationComponent
 	}
 
 	/**
-	 * Returns the path to the offline template by first checking to see if they have set a custom path in config.
-	 * If that is not set, it will fall back on the default CP offline template.
+	 * Returns the path to the craft/storage/runtime/compiled_templates/ folder.
 	 *
-	 * @return mixed
-	 */
-	public function getOfflineTemplatePath()
-	{
-		// If the user has set offlinePath config item, let's use it.
-		if (($path = craft()->config->get('offlinePath')) !== null)
-		{
-			return mb_substr($path, 0, mb_strlen($path) - mb_strlen(IOHelper::getFileName($path)));
-		}
-
-		return $this->getCpTemplatesPath();
-	}
-
-	/**
-	 * Returns the current parsed templates path, taking into account whether this is a CP or Site request.
-	 *
-	 * @return mixed
+	 * @return string The path to the craft/storage/runtime/compiled_templates/ folder.
 	 */
 	public function getCompiledTemplatesPath()
 	{
@@ -302,7 +367,9 @@ class PathService extends BaseApplicationComponent
 	}
 
 	/**
-	 * @return string
+	 * Returns the path to the craft/storage/runtime/sessions/ folder.
+	 *
+	 * @return string The path to the craft/storage/runtime/sessions/ folder.
 	 */
 	public function getSessionPath()
 	{
@@ -312,17 +379,30 @@ class PathService extends BaseApplicationComponent
 	}
 
 	/**
-	 * @return string
+	 * Returns the path to the file cache folder.
+	 *
+	 * This will be located at craft/storage/runtime/cache/ by default, but that can be overridden with the 'cachePath'
+	 * config setting in craft/config/filecache.php.
+	 *
+	 * @return string The path to the file cache folder.
 	 */
 	public function getCachePath()
 	{
-		$path = $this->getRuntimePath().'cache/';
+		$path = craft()->config->get('cachePath', ConfigFile::FileCache);
+
+		if (!$path)
+		{
+			$path = $this->getRuntimePath().'cache/';
+		}
+
 		IOHelper::ensureFolderExists($path);
 		return $path;
 	}
 
 	/**
-	 * Returns the path to the license key file.
+	 * Returns the path to craft/config/license.key.
+	 *
+	 * @return string The path to craft/config/license.key.
 	 */
 	public function getLicenseKeyPath()
 	{

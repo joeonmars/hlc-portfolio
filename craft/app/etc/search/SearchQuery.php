@@ -2,31 +2,50 @@
 namespace Craft;
 
 /**
- * Craft by Pixel & Tonic
+ * Search Query class.
  *
- * @package   Craft
- * @author    Pixel & Tonic, Inc.
+ * @author    Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
- * @license   http://buildwithcraft.com/license Craft License Agreement
- * @link      http://buildwithcraft.com
- */
-
-/**
- * Search Query class
+ * @license   http://craftcms.com/license Craft License Agreement
+ * @see       http://craftcms.com
+ * @package   craft.app.etc.search
+ * @since     1.0
  */
 class SearchQuery
 {
+	// Properties
+	// =========================================================================
+
+	/**
+	 * @var string
+	 */
 	private $_query;
+
+	/**
+	 * @var array
+	 */
+	private $_termOptions;
+
+	/**
+	 * @var array
+	 */
 	private $_tokens;
+
+	// Public Methods
+	// =========================================================================
 
 	/**
 	 * Constructor
 	 *
 	 * @param string $query
+	 * @param array $termOptions
+	 *
+	 * @return SearchQuery
 	 */
-	function __construct($query)
+	public function __construct($query, $termOptions = array())
 	{
 		$this->_query = $query;
+		$this->_termOptions = $termOptions;
 		$this->_tokens = array();
 		$this->_parse();
 	}
@@ -51,10 +70,13 @@ class SearchQuery
 		return $this->_query;
 	}
 
+	// Private Methods
+	// =========================================================================
+
 	/**
 	 * Parses the query into an array of tokens.
 	 *
-	 * @access private
+	 * @return null
 	 */
 	private function _parse()
 	{
@@ -90,9 +112,16 @@ class SearchQuery
 
 			$term = new SearchQueryTerm();
 
-			// Is this an exclude term?
-			if ($term->exclude = ($token[0] == '-'))
+			// Set the default options
+			foreach ($this->_termOptions as $option => $value)
 			{
+				$term->$option = $value;
+			}
+
+			// Is this an exclude term?
+			if (StringHelper::getCharAt($token, 0) == '-')
+			{
+				$term->exclude = true;
 				$token = mb_substr($token, 1);
 			}
 
@@ -100,32 +129,38 @@ class SearchQuery
 			if (preg_match('/^(\w+)(::?)(.+)$/', $token, $match))
 			{
 				$term->attribute = $match[1];
-				$term->exact     = ($match[2] == '::');
 				$token = $match[3];
+
+				if ($match[2] == '::')
+				{
+					$term->exact = true;
+				}
 			}
 
 			// Does it start with a quote?
-			if ($token && mb_strpos('"\'', $token[0]) !== false)
+			if ($token && mb_strpos('"\'', StringHelper::getCharAt($token, 0)) !== false)
 			{
 				// Is the end quote at the end of this very token?
-				if ($token[mb_strlen($token)-1] == $token[0])
+				if (StringHelper::getCharAt($token, mb_strlen($token)-1) == StringHelper::getCharAt($token, 0))
 				{
 					$token = mb_substr($token, 1, -1);
 				}
 				else
 				{
-					$token = mb_substr($token, 1).' '.strtok($token[0]);
+					$token = mb_substr($token, 1).' '.strtok(StringHelper::getCharAt($token, 0));
 				}
 			}
 
 			// Include sub-word matches?
-			if ($term->subLeft = ($token && $token[0] == '*'))
+			if ($token && StringHelper::getCharAt($token, 0) == '*')
 			{
+				$term->subLeft = true;
 				$token = mb_substr($token, 1);
 			}
 
-			if ($term->subRight = ($token && substr($token, -1) == '*'))
+			if ($token && substr($token, -1) == '*')
 			{
+				$term->subRight = true;
 				$token = mb_substr($token, 0, -1);
 			}
 

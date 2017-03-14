@@ -2,40 +2,25 @@
 namespace Craft;
 
 /**
- * Craft by Pixel & Tonic
+ * Class EntryVersionModel
  *
- * @package   Craft
- * @author    Pixel & Tonic, Inc.
+ * @author    Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
- * @license   http://buildwithcraft.com/license Craft License Agreement
- * @link      http://buildwithcraft.com
- */
-
-craft()->requirePackage(CraftPackage::PublishPro);
-
-/**
- *
+ * @license   http://craftcms.com/license Craft License Agreement
+ * @see       http://craftcms.com
+ * @package   craft.app.models
+ * @since     1.0
  */
 class EntryVersionModel extends BaseEntryRevisionModel
 {
-	/**
-	 * @access protected
-	 * @return array
-	 */
-	protected function defineAttributes()
-	{
-		return array_merge(parent::defineAttributes(), array(
-			'versionId'   => AttributeType::Number,
-			'notes'       => AttributeType::String,
-			'dateCreated' => AttributeType::DateTime,
-		));
-	}
+	// Public Methods
+	// =========================================================================
 
 	/**
-	 * Populates a new model instance with a given set of attributes.
+	 * @inheritDoc BaseModel::populateModel()
 	 *
-	 * @static
 	 * @param mixed $attributes
+	 *
 	 * @return EntryVersionModel
 	 */
 	public static function populateModel($attributes)
@@ -50,8 +35,9 @@ class EntryVersionModel extends BaseEntryRevisionModel
 		$fieldContent = isset($entryData['fields']) ? $entryData['fields'] : null;
 		$attributes['versionId'] = $attributes['id'];
 		$attributes['id'] = $attributes['entryId'];
+		$attributes['revisionNotes'] = $attributes['notes'];
 		$title = $entryData['title'];
-		unset($attributes['data'], $entryData['fields'], $attributes['entryId'], $entryData['title']);
+		unset($attributes['data'], $entryData['fields'], $attributes['entryId'], $attributes['notes'], $entryData['title']);
 
 		$attributes = array_merge($attributes, $entryData);
 
@@ -65,5 +51,21 @@ class EntryVersionModel extends BaseEntryRevisionModel
 		}
 
 		return $version;
+	}
+
+	// Protected Methods
+	// =========================================================================
+
+	/**
+	 * @inheritDoc BaseModel::defineAttributes()
+	 *
+	 * @return array
+	 */
+	protected function defineAttributes()
+	{
+		return array_merge(parent::defineAttributes(), array(
+			'versionId'   => AttributeType::Number,
+			'num'         => AttributeType::Number,
+		));
 	}
 }

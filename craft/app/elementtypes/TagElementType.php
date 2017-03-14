@@ -2,22 +2,22 @@
 namespace Craft;
 
 /**
- * Craft by Pixel & Tonic
+ * The TagElementType class is responsible for implementing and definingtags as a native element type in Craft.
  *
- * @package   Craft
- * @author    Pixel & Tonic, Inc.
+ * @author    Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
- * @license   http://buildwithcraft.com/license Craft License Agreement
- * @link      http://buildwithcraft.com
- */
-
-/**
- * Tag element type
+ * @license   http://craftcms.com/license Craft License Agreement
+ * @see       http://craftcms.com
+ * @package   craft.app.elementtypes
+ * @since     1.1
  */
 class TagElementType extends BaseElementType
 {
+	// Public Methods
+	// =========================================================================
+
 	/**
-	 * Returns the element type name.
+	 * @inheritDoc IComponentType::getName()
 	 *
 	 * @return string
 	 */
@@ -27,7 +27,7 @@ class TagElementType extends BaseElementType
 	}
 
 	/**
-	 * Returns whether this element type has content.
+	 * @inheritDoc IElementType::hasContent()
 	 *
 	 * @return bool
 	 */
@@ -37,22 +37,43 @@ class TagElementType extends BaseElementType
 	}
 
 	/**
-	 * Returns this element type's sources.
+	 * @inheritDoc IElementType::hasTitles()
+	 *
+	 * @return bool
+	 */
+	public function hasTitles()
+	{
+		return true;
+	}
+
+	/**
+	 * @inheritDoc IElementType::isLocalized()
+	 *
+	 * @return bool
+	 */
+	public function isLocalized()
+	{
+		return true;
+	}
+
+	/**
+	 * @inheritDoc IElementType::getSources()
 	 *
 	 * @param string|null $context
+	 *
 	 * @return array|false
 	 */
 	public function getSources($context = null)
 	{
 		$sources = array();
 
-		foreach (craft()->tags->getAllTagSets() as $tagSet)
+		foreach (craft()->tags->getAllTagGroups() as $tagGroup)
 		{
-			$key = 'tagset:'.$tagSet->id;
+			$key = 'taggroup:'.$tagGroup->id;
 
 			$sources[$key] = array(
-				'label'    => $tagSet->name,
-				'criteria' => array('setId' => $tagSet->id)
+				'label'    => Craft::t($tagGroup->name),
+				'criteria' => array('groupId' => $tagGroup->id)
 			);
 		}
 
@@ -60,81 +81,143 @@ class TagElementType extends BaseElementType
 	}
 
 	/**
-	 * Defines which model attributes should be searchable.
+	 * @inheritDoc IElementType::defineSearchableAttributes()
 	 *
 	 * @return array
 	 */
 	public function defineSearchableAttributes()
 	{
+		// TODO: Remove this in 3.0
 		return array('name');
 	}
 
 	/**
-	 * Returns the attributes that can be shown/sorted by in table views.
-	 *
-	 * @param string|null $source
-	 * @return array
-	 */
-	public function defineTableAttributes($source = null)
-	{
-		return array(
-			'name' => Craft::t('Name'),
-		);
-	}
-
-	/**
-	 * Defines any custom element criteria attributes for this element type.
+	 * @inheritDoc IElementType::defineCriteriaAttributes()
 	 *
 	 * @return array
 	 */
 	public function defineCriteriaAttributes()
 	{
 		return array(
-			'name'  => AttributeType::String,
-			'set'   => AttributeType::Mixed,
-			'setId' => AttributeType::Mixed,
-			'order' => array(AttributeType::String, 'default' => 'name asc'),
+			'group'   => AttributeType::Mixed,
+			'groupId' => AttributeType::Mixed,
+			'order'   => array(AttributeType::String, 'default' => 'content.title asc'),
+
+			// TODO: Deprecated
+			'name'    => AttributeType::String,
+			'set'     => AttributeType::Mixed,
+			'setId'   => AttributeType::Mixed,
 		);
 	}
 
 	/**
-	 * Modifies an element query targeting elements of this type.
+	 * @inheritDoc IElementType::modifyElementsQuery()
 	 *
-	 * @param DbCommand $query
+	 * @param DbCommand            $query
 	 * @param ElementCriteriaModel $criteria
+	 *
 	 * @return mixed
 	 */
 	public function modifyElementsQuery(DbCommand $query, ElementCriteriaModel $criteria)
 	{
 		$query
-			->addSelect('tags.setId, tags.name')
+			->addSelect('tags.groupId')
 			->join('tags tags', 'tags.id = elements.id');
+
+		// Still support the deprecated params
 
 		if ($criteria->name)
 		{
-			$query->andWhere(DbHelper::parseParam('tags.name', $criteria->name, $query->params));
+			craft()->deprecator->log('TagElementType::modifyElementsQuery():name_param', 'The ‘name’ tag param has been deprecated. Use ‘title’ instead.');
+			$query->andWhere(DbHelper::parseParam('content.title', $criteria->name, $query->params));
 		}
 
-		if ($criteria->setId)
+		if ($criteria->setId && !$criteria->groupId)
 		{
-			$query->andWhere(DbHelper::parseParam('tags.setId', $criteria->setId, $query->params));
+			craft()->deprecator->log('TagElementType::modifyElementsQuery():setId_param', 'The ‘setId’ tag param has been deprecated. Use ‘groupId’ instead.');
+			$criteria->groupId = $criteria->setId;
+			$criteria->setId = null;
 		}
 
-		if ($criteria->set)
+		if ($criteria->set && !$criteria->group)
 		{
-			$query->join('tagsets tagsets', 'tagsets.id = tags.setId');
-			$query->andWhere(DbHelper::parseParam('tagsets.handle', $criteria->set, $query->params));
+			craft()->deprecator->log('TagElementType::modifyElementsQuery():set_param', 'The ‘set’ tag param has been deprecated. Use ‘group’ instead.');
+			$criteria->group = $criteria->set;
+			$criteria->set = null;
+		}
+
+		if ($criteria->groupId)
+		{
+			$query->andWhere(DbHelper::parseParam('tags.groupId', $criteria->groupId, $query->params));
+		}
+
+		if ($criteria->group)
+		{
+			$query->join('taggroups taggroups', 'taggroups.id = tags.groupId');
+			$query->andWhere(DbHelper::parseParam('taggroups.handle', $criteria->group, $query->params));
+		}
+
+		// Backwards compatibility with order=name (tags had names before 2.3)
+		if (is_string($criteria->order))
+		{
+			$criteria->order = preg_replace('/\bname\b/', 'title', $criteria->order, -1, $count);
+
+			if ($count) {
+				craft()->deprecator->log('tag_orderby_name', 'Ordering tags by ‘name’ has been deprecated. Order by ‘title’ instead.');
+			}
 		}
 	}
 
 	/**
-	 * Populates an element model based on a query result.
+	 * @inheritDoc IElementType::populateElementModel()
 	 *
 	 * @param array $row
+	 *
 	 * @return array
 	 */
 	public function populateElementModel($row)
 	{
 		return TagModel::populateModel($row);
+	}
+
+	/**
+	 * @inheritDoc IElementType::getEditorHtml()
+	 *
+	 * @param BaseElementModel $element
+	 *
+	 * @return string
+	 */
+	public function getEditorHtml(BaseElementModel $element)
+	{
+		$html = craft()->templates->renderMacro('_includes/forms', 'textField', array(
+			array(
+				'label'     => Craft::t('Title'),
+				'locale'    => $element->locale,
+				'id'        => 'title',
+				'name'      => 'title',
+				'value'     => $element->getContent()->title,
+				'errors'    => $element->getErrors('title'),
+				'first'     => true,
+				'autofocus' => true,
+				'required'  => true
+			)
+		));
+
+		$html .= parent::getEditorHtml($element);
+
+		return $html;
+	}
+
+	/**
+	 * @inheritDoc IElementType::saveElement()
+	 *
+	 * @param BaseElementModel $element
+	 * @param array            $params
+	 *
+	 * @return bool
+	 */
+	public function saveElement(BaseElementModel $element, $params)
+	{
+		return craft()->tags->saveTag($element);
 	}
 }

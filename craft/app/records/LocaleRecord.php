@@ -2,21 +2,23 @@
 namespace Craft;
 
 /**
- * Craft by Pixel & Tonic
+ * Stores the locales.
  *
- * @package   Craft
- * @author    Pixel & Tonic, Inc.
+ * @author    Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
- * @license   http://buildwithcraft.com/license Craft License Agreement
- * @link      http://buildwithcraft.com
- */
-
-/**
- * Stores the locales
+ * @license   http://craftcms.com/license Craft License Agreement
+ * @see       http://craftcms.com
+ * @package   craft.app.records
+ * @since     1.0
  */
 class LocaleRecord extends BaseRecord
 {
+	// Public Methods
+	// =========================================================================
+
 	/**
+	 * @inheritDoc BaseRecord::getTableName()
+	 *
 	 * @return string
 	 */
 	public function getTableName()
@@ -33,7 +35,23 @@ class LocaleRecord extends BaseRecord
 	}
 
 	/**
-	 * @access protected
+	 * @inheritDoc BaseRecord::defineIndexes()
+	 *
+	 * @return array
+	 */
+	public function defineIndexes()
+	{
+		return array(
+			array('columns' => array('sortOrder')),
+		);
+	}
+
+	// Protected Methods
+	// =========================================================================
+
+	/**
+	 * @inheritDoc BaseRecord::defineAttributes()
+	 *
 	 * @return array
 	 */
 	protected function defineAttributes()

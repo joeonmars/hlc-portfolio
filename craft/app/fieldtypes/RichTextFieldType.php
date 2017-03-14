@@ -2,25 +2,30 @@
 namespace Craft;
 
 /**
- * Craft by Pixel & Tonic
+ * Class RichTextFieldType
  *
- * @package   Craft
- * @author    Pixel & Tonic, Inc.
+ * @author    Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
- * @license   http://buildwithcraft.com/license Craft License Agreement
- * @link      http://buildwithcraft.com
- */
-
-/**
- *
+ * @license   http://craftcms.com/license Craft License Agreement
+ * @see       http://craftcms.com
+ * @package   craft.app.fieldtypes
+ * @since     1.0
  */
 class RichTextFieldType extends BaseFieldType
 {
-	private static $_includedFieldResources = false;
-	private static $_inputLang = 'en';
+	// Properties
+	// =========================================================================
 
 	/**
-	 * Returns the type of field this is.
+	 * @var string
+	 */
+	private static $_redactorLang = 'en';
+
+	// Public Methods
+	// =========================================================================
+
+	/**
+	 * @inheritDoc IComponentType::getName()
 	 *
 	 * @return string
 	 */
@@ -30,21 +35,7 @@ class RichTextFieldType extends BaseFieldType
 	}
 
 	/**
-	 * Defines the settings.
-	 *
-	 * @access protected
-	 * @return array
-	 */
-	protected function defineSettings()
-	{
-		return array(
-			'configFile'  => AttributeType::String,
-			'cleanupHtml' => array(AttributeType::Bool, 'default' => true),
-		);
-	}
-
-	/**
-	 * Returns the field's settings HTML.
+	 * @inheritDoc ISavableComponentType::getSettingsHtml()
 	 *
 	 * @return string|null
 	 */
@@ -66,26 +57,56 @@ class RichTextFieldType extends BaseFieldType
 			}
 		}
 
+		$columns = array(
+			'text'       => 'text (~64K)',
+			'mediumtext' => 'mediumtext (~16MB)'
+		);
+
+		$sourceOptions = array();
+		foreach (craft()->assetSources->getPublicSources() as $source)
+		{
+			$sourceOptions[] = array('label' => $source->name, 'value' => $source->id);
+		}
+
+		$transformOptions = array();
+		foreach (craft()->assetTransforms->getAllTransforms() as $transform)
+		{
+			$transformOptions[] = array('label' => $transform->name, 'value' => $transform->id );
+		}
+
 		return craft()->templates->render('_components/fieldtypes/RichText/settings', array(
 			'settings' => $this->getSettings(),
-			'configOptions' => $configOptions
+			'configOptions' => $configOptions,
+			'assetSourceOptions' => $sourceOptions,
+			'transformOptions' => $transformOptions,
+			'columns' => $columns,
+			'existing' => !empty($this->model->id),
 		));
 	}
 
 	/**
-	 * Returns the content attribute config.
+	 * @inheritDoc IFieldType::defineContentAttribute()
 	 *
 	 * @return mixed
 	 */
 	public function defineContentAttribute()
 	{
-		return array(AttributeType::String, 'column' => ColumnType::Text);
+		$settings = $this->getSettings();
+
+		// It hasn't always been a settings, so default to Text if it's not set.
+		if (!$settings->getAttribute('columnType'))
+		{
+			return array(AttributeType::String, 'column' => ColumnType::Text);
+		}
+
+		return array(AttributeType::String, 'column' => $settings->columnType);
 	}
 
 	/**
-	 * Preps the field value for use.
+	 * @inheritDoc IFieldType::prepValue()
 	 *
 	 * @param mixed $value
+	 *
 	 * @return mixed
 	 */
 	public function prepValue($value)
@@ -103,24 +124,39 @@ class RichTextFieldType extends BaseFieldType
 	}
 
 	/**
-	 * Returns the field's input HTML.
+	 * @inheritDoc IFieldType::getInputHtml()
 	 *
 	 * @param string $name
 	 * @param mixed  $value
+	 *
 	 * @return string
 	 */
 	public function getInputHtml($name, $value)
 	{
-		$this->_includeFieldResources();
+		$configJs = $this->_getConfigJson();
+		$this->_includeFieldResources($configJs);
 
 		$id = craft()->templates->formatInputId($name);
+		$localeId = (isset($this->element) ? $this->element->locale : craft()->language);
 
-		craft()->templates->includeJs('new Craft.RichTextInput(' .
-			'"'.craft()->templates->namespaceInputId($id).'", ' .
-			'"'.static::$_inputLang.'", ' .
-			JsonHelper::encode($this->_getSectionSources()).', ' .
-			$this->_getConfigJs() .
-		');');
+		$settings = array(
+			'id'              => craft()->templates->namespaceInputId($id),
+			'linkOptions'     => $this->_getLinkOptions(),
+			'assetSources'    => $this->_getAssetSources(),
+			'transforms'      => $this->_getTransforms(),
+			'elementLocale'   => $localeId,
+			'redactorConfig'  => JsonHelper::decode(JsonHelper::removeComments($configJs)),
+			'redactorLang'    => static::$_redactorLang,
+		);
+
+		if (isset($this->model) && $this->model->translatable)
+		{
+			// Explicitly set the text direction
+			$locale = craft()->i18n->getLocaleData($localeId);
+			$settings['direction'] = $locale->getOrientation();
+		}
+
+		craft()->templates->includeJs('new Craft.RichTextInput('.JsonHelper::encode($settings).');');
 
 		if ($value instanceof RichTextData)
 		{
@@ -129,11 +165,10 @@ class RichTextFieldType extends BaseFieldType
 
 		if (strpos($value, '{') !== false)
 		{
-			// Preserve the ref tags with hashes
-			// {type:id:url} => {type:id:url}#type:id
-			$value = preg_replace_callback('/(href=|src=)([\'"])(\{(\w+\:\d+\:'.HandleValidator::$handlePattern.')\})\2/', function($matches)
+			// Preserve the ref tags with hashes {type:id:url} => {type:id:url}#type:id
+			$value = preg_replace_callback('/(href=|src=)([\'"])(\{(\w+\:\d+\:'.HandleValidator::$handlePattern.')\})(#[^\'"#]+)?\2/', function($matches)
 			{
-				return $matches[1].$matches[2].$matches[3].'#'.$matches[4].$matches[2];
+				return $matches[1].$matches[2].$matches[3].(!empty($matches[5]) ? $matches[5] : '').'#'.$matches[4].$matches[2];
 			}, $value);
 
 			// Now parse 'em
@@ -147,17 +182,36 @@ class RichTextFieldType extends BaseFieldType
 	}
 
 	/**
-	 * Returns the input value as it should be saved to the database.
+	 * @inheritDoc IFieldType::prepValueFromPost()
 	 *
 	 * @param mixed $value
+	 *
 	 * @return mixed
 	 */
 	public function prepValueFromPost($value)
 	{
+		// Temporary fix (hopefully) for a Redactor bug where some HTML will get submitted when the field is blank,
+		// if any text was typed into the field, and then deleted
+		if ($value == '<p><br></p>')
+		{
+			$value = '';
+		}
+
 		if ($value)
 		{
 			// Swap any pagebreak <hr>'s with <!--pagebreak-->'s
-			$value = preg_replace('/<hr class="redactor_pagebreak" style="display:none" unselectable="on" contenteditable="false"\s*(\/)?>/', '<!--pagebreak-->', $value);
+			$value = preg_replace('/<hr class="redactor_pagebreak".*?>/', '<!--pagebreak-->', $value);
+
+			if ($this->getSettings()->purifyHtml)
+			{
+				$purifier = new \CHtmlPurifier();
+				$purifier->setOptions(array(
+					'Attr.AllowedFrameTargets' => array('_blank'),
+					'HTML.AllowedComments' => array('pagebreak'),
+				));
+
+				$value = $purifier->purify($value);
+			}
 
 			if ($this->getSettings()->cleanupHtml)
 			{
@@ -169,18 +223,148 @@ class RichTextFieldType extends BaseFieldType
 				$value = preg_replace('/(<(?:h1|h2|h3|h4|h5|h6|p|div|blockquote|pre|strong|em|b|i|u|a)\b[^>]*)\s+style="[^"]*"/', '$1', $value);
 
 				// Remove empty tags
-				// (Leave empty <a> tags though, since they might be defining a standalone #anchor.)
-				$value = preg_replace('/<(h1|h2|h3|h4|h5|h6|p|div|blockquote|pre|strong|em|b|i|u)\s*><\/\1>/', '', $value);
+				$value = preg_replace('/<(h1|h2|h3|h4|h5|h6|p|div|blockquote|pre|strong|em|a|b|i|u)\s*><\/\1>/', '', $value);
 			}
 		}
 
 		// Find any element URLs and swap them with ref tags
-		$value = preg_replace_callback('/(href=|src=)([\'"])[^\'"]+?#(\w+):(\d+)(:'.HandleValidator::$handlePattern.')?\2/', function($matches)
+		$value = preg_replace_callback('/(href=|src=)([\'"])[^\'"#]+?(#[^\'"#]+)?(?:#|%23)(\w+):(\d+)(:'.HandleValidator::$handlePattern.')?\2/', function($matches)
 		{
-			return $matches[1].$matches[2].'{'.$matches[3].':'.$matches[4].(!empty($matches[5]) ? $matches[5] : ':url').'}'.$matches[2];
+			$refTag = '{'.$matches[4].':'.$matches[5].(!empty($matches[6]) ? $matches[6] : ':url').'}';
+			$hash = (!empty($matches[3]) ? $matches[3] : '');
+
+			if ($hash)
+			{
+				// Make sure that the hash isn't actually part of the parsed URL
+				// (someone's Entry URL Format could be "#{slug}", etc.)
+				$url = craft()->elements->parseRefs($refTag);
+
+				if (mb_strpos($url, $hash) !== false)
+				{
+					$hash = '';
+				}
+			}
+
+
+			return $matches[1].$matches[2].$refTag.$hash.$matches[2];
 		}, $value);
 
+		// Encode any 4-byte UTF-8 characters.
+		$value = StringHelper::encodeMb4($value);
+
 		return $value;
+	}
+
+	/**
+	 * @inheritDoc BaseFieldType::validate()
+	 *
+	 * @param mixed $value
+	 *
+	 * @return true|string|array
+	 */
+	public function validate($value)
+	{
+		$settings = $this->getSettings();
+
+		// This wasn't always a setting.
+		$columnType = !$settings->getAttribute('columnType') ? ColumnType::Text : $settings->getAttribute('columnType');
+
+		$postContentSize = strlen($value);
+		$maxDbColumnSize = DbHelper::getTextualColumnStorageCapacity($columnType);
+
+		// Give ourselves 10% wiggle room.
+		$maxDbColumnSize = ceil($maxDbColumnSize * 0.9);
+
+		if ($postContentSize > $maxDbColumnSize)
+		{
+			return Craft::t('{attribute} is too long.', array('attribute' => Craft::t($this->model->name)));
+		}
+
+		return true;
+	}
+
+	/**
+	 * @inheritDoc IFieldType::getStaticHtml()
+	 *
+	 * @param mixed $value
+	 *
+	 * @return string
+	 */
+	public function getStaticHtml($value)
+	{
+		return '<div class="text">'.($value ? $value : '&nbsp;').'</div>';
+	}
+
+	// Protected Methods
+	// =========================================================================
+
+	/**
+	 * @inheritDoc BaseSavableComponentType::defineSettings()
+	 *
+	 * @return array
+	 */
+	protected function defineSettings()
+	{
+		return array(
+			'configFile'            => AttributeType::String,
+			'cleanupHtml'           => array(AttributeType::Bool, 'default' => true),
+			'purifyHtml'            => array(AttributeType::Bool, 'default' => true),
+			'columnType'            => array(AttributeType::String),
+			'availableAssetSources' => AttributeType::Mixed,
+			'availableTransforms'   => AttributeType::Mixed,
+		);
+	}
+
+	// Private Methods
+	// =========================================================================
+
+	/**
+	 * Returns the link options available to the field.
+	 *
+	 * Each link option is represented by an array with the following keys:
+	 *
+	 * - `optionTitle` (required) – the user-facing option title that appears in the Link dropdown menu
+	 * - `elementType` (required) – the element type class that the option should be linking to
+	 * - `sources` (optional) – the sources that the user should be able to select elements from
+	 * - `criteria` (optional) – any specific element criteria parameters that should limit which elements the user can select
+	 * - `storageKey` (optional) – the localStorage key that should be used to store the element selector modal state (defaults to RichTextFieldType.LinkTo[ElementType])
+	 *
+	 * @return array
+	 */
+	private function _getLinkOptions()
+	{
+		$linkOptions = array();
+
+		$sectionSources = $this->_getSectionSources();
+		$categorySources = $this->_getCategorySources();
+
+		if ($sectionSources)
+		{
+			$linkOptions[] = array(
+				'optionTitle' => Craft::t('Link to an entry'),
+				'elementType' => 'Entry',
+				'sources' => $sectionSources,
+			);
+		}
+
+		if ($categorySources)
+		{
+			$linkOptions[] = array(
+				'optionTitle' => Craft::t('Link to a category'),
+				'elementType' => 'Category',
+				'sources' => $categorySources,
+			);
+		}
+
+		// Give plugins a chance to add their own
+		$allPluginLinkOptions = craft()->plugins->call('addRichTextLinkOptions', array(), true);
+
+		foreach ($allPluginLinkOptions as $pluginLinkOptions)
+		{
+			$linkOptions = array_merge($linkOptions, $pluginLinkOptions);
+		}
+
+		return $linkOptions;
 	}
 
 	/**
@@ -202,7 +386,7 @@ class RichTextFieldType extends BaseFieldType
 			}
 			else if ($section->hasUrls)
 			{
-				$sources[] = 'section:' . $section->id;
+				$sources[] = 'section:'.$section->id;
 			}
 		}
 
@@ -215,44 +399,121 @@ class RichTextFieldType extends BaseFieldType
 	}
 
 	/**
-	 * Returns the Redactor config JS used by this field.
+	 * Get available category sources.
+	 *
+	 * @return array
+	 */
+	private function _getCategorySources()
+	{
+		$sources = array();
+		$categoryGroups = craft()->categories->getAllGroups();
+
+		foreach ($categoryGroups as $categoryGroup)
+		{
+			if ($categoryGroup->hasUrls)
+			{
+				$sources[] = 'group:'.$categoryGroup->id;
+			}
+		}
+
+		return $sources;
+	}
+
+	/**
+	 * Get available Asset sources.
+	 *
+	 * @return array
+	 */
+	private function _getAssetSources()
+	{
+		$sources = array();
+
+		$assetSourceIds = $this->getSettings()->availableAssetSources;
+
+		if (!$assetSourceIds)
+		{
+			$assetSourceIds = craft()->assetSources->getPublicSourceIds();
+		}
+
+		$folders = craft()->assets->findFolders(array(
+			'sourceId' => $assetSourceIds,
+			'parentId' => ':empty:'
+		));
+
+		foreach ($folders as $folder)
+		{
+			$sources[] = 'folder:'.$folder->id;
+		}
+
+		return $sources;
+	}
+
+	/**
+	 * Get available Transforms.
+	 *
+	 * @return array
+	 */
+	private function _getTransforms()
+	{
+		$transforms = craft()->assetTransforms->getAllTransforms('id');
+		$settings = $this->getSettings();
+
+		$transformIds = array_flip(!empty($settings->availableTransforms) && is_array($settings->availableTransforms)? $settings->availableTransforms : array());
+		if (!empty($transformIds))
+		{
+			$transforms = array_intersect_key($transforms, $transformIds);
+		}
+
+		$transformList = array();
+		foreach ($transforms as $transform)
+		{
+			$transformList[] = (object) array('handle' => HtmlHelper::encode($transform->handle), 'name' => HtmlHelper::encode($transform->name));
+		}
+
+		return $transformList;
+	}
+
+	/**
+	 * Returns the Redactor config JSON used by this field.
 	 *
 	 * @return string
 	 */
-	private function _getConfigJs()
+	private function _getConfigJson()
 	{
 		if ($this->getSettings()->configFile)
 		{
 			$configPath = craft()->path->getConfigPath().'redactor/'.$this->getSettings()->configFile;
-			$js = IOHelper::getFileContents($configPath);
+			$json = IOHelper::getFileContents($configPath);
 		}
 
-		if (empty($js))
+		if (empty($json))
 		{
-			$js = '{}';
+			$json = '{}';
 		}
 
-		return $js;
+		return $json;
 	}
 
 	/**
 	 * Includes the input resources.
 	 *
-	 * @access private
+	 * @param string $configJs
+	 *
+	 * @return null
 	 */
-	private function _includeFieldResources()
+	private function _includeFieldResources($configJs)
 	{
-		craft()->templates->includeCssResource('lib/redactor/redactor.css');
-		craft()->templates->includeCssResource('lib/redactor/plugins/pagebreak.css');
+		craft()->templates->includeCssResource('lib/redactor/redactor.min.css');
 
-		// Gotta use the uncompressed Redactor JS until the compressed one gets our Live Preview menu fix
-		craft()->templates->includeJsResource('lib/redactor/redactor.js');
-		//craft()->templates->includeJsResource('lib/redactor/redactor'.(craft()->config->get('useCompressedJs') ? '.min' : '').'.js');
+		craft()->templates->includeJsResource('lib/redactor/redactor'.(craft()->config->get('useCompressedJs') ? '.min' : '').'.js');
 
-		craft()->templates->includeJsResource('lib/redactor/plugins/fullscreen.js');
-		craft()->templates->includeJsResource('lib/redactor/plugins/pagebreak.js');
+		$this->_maybeIncludeRedactorPlugin($configJs, 'fullscreen', false);
+		$this->_maybeIncludeRedactorPlugin($configJs, 'source|html', false);
+		$this->_maybeIncludeRedactorPlugin($configJs, 'table', false);
+		$this->_maybeIncludeRedactorPlugin($configJs, 'video', false);
+		$this->_maybeIncludeRedactorPlugin($configJs, 'pagebreak', true);
 
-		craft()->templates->includeTranslations('Insert image', 'Insert URL', 'Choose image', 'Link', 'Link to an entry', 'Insert link', 'Unlink', 'Link to an asset');
+		craft()->templates->includeTranslations('Insert image', 'Insert URL', 'Choose image', 'Link', 'Link to an entry', 'Insert link', 'Unlink', 'Link to an asset', 'Link to a category');
 
 		craft()->templates->includeJsResource('js/RichTextInput.js');
 
@@ -260,30 +521,88 @@ class RichTextFieldType extends BaseFieldType
 		if (craft()->language != craft()->sourceLanguage)
 		{
 			// First try to include the actual target locale
-			if (!$this->_includeLangFile(craft()->language))
+			if (!$this->_includeRedactorLangFile(craft()->language))
 			{
 				// Otherwise try to load the language (without the territory half)
 				$languageId = craft()->locale->getLanguageID(craft()->language);
-				$this->_includeLangFile($languageId);
+
+				if (!$this->_includeRedactorLangFile($languageId))
+				{
+					// If it's Norwegian Bokmål/Nynorsk, add plain ol' Norwegian as a fallback
+					if ($languageId === 'nb' || $languageId === 'nn')
+					{
+						$this->_includeRedactorLangFile('no');
+					}
+				}
 			}
+		}
+
+		$customTranslations = array(
+			'fullscreen' => Craft::t('Fullscreen'),
+			'insert-page-break' => Craft::t('Insert Page Break'),
+			'table' => Craft::t('Table'),
+			'insert-table' => Craft::t('Insert table'),
+			'insert-row-above' => Craft::t('Insert row above'),
+			'insert-row-below' => Craft::t('Insert row below'),
+			'insert-column-left' => Craft::t('Insert column left'),
+			'insert-column-right' => Craft::t('Insert column right'),
+			'add-head' => Craft::t('Add head'),
+			'delete-head' => Craft::t('Delete head'),
+			'delete-column' => Craft::t('Delete column'),
+			'delete-row' => Craft::t('Delete row'),
+			'delete-table' => Craft::t('Delete table'),
+			'video' => Craft::t('Video'),
+			'video-html-code' => Craft::t('Video Embed Code or Youtube/Vimeo Link'),
+		);
+
+		craft()->templates->includeJs(
+			'$.extend($.Redactor.opts.langs["'.static::$_redactorLang.'"], ' .
+			JsonHelper::encode($customTranslations) .
+			');');
+	}
+
+	/**
+	 * Includes a plugin’s JS file, if it appears to be requested by the config file.
+	 *
+	 * @param string $configJs
+	 * @param string $plugin
+	 * @param bool $includeCss
+	 *
+	 * @return null
+	 */
+	private function _maybeIncludeRedactorPlugin($configJs, $plugin, $includeCss)
+	{
+		if (preg_match('/([\'"])(?:'.$plugin.')\1/', $configJs))
+		{
+			if (($pipe = strpos($plugin, '|')) !== false)
+			{
+				$plugin = substr($plugin, 0, $pipe);
+			}
+
+			if ($includeCss)
+			{
+				craft()->templates->includeCssResource('lib/redactor/plugins/'.$plugin.'.css');
+			}
+
+			craft()->templates->includeJsResource('lib/redactor/plugins/'.$plugin.'.js');
 		}
 	}
 
 	/**
 	 * Attempts to include a Redactor language file.
 	 *
-	 * @access private
 	 * @param string $lang
+	 *
 	 * @return bool
 	 */
-	private function _includeLangFile($lang)
+	private function _includeRedactorLangFile($lang)
 	{
 		$path = 'lib/redactor/lang/'.$lang.'.js';
 
 		if (IOHelper::fileExists(craft()->path->getResourcesPath().$path))
 		{
 			craft()->templates->includeJsResource($path);
-			static::$_inputLang = $lang;
+			static::$_redactorLang = $lang;
 
 			return true;
 		}

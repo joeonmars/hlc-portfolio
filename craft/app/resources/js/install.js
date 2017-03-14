@@ -1,17 +1,7 @@
-/**
- * Craft by Pixel & Tonic
- *
- * @package   Craft
- * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
- * @license   http://buildwithcraft.com/license Craft License Agreement
- * @link      http://buildwithcraft.com
- */
-
 (function($) {
 
-Craft.Installer = Garnish.Base.extend({
-
+Craft.Installer = Garnish.Base.extend(
+{
 	$bg: null,
 	$screens: null,
 	$currentScreen: null,
@@ -69,8 +59,8 @@ Craft.Installer = Garnish.Base.extend({
 
 	showInstallScreen: function()
 	{
-		this.showScreen(3, $.proxy(function() {
-
+		this.showScreen(3, $.proxy(function()
+		{
 			var inputs = ['username', 'email', 'password', 'siteName', 'siteUrl', 'locale'];
 
 			var data = {};
@@ -97,7 +87,7 @@ Craft.Installer = Garnish.Base.extend({
 			this.$currentScreen.find('h1:first').text(Craft.t('All done!'));
 
 			var $buttons = $('<div class="buttons"/>'),
-				$go = $('<div class="btn big submit">'+Craft.t('Go to Craft')+'</div>').appendTo($buttons);
+				$go = $('<div class="btn big submit">'+Craft.t('Go to Craft CMS')+'</div>').appendTo($buttons);
 
 			$('#spinner').replaceWith($buttons);
 
@@ -123,9 +113,7 @@ Craft.Installer = Garnish.Base.extend({
 		}
 
 		// Slide the BG
-		this.$bg.animate({
-			left: '-'+(i*5)+'%'
-		}, bgDuration);
+		this.$bg.velocity({ left: '-'+(i*5)+'%' }, bgDuration);
 
 		// Slide out the old screen
 		var windowWidth = Garnish.$win.width(),
@@ -135,9 +123,7 @@ Craft.Installer = Garnish.Base.extend({
 		{
 			this.$currentScreen
 				.css('left', centeredLeftPos)
-				.animate({
-					left: -400
-				}, Craft.Installer.duration);
+				.velocity({ left: -400 }, Craft.Installer.duration);
 		}
 
 		// Slide in the new screen
@@ -146,7 +132,8 @@ Craft.Installer = Garnish.Base.extend({
 				display: 'block',
 				left: windowWidth + 400
 			})
-			.animate({left: centeredLeftPos}, Craft.Installer.duration, $.proxy(function() {
+			.velocity({ left: centeredLeftPos }, Craft.Installer.duration, $.proxy(function()
+			{
 				// Relax the screen
 				this.$currentScreen.css('left', '50%');
 
@@ -182,8 +169,8 @@ Craft.Installer = Garnish.Base.extend({
 			data[input] = Garnish.getInputPostVal($input);
 		}
 
-		Craft.postActionRequest(action, data, $.proxy(function(response, textStatus) {
-
+		Craft.postActionRequest(action, data, $.proxy(function(response, textStatus)
+		{
 			this.loading = false;
 			$submitBtn.removeClass('sel loading');
 

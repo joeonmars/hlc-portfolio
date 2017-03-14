@@ -1,5 +1,6 @@
 goog.provide( 'hlc.views.Loader' );
 
+goog.require( 'goog.async.Throttle' );
 goog.require( 'goog.fx.anim' );
 goog.require( 'goog.dom' );
 goog.require( 'goog.events.EventTarget' );
@@ -14,6 +15,7 @@ goog.require( 'goog.object' );
 
 /** @constructor */
 hlc.views.Loader = function (bulkAssets, imageAssets, duration) {
+
 	goog.base(this);
 
 	// loader properties
@@ -54,8 +56,20 @@ hlc.views.Loader = function (bulkAssets, imageAssets, duration) {
 		'onCompleteScope': this
 	});
 
-	this._startTime = null;
 	this._duration = duration || 0;
+	
+	this._progressThrottle = new goog.async.Throttle( this.animateToProgress, 500, this );
+
+	this._progressProps = {
+		progress: 0
+	};
+
+	this._progressTweener = new TweenMax(this._progressProps, 0, {
+		progress: 0,
+		ease: Linear.easeNone,
+		onUpdate: this.onProgressUpdate,
+		onUpdateScope: this
+	});
 };
 goog.inherits(hlc.views.Loader, goog.events.EventTarget);
 
@@ -65,6 +79,9 @@ hlc.views.Loader.prototype.disposeInternal = function() {
 
 	// stop animation
 	goog.fx.anim.unregisterAnimation(this);
+
+	this._progressTweener.kill();
+	this._progressThrottle.dispose();
 
 	// kill tweener instances
 	this._animateInTweener.kill();
@@ -188,8 +205,35 @@ hlc.views.Loader.prototype.start = function(loaders) {
 
 	this._eventHandler.listen(this, hlc.events.EventType.PROGRESS, this.onProgress, false, this);
 
-	this._startTime = goog.now();
 	goog.fx.anim.registerAnimation(this);
+};
+
+
+hlc.views.Loader.prototype.animateToProgress = function() {
+
+	var progress = this._loadedAssets / this._totalAssets;
+	var timeDiff = (progress - this._progressProps.progress) * this._duration;
+
+	if (timeDiff > 0) {
+		this._progressTweener.duration(timeDiff).updateTo({
+			progress: progress
+		}, true);
+	}
+};
+
+
+hlc.views.Loader.prototype.onProgressUpdate = function() {
+
+	var progress = this._progressProps.progress;
+
+	this.dispatchEvent({
+		type: hlc.events.EventType.PROGRESS,
+		progress: progress
+	});
+
+	if (progress >= 1) {
+		this.onAnimationComplete();
+	}
 };
 
 
@@ -215,23 +259,18 @@ hlc.views.Loader.prototype.onAnimatedOut = function(e) {
 
 
 hlc.views.Loader.prototype.onAnimationFrame = function(now) {
-	var elapsed = now - this._startTime;
-	var animationProgress = Math.min(elapsed / this._duration, 1, this._progress);
 
-	if(animationProgress === 1) {
-		this.onAnimationComplete();
-	}
-
-	this.dispatchEvent({
-		type: hlc.events.EventType.PROGRESS,
-		progress: animationProgress
-	});
+	this._progressThrottle.fire();
 };
 
 
 hlc.views.Loader.prototype.onAnimationComplete = function(e) {
+
 	// stop animation
 	goog.fx.anim.unregisterAnimation(this);
+
+	this._progressTweener.kill();
+	this._progressThrottle.dispose();
 
 	// start animate out
 	this.animateOut();
@@ -243,7 +282,7 @@ hlc.views.Loader.prototype.onAnimationComplete = function(e) {
 
 
 hlc.views.Loader.prototype.onProgress = function(e) {
-	
+
 };
 
 
@@ -271,6 +310,8 @@ hlc.views.Loader.prototype.onLoadComplete = function() {
 
 	this._progress = 1;
 	this._isLoaded = true;
+
+	this._progressThrottle.stop();
 };
 
 

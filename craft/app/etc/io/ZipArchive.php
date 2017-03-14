@@ -2,24 +2,26 @@
 namespace Craft;
 
 /**
- * Craft by Pixel & Tonic
+ * Class ZipArchive
  *
- * @package   Craft
- * @author    Pixel & Tonic, Inc.
+ * @author    Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
- * @license   http://buildwithcraft.com/license Craft License Agreement
- * @link      http://buildwithcraft.com
- */
-
-/**
- *
+ * @license   http://craftcms.com/license Craft License Agreement
+ * @see       http://craftcms.com
+ * @package   craft.app.etc.io
+ * @since     1.0
  */
 class ZipArchive implements IZip
 {
+	// Public Methods
+	// =========================================================================
 
 	/**
+	 * @inheritDoc IZip::zip()
+	 *
 	 * @param $sourceFolder
 	 * @param $destZip
+	 *
 	 * @return bool
 	 */
 	public function zip($sourceFolder, $destZip)
@@ -38,8 +40,11 @@ class ZipArchive implements IZip
 	}
 
 	/**
+	 * @inheritDoc IZip::unzip()
+	 *
 	 * @param $srcZip
 	 * @param $destFolder
+	 *
 	 * @return bool
 	 */
 	public function unzip($srcZip, $destFolder)
@@ -99,12 +104,13 @@ class ZipArchive implements IZip
 	}
 
 	/**
-	 * Will add either a file or a folder to an existing zip file.  If it is a folder, it will add the contents recursively.
+	 * @inheritDoc IZip::add()
 	 *
-	 * @param string $sourceZip     The zip file to be added to.
-	 * @param string $pathToAdd     A file or a folder to add.  If it is a folder, it will recursively add the contents of the folder to the zip.
-	 * @param string $basePath      The root path of the file(s) to be added that will be removed before adding.
-	 * @param string $pathPrefix    A path to be prepended to each file before it is added to the zip.
+	 * @param string $sourceZip
+	 * @param string $pathToAdd
+	 * @param string $basePath
+	 * @param null   $pathPrefix
+	 *
 	 * @return bool
 	 */
 	public function add($sourceZip, $pathToAdd, $basePath, $pathPrefix = null)
@@ -127,34 +133,37 @@ class ZipArchive implements IZip
 			$folderContents = IOHelper::getFolderContents($pathToAdd, true);
 		}
 
-		foreach ($folderContents as $itemToZip)
+		if ($folderContents)
 		{
-			if (IOHelper::isReadable($itemToZip))
+			foreach ($folderContents as $itemToZip)
 			{
-				// Figure out the relative path we'll be adding to the zip.
-				$relFilePath = mb_substr($itemToZip, mb_strlen($basePath));
-
-				if ($pathPrefix)
+				if (IOHelper::isReadable($itemToZip))
 				{
-					$pathPrefix = IOHelper::normalizePathSeparators($pathPrefix);
-					$relFilePath = $pathPrefix.$relFilePath;
-				}
+					// Figure out the relative path we'll be adding to the zip.
+					$relFilePath = mb_substr($itemToZip, mb_strlen($basePath));
 
-				if (IOHelper::folderExists($itemToZip))
-				{
-					if (IOHelper::isFolderEmpty($itemToZip))
+					if ($pathPrefix)
 					{
-						$zip->addEmptyDir($relFilePath);
+						$pathPrefix = IOHelper::normalizePathSeparators($pathPrefix);
+						$relFilePath = $pathPrefix.$relFilePath;
 					}
-				}
-				elseif (IOHelper::fileExists($itemToZip))
-				{
-					// We can't use $zip->addFile() here but it's a terrible, horrible, POS method that's buggy on Windows.
-					$fileContents = IOHelper::getFileContents($itemToZip);
 
-					if (!$zip->addFromString($relFilePath, $fileContents))
+					if (IOHelper::folderExists($itemToZip))
 					{
-						Craft::log('There was an error adding the file '.$itemToZip.' to the zip: '.$itemToZip, LogLevel::Error);
+						if (IOHelper::isFolderEmpty($itemToZip))
+						{
+							$zip->addEmptyDir($relFilePath);
+						}
+					}
+					elseif (IOHelper::fileExists($itemToZip))
+					{
+						// We can't use $zip->addFile() here but it's a terrible, horrible, POS method that's buggy on Windows.
+						$fileContents = IOHelper::getFileContents($itemToZip);
+
+						if (!$zip->addFromString($relFilePath, $fileContents))
+						{
+							Craft::log('There was an error adding the file '.$itemToZip.' to the zip: '.$itemToZip, LogLevel::Error);
+						}
 					}
 				}
 			}

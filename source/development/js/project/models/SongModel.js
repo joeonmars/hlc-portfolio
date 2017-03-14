@@ -47,6 +47,7 @@ hlc.models.SongModel = function(songId, songData, album){
 
   this.audio = new Audio();
   this.audio.setAttribute('preload', 'none');
+  this.audio.setAttribute('title', this.songTitle);
 
   if(goog.userAgent.GECKO || goog.userAgent.OPERA) {
   	this.audio.setAttribute('src', oggUrl);

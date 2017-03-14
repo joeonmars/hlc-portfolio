@@ -1,21 +1,11 @@
-/**
- * Craft by Pixel & Tonic
- *
- * @package   Craft
- * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
- * @license   http://buildwithcraft.com/license Craft License Agreement
- * @link      http://buildwithcraft.com
- */
-
 (function($){
 
 
 /**
  * Matrix configurator class
  */
-Craft.MatrixConfigurator = Garnish.Base.extend({
-
+Craft.MatrixConfigurator = Garnish.Base.extend(
+{
 	fieldTypeInfo: null,
 
 	inputNamePrefix: null,
@@ -27,6 +17,7 @@ Craft.MatrixConfigurator = Garnish.Base.extend({
 	$fieldsColumnContainer: null,
 	$fieldSettingsColumnContainer: null,
 
+	$blockTypeItemsOuterContainer: null,
 	$blockTypeItemsContainer: null,
 	$fieldItemsContainer: null,
 	$fieldSettingItemsContainer: null,
@@ -46,23 +37,26 @@ Craft.MatrixConfigurator = Garnish.Base.extend({
 		this.inputNamePrefix = inputNamePrefix;
 		this.inputIdPrefix = Craft.formatInputId(this.inputNamePrefix);
 
-		this.$container = $('.matrix-configurator:first .input:first');
+		this.$container = $('#'+this.inputIdPrefix+'-matrix-configurator:first .input:first');
 
 		this.$blockTypesColumnContainer = this.$container.children('.block-types').children();
 		this.$fieldsColumnContainer = this.$container.children('.fields').children();
 		this.$fieldSettingsColumnContainer = this.$container.children('.field-settings').children();
 
-		this.$blockTypeItemsContainer = this.$blockTypesColumnContainer.children('.items');
-		this.$fieldItemsContainer = this.$fieldsColumnContainer.children('.items');
+		this.$blockTypeItemsOuterContainer = this.$blockTypesColumnContainer.children('.items');
+		this.$blockTypeItemsContainer = this.$blockTypeItemsOuterContainer.children('.blocktypes');
+		this.$fieldItemsOuterContainer = this.$fieldsColumnContainer.children('.items');
 		this.$fieldSettingItemsContainer = this.$fieldSettingsColumnContainer.children('.items');
 
-		this.$newBlockTypeBtn = this.$blockTypeItemsContainer.children('.btn');
-		this.$newFieldBtn = this.$fieldItemsContainer.children('.btn');
+		this.setContainerHeight();
+
+		this.$newBlockTypeBtn = this.$blockTypeItemsOuterContainer.children('.btn');
+		this.$newFieldBtn = this.$fieldItemsOuterContainer.children('.btn');
 
 		// Find the existing block types
 		this.blockTypes = {};
 
-		var $blockTypeItems = this.$blockTypeItemsContainer.children('.matrixconfigitem');
+		var $blockTypeItems = this.$blockTypeItemsContainer.children();
 
 		for (var i = 0; i < $blockTypeItems.length; i++)
 		{
@@ -81,13 +75,25 @@ Craft.MatrixConfigurator = Garnish.Base.extend({
 		}
 
 		this.blockTypeSort = new Garnish.DragSort($blockTypeItems, {
-			caboose: '<div/>',
 			handle: '.move',
 			axis: 'y'
 		});
 
 		this.addListener(this.$newBlockTypeBtn, 'click', 'addBlockType');
 		this.addListener(this.$newFieldBtn, 'click', 'addFieldToSelectedBlockType');
+
+		this.addListener(this.$blockTypesColumnContainer, 'resize', 'setContainerHeight');
+		this.addListener(this.$fieldsColumnContainer, 'resize', 'setContainerHeight');
+		this.addListener(this.$fieldSettingsColumnContainer, 'resize', 'setContainerHeight');
+	},
+
+	setContainerHeight: function()
+	{
+		setTimeout($.proxy(function()
+		{
+			var maxColHeight = Math.max(this.$blockTypesColumnContainer.height(), this.$fieldsColumnContainer.height(), this.$fieldSettingsColumnContainer.height(), 400);
+			this.$container.height(maxColHeight);
+		}, this), 1);
 	},
 
 	getFieldTypeInfo: function(type)
@@ -123,7 +129,7 @@ Craft.MatrixConfigurator = Garnish.Base.extend({
 					'<input class="hidden" name="types[Matrix][blockTypes]['+id+'][name]">' +
 					'<input class="hidden" name="types[Matrix][blockTypes]['+id+'][handle]">' +
 				'</div>'
-			).insertBefore(this.$newBlockTypeBtn);
+			).appendTo(this.$blockTypeItemsContainer);
 
 			this.blockTypes[id] = new BlockType(this, $item);
 			this.blockTypes[id].applySettings(name, handle);
@@ -157,13 +163,13 @@ Craft.MatrixConfigurator = Garnish.Base.extend({
 /**
  * Block type settings modal class
  */
-var BlockTypeSettingsModal = Garnish.Modal.extend({
-
+var BlockTypeSettingsModal = Garnish.Modal.extend(
+{
 	init: function()
 	{
 		this.base();
 
-		this.$form = $('<form class="modal"/>').appendTo(Garnish.$bod);
+		this.$form = $('<form class="modal fitted"/>').appendTo(Garnish.$bod);
 		this.setContainer(this.$form);
 
 		this.$body = $('<div class="body"/>').appendTo(this.$form);
@@ -264,7 +270,7 @@ var BlockTypeSettingsModal = Garnish.Modal.extend({
 		if (!Garnish.isMobileBrowser())
 		{
 			setTimeout($.proxy(function() {
-				this.$nameInput.focus()
+				this.$nameInput.focus();
 			}, this), 100);
 		}
 
@@ -301,8 +307,8 @@ var BlockTypeSettingsModal = Garnish.Modal.extend({
 /**
  * Block type class
  */
-var BlockType = Garnish.Base.extend({
-
+var BlockType = Garnish.Base.extend(
+{
 	configurator: null,
 	id: null,
 	errors: null,
@@ -342,7 +348,7 @@ var BlockType = Garnish.Base.extend({
 		this.$settingsBtn = this.$item.find('.settings');
 
 		// Find the field items container if it exists, otherwise create it
-		this.$fieldItemsContainer = this.configurator.$fieldItemsContainer.children('[data-id="'+this.id+'"]:first');
+		this.$fieldItemsContainer = this.configurator.$fieldItemsOuterContainer.children('[data-id="'+this.id+'"]:first');
 
 		if (!this.$fieldItemsContainer.length)
 		{
@@ -382,7 +388,6 @@ var BlockType = Garnish.Base.extend({
 		this.addListener(this.$settingsBtn, 'click', 'showSettings');
 
 		this.fieldSort = new Garnish.DragSort($fieldItems, {
-			caboose: '<div/>',
 			handle: '.move',
 			axis: 'y',
 			onSortChange: $.proxy(function() {
@@ -411,7 +416,7 @@ var BlockType = Garnish.Base.extend({
 			this.configurator.selectedBlockType.deselect();
 		}
 
-		this.configurator.$fieldsColumnContainer.removeClass('hidden');
+		this.configurator.$fieldsColumnContainer.removeClass('hidden').trigger('resize');
 		this.$fieldItemsContainer.removeClass('hidden');
 		this.$item.addClass('sel');
 		this.configurator.selectedBlockType = this;
@@ -420,7 +425,7 @@ var BlockType = Garnish.Base.extend({
 	deselect: function()
 	{
 		this.$item.removeClass('sel');
-		this.configurator.$fieldsColumnContainer.addClass('hidden');
+		this.configurator.$fieldsColumnContainer.addClass('hidden').trigger('resize');
 		this.$fieldItemsContainer.addClass('hidden');
 		this.$fieldSettingsContainer.addClass('hidden');
 		this.configurator.selectedBlockType = null;
@@ -460,7 +465,7 @@ var BlockType = Garnish.Base.extend({
 
 		var $item = $(
 			'<div class="matrixconfigitem mci-field" data-id="'+id+'">' +
-				'<div class="name">&nbsp;</div>' +
+				'<div class="name"><em class="light">'+Craft.t('(blank)')+'</em>&nbsp;</div>' +
 				'<div class="handle code">&nbsp;</div>' +
 				'<div class="actions">' +
 					'<a class="move icon" title="'+Craft.t('Reorder')+'"></a>' +
@@ -488,8 +493,8 @@ var BlockType = Garnish.Base.extend({
 });
 
 
-Field = Garnish.Base.extend({
-
+Field = Garnish.Base.extend(
+{
 	configurator: null,
 	blockType: null,
 	id: null,
@@ -579,7 +584,7 @@ Field = Garnish.Base.extend({
 			this.blockType.selectedField.deselect();
 		}
 
-		this.configurator.$fieldSettingsColumnContainer.removeClass('hidden');
+		this.configurator.$fieldSettingsColumnContainer.removeClass('hidden').trigger('resize');
 		this.blockType.$fieldSettingsContainer.removeClass('hidden');
 		this.$fieldSettingsContainer.removeClass('hidden');
 		this.$item.addClass('sel');
@@ -588,7 +593,7 @@ Field = Garnish.Base.extend({
 		if (!Garnish.isMobileBrowser())
 		{
 			setTimeout($.proxy(function() {
-				this.$nameInput.focus()
+				this.$nameInput.focus();
 			}, this), 100);
 		}
 	},
@@ -596,7 +601,7 @@ Field = Garnish.Base.extend({
 	deselect: function()
 	{
 		this.$item.removeClass('sel');
-		this.configurator.$fieldSettingsColumnContainer.addClass('hidden');
+		this.configurator.$fieldSettingsColumnContainer.addClass('hidden').trigger('resize');
 		this.blockType.$fieldSettingsContainer.addClass('hidden');
 		this.$fieldSettingsContainer.addClass('hidden');
 		this.blockType.selectedField = null;
@@ -604,7 +609,8 @@ Field = Garnish.Base.extend({
 
 	updateNameLabel: function()
 	{
-		this.$nameLabel.html(Craft.escapeHtml(this.$nameInput.val())+'&nbsp;');
+		var val = this.$nameInput.val();
+		this.$nameLabel.html((val ? Craft.escapeHtml(val) : '<em class="light">'+Craft.t('(blank)')+'</em>')+'&nbsp;');
 	},
 
 	updateHandleLabel: function()
@@ -639,20 +645,23 @@ Field = Garnish.Base.extend({
 		this.selectedFieldType = type;
 		this.$typeSelect.val(type);
 
-		var firstTime = (typeof this.initializedFieldTypeSettings[type] == 'undefined');
+		var firstTime = (typeof this.initializedFieldTypeSettings[type] == 'undefined'),
+			footHtml,
+			$body;
 
 		if (firstTime)
 		{
 			var info = this.configurator.getFieldTypeInfo(type),
-				bodyHtml = this.getParsedFieldTypeHtml(info.settingsBodyHtml),
-				footHtml = this.getParsedFieldTypeHtml(info.settingsFootHtml),
-				$body = $('<div>'+bodyHtml+'</div>');
+				bodyHtml = this.getParsedFieldTypeHtml(info.settingsBodyHtml);
+
+			footHtml = this.getParsedFieldTypeHtml(info.settingsFootHtml);
+			$body = $('<div>'+bodyHtml+'</div>');
 
 			this.initializedFieldTypeSettings[type] = $body;
 		}
 		else
 		{
-			var $body = this.initializedFieldTypeSettings[type];
+			$body = this.initializedFieldTypeSettings[type];
 		}
 
 		$body.appendTo(this.$typeSettingsContainer);
@@ -660,8 +669,11 @@ Field = Garnish.Base.extend({
 		if (firstTime)
 		{
 			Craft.initUiElements($body);
-			$('body').append(footHtml);
+			Garnish.$bod.append(footHtml);
 		}
+
+		// Firefox might have been sleeping on the job.
+		this.$typeSettingsContainer.trigger('resize');
 	},
 
 	getParsedFieldTypeHtml: function(html)
@@ -685,7 +697,7 @@ Field = Garnish.Base.extend({
 			'<div data-id="'+this.id+'">' +
 				'<div class="field" id="'+this.inputIdPrefix+'-name-field">' +
 					'<div class="heading">' +
-						'<label class="required" for="'+this.inputIdPrefix+'-name">'+Craft.t('Name')+'</label>' +
+						'<label for="'+this.inputIdPrefix+'-name">'+Craft.t('Name')+'</label>' +
 					'</div>' +
 					'<div class="input">' +
 						'<input class="text fullwidth" type="text" id="'+this.inputIdPrefix+'-name" name="'+this.inputNamePrefix+'[name]" autofocus="" autocomplete="off"/>' +
@@ -699,7 +711,15 @@ Field = Garnish.Base.extend({
 						'<input class="text fullwidth code" type="text" id="'+this.inputIdPrefix+'-handle" name="'+this.inputNamePrefix+'[handle]" autofocus="" autocomplete="off"/>' +
 					'</div>' +
 				'</div>' +
-				'<div class="field checkbox">' +
+				'<div class="field" id="'+this.inputIdPrefix+'-instructions-field">' +
+					'<div class="heading">' +
+						'<label for="'+this.inputIdPrefix+'-instructions">'+Craft.t('Instructions')+'</label>' +
+					'</div>' +
+					'<div class="input">' +
+						'<textarea class="text nicetext fullwidth" rows="2" cols="50" id="'+this.inputIdPrefix+'-instructions" name="'+this.inputNamePrefix+'[instructions]"></textarea>' +
+					'</div>' +
+				'</div>' +
+				'<div class="field checkboxfield">' +
 					'<label>' +
 						'<input type="hidden" name="'+this.inputNamePrefix+'[required]" value=""/>' +
 						'<input type="checkbox" value="1" name="'+this.inputNamePrefix+'[required]"/> ' +
@@ -707,10 +727,10 @@ Field = Garnish.Base.extend({
 					'</label>' +
 				'</div>';
 
-		if (Craft.hasPackage('Localize'))
+		if (Craft.isLocalized)
 		{
 			html +=
-				'<div class="field checkbox">' +
+				'<div class="field checkboxfield">' +
 					'<label>' +
 						'<input type="hidden" name="'+this.inputNamePrefix+'[translatable]" value=""/>' +
 						'<input type="checkbox" value="1" name="'+this.inputNamePrefix+'[translatable]"/> ' +

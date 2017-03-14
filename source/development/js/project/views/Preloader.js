@@ -19,7 +19,7 @@ hlc.views.Preloader = function() {
 		goog.object.add( imageAssets, id, url );
 	} );
 
-	goog.base( this, bulkAssets, imageAssets, 4000 );
+	goog.base( this, bulkAssets, imageAssets, 3 );
 
 	this.assets = {};
 	this._domElement = goog.dom.getElement( 'preloader' );
@@ -47,7 +47,7 @@ hlc.views.Preloader = function() {
 	this._numeratorHundredsDigits = goog.dom.query( 'span', this._numeratorHundredsEl );
 
 	//
-	this._progressUpdateThrottle = new goog.async.Throttle( this.renderProgress, 350, this );
+	this._progressUpdateThrottle = new goog.async.Throttle( this.renderProgress, 500, this );
 
 	this._hasProgress = false;
 	this._animationProgress = 0;
@@ -71,20 +71,20 @@ hlc.views.Preloader = function() {
 	this._animateInTweener.add( fadeInTweener );
 	this._animateInTweener.add( portraitInTweener, '+=0', 'start', .25 );
 
-	var contentOutTweener = TweenMax.to( this._contentEl, .8, {
+	var contentOutTweener = TweenMax.to( this._contentEl, 1, {
 		opacity: 0,
 		y: -80,
 		ease: Cubic.easeInOut
 	} );
 
-	var portraitOutTweener = TweenMax.to( this._portraitEl, .8, {
+	var portraitOutTweener = TweenMax.to( this._portraitEl, 1, {
 		delay: .25,
 		opacity: 0,
 		y: -40,
 		ease: Cubic.easeInOut
 	} );
 
-	var curtainTweener = TweenMax.fromTo( this._curtainEl, 1, {
+	var curtainTweener = TweenMax.fromTo( this._curtainEl, 1.2, {
 		opacity: 0
 	}, {
 		delay: .5,

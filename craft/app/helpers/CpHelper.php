@@ -2,23 +2,24 @@
 namespace Craft;
 
 /**
- * Craft by Pixel & Tonic
+ * Class CpHelper
  *
- * @package   Craft
- * @author    Pixel & Tonic, Inc.
+ * @author    Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
- * @license   http://buildwithcraft.com/license Craft License Agreement
- * @link      http://buildwithcraft.com
- */
-
-/**
- *
+ * @license   http://craftcms.com/license Craft License Agreement
+ * @see       http://craftcms.com
+ * @package   craft.app.helpers
+ * @since     1.0
  */
 class CpHelper
 {
+	// Public Methods
+	// =========================================================================
+
 	/**
-	 * @static
-	 * @param bool $fetch
+	 * @param string|null $path
+	 * @param bool        $fetch
+	 *
 	 * @return array
 	 */
 	public static function getAlerts($path = null, $fetch = false)
@@ -33,9 +34,26 @@ class CpHelper
 
 		if (craft()->updates->isUpdateInfoCached() || $fetch)
 		{
-			// Fetch the updates regardless of whether we're on the Updates page or not,
-			// because the other alerts are relying on cached Elliott info
+			// Fetch the updates regardless of whether we're on the Updates page or not, because the other alerts are
+			// relying on cached Elliott info
 			$updateModel = craft()->updates->getUpdates();
+
+			// Get the license key status
+			$licenseKeyStatus = craft()->et->getLicenseKeyStatus();
+
+			// Invalid license?
+			if ($licenseKeyStatus == LicenseKeyStatus::Invalid)
+			{
+				$alerts[] = Craft::t('Your license key is invalid.');
+			}
+			else if (craft()->hasWrongEdition())
+			{
+				$alerts[] = Craft::t('You’re running Craft {edition} with a Craft {licensedEdition} license.', array(
+						'edition' => craft()->getEditionName(),
+						'licensedEdition' => craft()->getLicensedEditionName()
+					)) .
+					' <a class="go edition-resolution">'.Craft::t('Resolve').'</a>';
+			}
 
 			if ($path != 'updates' && $user->can('performUpdates'))
 			{
@@ -43,16 +61,14 @@ class CpHelper
 				{
 					if (craft()->updates->criticalCraftUpdateAvailable($updateModel->app->releases))
 					{
-						$alerts[] = Craft::t('There’s a critical Craft update available.') .
-							' <a class="go" href="'.UrlHelper::getUrl('updates').'">'.Craft::t('Go to Updates').'</a>';
+						$alerts[] = Craft::t('There’s a critical Craft CMS update available.') .
+							' <a class="go nowrap" href="'.UrlHelper::getUrl('updates').'">'.Craft::t('Go to Updates').'</a>';
 					}
 				}
 			}
 
 			// Domain mismatch?
-			$licenseKeyStatus = craft()->et->getLicenseKeyStatus();
-
-			if ($licenseKeyStatus == LicenseKeyStatus::MismatchedDomain)
+			if ($licenseKeyStatus == LicenseKeyStatus::Mismatched)
 			{
 				$licensedDomain = craft()->et->getLicensedDomain();
 				$licenseKeyPath = craft()->path->getLicenseKeyPath();
@@ -66,7 +82,7 @@ class CpHelper
 				// Can they actually do something about it?
 				if ($user->admin)
 				{
-					$action = '<a class="domain-mismatch">'.Craft::t('Transfer it to this domain?').'</a>';
+					$action = '<a class="go domain-mismatch">'.Craft::t('Transfer it to this domain').'</a>';
 				}
 				else
 				{
@@ -75,92 +91,13 @@ class CpHelper
 
 				$alerts[] = $message.' '.$action;
 			}
+		}
 
-			// Unlicensed packages?
-			if ($path != 'settings/packages')
-			{
-				$licensedPackages = craft()->et->getLicensedPackages();
-				$packageTrials    = craft()->et->getPackageTrials();
+		$allPluginAlerts = craft()->plugins->call('getCpAlerts', array($path, $fetch), true);
 
-				// Could be false if not cached
-				if (is_array($licensedPackages))
-				{
-					// Look for any unlicensed licenses
-					$unlicensedPackages = array();
-
-					foreach (craft()->getPackages() as $package)
-					{
-						if (!in_array($package, $licensedPackages))
-						{
-							// Make sure it's not in trial
-							if (!is_array($packageTrials) || !in_array($package, array_keys($packageTrials)))
-							{
-								$unlicensedPackages[] = $package;
-							}
-						}
-					}
-
-					if ($unlicensedPackages)
-					{
-						if (count($unlicensedPackages) == 1)
-						{
-							$message = Craft::t('The {package} package is installed, but it’s not licensed.', array('package' => Craft::t($unlicensedPackages[0])));
-						}
-						else
-						{
-							$message = Craft::t('You have multiple unlicensed packages installed.');
-						}
-
-						// Can they actually do something about it?
-						if ($user->admin)
-						{
-							$action = '<a class="go" href="'.UrlHelper::getUrl('settings/packages').'">'.Craft::t('Manage packages').'</a>';
-						}
-						else
-						{
-							$action = Craft::t('Please notify one of your site’s admins.');
-						}
-
-						$alerts[] = $message.' '.$action;
-					}
-				}
-
-				if ($packageTrials && $user->admin && !$user->hasShunned('packageTrialAlert'))
-				{
-					$expiringTrials = array();
-					$currentTime = DateTimeHelper::currentUTCDateTime();
-					$nextWeek = $currentTime->add(new DateInterval('P1W'))->getTimestamp();
-
-					// See if there are any package trials that expire in less than a week
-					foreach (craft()->getPackages() as $package)
-					{
-						if (!empty($packageTrials[$package]))
-						{
-							if ($packageTrials[$package] < $nextWeek)
-							{
-								$expiringTrials[] = $package;
-							}
-						}
-					}
-
-					if ($expiringTrials)
-					{
-						if (count($expiringTrials) == 1)
-						{
-							$message = Craft::t('Your {package} trial is expiring soon.', array('package' => Craft::t($expiringTrials[0])));
-						}
-						else
-						{
-							$message = Craft::t('You have multiple package trials expiring soon.');
-						}
-
-						$action1 = '<a class="shun:packageTrialAlert">'.Craft::t('Remind me later').'</a>';
-						$action2 = '<a class="go" href="'.UrlHelper::getUrl('settings/packages').'">'.Craft::t('manage packages').'</a>';
-
-						$alerts[] = $message.' '.$action1.' '.Craft::t('or').' '.$action2;
-					}
-				}
-			}
+		foreach ($allPluginAlerts as $pluginAlerts)
+		{
+			$alerts = array_merge($alerts, $pluginAlerts);
 		}
 
 		return $alerts;

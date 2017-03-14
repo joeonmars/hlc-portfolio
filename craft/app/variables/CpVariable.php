@@ -2,49 +2,54 @@
 namespace Craft;
 
 /**
- * Craft by Pixel & Tonic
- *
- * @package   Craft
- * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
- * @license   http://buildwithcraft.com/license Craft License Agreement
- * @link      http://buildwithcraft.com
- */
-
-/**
  * CP functions
+ *
+ * @author    Pixel & Tonic, Inc. <support@pixelandtonic.com>
+ * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
+ * @license   http://craftcms.com/license Craft License Agreement
+ * @see       http://craftcms.com
+ * @package   craft.app.variables
+ * @since     1.0
  */
 class CpVariable
 {
+	// Public Methods
+	// =========================================================================
+
 	/**
 	 * Get the sections of the CP.
 	 *
 	 * @return array
 	 */
-	public function nav()
+	public function nav($iconSize = 32)
 	{
-		$nav['dashboard'] = array('name' => Craft::t('Dashboard'));
+		$nav['dashboard'] = array('label' => Craft::t('Dashboard'), 'icon' => 'gauge');
 
 		if (craft()->sections->getTotalEditableSections())
 		{
-			$nav['entries'] = array('name' => Craft::t('Entries'));
+			$nav['entries'] = array('label' => Craft::t('Entries'), 'icon' => 'section');
 		}
 
 		$globals = craft()->globals->getEditableSets();
 
 		if ($globals)
 		{
-			$nav['globals'] = array('name' => Craft::t('Globals'), 'url' => 'globals/'.$globals[0]->handle);
+			$nav['globals'] = array('label' => Craft::t('Globals'), 'url' => 'globals/'.$globals[0]->handle, 'icon' => 'globe');
+		}
+
+		if (craft()->categories->getEditableGroupIds())
+		{
+			$nav['categories'] = array('label' => Craft::t('Categories'), 'icon' => 'categories');
 		}
 
 		if (craft()->assetSources->getTotalViewableSources())
 		{
-			$nav['assets'] = array('name' => Craft::t('Assets'));
+			$nav['assets'] = array('label' => Craft::t('Assets'), 'icon' => 'assets');
 		}
 
-		if (craft()->hasPackage(CraftPackage::Users) && craft()->userSession->checkPermission('editUsers'))
+		if (craft()->getEdition() == Craft::Pro && craft()->userSession->checkPermission('editUsers'))
 		{
-			$nav['users'] = array('name' => Craft::t('Users'));
+			$nav['users'] = array('label' => Craft::t('Users'), 'icon' => 'users');
 		}
 
 		// Add any Plugin nav items
@@ -54,14 +59,39 @@ class CpVariable
 		{
 			if ($plugin->hasCpSection())
 			{
-				if (craft()->userSession->checkPermission('accessPlugin-'.$plugin->getClassHandle()))
+				$pluginHandle = $plugin->getClassHandle();
+
+				if (craft()->userSession->checkPermission('accessPlugin-'.$pluginHandle))
 				{
-					$lcHandle = mb_strtolower($plugin->getClassHandle());
-					$nav[$lcHandle] = array('name' => $plugin->getName());
+					$lcHandle = StringHelper::toLowerCase($pluginHandle);
+					$iconPath = craft()->path->getPluginsPath().$lcHandle.'/resources/icon-mask.svg';
+
+					if (IOHelper::fileExists($iconPath))
+					{
+						$iconSvg = IOHelper::getFileContents($iconPath);
+					}
+					else
+					{
+						$iconSvg = false;
+					}
+
+					$nav[$lcHandle] = array(
+						'label' => $plugin->getName(),
+						'iconSvg' => $iconSvg
+					);
 				}
 			}
 		}
 
+		if (craft()->userSession->isAdmin())
+		{
+			$nav['settings'] = array('label' => Craft::t('Settings'), 'icon' => 'settings');
+		}
+
+		// Allow plugins to modify the nav
+		craft()->plugins->call('modifyCpNav', array(&$nav));
+
+		// Figure out which item is selected, and normalize the items
 		$firstSegment = craft()->request->getSegment(1);
 
 		if ($firstSegment == 'myaccount')
@@ -71,6 +101,11 @@ class CpVariable
 
 		foreach ($nav as $handle => &$item)
 		{
+			if (is_string($item))
+			{
+				$item = array('label' => $item);
+			}
+
 			$item['sel'] = ($handle == $firstSegment);
 
 			if (isset($item['url']))
@@ -84,6 +119,67 @@ class CpVariable
 		}
 
 		return $nav;
+	}
+
+	/**
+	 * Returns the list of settings.
+	 *
+	 * @return array
+	 */
+	public function settings($iconSize = 32)
+	{
+		$label = Craft::t('System');
+
+		$settings[$label]['general'] = array('icon' => 'general', 'label' => Craft::t('General'));
+		$settings[$label]['routes'] = array('icon' => 'routes', 'label' => Craft::t('Routes'));
+
+		if (craft()->getEdition() == Craft::Pro)
+		{
+			$settings[$label]['users'] = array('icon' => 'users', 'label' => Craft::t('Users'));
+		}
+
+		$settings[$label]['email'] = array('icon' => 'mail', 'label' => Craft::t('Email'));
+		$settings[$label]['plugins'] = array('icon' => 'plugin', 'label' => Craft::t('Plugins'));
+
+		$label = Craft::t('Content');
+
+		$settings[$label]['fields'] = array('icon' => 'field', 'label' => Craft::t('Fields'));
+		$settings[$label]['sections'] = array('icon' => 'section', 'label' => Craft::t('Sections'));
+		$settings[$label]['assets'] = array('icon' => 'assets', 'label' => Craft::t('Assets'));
+		$settings[$label]['globals'] = array('icon' => 'globe', 'label' => Craft::t('Globals'));
+		$settings[$label]['categories'] = array('icon' => 'categories', 'label' => Craft::t('Categories'));
+		$settings[$label]['tags'] = array('icon' => 'tags', 'label' => Craft::t('Tags'));
+
+		if (craft()->getEdition() == Craft::Pro)
+		{
+			$settings[$label]['locales'] = array('icon' => 'language', 'label' => Craft::t('Locales'));
+		}
+
+		$label = Craft::t('Plugins');
+
+		foreach (craft()->plugins->getPlugins() as $plugin)
+		{
+			if ($plugin->hasSettings())
+			{
+				$pluginHandle = $plugin->getClassHandle();
+
+				// Is this plugin managing its own settings?
+				$settingsUrl = $plugin->getSettingsUrl();
+
+				if (!$settingsUrl)
+				{
+					$settingsUrl = 'settings/plugins/'.StringHelper::toLowerCase($pluginHandle);
+				}
+
+				$settings[$label][$pluginHandle] = array(
+					'url' => $settingsUrl,
+					'iconUrl' => craft()->plugins->getPluginIconUrl($pluginHandle, $iconSize),
+					'label' => $plugin->name
+				);
+			}
+		}
+
+		return $settings;
 	}
 
 	/**

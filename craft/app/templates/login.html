@@ -1,8 +1,9 @@
 {% extends "_layouts/basecp" %}
 {% import "_includes/forms" as forms %}
 {% set title = "Login"|t %}
-{% includeCssResource "css/login.css" %}
-{% includeJsResource "js/login.js" %}
+{% set bodyClass = 'login' %}
+{% includecssresource "css/login.css" %}
+{% includejsresource "js/login.js" %}
 {% includeTranslations
 	"Reset Password",
 	"Check your email for instructions to reset your password."
@@ -10,7 +11,7 @@
 
 {% set username = (craft.config.rememberUsernameDuration ? craft.session.rememberedUsername : '') %}
 
-{% set body %}
+{% block body %}
     <script type="text/javascript">
 		var cookieTest = 'CraftCookieTest='+Math.floor(Math.random() * 1000000);
 		document.cookie = cookieTest;
@@ -20,12 +21,15 @@
 			document.cookie = cookieTest + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 
 			document.write(
-				'<form id="login-form" method="post" action="" accept-charset="UTF-8" {% if craft.hasPackage("Rebrand") and craft.rebrand.isLogoUploaded -%}
+				'{%- set hasLogo = (CraftEdition >= CraftClient and craft.rebrand.isLogoUploaded ? true : false) -%}'+
+				'<form id="login-form" method="post" accept-charset="UTF-8" {% if hasLogo -%}
 						{%- set logo = craft.rebrand.logo -%}
-						{%- set padding = logo.height + 30 %}
-						style="background-image: url({{ logo.url }}); background-size: {{ logo.width }}px {{ logo.height }}px; padding-top: {{ padding }}px; margin-top: -{{ round((156+padding)/2) }}px"
+						{%- set padding = logo.height + 30 -%}
+						class="has-logo" style="background-image: url(\'{{ logo.url }}\'); background-size: {{ logo.width }}px {{ logo.height }}px; padding-top: {{ padding }}px; margin-top: -{{ round((353+padding)/2) }}px"
 					{%- endif %}>' +
-					'{{ forms.textField({ id: "loginName", name: "username", placeholder: "Username or Email"|t, value: username })|e("js") }}' +
+					'{% if not hasLogo -%}<h1>{{ siteName }}</h1>{%- endif %}'+
+					'{% set placeHolderText = (craft.config.useEmailAsUsername ? "Email"|t : "Username or Email"|t) %}' +
+					'{{ forms.textField({ id: "loginName", name: "username", placeholder: placeHolderText, value: username })|e("js") }}' +
 
 					'<div id="login-fields" class="nested-fields">' +
 						'{{ forms.passwordField({ id: "password", name: "password", placeholder: "Password"|t })|e("js") }}' +
@@ -36,17 +40,17 @@
 					'</div>' +
 
 					'<div class="buttons">' +
-						'<div id="ssl-icon" class="disabled"><div class="{{ craft.request.isSecure ? "secure" : "insecure" }} icon"></div></div>' +
+						'{# <div id="ssl-icon" class="disabled"><div class="{{ craft.request.isSecure ? "secure" : "insecure" }} icon"></div></div>#}' +
 						'<input id="submit" class="btn submit disabled" type="submit" value="{{ "Login"|t }}">' +
 						'<div id="spinner" class="spinner hidden"></div>' +
 					'</div>' +
+					'<a id="poweredby" href="http://craftcms.com/" title="{{ "Powered by Craft CMS"|t }}"><img src="{{ resourceUrl("images/craftcms.svg") }}" /></a>'+
 				'</form>'
 			);
 
 			{% if not craft.request.isMobileBrowser(true) %}
 				document.getElementById("{{ (username ? 'password' : 'loginName') }}").focus();
 			{% endif %}
-			window.returnUrl = '{{ craft.session.returnUrl|e('js') }}';
 		}
 		else
 		{
@@ -56,8 +60,8 @@
 						'<div class="pane-body">' +
 							'<div class="notice">' +
 								'<div class="icon"></div>' +
-								'<p>{{ "Cookies must be enabled to access the Craft control panel."|t }}<br>' +
-									'<a class="go" href="">{{ "See how"|t }}</a>' +
+								'<p>{{ "Cookies must be enabled to access the Craft CMS control panel."|t }}<br>' +
+									'<a class="go nowrap" href="">{{ "See how"|t }}</a>' +
 								'</p>' +
 							'</div>' +
 						'</div>' +
@@ -66,4 +70,4 @@
 			);
 		}
 	</script>
-{% endset %}
+{% endblock %}

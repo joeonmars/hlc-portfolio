@@ -2,22 +2,27 @@
 namespace Craft;
 
 /**
- * Craft by Pixel & Tonic
+ * The GlobalsController class is a controller that handles various global and global set related tasks such as saving,
+ * deleting displaying both globals and global sets.
  *
- * @package   Craft
- * @author    Pixel & Tonic, Inc.
+ * Note that all actions in the controller require an authenticated Craft session via {@link BaseController::allowAnonymous}.
+ *
+ * @author    Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
- * @license   http://buildwithcraft.com/license Craft License Agreement
- * @link      http://buildwithcraft.com
- */
-
-/**
- * Handles global set management tasks
+ * @license   http://craftcms.com/license Craft License Agreement
+ * @see       http://craftcms.com
+ * @package   craft.app.controllers
+ * @since     1.0
  */
 class GlobalsController extends BaseController
 {
+	// Public Methods
+	// =========================================================================
+
 	/**
 	 * Saves a global set.
+	 *
+	 * @return null
 	 */
 	public function actionSaveSet()
 	{
@@ -32,7 +37,7 @@ class GlobalsController extends BaseController
 		$globalSet->handle = craft()->request->getPost('handle');
 
 		// Set the field layout
-		$fieldLayout = craft()->fields->assembleLayoutFromPost(false);
+		$fieldLayout = craft()->fields->assembleLayoutFromPost();
 		$fieldLayout->type = ElementType::GlobalSet;
 		$globalSet->setFieldLayout($fieldLayout);
 
@@ -41,10 +46,9 @@ class GlobalsController extends BaseController
 		{
 			craft()->userSession->setNotice(Craft::t('Global set saved.'));
 
-			// TODO: Remove for 2.0
 			if (isset($_POST['redirect']) && mb_strpos($_POST['redirect'], '{setId}') !== false)
 			{
-				Craft::log('The {setId} token within the ‘redirect’ param on globals/saveSet requests has been deprecated. Use {id} instead.', LogLevel::Warning);
+				craft()->deprecator->log('GlobalsController::saveSet():setId_redirect', 'The {setId} token within the ‘redirect’ param on globals/saveSet requests has been deprecated. Use {id} instead.');
 				$_POST['redirect'] = str_replace('{setId}', '{id}', $_POST['redirect']);
 			}
 
@@ -63,6 +67,8 @@ class GlobalsController extends BaseController
 
 	/**
 	 * Deletes a global set.
+	 *
+	 * @return null
 	 */
 	public function actionDeleteSet()
 	{
@@ -80,6 +86,9 @@ class GlobalsController extends BaseController
 	 * Edits a global set's content.
 	 *
 	 * @param array $variables
+	 *
+	 * @throws HttpException
+	 * @return null
 	 */
 	public function actionEditContent(array $variables = array())
 	{
@@ -120,6 +129,7 @@ class GlobalsController extends BaseController
 
 		$criteria = craft()->elements->getCriteria(ElementType::GlobalSet);
 		$criteria->locale = $variables['localeId'];
+		$criteria->limit = null;
 		$globalSets = $criteria->find();
 
 		foreach ($globalSets as $globalSet)
@@ -146,6 +156,9 @@ class GlobalsController extends BaseController
 
 	/**
 	 * Saves a global set's content.
+	 *
+	 * @throws Exception
+	 * @return null
 	 */
 	public function actionSaveContent()
 	{
@@ -157,23 +170,19 @@ class GlobalsController extends BaseController
 		// Make sure the user is allowed to edit this global set and locale
 		craft()->userSession->requirePermission('editGlobalSet:'.$globalSetId);
 
-		if (craft()->hasPackage(CraftPackage::Localize))
+		if (craft()->isLocalized())
 		{
 			craft()->userSession->requirePermission('editLocale:'.$localeId);
 		}
 
-		$criteria = craft()->elements->getCriteria(ElementType::GlobalSet);
-		$criteria->id = $globalSetId;
-		$criteria->locale = $localeId;
-		$globalSet = $criteria->first();
+		$globalSet = craft()->globals->getSetById($globalSetId, $localeId);
 
 		if (!$globalSet)
 		{
 			throw new Exception(Craft::t('No global set exists with the ID “{id}”.', array('id' => $globalSetId)));
 		}
 
-		$fields = craft()->request->getPost('fields');
-		$globalSet->getContent()->setAttributes($fields);
+		$globalSet->setContentFromPost('fields');
 
 		if (craft()->globals->saveContent($globalSet))
 		{

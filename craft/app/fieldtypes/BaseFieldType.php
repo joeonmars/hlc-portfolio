@@ -2,33 +2,58 @@
 namespace Craft;
 
 /**
- * Craft by Pixel & Tonic
+ * Field type base class.
  *
- * @package   Craft
- * @author    Pixel & Tonic, Inc.
+ * @author    Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
- * @license   http://buildwithcraft.com/license Craft License Agreement
- * @link      http://buildwithcraft.com
- */
-
-/**
- * Field type base class
+ * @license   http://craftcms.com/license Craft License Agreement
+ * @see       http://craftcms.com
+ * @package   craft.app.fieldtypes
+ * @since     1.0
  */
 abstract class BaseFieldType extends BaseSavableComponentType implements IFieldType
 {
+	// Properties
+	// =========================================================================
+
 	/**
-	 * @var BaseElementModel The element that the current instance is associated with
+	 * The element that the current instance is associated with.
+	 *
+	 * @var BaseElementModel
 	 */
 	public $element;
 
 	/**
-	 * @access protected
-	 * @var string The type of component this is
+	 * The type of component, e.g. "Plugin", "Widget", "FieldType", etc. Defined by the component type's base class.
+	 *
+	 * @var string
 	 */
 	protected $componentType = 'FieldType';
 
 	/**
-	 * Returns the content attribute config.
+	 * @var bool Whether the field is fresh.
+	 * @see isFresh()
+	 * @see setIsFresh()
+	 */
+	private $_isFresh;
+
+	// Public Methods
+	// =========================================================================
+
+	/**
+	 * @inheritDoc IFieldType::setElement()
+	 *
+	 * @param $element
+	 *
+	 * @return null
+	 */
+	public function setElement(BaseElementModel $element)
+	{
+		$this->element = $element;
+	}
+
+	/**
+	 * @inheritDoc IFieldType::defineContentAttribute()
 	 *
 	 * @return mixed
 	 */
@@ -38,63 +63,97 @@ abstract class BaseFieldType extends BaseSavableComponentType implements IFieldT
 	}
 
 	/**
-	 * Performs any actions before a field is saved.
+	 * @inheritDoc IFieldType::onBeforeSave()
+	 *
+	 * @return null
 	 */
 	public function onBeforeSave()
 	{
 	}
 
 	/**
-	 * Performs any actions after a field is saved.
+	 * @inheritDoc IFieldType::onAfterSave()
+	 *
+	 * @return null
 	 */
 	public function onAfterSave()
 	{
 	}
 
 	/**
-	 * Performs any actions before a field is deleted.
+	 * @inheritDoc IFieldType::onBeforeDelete()
+	 *
+	 * @return null
 	 */
 	public function onBeforeDelete()
 	{
 	}
 
 	/**
-	 * Performs any actions after a field is deleted.
+	 * @inheritDoc IFieldType::onAfterDelete()
+	 *
+	 * @return null
 	 */
 	public function onAfterDelete()
 	{
 	}
 
 	/**
-	 * Returns the field's input HTML.
+	 * @inheritDoc IFieldType::getInputHtml()
 	 *
 	 * @param string $name
 	 * @param mixed  $value
+	 *
 	 * @return string
 	 */
 	public function getInputHtml($name, $value)
 	{
-		return '<textarea name="'.$name.'">'.$value.'</textarea>';
+		return HtmlHelper::encodeParams('<textarea name="{name}">{value}</textarea>', array('name' => $name, 'value' => $value));
 	}
 
 	/**
-	 * Returns the input value as it should be saved to the database.
+	 * @inheritDoc IFieldType::getStaticHtml()
 	 *
 	 * @param mixed $value
+	 *
+	 * @return string
+	 */
+	public function getStaticHtml($value)
+	{
+		// Just return the input HTML with disabled inputs by default
+		craft()->templates->startJsBuffer();
+		$inputHtml = $this->getInputHtml(StringHelper::randomString(), $value);
+		$inputHtml = preg_replace('/<(?:input|textarea|select)\s[^>]*/i', '$0 disabled', $inputHtml);
+		craft()->templates->clearJsBuffer();
+
+		return $inputHtml;
+	}
+
+	/**
+	 * @inheritDoc IFieldType::prepValueFromPost()
+	 *
+	 * @param mixed $value
+	 *
 	 * @return mixed
 	 */
 	public function prepValueFromPost($value)
 	{
-		// TODO: Remove redundant prepPostData() in Craft 2.0
-		return $this->prepPostData($value);
+		if (method_exists($this, 'prepPostData'))
+		{
+			craft()->deprecator->log('BaseFieldType::prepPostData()', 'BaseFieldType::prepPostData() has been deprecated. Use prepValueFromPost() instead.');
+			return $this->prepPostData($value);
+		}
+		else
+		{
+			return $value;
+		}
 	}
 
 	/**
-	 * Validates the value beyond the checks that were assumed based on the content attribute.
-	 *
-	 * Returns 'true' or any custom validation errors.
+	 * @inheritDoc IFieldType::validate()
 	 *
 	 * @param mixed $value
+	 *
 	 * @return true|string|array
 	 */
 	public function validate($value)
@@ -103,17 +162,19 @@ abstract class BaseFieldType extends BaseSavableComponentType implements IFieldT
 	}
 
 	/**
-	 * Performs any additional actions after the element has been saved.
+	 * @inheritDoc IFieldType::onAfterElementSave()
+	 *
+	 * @return null
 	 */
 	public function onAfterElementSave()
 	{
 	}
 
 	/**
-	 * Returns the search keywords that should be associated with this field,
-	 * based on the prepped post data.
+	 * @inheritDoc IFieldType::getSearchKeywords()
 	 *
 	 * @param mixed $value
+	 *
 	 * @return string
 	 */
 	public function getSearchKeywords($value)
@@ -122,9 +183,24 @@ abstract class BaseFieldType extends BaseSavableComponentType implements IFieldT
 	}
 
 	/**
-	 * Preps the field value for use.
+	 * @inheritDoc IPreviewableFieldType::getTableAttributeHtml()
 	 *
 	 * @param mixed $value
+	 *
+	 * @return string
+	 */
+	public function getTableAttributeHtml($value)
+	{
+		$value = (string) $value;
+
+		return StringHelper::stripHtml($value);
+	}
+
+	/**
+	 * @inheritDoc IFieldType::prepValue()
+	 *
+	 * @param mixed $value
+	 *
 	 * @return mixed
 	 */
 	public function prepValue($value)
@@ -133,46 +209,81 @@ abstract class BaseFieldType extends BaseSavableComponentType implements IFieldT
 	}
 
 	/**
-	 * Modifies an element query that's filtering by this field.
+	 * @inheritDoc IFieldType::modifyElementsQuery()
 	 *
 	 * @param DbCommand $query
 	 * @param mixed     $value
+	 *
 	 * @return null|false
 	 */
 	public function modifyElementsQuery(DbCommand $query, $value)
 	{
-		if ($this->defineContentAttribute())
+		if ($value !== null)
 		{
-			$handle = $this->model->handle;
-			$query->andWhere(DbHelper::parseParam('content.'.craft()->content->fieldColumnPrefix.$handle, $value, $query->params));
-		}
-		else
-		{
-			return false;
+			if ($this->defineContentAttribute())
+			{
+				$handle = $this->model->handle;
+				$query->andWhere(DbHelper::parseParam('content.'.craft()->content->fieldColumnPrefix.$handle, $value, $query->params));
+			}
+			else
+			{
+				return false;
+			}
 		}
 	}
 
 	/**
-	 * Preps the post data before it's saved to the database.
+	 * Sets whether the field is fresh.
 	 *
-	 * @access protected
-	 * @param mixed $value
-	 * @return mixed
-	 * @deprecated Deprecated since 1.1
+	 * @param bool|null $isFresh
+	 *
+	 * @return null
 	 */
-	protected function prepPostData($value)
+	public function setIsFresh($isFresh)
 	{
-		return $value;
+		$this->_isFresh = $isFresh;
+	}
+
+	// Protected Methods
+	// =========================================================================
+
+	/**
+	 * Returns the location in POST that this field's content was pulled from.
+	 *
+	 * @return string|null
+	 */
+	protected function getContentPostLocation()
+	{
+		if (isset($this->element) && isset($this->model))
+		{
+			$elementContentPostLocation = $this->element->getContentPostLocation();
+
+			if ($elementContentPostLocation)
+			{
+				return $elementContentPostLocation.'.'.$this->model->handle;
+			}
+		}
 	}
 
 	/**
 	 * Returns whether this is the first time the element's content has been edited.
 	 *
-	 * @access protected
 	 * @return bool
 	 */
 	protected function isFresh()
 	{
-		return (!isset($this->element) || (empty($this->element->getContent()->id) && !$this->element->hasErrors()));
+		if (!isset($this->_isFresh))
+		{
+			if (isset($this->element))
+			{
+				$this->_isFresh = $this->element->getHasFreshContent();
+			}
+			else
+			{
+				$this->_isFresh = true;
+			}
+		}
+
+		return $this->_isFresh;
 	}
 }

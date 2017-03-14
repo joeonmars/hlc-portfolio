@@ -1,18 +1,8 @@
-/**
- * Craft by Pixel & Tonic
- *
- * @package   Craft
- * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
- * @license   http://buildwithcraft.com/license Craft License Agreement
- * @link      http://buildwithcraft.com
- */
-
 (function($) {
 
 
-var FieldsAdmin = Garnish.Base.extend({
-
+var FieldsAdmin = Garnish.Base.extend(
+{
 	$groups: null,
 	$selectedGroup: null,
 
@@ -51,7 +41,7 @@ var FieldsAdmin = Garnish.Base.extend({
 
 	addNewGroup: function()
 	{
-		var name = this.promptForGroupName();
+		var name = this.promptForGroupName('');
 
 		if (name)
 		{
@@ -59,8 +49,8 @@ var FieldsAdmin = Garnish.Base.extend({
 				name: name
 			};
 
-			Craft.postActionRequest('fields/saveGroup', data, $.proxy(function(response, textStatus) {
-
+			Craft.postActionRequest('fields/saveGroup', data, $.proxy(function(response, textStatus)
+			{
 				if (textStatus == 'success')
 				{
 					if (response.success)
@@ -94,8 +84,8 @@ var FieldsAdmin = Garnish.Base.extend({
 				name: newName
 			};
 
-			Craft.postActionRequest('fields/saveGroup', data, $.proxy(function(response, textStatus) {
-
+			Craft.postActionRequest('fields/saveGroup', data, $.proxy(function(response, textStatus)
+			{
 				if (textStatus == 'success')
 				{
 					if (response.success)
@@ -131,8 +121,8 @@ var FieldsAdmin = Garnish.Base.extend({
 				id: this.$selectedGroup.data('id')
 			};
 
-			Craft.postActionRequest('fields/deleteGroup', data, $.proxy(function(response, textStatus) {
-
+			Craft.postActionRequest('fields/deleteGroup', data, $.proxy(function(response, textStatus)
+			{
 				if (textStatus == 'success')
 				{
 					if (response.success)
@@ -154,7 +144,7 @@ var FieldsAdmin = Garnish.Base.extend({
 
 		for (var attribute in responseErrors)
 		{
-			errors = errors.concat(response.errors[attribute]);
+			errors = errors.concat(responseErrors[attribute]);
 		}
 
 		return errors;

@@ -2,26 +2,26 @@
 namespace Craft;
 
 /**
- * Craft by Pixel & Tonic
+ * Helper class for template variables.
  *
- * @package   Craft
- * @author    Pixel & Tonic, Inc.
+ * @author    Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
- * @license   http://buildwithcraft.com/license Craft License Agreement
- * @link      http://buildwithcraft.com
- */
-
-/**
- * Helper class for template variables
+ * @license   http://craftcms.com/license Craft License Agreement
+ * @see       http://craftcms.com
+ * @package   craft.app.helpers
+ * @since     1.0
  */
 class VariableHelper
 {
+	// Public Methods
+	// =========================================================================
+
 	/**
 	 * Returns an array of variables for a given set of class instances.
 	 *
-	 * @static
-	 * @param array $instances
+	 * @param array  $instances
 	 * @param string $class
+	 *
 	 * @return array
 	 */
 	public static function populateVariables($instances, $class)

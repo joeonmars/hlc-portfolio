@@ -2,22 +2,22 @@
 
 {% extends "_layouts/cp" %}
 {% set title = "Updates"|t %}
-{% includeCssResource "css/updates.css" %}
-{% includeJsResource "js/updates.js" %}
+{% includecssresource "css/updates.css" %}
+{% includejsresource "js/updates.js" %}
 {% includeTranslations
 	"You’ve got updates!",
-	"No system updates are available.",
-	"build {build}",
+	"You’re all up-to-date!",
 	"Critical",
 	"Update",
 	"Download",
-	"Craft’s <a href=\"http://buildwithcraft.com/license\" target=\"_blank\">Terms and Conditions</a> have changed.",
+	"Craft’s <a href=\"http://craftcms.com/license\" target=\"_blank\">Terms and Conditions</a> have changed.",
 	"I agree.",
 	"Seriously, download.",
 	"Seriously, update.",
 	"Install",
-	"{packages} upgrades",
 	"{app} update required",
+	"Released on {date}",
+	"Show more",
 	"Added",
 	"Improved",
 	"Fixed",
@@ -25,9 +25,11 @@
 %}
 
 
-{% set content %}
-	<div id="loading">
-		<div class="spinner big"></div>
-		<p>{{ "Checking for updates…"|t }}</p>
-	</div>
-{% endset %}
+{% block pageHeader %}
+{% endblock %}
+
+
+{% block main %}
+	<div id="graphic" class="spinner big"></div>
+	<div id="status">{{ "Checking for updates…"|t }}</div>
+{% endblock %}

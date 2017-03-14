@@ -49,7 +49,6 @@ hlc.main = function() {
 	goog.events.listenOnce( hlc.main.views.preloader, goog.net.EventType.COMPLETE, hlc.main.onPreload, false, this );
 	goog.events.listenOnce( hlc.main.views.preloader, hlc.events.EventType.ANIMATE_OUT_COMPLETE, hlc.main.onPreloadAnimateOutComplete, false, this );
 	hlc.main.views.preloader.init();
-	hlc.main.views.preloader.start();
 };
 
 

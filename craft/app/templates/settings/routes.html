@@ -1,13 +1,24 @@
+{% requireAdmin %}
+
 {% extends "_layouts/cp" %}
 {% set title = "Routes"|t %}
-{% includeCssResource "css/routes.css" %}
-{% includeJsResource "js/routes.js" %}
+
+{% includecssresource "css/routes.css" %}
+{% includejsresource "js/routes.js" %}
+
+
+{% set extraPageHeaderHtml %}
+	<div class="buttons right">
+		<div id="add-route-btn" class="btn submit add icon">{{ "New route"|t }}</div>
+	</div>
+{% endset %}
 
 {% set crumbs = [
 	{ label: "Settings"|t, url: url('settings') }
 ] %}
 
 {% includeTranslations
+	"Global",
 	"New route order saved.",
 	"Couldn’t save new route order.",
 	"If the URI looks like this",
@@ -21,42 +32,44 @@
 	"Route deleted."
 %}
 
-{% set docsUrl = 'http://buildwithcraft.com/docs/routing' %}
+{% set docsUrl = 'http://craftcms.com/docs/routing' %}
 
 
-{% set routes = craft.routes.getAllRoutes() %}
+{% set routes = craft.routes.getDbRoutes() %}
 
 
-{% set content %}
+{% block content %}
 	<p id="noroutes"{% if routes %} class="hidden"{% endif %}>
 		{{ "No routes exist yet."|t }}
 	</p>
 
 	<div id="routes">
 		{% for route in routes %}
-			<div class="pane route" data-id="{{ route.id }}">
-				<div class="url">
-					{%- autoescape false -%}
-						{{ route.urlDisplayHtml }}
-					{%- endautoescape -%}
+			<div class="route" data-id="{{ route.id }}"{% if route.locale %} data-locale="{{ route.locale }}"{% endif %}>
+				<div class="url-container">
+					{%- spaceless %}
+						{% if craft.isLocalized() %}
+							<span class="locale">{{ route.locale ?: "Global"|t }}</span>
+						{% endif %}
+						<span class="url">{{ route.urlDisplayHtml|raw }}</span>
+					{% endspaceless -%}
 				</div>
 				<div class="template">{{ route.template }}</div>
 			</div>
 		{% endfor %}
 	</div>
-
-	<div class="buttons">
-		<div id="add-route-btn" class="btn submit add icon">{{ "New Route"|t }}</div>
-	</div>
-{% endset %}
+{% endblock %}
 
 
-{% set js %}
+{% includejs %}
 	Craft.routes.tokens = {
 		{% for name, pattern in tokens %}
 			{% if not loop.first %},{% endif %}
-			"{{ name|t(null, null, craft.app.locale)|e('js') }}": "{{ pattern|e('js') }}"
+			"{{ name|e('js') }}": "{{ pattern|e('js') }}"
 		{% endfor %}
 	};
-{% endset %}
-{% includeJs js %}
+
+	{% if craft.isLocalized() %}
+		Craft.routes.locales = {{ craft.i18n.getSiteLocaleIds()|json_encode|raw }};
+	{% endif %}
+{% endincludejs %}

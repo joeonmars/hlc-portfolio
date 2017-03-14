@@ -7,11 +7,8 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Twig_' => array($vendorDir . '/twig/twig/lib'),
-    'Symfony\\Component\\Yaml\\' => array($vendorDir . '/symfony/yaml'),
-    'Symfony\\Component\\EventDispatcher\\' => array($vendorDir . '/symfony/event-dispatcher'),
     'SimplePie' => array($vendorDir . '/simplepie/simplepie/library'),
-    'Mockery' => array($vendorDir . '/mockery/mockery/library'),
-    'Imagine' => array($vendorDir . '/imagine/imagine/lib'),
+    'Imagine' => array($vendorDir . '/pixelandtonic/imagine/lib'),
     'Guzzle\\Tests' => array($vendorDir . '/guzzle/guzzle/tests'),
     'Guzzle' => array($vendorDir . '/guzzle/guzzle/src'),
 );

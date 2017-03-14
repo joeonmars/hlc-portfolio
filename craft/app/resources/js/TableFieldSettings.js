@@ -1,18 +1,8 @@
-/**
- * Craft by Pixel & Tonic
- *
- * @package   Craft
- * @author    Pixel & Tonic, Inc.
- * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
- * @license   http://buildwithcraft.com/license Craft License Agreement
- * @link      http://buildwithcraft.com
- */
-
 (function($) {
 
 
-Craft.TableFieldSettings = Garnish.Base.extend({
-
+Craft.TableFieldSettings = Garnish.Base.extend(
+{
 	columnsTableName: null,
 	defaultsTableName: null,
 	columnsTableId: null,
@@ -72,7 +62,7 @@ Craft.TableFieldSettings = Garnish.Base.extend({
 	initColumnSettingInputs: function($container)
 	{
 		var $textareas = $container.find('td:first-child textarea, td:nth-child(3) textarea'),
-			$typeSelect = $container.find('td:nth-child(4) select')
+			$typeSelect = $container.find('td:nth-child(4) select');
 
 		this.addListener($textareas, 'textchange', 'reconstructDefaultsTable');
 		this.addListener($typeSelect, 'change', 'reconstructDefaultsTable');

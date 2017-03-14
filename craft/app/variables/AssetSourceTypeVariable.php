@@ -2,18 +2,16 @@
 namespace Craft;
 
 /**
- * Craft by Pixel & Tonic
+ * Asset source type template variable.
  *
- * @package   Craft
- * @author    Pixel & Tonic, Inc.
+ * @author    Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
- * @license   http://buildwithcraft.com/license Craft License Agreement
- * @link      http://buildwithcraft.com
- */
-
-/**
- * Asset source type template variable
+ * @license   http://craftcms.com/license Craft License Agreement
+ * @see       http://craftcms.com
+ * @package   craft.app.variables
+ * @since     1.0
  */
 class AssetSourceTypeVariable extends BaseComponentTypeVariable
 {
+
 }

@@ -2,28 +2,32 @@
 namespace Craft;
 
 /**
- * Craft by Pixel & Tonic
+ * Get Help widget.
  *
- * @package   Craft
- * @author    Pixel & Tonic, Inc.
+ * @author    Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @copyright Copyright (c) 2014, Pixel & Tonic, Inc.
- * @license   http://buildwithcraft.com/license Craft License Agreement
- * @link      http://buildwithcraft.com
- */
-
-/**
- * Get Help widget
+ * @license   http://craftcms.com/license Craft License Agreement
+ * @see       http://craftcms.com
+ * @package   craft.app.widgets
+ * @since     1.0
  */
 class GetHelpWidget extends BaseWidget
 {
+	// Properties
+	// =========================================================================
+
 	/**
-	 * @access protected
-	 * @var bool Whether users should be able to select more than one of this widget type.
+	 * Whether users should be able to select more than one of this widget type.
+	 *
+	 * @var bool
 	 */
 	protected $multi = false;
 
+	// Public Methods
+	// =========================================================================
+
 	/**
-	 * Returns the type of widget this is.
+	 * @inheritDoc IComponentType::getName()
 	 *
 	 * @return string
 	 */
@@ -33,22 +37,38 @@ class GetHelpWidget extends BaseWidget
 	}
 
 	/**
-	 * Gets the widget's title.
+	 * @inheritDoc IWidget::getTitle()
 	 *
 	 * @return string
 	 */
 	public function getTitle()
 	{
-		return Craft::t('Send a message to Craft Support');
+		return Craft::t('Send a message to Craft CMS Support');
 	}
 
 	/**
-	 * Returns the widget's body HTML.
+	 * @inheritDoc IWidget::getIconPath()
+	 *
+	 * @return string
+	 */
+	public function getIconPath()
+	{
+		return craft()->path->getResourcesPath().'images/widgets/get-help.svg';
+	}
+
+	/**
+	 * @inheritDoc IWidget::getBodyHtml()
 	 *
 	 * @return string|false
 	 */
 	public function getBodyHtml()
 	{
+		// Only admins get the Get Help widget.
+		if (!craft()->userSession->isAdmin())
+		{
+			return false;
+		}
+
 		$id = $this->model->id;
 		$js = "new Craft.GetHelpWidget({$id});";
 		craft()->templates->includeJs($js);
@@ -56,36 +76,12 @@ class GetHelpWidget extends BaseWidget
 		craft()->templates->includeJsResource('js/GetHelpWidget.js');
 		craft()->templates->includeTranslations('Message sent successfully.', 'Couldn’t send support request.');
 
-
-		$message = "Enter your message here.\n\n" .
-			"------------------------------\n\n" .
-			'Craft version: ' .
-			Craft::t('{version} build {build}', array(
-				'version' => craft()->getVersion(),
-				'build'   => craft()->getBuild()
-			))."\n" .
-			'Packages: '.implode(', ', craft()->getPackages());
-
-		$plugins = craft()->plugins->getPlugins();
-
-		if ($plugins)
-		{
-			$pluginNames = array();
-
-			foreach ($plugins as $plugin)
-			{
-				$pluginNames[] = $plugin->getName().' ('.$plugin->getDeveloper().')';
-			}
-
-			$message .= "\nPlugins: ".implode(', ', $pluginNames);
-		}
-
-		return craft()->templates->render('_components/widgets/GetHelp/body', array(
-			'message' => $message
-		));
+		return craft()->templates->render('_components/widgets/GetHelp/body');
 	}
 
 	/**
+	 * @inheritDoc IComponentType::isSelectable()
+	 *
 	 * @return bool
 	 */
 	public function isSelectable()
