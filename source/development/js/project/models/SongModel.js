@@ -216,7 +216,7 @@ hlc.models.SongModel.prototype.onAudioDataLoadError = function(e) {
 
 hlc.models.SongModel.getSongById = function(id) {
 
-  var albumsData = hlc.main.assets.sitemap['albums'];
+  var albumsData = hlc.main.assets['sitemap']['albums'];
 
   for(var albumId in albumsData) {
 
